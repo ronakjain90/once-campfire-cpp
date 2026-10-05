@@ -6,7 +6,7 @@
 namespace campfire::compat {
 namespace {
 
-using i128 = __extension__ __int128;
+__extension__ typedef __int128 i128;
 
 // Ruby's ISSPACE: what String#to_i and #to_f skip.
 bool is_space(char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r'; }
@@ -33,7 +33,7 @@ i128 to_i128(std::string_view s) {
   for (char c : s) {
     if (c >= '0' && c <= '9') {
       if (number > (kI128Max - (c - '0')) / 10) number = kI128Max;
-      else number = number * 10 + (c - '0');
+      else number = (number << 3) + (number << 1) + (c - '0');  // no i128 multiply: UBSan needs __muloti4
       previous_digit = true;
     } else if (c == '_' && previous_digit) {
       previous_digit = false;

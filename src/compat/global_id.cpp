@@ -71,8 +71,9 @@ std::optional<json::Value> verify_legacy_self_validated(const MessageVerifier& v
 std::optional<GlobalId> locate_signed(const Secrets& secrets, std::string_view sgid, std::string_view purpose,
                                       Timestamp now) {
   const MessageVerifier& verifier = secrets.global_id_verifier();
-  auto data = verifier.verify(sgid, purpose, now);
-  if (!data) data = verify_legacy_self_validated(verifier, sgid, purpose, now);
+  std::optional<json::Value> data;
+  if (auto verified = verifier.verify(sgid, purpose, now)) data = std::move(*verified);
+  else data = verify_legacy_self_validated(verifier, sgid, purpose, now);
   if (!data) return std::nullopt;
   const std::string* uri = data->get_string();
   if (uri == nullptr) return std::nullopt;

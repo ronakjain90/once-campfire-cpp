@@ -1,0 +1,99 @@
+{
+ "room_gzip": [
+  {
+   "status": 200,
+   "raw_bytes": 24231,
+   "decoded_bytes": 416122,
+   "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+  },
+  {
+   "status": 200,
+   "raw_bytes": 24231,
+   "decoded_bytes": 416122,
+   "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+  },
+  {
+   "status": 200,
+   "raw_bytes": 24231,
+   "decoded_bytes": 416122,
+   "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+  }
+ ],
+ "room_identity": [
+  {
+   "status": 200,
+   "raw_bytes": 416122,
+   "decoded_bytes": 416122,
+   "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+  },
+  {
+   "status": 200,
+   "raw_bytes": 416122,
+   "decoded_bytes": 416122,
+   "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+  },
+  {
+   "status": 200,
+   "raw_bytes": 416122,
+   "decoded_bytes": 416122,
+   "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+  }
+ ],
+ "posts": [
+  {
+   "i": 1,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 2,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 3,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 4,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 5,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 6,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 7,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 8,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 9,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 10,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  },
+  {
+   "i": 11,
+   "status": 200,
+   "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+  }
+ ]
+}

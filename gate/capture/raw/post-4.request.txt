@@ -1,0 +1,11 @@
+POST /rooms/201306877/messages HTTP/1.1
+host: 127.0.0.1:4490
+cookie: session_token=eyJfcmFpbHMiOnsibWVzc2FnZSI6IkluWmFkVmhpU0hKdFpHVXhjR2R4VEdONWVITldiM0UyZUNJPSIsImV4cCI6IjIwNDYtMTAtMDVUMTI6MDM6NDEuNTExWiIsInB1ciI6ImNvb2tpZS5zZXNzaW9uX3Rva2VuIn19--68b0097b1058fa4e1884d2c2ad29ab1b8aa86362
+content-type: application/x-www-form-urlencoded
+accept: text/vnd.turbo-stream.html, text/html, application/xhtml+xml
+x-csrf-token: 
+sec-fetch-site: same-origin
+accept-encoding: gzip
+content-length: 104
+
+message%5Bbody%5D=bench%20write%204&message%5Bclient_message_id%5D=18dba096a5d317804&authenticity_token=

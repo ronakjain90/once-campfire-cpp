@@ -1,0 +1,421 @@
+{
+ "summary": {
+  "room_gzip": [
+   {
+    "status": 200,
+    "raw_bytes": 24231,
+    "decoded_bytes": 416122,
+    "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+   },
+   {
+    "status": 200,
+    "raw_bytes": 24231,
+    "decoded_bytes": 416122,
+    "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+   },
+   {
+    "status": 200,
+    "raw_bytes": 24231,
+    "decoded_bytes": 416122,
+    "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+   }
+  ],
+  "room_identity": [
+   {
+    "status": 200,
+    "raw_bytes": 416122,
+    "decoded_bytes": 416122,
+    "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+   },
+   {
+    "status": 200,
+    "raw_bytes": 416122,
+    "decoded_bytes": 416122,
+    "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+   },
+   {
+    "status": 200,
+    "raw_bytes": 416122,
+    "decoded_bytes": 416122,
+    "sha256_decoded": "65f5de290894e00109d0b10bb02d63d56e89ead89d4258d7d8e0390e446dc072"
+   }
+  ],
+  "posts": [
+   {
+    "i": 1,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 2,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 3,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 4,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 5,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 6,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 7,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 8,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 9,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 10,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   },
+   {
+    "i": 11,
+    "status": 200,
+    "content_type": "text/vnd.turbo-stream.html; charset=utf-8"
+   }
+  ]
+ },
+ "windows": [
+  {
+   "name": "mark GET room gzip #1.before",
+   "start": 1791201823.5248764,
+   "end": 1791201823.5300107,
+   "status": 400
+  },
+  {
+   "name": "GET room gzip #1",
+   "start": 1791201823.8329077,
+   "end": 1791201823.84131,
+   "status": 200
+  },
+  {
+   "name": "mark GET room gzip #1.after",
+   "start": 1791201824.8452914,
+   "end": 1791201824.8465526,
+   "status": 400
+  },
+  {
+   "name": "mark GET room gzip #2.before",
+   "start": 1791201825.1567705,
+   "end": 1791201825.1573918,
+   "status": 400
+  },
+  {
+   "name": "GET room gzip #2",
+   "start": 1791201825.4625716,
+   "end": 1791201825.4658806,
+   "status": 200
+  },
+  {
+   "name": "mark GET room gzip #2.after",
+   "start": 1791201826.4691358,
+   "end": 1791201826.4702065,
+   "status": 400
+  },
+  {
+   "name": "mark GET room gzip #3.before",
+   "start": 1791201826.7841835,
+   "end": 1791201826.7850358,
+   "status": 400
+  },
+  {
+   "name": "GET room gzip #3",
+   "start": 1791201827.090258,
+   "end": 1791201827.092598,
+   "status": 200
+  },
+  {
+   "name": "mark GET room gzip #3.after",
+   "start": 1791201828.095216,
+   "end": 1791201828.0959444,
+   "status": 400
+  },
+  {
+   "name": "mark GET room identity #1.before",
+   "start": 1791201828.4052134,
+   "end": 1791201828.4058475,
+   "status": 400
+  },
+  {
+   "name": "GET room identity #1",
+   "start": 1791201828.7110488,
+   "end": 1791201828.7149208,
+   "status": 200
+  },
+  {
+   "name": "mark GET room identity #1.after",
+   "start": 1791201829.7202046,
+   "end": 1791201829.7214398,
+   "status": 400
+  },
+  {
+   "name": "mark GET room identity #2.before",
+   "start": 1791201830.034273,
+   "end": 1791201830.0350251,
+   "status": 400
+  },
+  {
+   "name": "GET room identity #2",
+   "start": 1791201830.3391767,
+   "end": 1791201830.3425434,
+   "status": 200
+  },
+  {
+   "name": "mark GET room identity #2.after",
+   "start": 1791201831.3428574,
+   "end": 1791201831.3441765,
+   "status": 400
+  },
+  {
+   "name": "mark GET room identity #3.before",
+   "start": 1791201831.6569002,
+   "end": 1791201831.6576734,
+   "status": 400
+  },
+  {
+   "name": "GET room identity #3",
+   "start": 1791201831.962869,
+   "end": 1791201831.9675746,
+   "status": 200
+  },
+  {
+   "name": "mark GET room identity #3.after",
+   "start": 1791201832.9699156,
+   "end": 1791201832.9709466,
+   "status": 400
+  },
+  {
+   "name": "mark loadgen-validate.before",
+   "start": 1791201833.2828617,
+   "end": 1791201833.2840312,
+   "status": 200
+  },
+  {
+   "name": "mark loadgen-validate.after",
+   "start": 1791201835.3019714,
+   "end": 1791201835.304048,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #1.before",
+   "start": 1791201836.3102167,
+   "end": 1791201836.3112977,
+   "status": 400
+  },
+  {
+   "name": "POST message #1",
+   "start": 1791201836.616514,
+   "end": 1791201836.6227903,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #1.after",
+   "start": 1791201837.6270623,
+   "end": 1791201837.627868,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #2.before",
+   "start": 1791201839.4416435,
+   "end": 1791201839.4426863,
+   "status": 400
+  },
+  {
+   "name": "POST message #2",
+   "start": 1791201839.744692,
+   "end": 1791201839.7522311,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #2.after",
+   "start": 1791201840.7565362,
+   "end": 1791201840.7576435,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #3.before",
+   "start": 1791201842.5703568,
+   "end": 1791201842.5713623,
+   "status": 400
+  },
+  {
+   "name": "POST message #3",
+   "start": 1791201842.874221,
+   "end": 1791201842.8817954,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #3.after",
+   "start": 1791201843.8869836,
+   "end": 1791201843.8879755,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #4.before",
+   "start": 1791201845.6976824,
+   "end": 1791201845.6986482,
+   "status": 400
+  },
+  {
+   "name": "POST message #4",
+   "start": 1791201846.001594,
+   "end": 1791201846.0079591,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #4.after",
+   "start": 1791201847.0121956,
+   "end": 1791201847.0132446,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #5.before",
+   "start": 1791201848.8263803,
+   "end": 1791201848.827405,
+   "status": 400
+  },
+  {
+   "name": "POST message #5",
+   "start": 1791201849.1285014,
+   "end": 1791201849.1357481,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #5.after",
+   "start": 1791201850.140131,
+   "end": 1791201850.1408138,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #6.before",
+   "start": 1791201851.9521785,
+   "end": 1791201851.9530087,
+   "status": 400
+  },
+  {
+   "name": "POST message #6",
+   "start": 1791201852.2549827,
+   "end": 1791201852.2602403,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #6.after",
+   "start": 1791201853.2642026,
+   "end": 1791201853.2652059,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #7.before",
+   "start": 1791201855.0758126,
+   "end": 1791201855.0769613,
+   "status": 400
+  },
+  {
+   "name": "POST message #7",
+   "start": 1791201855.3813827,
+   "end": 1791201855.3876197,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #7.after",
+   "start": 1791201856.3922834,
+   "end": 1791201856.3931334,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #8.before",
+   "start": 1791201858.2083948,
+   "end": 1791201858.2099526,
+   "status": 400
+  },
+  {
+   "name": "POST message #8",
+   "start": 1791201858.5115614,
+   "end": 1791201858.5176277,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #8.after",
+   "start": 1791201859.522926,
+   "end": 1791201859.5240343,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #9.before",
+   "start": 1791201861.3352308,
+   "end": 1791201861.3359706,
+   "status": 400
+  },
+  {
+   "name": "POST message #9",
+   "start": 1791201861.6379497,
+   "end": 1791201861.6424131,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #9.after",
+   "start": 1791201862.647623,
+   "end": 1791201862.6486278,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #10.before",
+   "start": 1791201864.4592028,
+   "end": 1791201864.4599082,
+   "status": 400
+  },
+  {
+   "name": "POST message #10",
+   "start": 1791201864.7651029,
+   "end": 1791201864.769778,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #10.after",
+   "start": 1791201865.7709136,
+   "end": 1791201865.7718558,
+   "status": 400
+  },
+  {
+   "name": "mark POST message #11.before",
+   "start": 1791201867.5888517,
+   "end": 1791201867.58964,
+   "status": 400
+  },
+  {
+   "name": "POST message #11",
+   "start": 1791201867.889825,
+   "end": 1791201867.8972344,
+   "status": 200
+  },
+  {
+   "name": "mark POST message #11.after",
+   "start": 1791201868.8993387,
+   "end": 1791201868.9005027,
+   "status": 400
+  }
+ ]
+}

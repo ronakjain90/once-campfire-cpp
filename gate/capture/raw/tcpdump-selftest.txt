@@ -1,0 +1,5 @@
+1791201928.483673 lo    In  IP 127.0.0.1.59452 > 127.0.0.1.9: Flags [S], seq 2128387874, win 65495, options [mss 65495,sackOK,TS val 2174261728 ecr 0,nop,wscale 7], length 0
+1791201928.483694 lo    In  IP 127.0.0.1.9 > 127.0.0.1.59452: Flags [R.], seq 0, ack 2128387875, win 0, length 0
+1791201928.490536 lo    In  IP 127.0.0.1.59460 > 127.0.0.1.9: Flags [S], seq 2261587031, win 65495, options [mss 65495,sackOK,TS val 2174261735 ecr 0,nop,wscale 7], length 0
+1791201928.490552 lo    In  IP 127.0.0.1.9 > 127.0.0.1.59460: Flags [R.], seq 0, ack 2261587032, win 0, length 0
+

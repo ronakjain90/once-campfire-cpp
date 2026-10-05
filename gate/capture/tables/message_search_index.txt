@@ -1,0 +1,13 @@
+rows of the FTS5 table message_search_index (rowid, body) for the new messages
+[933434638, "bench write 1"]
+[933434639, "bench write 1"]
+[933434640, "bench write 2"]
+[933434641, "bench write 3"]
+[933434642, "bench write 4"]
+[933434643, "bench write 5"]
+[933434644, "bench write 6"]
+[933434645, "bench write 7"]
+[933434646, "bench write 8"]
+[933434647, "bench write 9"]
+[933434648, "bench write 10"]
+[933434649, "bench write 11"]

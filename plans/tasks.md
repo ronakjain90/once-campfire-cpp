@@ -39,7 +39,7 @@ each branch against its acceptance list, runs the tests, and merges it into `mai
 | ID | Task | Depends on |
 |---|---|---|
 | T5 | **Server.** `src/net/`: event loop, HTTP/1.1, the router generator, `Ctx`, the response builder, timers, worker threads, the cross-worker queues. | T1 |
-| T6 | **Request parts.** Rack-compatible params (nested keys), multipart, cookies, encrypted session, flash, `Sec-Fetch-Site` forgery protection, formats and `Accept` rules. Fuzz targets for each parser. | T1, T2 |
+| T6 | **Request parts.** Rack-compatible params (nested keys), multipart, cookies, encrypted session, flash, `Sec-Fetch-Site` forgery protection with the old-token path, formats and `Accept` rules, bcrypt (vendored `crypt_blowfish`). Vector groups `csrf` and `passwords` of `rails_compat.json`. Fuzz targets for each parser. | T1, T2 |
 | T7 | **Database.** `src/db/`: connections, typed statements, `schema_gen.py`, the writer with group commit and after-commit hand-back, change events, the checkpointer, the tracked dependency hash. | T1 |
 | T8 | **Templates.** `tools/ctc.py`, `src/views/` foundation: tag helpers with Rails attribute order, URL helpers (`vectors/campfire_routes.json`), form builders, `time_tag`, `turbo_frame_tag`, the layout and the shared partials. | T1, T2 |
 | T9 | **Assets.** `src/assets/`: Propshaft digests, importmap, the overrides, precompressed bodies, and the vendored frontend files. | T1 |
@@ -93,6 +93,6 @@ its requests in the diff sweep pass.
 | ID | Status | Branch | Notes |
 |---|---|---|---|
 | T1 | in progress (Sonnet) | `task/T1` | |
-| T2 | in progress (Sonnet) | `task/T2` | |
+| T2 | merged (verified by Opus) | `task/T2` | All vector groups pass in release and ASan. `passwords` (bcrypt) and `csrf` groups moved to T6. Needs T1's doctest wiring. |
 | T3 | in progress (Sonnet) | `task/T3` | |
 | T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |

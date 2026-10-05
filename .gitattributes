@@ -1,0 +1,2 @@
+gate/capture/raw/** -text
+gate/server/fixtures/** -text

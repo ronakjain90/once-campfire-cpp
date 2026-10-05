@@ -92,7 +92,7 @@ its requests in the diff sweep pass.
 
 | ID | Status | Branch | Notes |
 |---|---|---|---|
-| T1 | not started | | |
-| T2 | not started | | |
-| T3 | not started | | |
-| T4 | not started | | |
+| T1 | in progress (Sonnet) | `task/T1` | |
+| T2 | in progress (Sonnet) | `task/T2` | |
+| T3 | in progress (Sonnet) | `task/T3` | |
+| T4 | in progress (Sonnet) | `task/T4` | |

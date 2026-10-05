@@ -320,8 +320,8 @@ Agents update this table when they start or finish a task.
 
 | ID | Status | Branch | Notes |
 |---|---|---|---|
-| G1 | in progress | | Images build in Colima |
-| G2 | not started | | |
-| G3 | not started | | |
-| G4 | not started | | Waits for G3 |
+| G1 | done | | Rails image 4 min, Rust image 5.5 min, seed `default` built |
+| G2 | done (verified by Opus) | | Harness in `gate/bench/`. First Rust run was noisy: G3 built an image at the same time. |
+| G3 | done (verified by Opus) | `gate-sql-trace` (Rust worktree) | Room page: 9 reads. Post: 5 request reads, 9 writer statements, 19 pool reads. No push or webhook sends. |
+| G4 | in progress (Sonnet) | | |
 | G5 | not started | | |

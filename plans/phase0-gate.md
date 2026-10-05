@@ -179,16 +179,20 @@ These rules make the gate a fair measurement. I will check each rule.
    Choose by `Accept-Encoding`, as the Rust app does.
 5. **Headers.** Send the same header names, in the same order, as the captured Rust response.
    Compute `ETag` from the cache key. Send the current `Date`.
-6. **POST.** Parse the form body. Run each write statement that the Rust app runs for a post, in
-   the writer group commit, with real values: new ids, the current time, the message body as Rust
-   stores it, and the FTS row. Then do these steps after the commit:
-   - Render the response body from the captured template, with this post's values.
-     Escape the body text as HTML.
-   - Render the broadcast HTML of the message once, as the Rust app does for each post.
-   - For each push subscription that the Rust app sends to for this post (from task G3), do the
-     Web Push encryption with OpenSSL (P-256 ECDH, HKDF, AES-128-GCM, as in RFC 8291). Then try
-     one non-blocking TCP connection to `127.0.0.1:9`. Do this on a separate pool of 2 threads.
-   - For each webhook connection in the capture, try one TCP connection to `127.0.0.1:9`.
+6. **POST.** Parse the form body. Then do the work that `gate/capture/summary.md`, section 2,
+   records for a post, in the same order:
+   - Run the 5 request-thread reads (bans, session, user, membership, room). You can skip the
+     session and user reads, as rule 1 says.
+   - Run the writer statements in the group commit, with real values: new ids, the current time,
+     the body as Rust stores it. Then run the statements that Rust runs after its `COMMIT`: the
+     rich text SELECT, the FTS insert and the memberships UPDATE.
+   - Run the 19 pool reads (message, room, user, rich text, attachment, boosts, account, push
+     subscriptions, unread counts) on worker read connections, and read all rows.
+   - Render the response body from the captured template, with this post's values. Escape the
+     body text as HTML. Render the broadcast HTML of the message once, as Rust does.
+   - Push: apply the same endpoint check as Rust (`web_push.rs`, `push_subscription.rs`). The
+     benchmark endpoints fail it, so Rust sends nothing and encrypts nothing. Do the same.
+   - Webhooks: the capture shows none. Send none.
 7. **No shortcuts.** Do not cache a response across requests other than the way rule 3 says.
    Do not skip a write. Do not reduce `synchronous` or change `journal_mode`.
 

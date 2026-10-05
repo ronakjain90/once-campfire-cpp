@@ -94,6 +94,9 @@ std::string generate(const Value& value);
 // "<", ">" and "&" written as <, > and &. U+2028 and U+2029 stay raw.
 std::string encode(const Value& value);
 
+// True if the bytes are well-formed UTF-8 (no surrogates, no overlong forms).
+bool valid_utf8(std::string_view text);
+
 // Re-escapes JSON text that is already encoded.
 std::string escape_html_entities(std::string_view json);
 

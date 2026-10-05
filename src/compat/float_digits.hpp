@@ -13,4 +13,8 @@ struct Digits {
 // The shortest digits of a finite, positive double (Ryu, through std::to_chars).
 Digits shortest_digits(double magnitude);
 
+// Like shortest_digits, but of two equally close shortest forms it takes the even one, as Ruby's
+// dtoa does (667020902720176.25.to_s is "667020902720176.2").
+Digits ruby_shortest_digits(double magnitude);
+
 }  // namespace campfire::compat::detail

@@ -188,6 +188,15 @@ std::string generate(const Value& value) {
   return out;
 }
 
+bool valid_utf8(std::string_view text) {
+  for (size_t i = 0; i < text.size();) {
+    size_t n = utf8_length(text, i);
+    if (n == 0) return false;
+    i += n;
+  }
+  return true;
+}
+
 std::string escape_html_entities(std::string_view json) {
   std::string out;
   out.reserve(json.size() + 16);

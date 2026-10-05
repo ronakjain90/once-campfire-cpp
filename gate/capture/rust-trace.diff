@@ -1,0 +1,69 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index c2b3701..464ce2c 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -41,7 +41,7 @@ serde_yaml   = "0.9"
+ # Bundled SQLite 3.53, past 3.51.3's fix for the WAL-reset corruption bug, which the checkpointer
+ # thread next to the writer (crates/db/src/database.rs) could hit. `cache` is the statement cache;
+ # the other default feature only adds wasm crates to Cargo.lock.
+-rusqlite     = { version = "0.40", default-features = false, features = ["bundled", "cache", "hooks"] }
++rusqlite     = { version = "0.40", default-features = false, features = ["bundled", "cache", "hooks", "trace"] }
+ askama       = "0.14"
+ jiff         = { version = "0.2", features = ["serde"] }
+ thiserror    = "2"
+diff --git a/crates/db/src/database.rs b/crates/db/src/database.rs
+index 8b8e950..52f4c68 100644
+--- a/crates/db/src/database.rs
++++ b/crates/db/src/database.rs
+@@ -40,6 +40,7 @@ use std::path::{Path, PathBuf};
+ use std::sync::{Arc, Condvar, Mutex, MutexGuard, TryLockError};
+ 
+ use rails_compat::clock::SharedClock;
++use rusqlite::trace::{TraceEvent, TraceEventCodes};
+ use rusqlite::{Connection, OpenFlags, Transaction, TransactionBehavior};
+ use tokio::sync::{mpsc, oneshot};
+ 
+@@ -422,9 +423,43 @@ fn open_connection(path: &Path, reader: bool) -> Result<Connection> {
+     if reader {
+         conn.pragma_update(None, "query_only", true)?;
+     }
++    if std::env::var_os("CAMPFIRE_SQL_TRACE").is_some() {
++        let events = TraceEventCodes::SQLITE_TRACE_STMT | TraceEventCodes::SQLITE_TRACE_PROFILE | TraceEventCodes::SQLITE_TRACE_ROW;
++        conn.trace_v2(events, Some(if reader { trace_reader } else { trace_writer }));
++    }
+     Ok(conn)
+ }
+ 
++thread_local! {
++    /// Rows the statements running on this thread have returned since the last one finished.
++    static TRACE_ROWS: Cell<u64> = const { Cell::new(0) };
++}
++
++/// `CAMPFIRE_SQL_TRACE`: to stderr, a `start` line with the expanded SQL (bound values filled in)
++/// when a statement runs, and an `end` line with its row count when it finishes.
++fn trace_statement(role: &str, event: TraceEvent<'_>) {
++    let thread = std::thread::current().id();
++    match event {
++        TraceEvent::Stmt(stmt, sql) => {
++            let sql = stmt.expanded_sql().unwrap_or_else(|| sql.to_string());
++            eprintln!("SQLTRACE start {role} {thread:?} {}", sql.replace('\n', "\\n"));
++        }
++        TraceEvent::Row(_) => TRACE_ROWS.set(TRACE_ROWS.get() + 1),
++        TraceEvent::Profile(stmt, _) => {
++            eprintln!("SQLTRACE end {role} {thread:?} rows={} {}", TRACE_ROWS.replace(0), stmt.sql().replace('\n', "\\n"));
++        }
++        _ => {}
++    }
++}
++
++fn trace_reader(event: TraceEvent<'_>) {
++    trace_statement("reader", event);
++}
++
++fn trace_writer(event: TraceEvent<'_>) {
++    trace_statement("writer", event);
++}
++
+ /// The reader threads, one per reader connection. They stop once the last [`Database`] handle,
+ /// and so this, is gone.
+ struct Readers {

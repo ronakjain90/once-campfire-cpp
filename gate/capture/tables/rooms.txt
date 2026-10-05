@@ -1,0 +1,4 @@
+columns: id, created_at, creator_id, name, type, updated_at
+CHANGED [201306877, "2026-01-03 17:00:00", 127326141, "HQ", "Rooms::Open", "2026-10-05 12:04:27.891761"]
+  was   [201306877, "2026-01-03 17:00:00", 127326141, "HQ", "Rooms::Open", "2026-01-03 17:00:00"]
+  cols  updated_at

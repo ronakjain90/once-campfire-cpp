@@ -1,0 +1,20 @@
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+x-version: parity
+x-rev: parity
+link: </assets/_reset-9c3efd7b.css>; rel=preload; as=style; nopush,</assets/actiontext-7b8d51ea.css>; rel=preload; as=style; nopush,</assets/animation-bcdb4bab.css>; rel=preload; as=style; nopush,</assets/autocomplete-9de8c93f.css>; rel=preload; as=style; nopush,</assets/avatars-279376ab.css>; rel=preload; as=style; nopush,</assets/base-637a0ec8.css>; rel=preload; as=style; nopush,</assets/boosts-da4032a8.css>; rel=preload; as=style; nopush,</assets/buttons-c7d39fd4.css>; rel=preload; as=style; nopush,</assets/code-333ae548.css>; rel=preload; as=style; nopush,</assets/colorize-eb391ca0.css>; rel=preload; as=style; nopush,</assets/colors-aee62523.css>; rel=preload; as=style; nopush,</assets/composer-e490638a.css>; rel=preload; as=style; nopush,</assets/embeds-c20d0a3a.css>; rel=preload; as=style; nopush,</assets/filters-8a4d63ed.css>; rel=preload; as=style; nopush,</assets/flash-a561c1e5.css>; rel=preload; as=style; nopush,</assets/inputs-9e58a07c.css>; rel=preload; as=style; nopush
+set-cookie: last_room=486777696; path=/; expires=Fri, 05 Oct 2046 12:03:47 GMT; samesite=lax
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+etag: W/"7b5fe0b3da7cd2db376df9a202a71ee7"
+cache-control: max-age=0, private, must-revalidate
+content-encoding: gzip
+x-request-id: 81ccc9b1-658b-4a23-8e27-af73866ebacc
+x-runtime: 0.001147
+vary: Accept-Encoding
+x-cache: miss
+date: Mon, 05 Oct 2026 12:03:47 GMT
+transfer-encoding: chunked

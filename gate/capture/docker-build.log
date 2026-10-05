@@ -1,0 +1,133 @@
+#0 building with "colima" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 10.07kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.8s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/rust:1.98.1-trixie
+#4 ...
+
+#5 [internal] load metadata for docker.io/library/debian:trixie-slim
+#5 DONE 0.7s
+
+#4 [internal] load metadata for docker.io/library/rust:1.98.1-trixie
+#4 DONE 0.7s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 911B done
+#6 DONE 0.0s
+
+#7 [internal] preparing inline document
+#7 DONE 0.0s
+
+#8 [internal] preparing inline document
+#8 DONE 0.0s
+
+#9 [stage-6  1/11] FROM docker.io/library/debian:trixie-slim@sha256:a99cfc517144bc59b1978475ec53b46ecabec7e43635402ee5b77cc54cd1b20a
+#9 resolve docker.io/library/debian:trixie-slim@sha256:a99cfc517144bc59b1978475ec53b46ecabec7e43635402ee5b77cc54cd1b20a 0.0s done
+#9 DONE 0.0s
+
+#10 [media-base 1/3] FROM docker.io/library/rust:1.98.1-trixie@sha256:a8a5f0a1e5fe7dfe1d352591e4a1c7dd2c08fd70475cae872cf3458ba0df0546
+#10 resolve docker.io/library/rust:1.98.1-trixie@sha256:a8a5f0a1e5fe7dfe1d352591e4a1c7dd2c08fd70475cae872cf3458ba0df0546 0.0s done
+#10 DONE 0.0s
+
+#11 [internal] load build context
+#11 transferring context: 122.56kB 0.0s done
+#11 DONE 0.0s
+
+#12 [build 1/6] COPY --from=vips /opt/vips /opt/vips
+#12 CACHED
+
+#13 [build 2/6] WORKDIR /src
+#13 CACHED
+
+#14 [vips 1/1] RUN apt-get source -qq vips=8.16.1-1+deb13u1 &&     echo "60205e00d061b9d8072938e04899f2ca2fdac0513068e561d33f7c87fae1ae2e  vips_8.16.1-1+deb13u1.dsc" | sha256sum -c - &&     cd vips-8.16.1 &&     eval "$(DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --export=sh)" &&     meson setup build --buildtype=plain --wrap-mode=nodownload --prefix=/opt/vips --libdir=lib       --auto-features=disabled -Dmodules=disabled -Dintrospection=disabled -Dcplusplus=false       -Ddeprecated=false -Dexamples=false       -Djpeg=enabled -Dspng=enabled -Dpng=enabled -Dwebp=enabled -Dtiff=enabled -Dheif=enabled       -Dexif=enabled -Dlcms=enabled -Dcgif=enabled -Dimagequant=enabled -Dhighway=enabled       -Dzlib=enabled &&     meson install -C build --strip
+#14 CACHED
+
+#15 [media-base 2/3] RUN sed -i 's/^Types: deb$/Types: deb deb-src/' /etc/apt/sources.list.d/debian.sources &&     apt-get update -qq &&     apt-get install --no-install-recommends -y       dpkg-dev meson ninja-build nasm       libglib2.0-dev libexpat1-dev zlib1g-dev libjpeg62-turbo-dev libspng-dev libpng-dev       libwebp-dev libtiff-dev libheif-dev libexif-dev liblcms2-dev libcgif-dev libimagequant-dev       libhwy-dev libdav1d-dev libbz2-dev liblzma-dev
+#15 CACHED
+
+#16 [media-base 3/3] WORKDIR /usr/src
+#16 CACHED
+
+#17 [build 3/6] COPY Cargo.toml Cargo.lock ./
+#17 CACHED
+
+#18 [build 4/6] COPY crates crates
+#18 DONE 0.0s
+
+#19 [build 5/6] COPY reference reference
+#19 DONE 0.1s
+
+#20 [build 6/6] RUN --mount=type=cache,id=campfire-rust-cargo-registry,target=/usr/local/cargo/registry     --mount=type=cache,id=campfire-rust-target,target=/src/target     if [ "arm64" = arm64 ]; then export JEMALLOC_SYS_WITH_LG_PAGE=14; fi &&     cargo build --release --locked -p campfire &&     install -D -m 755 target/release/campfire /out/campfire
+#20 0.186    Compiling campfire_db v0.1.0 (/src/crates/db)
+#20 2.458    Compiling campfire v0.1.0 (/src/crates/campfire)
+#20 73.43     Finished `release` profile [optimized] target(s) in 1m 13s
+#20 DONE 73.5s
+
+#21 [media 3/3] COPY --from=ffmpeg /opt/ffmpeg/bin/ffmpeg /opt/ffmpeg/bin/ffprobe /usr/local/bin/
+#21 CACHED
+
+#22 [stage-6  4/11] RUN ldconfig
+#22 CACHED
+
+#23 [stage-6  5/11] RUN groupadd --system --gid 1000 rails &&     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
+#23 CACHED
+
+#24 [media 2/3] COPY --from=ffmpeg /opt/ffmpeg/lib/libavcodec.so.61 /opt/ffmpeg/lib/libavfilter.so.10      /opt/ffmpeg/lib/libavformat.so.61 /opt/ffmpeg/lib/libavutil.so.59      /opt/ffmpeg/lib/libswresample.so.5 /opt/ffmpeg/lib/libswscale.so.8 /usr/local/lib/
+#24 CACHED
+
+#25 [media 1/3] COPY --from=vips /opt/vips/lib/libvips.so.42 /usr/local/lib/
+#25 CACHED
+
+#26 [ffmpeg 1/1] RUN apt-get source -qq ffmpeg=7:7.1.5-0+deb13u1 &&     upstream=7.1.5-0+deb13u1 && upstream=${upstream%-*} && revision=0+deb13u1 &&     echo "9ed2ed34cbe7f056eeebbe9045c5e2d15e41b5b053fe7c8ba6979a0b6fb081ce  ffmpeg_7.1.5-0+deb13u1.dsc" | sha256sum -c - &&     cd ffmpeg-${upstream} &&     ./configure --prefix=/opt/ffmpeg --extra-version="${revision}" --toolchain=hardened       --enable-shared --disable-static --disable-doc --disable-ffplay --disable-avdevice       --disable-autodetect --disable-network --disable-hwaccels --disable-devices       --enable-libdav1d --enable-zlib --enable-bzlib --enable-lzma       --disable-encoders --enable-encoder=mjpeg       --disable-muxers --enable-muxer=image2       --disable-protocols --enable-protocol=file,pipe       --disable-filters       --enable-filter=buffer,buffersink,abuffer,abuffersink,format,aformat,null,anull,scale,aresample       --enable-filter=select,loop,trim,transpose,hflip,vflip,rotate,crop &&     make -j"$(nproc)" &&     make install &&     strip --strip-unneeded /opt/ffmpeg/lib/*.so.* /opt/ffmpeg/bin/*
+#26 CACHED
+
+#27 [stage-6  3/11] COPY --from=media / /
+#27 CACHED
+
+#28 [stage-6  2/11] RUN apt-get update -qq &&     apt-get install --no-install-recommends -y       ca-certificates libglib2.0-0t64 libexpat1 libjpeg62-turbo libspng0 libpng16-16t64       libwebp7 libwebpmux3 libwebpdemux2 libtiff6 libheif1 libheif-plugin-libde265       libheif-plugin-dav1d libexif12 liblcms2-2 libcgif0 libimagequant0 libhwy1t64 libdav1d7 &&     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+#28 CACHED
+
+#29 [stage-6  6/11] WORKDIR /rails
+#29 CACHED
+
+#8 [internal] preparing inline document
+#8 CACHED
+
+#7 [internal] preparing inline document
+#7 CACHED
+
+#30 [stage-6  7/11] COPY --from=build /out/campfire /usr/local/bin/campfire
+#30 DONE 0.0s
+
+#31 [stage-6  8/11] COPY --chmod=755 <<EOF /rails/bin/boot
+#31 DONE 0.0s
+
+#32 [stage-6  9/11] RUN mkdir -p /rails/storage/db /rails/storage/files /rails/storage/backups &&     chown -R 1000:1000 /rails
+#32 DONE 0.1s
+
+#33 [stage-6 10/11] COPY --chmod=755 <<EOF /hooks/pre-backup
+#33 DONE 0.0s
+
+#34 [stage-6 11/11] COPY --chmod=755 reference/hooks/post-restore /hooks/post-restore
+#34 DONE 0.0s
+
+#35 exporting to image
+#35 exporting layers
+#35 exporting layers 0.6s done
+#35 exporting manifest sha256:4c35b9b932b09aec05c446a118c35430fafbe53d95351fd69dd60e9269f00ea4 done
+#35 exporting config sha256:c00f4070f5a0d6c70fbc83595d162d53bc14a71d7f87403ea6f88828752dbb85 done
+#35 exporting attestation manifest sha256:6b3b8944657103723cea306137c3462f55707a937d607092be7d099468952ebd done
+#35 exporting manifest list sha256:820576836000080eac12d046eefc4852249a4cf1b2edd7aa6c89bd174ad9417e done
+#35 naming to docker.io/library/campfire-rust:trace done
+#35 unpacking to docker.io/library/campfire-rust:trace 0.1s done
+#35 DONE 0.8s
+done 0

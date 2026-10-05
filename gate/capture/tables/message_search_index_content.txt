@@ -1,0 +1,13 @@
+columns: id, c0
+NEW     [933434638, "bench write 1"]
+NEW     [933434639, "bench write 1"]
+NEW     [933434640, "bench write 2"]
+NEW     [933434641, "bench write 3"]
+NEW     [933434642, "bench write 4"]
+NEW     [933434643, "bench write 5"]
+NEW     [933434644, "bench write 6"]
+NEW     [933434645, "bench write 7"]
+NEW     [933434646, "bench write 8"]
+NEW     [933434647, "bench write 9"]
+NEW     [933434648, "bench write 10"]
+NEW     [933434649, "bench write 11"]

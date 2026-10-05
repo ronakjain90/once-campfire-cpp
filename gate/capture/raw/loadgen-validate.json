@@ -1,0 +1,21 @@
+{
+ "avg_bytes": 1990,
+ "conc": 1,
+ "errors": 0,
+ "gzip": true,
+ "latency": {
+  "max_ms": 4.871,
+  "mean_ms": 4.87,
+  "n": 1,
+  "p50_ms": 4.871,
+  "p90_ms": 4.871,
+  "p99_ms": 4.871
+ },
+ "ok": 1,
+ "path": "POST /rooms/201306877/messages",
+ "rps": 181.7,
+ "secs": 0.01,
+ "statuses": {
+  "200": 1
+ }
+}

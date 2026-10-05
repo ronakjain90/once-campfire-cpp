@@ -1,0 +1,5 @@
+message_search_index_content: seed 169 rows, after posts 181 rows
+message_search_index_docsize: seed 169 rows, after posts 181 rows
+message_search_index_data: seed 19 rows, after posts 14 rows
+message_search_index_idx: seed 17 rows, after posts 12 rows
+message_search_index_config: seed 1 rows, after posts 1 rows

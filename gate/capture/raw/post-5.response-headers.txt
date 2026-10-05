@@ -1,0 +1,19 @@
+HTTP/1.1 200 OK
+content-type: text/vnd.turbo-stream.html; charset=utf-8
+x-cache: bypass
+x-version: parity
+x-rev: parity
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+etag: W/"3e57ef3f16a189bc5dc23edd3dc9db3b"
+cache-control: max-age=0, private, must-revalidate
+content-encoding: gzip
+x-request-id: a774d1b9-6b6c-4167-a09d-0066c6028661
+x-runtime: 0.005550
+vary: Accept-Encoding
+vary: Accept,Accept-Encoding
+date: Mon, 05 Oct 2026 12:04:09 GMT
+transfer-encoding: chunked

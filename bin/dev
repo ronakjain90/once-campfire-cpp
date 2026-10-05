@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+# Runs build, test and style commands in the campfire-cpp-dev image.
+# The script works with bash 3.2 (macOS) and with /opt/homebrew/bin/bash.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+NAME="$(basename "$ROOT")"                       # for example "T1", or "once-campfire-cpp"
+LOWER="$(printf '%s' "$NAME" | tr '[:upper:]' '[:lower:]')"
+IMAGE="${CAMPFIRE_DEV_IMAGE:-campfire-cpp-dev}"
+VOLUME="${CAMPFIRE_BUILD_VOLUME:-cfcpp-build-$NAME}"   # one build volume for each worktree
+
+usage() {
+  cat <<USAGE
+Usage: bin/dev <command> [arguments]
+
+  build [preset] [target...]  Configure and build (preset: release, asan, tsan; default release)
+  test [preset] [ctest args]  Run ctest for a preset (default release)
+  format [--check] [paths]    Run clang-format (--check changes no file and fails on a difference)
+  tidy [paths]                Run clang-tidy on the given paths (default: src/)
+  shell                       Open a shell in the container
+  run <command...>            Run any command in the container
+  clean [preset]              Delete the build directory of a preset (or all presets)
+
+Environment: CAMPFIRE_DEV_IMAGE (image), CAMPFIRE_BUILD_VOLUME (build volume).
+The build volume is mounted at /build. The worktree is mounted at its host path.
+USAGE
+}
+
+tty_flags() {
+  if [ -t 0 ] && [ -t 1 ]; then printf '%s' "-it"; else printf '%s' "-i"; fi
+}
+
+# Run a bash -lc script in the container. The arguments of the script are \$1, \$2, ...
+in_container() {
+  local script="$1"
+  shift
+  docker run --rm "$(tty_flags)" \
+    --name "${LOWER}-dev-$$" \
+    -v "$ROOT:$ROOT" -v "$VOLUME:/build" -w "$ROOT" \
+    -e CC=clang -e CXX=clang++ \
+    "$IMAGE" bash -lc "$script" campfire-dev "$@"
+}
+
+check_preset() {
+  case "$1" in
+    release | asan | tsan) ;;
+    *)
+      echo "bin/dev: unknown preset '$1' (use release, asan or tsan)" >&2
+      exit 2
+      ;;
+  esac
+}
+
+cmd="${1:-}"
+[ $# -gt 0 ] && shift
+
+case "$cmd" in
+  build)
+    preset="${1:-release}"
+    [ $# -gt 0 ] && shift
+    check_preset "$preset"
+    # Leftover arguments are targets.
+    targets=()
+    for t in "$@"; do targets+=(--target "$t"); done
+    in_container 'set -e; p=$1; shift; cmake --preset "$p" >/dev/null && cmake --build --preset "$p" "$@"' \
+      "$preset" ${targets[@]+"${targets[@]}"}
+    ;;
+  test)
+    preset="${1:-release}"
+    [ $# -gt 0 ] && shift
+    check_preset "$preset"
+    in_container 'set -e; p=$1; shift; ctest --preset "$p" "$@"' "$preset" "$@"
+    ;;
+  format)
+    mode=fix
+    if [ "${1:-}" = "--check" ]; then
+      mode=check
+      shift
+    fi
+    in_container '
+      set -e
+      mode=$1; shift
+      if [ $# -eq 0 ]; then set -- src tests fuzz tools; fi
+      files=$(find "$@" -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.h" -o -name "*.cc" -o -name "*.inc" \) \
+                -not -path "*/vendor/*" -not -path "*/generated/*" -not -name "*.gen.*" 2>/dev/null | sort)
+      [ -n "$files" ] || { echo "no files"; exit 0; }
+      if [ "$mode" = check ]; then
+        echo "$files" | xargs clang-format --dry-run -Werror
+        echo "clang-format: clean ($(echo "$files" | wc -l | tr -d " ") files)"
+      else
+        echo "$files" | xargs clang-format -i
+        echo "clang-format: formatted ($(echo "$files" | wc -l | tr -d " ") files)"
+      fi' "$mode" "$@"
+    ;;
+  tidy)
+    in_container '
+      set -e
+      if [ ! -f /build/release/compile_commands.json ]; then cmake --preset release >/dev/null; fi
+      if [ $# -eq 0 ]; then set -- src; fi
+      files=$(find "$@" -type f \( -name "*.cpp" -o -name "*.cc" \) -not -path "*/vendor/*" | sort)
+      [ -n "$files" ] || { echo "no files"; exit 0; }
+      echo "$files" | xargs -P 4 -n 1 clang-tidy -p /build/release --quiet --warnings-as-errors="*"
+      echo "clang-tidy: clean ($(echo "$files" | wc -l | tr -d " ") files)"' "$@"
+    ;;
+  shell)
+    in_container 'exec bash -l'
+    ;;
+  run)
+    [ $# -gt 0 ] || { usage >&2; exit 2; }
+    in_container 'exec "$@"' "$@"
+    ;;
+  clean)
+    in_container 'set -e; if [ $# -eq 0 ]; then rm -rf /build/*; else for p in "$@"; do rm -rf "/build/$p"; done; fi' "$@"
+    ;;
+  help | -h | --help | "")
+    usage
+    ;;
+  *)
+    echo "bin/dev: unknown command '$cmd'" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

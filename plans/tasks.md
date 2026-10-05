@@ -36,6 +36,11 @@ each branch against its acceptance list, runs the tests, and merges it into `mai
 
 ## Wave 2: frameworks (parallel, after wave 1)
 
+Directory ownership in wave 2: T5 `src/net/`, `src/app/` (only `main.cpp` and the route table
+format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
+`tools/schema_gen.py`. T8 `src/views/`, `src/routes/`, `tools/ctc.py`. T9 `src/assets/`,
+`third_party/`. T11 `src/cable/`. T12 `src/storage/`. T13 `tools/diffsweep/`.
+
 | ID | Task | Depends on |
 |---|---|---|
 | T5 | **Server.** `src/net/`: event loop, HTTP/1.1, the router generator, `Ctx`, the response builder, timers, worker threads, the cross-worker queues. | T1 |

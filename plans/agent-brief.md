@@ -45,6 +45,11 @@ Read this before you start. Then read `plans/architecture.md` and your task in `
 5. If a requirement is not possible, or the design does not cover a case, stop that part and
    report it. Do not change a requirement by yourself.
 6. Never report a result that you did not see. Include the raw output of each acceptance command.
+7. A watchdog stops an agent that shows no progress for 10 minutes. To prevent this:
+   - Write or edit a file in pieces of at most about 250 lines for each tool call.
+   - Run each command that can take more than a few minutes (builds, image builds, fuzz runs,
+     benchmarks) in the background. Poll its log with short commands.
+   - Commit each time a piece compiles and its tests pass, so that a stop loses little work.
 
 ## Report
 

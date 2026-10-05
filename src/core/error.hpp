@@ -2,6 +2,7 @@
 // section 4 and section 14.
 #pragma once
 
+#include <cstdint>
 #include <expected>
 #include <string>
 #include <string_view>
@@ -10,7 +11,7 @@
 namespace campfire {
 
 // The kind of an error. Add a value when a caller must act on it. Use `Internal` otherwise.
-enum class Errc {
+enum class Errc : std::uint8_t {
   Internal,
   InvalidArgument,
   NotFound,

@@ -78,7 +78,9 @@ inline constexpr std::int64_t kMaxSeconds = 253'402'300'799;  // 9999-12-31T23:5
   return era * 146097 + static_cast<std::int64_t>(doe) - 719468;
 }
 
-[[nodiscard]] constexpr bool is_leap_year(int y) noexcept { return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0; }
+[[nodiscard]] constexpr bool is_leap_year(int y) noexcept {
+  return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+}
 
 [[nodiscard]] constexpr int days_in_month(int y, int m) noexcept {
   constexpr int kDays[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -116,13 +118,12 @@ inline constexpr std::int64_t kMaxSeconds = 253'402'300'799;  // 9999-12-31T23:5
 // is outside the valid range.
 [[nodiscard]] constexpr std::optional<Timestamp> from_civil(int year, int month, int day, int hour, int minute,
                                                             int second, std::int32_t nanos = 0) noexcept {
-  if (year < 1 || year > 9999 || month < 1 || month > 12 || day < 1 || day > days_in_month(year, month) ||
-      hour < 0 || hour > 23 || minute < 0 || minute > 59 || second < 0 || second > 59 || nanos < 0 ||
-      nanos > 999'999'999) {
+  if (year < 1 || year > 9999 || month < 1 || month > 12 || day < 1 || day > days_in_month(year, month) || hour < 0 ||
+      hour > 23 || minute < 0 || minute > 59 || second < 0 || second > 59 || nanos < 0 || nanos > 999'999'999) {
     return std::nullopt;
   }
   const std::int64_t days = days_from_civil(year, static_cast<unsigned>(month), static_cast<unsigned>(day));
-  return Timestamp{days * 86400 + hour * 3600 + minute * 60 + second, nanos};
+  return Timestamp{days * 86400 + std::int64_t{hour} * 3600 + std::int64_t{minute} * 60 + second, nanos};
 }
 
 }  // namespace campfire

@@ -13,7 +13,9 @@ using namespace campfire;
 
 namespace {
 
-Task<int> leaf(int v) { co_return v; }
+Task<int> leaf(int v) {
+  co_return v;
+}
 
 Task<int> middle(int v) {
   const int a = co_await leaf(v);
@@ -43,14 +45,18 @@ Task<std::string> catches() {
   co_return "not reached";
 }
 
-Task<int> propagates() { co_return co_await thrower(); }
+Task<int> propagates() {
+  co_return co_await thrower();
+}
 
 Task<void> void_task(int& out) {
   out = 5;
   co_return;
 }
 
-Task<std::string> move_only_value() { co_return std::string(100, 'x'); }
+Task<std::string> move_only_value() {
+  co_return std::string(100, 'x');
+}
 
 Task<int> deep(int n) {
   if (n == 0) {
@@ -125,7 +131,9 @@ TEST_CASE("Task values move out and Tasks move") {
 }
 
 TEST_CASE("a Task that never ran, or never finished, frees its frame") {
-  { Task<int> unused = outer(); }
+  {
+    Task<int> unused = outer();
+  }
   QueueScheduler scheduler;
   std::thread::id a;
   std::thread::id b;
@@ -137,7 +145,9 @@ TEST_CASE("a Task that never ran, or never finished, frees its frame") {
       scheduler.run_one_for(std::chrono::seconds(5));
     }
   }
-  { Task<int> half = middle(1); }
+  {
+    Task<int> half = middle(1);
+  }
 }
 
 TEST_CASE("a Completion from another thread resumes on the owner thread") {

@@ -1,6 +1,7 @@
 // Rails time formats. See time_format.hpp for the sources.
 #include "core/time_format.hpp"
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstdio>
@@ -57,7 +58,9 @@ constexpr std::array<std::string_view, 7> kDays = {"Sun", "Mon", "Tue", "Wed", "
 constexpr std::array<std::string_view, 12> kMonths = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-bool is_digit(char c) { return c >= '0' && c <= '9'; }
+bool is_digit(char c) {
+  return c >= '0' && c <= '9';
+}
 
 // Reads exactly `n` digits at `pos`.
 std::optional<int> digits_at(std::string_view s, std::size_t pos, std::size_t n) {
@@ -141,8 +144,8 @@ std::optional<Timestamp> parse_db(std::string_view text) {
   } else if (text.ends_with('Z')) {
     text.remove_suffix(1);
   }
-  if (text.size() < 19 || text[4] != '-' || text[7] != '-' || (text[10] != ' ' && text[10] != 'T') ||
-      text[13] != ':' || text[16] != ':') {
+  if (text.size() < 19 || text[4] != '-' || text[7] != '-' || (text[10] != ' ' && text[10] != 'T') || text[13] != ':' ||
+      text[16] != ':') {
     return std::nullopt;
   }
   const auto year = digits_at(text, 0, 4);
@@ -166,7 +169,7 @@ std::optional<Timestamp> parse_db(std::string_view text) {
         return std::nullopt;
       }
     }
-    nanos = fraction_nanos(fraction.substr(0, 6)) ;  // at most 6 digits, as the Rust port reads them
+    nanos = fraction_nanos(fraction.substr(0, 6));  // at most 6 digits, as the Rust port reads them
   }
   return from_civil(*year, *month, *day, *hour, *minute, *second, nanos);
 }
@@ -273,24 +276,25 @@ std::optional<Timestamp> parse_httpdate(std::string_view text) {
   // Zone, in minutes east of UTC.
   const std::string_view zone = parts[4];
   int offset = 0;
-  if (zone == "GMT" || zone == "UT" || zone == "UTC" || zone == "Z") {
-    offset = 0;
-  } else if (zone == "EST") {
-    offset = -5 * 60;
-  } else if (zone == "EDT") {
-    offset = -4 * 60;
-  } else if (zone == "CST") {
-    offset = -6 * 60;
-  } else if (zone == "CDT") {
-    offset = -5 * 60;
-  } else if (zone == "MST") {
-    offset = -7 * 60;
-  } else if (zone == "MDT") {
-    offset = -6 * 60;
-  } else if (zone == "PST") {
-    offset = -8 * 60;
-  } else if (zone == "PDT") {
-    offset = -7 * 60;
+  struct NamedZone {
+    std::string_view name;
+    int minutes;
+  };
+  static constexpr std::array<NamedZone, 12> kZones = {{{"GMT", 0},
+                                                        {"UT", 0},
+                                                        {"UTC", 0},
+                                                        {"Z", 0},
+                                                        {"EST", -5 * 60},
+                                                        {"EDT", -4 * 60},
+                                                        {"CST", -6 * 60},
+                                                        {"CDT", -5 * 60},
+                                                        {"MST", -7 * 60},
+                                                        {"MDT", -6 * 60},
+                                                        {"PST", -8 * 60},
+                                                        {"PDT", -7 * 60}}};
+  const auto named = std::ranges::find(kZones, zone, &NamedZone::name);
+  if (named != kZones.end()) {
+    offset = named->minutes;
   } else if (zone.size() == 5 && (zone[0] == '+' || zone[0] == '-')) {
     const auto hh = digits_at(zone, 1, 2);
     const auto mm = digits_at(zone, 3, 2);
@@ -331,9 +335,7 @@ std::int64_t epoch_ms(Timestamp t) {
 }
 
 Result<Timestamp> parse_rfc3339(std::string_view text) {
-  const auto bad = [&](std::string_view why) {
-    return fail(Errc::Parse, std::string(why));
-  };
+  const auto bad = [&](std::string_view why) { return fail(Errc::Parse, std::string(why)); };
   const std::string_view s = trim(text);
   if (s.size() < 11) {
     return bad("too short");
@@ -426,7 +428,7 @@ Result<Timestamp> parse_rfc3339(std::string_view text) {
     if (*oh > 24 || om > 59 || os > 59) {
       return bad("offset out of range");
     }
-    offset = sign * (*oh * 3600 + om * 60 + os);
+    offset = static_cast<std::int64_t>(sign) * (*oh * 3600 + om * 60 + os);
   } else {
     return bad("missing offset");
   }

@@ -2,6 +2,7 @@
 #pragma once
 
 #include <atomic>
+#include <cstdint>
 #include <format>
 #include <functional>
 #include <optional>
@@ -11,7 +12,7 @@
 namespace campfire {
 
 // The levels of Ruby's Logger, from the lowest to the highest.
-enum class LogLevel : int { Debug = 0, Info = 1, Warn = 2, Error = 3, Fatal = 4, Unknown = 5 };
+enum class LogLevel : std::uint8_t { Debug = 0, Info = 1, Warn = 2, Error = 3, Fatal = 4, Unknown = 5 };
 
 // Reads a level name, as Rails reads `config.log_level`: ASCII case is not significant.
 // Returns nothing for a name that is not a level.

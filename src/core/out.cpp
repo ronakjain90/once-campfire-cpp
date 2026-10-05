@@ -19,7 +19,9 @@ Out::Out(Out&& other) noexcept
   other.chunks_.clear();
 }
 
-Out::~Out() { release_chunks(); }
+Out::~Out() {
+  release_chunks();
+}
 
 void Out::release_chunks() noexcept {
   for (const Chunk& chunk : chunks_) {

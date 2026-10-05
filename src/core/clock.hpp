@@ -54,7 +54,8 @@ using SharedClock = std::shared_ptr<const Clock>;
 // The process clock. If `CAMPFIRE_FROZEN_TIME` is set to a text that is not blank, the clock is
 // frozen at that RFC 3339 time. A blank value means the real time. A text that is not a time
 // gives an error.
-[[nodiscard]] Result<SharedClock> clock_from_lookup(const std::function<std::optional<std::string>(std::string_view)>& get);
+[[nodiscard]] Result<SharedClock> clock_from_lookup(
+    const std::function<std::optional<std::string>(std::string_view)>& get);
 [[nodiscard]] Result<SharedClock> clock_from_env();
 
 }  // namespace campfire

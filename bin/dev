@@ -35,8 +35,10 @@ tty_flags() {
 in_container() {
   local script="$1"
   shift
+  # seccomp=unconfined: TSan calls personality(2), which the default Docker profile blocks.
   docker run --rm "$(tty_flags)" \
     --name "${LOWER}-dev-$$" \
+    --security-opt seccomp=unconfined \
     -v "$ROOT:$ROOT" -v "$VOLUME:/build" -w "$ROOT" \
     -e CC=clang -e CXX=clang++ \
     "$IMAGE" bash -lc "$script" campfire-dev "$@"

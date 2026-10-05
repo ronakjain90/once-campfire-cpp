@@ -17,7 +17,9 @@ namespace {
 
 constexpr std::string_view kSpace = " \t\n\v\f\r";
 
-bool blank(std::string_view s) { return s.find_first_not_of(kSpace) == std::string_view::npos; }
+bool blank(std::string_view s) {
+  return s.find_first_not_of(kSpace) == std::string_view::npos;
+}
 
 std::string_view trim(std::string_view s) {
   const std::size_t begin = s.find_first_not_of(kSpace);
@@ -258,7 +260,7 @@ FrontConfig FrontConfig::from_lookup(const EnvLookup& get) {
   if (const auto bind = find("TARGET_BIND")) {
     std::array<unsigned char, sizeof(in6_addr)> raw{};
     std::array<char, INET6_ADDRSTRLEN> text{};
-    const std::string value = *bind;
+    const std::string& value = *bind;
     if (inet_pton(AF_INET, value.c_str(), raw.data()) == 1) {
       inet_ntop(AF_INET, raw.data(), text.data(), text.size());
       c.target_bind = text.data();

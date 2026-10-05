@@ -30,7 +30,7 @@ namespace campfire {
 class Out {
  public:
   static constexpr std::size_t kFirstChunk = 1024;
-  static constexpr std::size_t kMaxGrowChunk = 64 * 1024;
+  static constexpr std::size_t kMaxGrowChunk = std::size_t{64} * 1024;
 
   explicit Out(std::pmr::memory_resource* resource = std::pmr::get_default_resource(),
                std::size_t first_chunk = kFirstChunk);

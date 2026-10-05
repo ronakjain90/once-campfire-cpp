@@ -26,14 +26,20 @@ Hash128 xxh3_128(std::string_view data, std::uint64_t seed) noexcept {
   return {h.low64, h.high64};
 }
 
-Xxh3State::Xxh3State(std::uint64_t seed) : impl_(std::make_unique<Impl>()) { reset(seed); }
+Xxh3State::Xxh3State(std::uint64_t seed) : impl_(std::make_unique<Impl>()) {
+  reset(seed);
+}
 Xxh3State::Xxh3State(Xxh3State&&) noexcept = default;
 Xxh3State& Xxh3State::operator=(Xxh3State&&) noexcept = default;
 Xxh3State::~Xxh3State() = default;
 
-void Xxh3State::reset(std::uint64_t seed) noexcept { XXH3_128bits_reset_withSeed(&impl_->state, seed); }
+void Xxh3State::reset(std::uint64_t seed) noexcept {
+  XXH3_128bits_reset_withSeed(&impl_->state, seed);
+}
 
-void Xxh3State::update(std::string_view data) noexcept { XXH3_128bits_update(&impl_->state, data.data(), data.size()); }
+void Xxh3State::update(std::string_view data) noexcept {
+  XXH3_128bits_update(&impl_->state, data.data(), data.size());
+}
 
 void Xxh3State::update_u64(std::uint64_t value) noexcept {
   std::array<unsigned char, 8> bytes{};

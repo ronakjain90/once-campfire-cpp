@@ -44,7 +44,8 @@ TEST_CASE("Out grows in chunks and gives iovecs") {
   CHECK(joined == expected);
 
   // A short write: skip the bytes that were sent.
-  for (const std::size_t skip : {std::size_t{0}, std::size_t{1}, std::size_t{16}, expected.size() - 1, expected.size()}) {
+  for (const std::size_t skip :
+       {std::size_t{0}, std::size_t{1}, std::size_t{16}, expected.size() - 1, expected.size()}) {
     std::vector<iovec> rest(out.chunk_count());
     rest.resize(out.fill_iovecs(rest, skip));
     std::string tail;
@@ -85,7 +86,7 @@ TEST_CASE("Out clear, empty and move") {
   out.append_raw("x");
   Out moved(std::move(out));
   CHECK(moved.to_string() == "x");
-  CHECK(out.size() == 0);  // NOLINT(bugprone-use-after-move): the moved-from state is specified
+  CHECK(out.size() == 0);  // NOLINT(bugprone-use-after-move,clang-analyzer-cplusplus.Move)
   moved.clear();
   CHECK(moved.empty());
   moved.append_raw("y");

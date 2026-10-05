@@ -1,0 +1,10 @@
+BasedOnStyle: Google
+Language: Cpp
+Standard: c++20
+ColumnLimit: 120
+IndentWidth: 2
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortCaseLabelsOnASingleLine: true
+IncludeBlocks: Regroup
+DerivePointerAlignment: false
+PointerAlignment: Left

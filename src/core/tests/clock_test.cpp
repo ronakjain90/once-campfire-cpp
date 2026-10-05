@@ -10,7 +10,7 @@
 using namespace campfire;
 
 namespace {
-Result<SharedClock> from(std::map<std::string, std::string> vars) {
+Result<SharedClock> from(const std::map<std::string, std::string>& vars) {
   return clock_from_lookup([vars](std::string_view name) -> std::optional<std::string> {
     const auto it = vars.find(std::string(name));
     if (it == vars.end()) {
@@ -55,7 +55,8 @@ TEST_CASE("CAMPFIRE_FROZEN_TIME") {
   CHECK((*frozen)->now() == Timestamp{1717243200, 0});
   CHECK((*frozen)->now() == Timestamp{1717243200, 0});
 
-  for (const auto& vars : {std::map<std::string, std::string>{}, {{"CAMPFIRE_FROZEN_TIME", ""}}, {{"CAMPFIRE_FROZEN_TIME", "  "}}}) {
+  for (const auto& vars :
+       {std::map<std::string, std::string>{}, {{"CAMPFIRE_FROZEN_TIME", ""}}, {{"CAMPFIRE_FROZEN_TIME", "  "}}}) {
     const auto real = from(vars);
     REQUIRE(real.has_value());
     CHECK((*real)->now().seconds > 1'700'000'000);

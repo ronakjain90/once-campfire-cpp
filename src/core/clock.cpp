@@ -60,7 +60,8 @@ Result<SharedClock> clock_from_lookup(const std::function<std::optional<std::str
   }
   const Result<Timestamp> at = parse_rfc3339(*value);
   if (!at) {
-    return fail(Errc::Config, std::string(kFrozenTimeEnv) + "=\"" + *value + "\" is not an RFC 3339 timestamp: " + at.error().message);
+    return fail(Errc::Config, std::string(kFrozenTimeEnv) + "=\"" + *value +
+                                  "\" is not an RFC 3339 timestamp: " + at.error().message);
   }
   return TestClock::frozen_at(*at);
 }

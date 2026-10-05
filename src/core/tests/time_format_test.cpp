@@ -96,10 +96,10 @@ TEST_CASE("RFC 3339 parser") {
   CHECK(at("2024-06-01T07:00:00-0500") == Timestamp{1717243200, 0});
   CHECK(at("2024-06-01T12:00:00.123456789Z") == Timestamp{1717243200, 123456789});
   CHECK(at("  2024-06-01T12:00:00Z  ") == Timestamp{1717243200, 0});
-  CHECK(at("2024-06-01T12:00:60Z") == Timestamp{1717243199 + 1 - 0, 0}.plus_seconds(-1).plus_seconds(0));  // leap second clamps to :59
-  for (const char* bad : {"", "2024-06-01", "2024-06-01T12:00:00", "yesterday", "2024-13-01T00:00:00Z",
-                          "2024-06-01T12:00:00Zjunk", "2024-06-01T12:00:00.Z", "2024-06-01T12:00:00.1234567890Z",
-                          "2024-02-30T00:00:00Z"}) {
+  CHECK(at("2024-06-01T12:00:60Z") == Timestamp{1717243259, 0});  // leap second clamps to :59
+  for (const char* bad :
+       {"", "2024-06-01", "2024-06-01T12:00:00", "yesterday", "2024-13-01T00:00:00Z", "2024-06-01T12:00:00Zjunk",
+        "2024-06-01T12:00:00.Z", "2024-06-01T12:00:00.1234567890Z", "2024-02-30T00:00:00Z"}) {
     INFO(bad);
     CHECK_FALSE(parse_rfc3339(bad).has_value());
   }

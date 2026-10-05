@@ -3,11 +3,11 @@
 #include "core/config.hpp"
 
 #include <doctest.h>
+#include <unistd.h>
 
 #include <filesystem>
 #include <fstream>
 #include <map>
-#include <unistd.h>
 
 using namespace campfire;
 namespace fs = std::filesystem;
@@ -23,14 +23,18 @@ EnvLookup lookup(Vars vars) {
     return it->second;
   };
 }
-Result<Config> config(Vars vars) { return Config::from_lookup(lookup(std::move(vars))); }
+Result<Config> config(Vars vars) {
+  return Config::from_lookup(lookup(std::move(vars)));
+}
 Config ok(Vars extra = {}) {
   extra.emplace("SECRET_KEY_BASE", "abc");
   Result<Config> c = config(std::move(extra));
   REQUIRE(c.has_value());
   return *c;
 }
-FrontConfig front(Vars vars) { return FrontConfig::from_lookup(lookup(std::move(vars))); }
+FrontConfig front(Vars vars) {
+  return FrontConfig::from_lookup(lookup(std::move(vars)));
+}
 }  // namespace
 
 TEST_CASE("Config requires a secret key base") {
@@ -79,7 +83,8 @@ TEST_CASE("Config numbers") {
     CHECK(c.error().message == std::string("CAMPFIRE_FRAGMENT_CACHE_MB=\"") + bad + "\" is not a number");
   }
   CHECK_FALSE(config({{"SECRET_KEY_BASE", "abc"}, {"RAILS_MAX_THREADS", "x"}}).has_value());
-  CHECK(config({{"SECRET_KEY_BASE", "abc"}, {"JOB_CONCURRENCY", "x"}}).error().message == "JOB_CONCURRENCY=\"x\" is not a number");
+  CHECK(config({{"SECRET_KEY_BASE", "abc"}, {"JOB_CONCURRENCY", "x"}}).error().message ==
+        "JOB_CONCURRENCY=\"x\" is not a number");
 }
 
 TEST_CASE("Config version falls back to the revision") {
@@ -107,7 +112,8 @@ TEST_CASE("VAPID settings") {
 }
 
 TEST_CASE("Storage overrides") {
-  const Config c = ok({{"CAMPFIRE_STORAGE_PATH", "/rails/storage"}, {"CAMPFIRE_FILES_PATH", "/seed/storage"}, {"RAILS_ENV", "test"}});
+  const Config c = ok(
+      {{"CAMPFIRE_STORAGE_PATH", "/rails/storage"}, {"CAMPFIRE_FILES_PATH", "/seed/storage"}, {"RAILS_ENV", "test"}});
   CHECK(c.environment == "test");
   CHECK(c.storage.database == fs::path("/rails/storage/db/test.sqlite3"));
   CHECK(c.storage.files == fs::path("/seed/storage"));
@@ -126,7 +132,9 @@ TEST_CASE("StoragePaths::create_dirs") {
   fs::remove_all(root);
   // A file in the way gives an error.
   fs::create_directories(root);
-  { std::ofstream(root / "db") << "x"; }
+  {
+    std::ofstream(root / "db") << "x";
+  }
   const Status s = paths.create_dirs();
   CHECK_FALSE(s.has_value());
   CHECK(s.error().code == Errc::Io);
@@ -170,8 +178,12 @@ TEST_CASE("FrontConfig TARGET_BIND") {
 }
 
 TEST_CASE("FrontConfig values that do not parse give the default") {
-  const FrontConfig c = front({{"HTTP_PORT", "eighty"}, {"HTTP_READ_TIMEOUT", "5s"}, {"LOG_REQUESTS", "yes"}, {"H2C_ENABLED", "1"},
-                               {"HTTPS_PORT", "70000"}, {"HTTP_IDLE_TIMEOUT", "-5"}});
+  const FrontConfig c = front({{"HTTP_PORT", "eighty"},
+                               {"HTTP_READ_TIMEOUT", "5s"},
+                               {"LOG_REQUESTS", "yes"},
+                               {"H2C_ENABLED", "1"},
+                               {"HTTPS_PORT", "70000"},
+                               {"HTTP_IDLE_TIMEOUT", "-5"}});
   CHECK(c.http_port == 80);
   CHECK(c.https_port == 443);
   CHECK(c.http_read_timeout_s == 30);

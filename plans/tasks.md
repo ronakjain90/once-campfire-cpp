@@ -95,4 +95,4 @@ its requests in the diff sweep pass.
 | T1 | in progress (Sonnet) | `task/T1` | |
 | T2 | in progress (Sonnet) | `task/T2` | |
 | T3 | in progress (Sonnet) | `task/T3` | |
-| T4 | in progress (Sonnet) | `task/T4` | |
+| T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |

@@ -76,6 +76,8 @@ Use three oracles, in this order:
 
 ## 5. Architecture
 
+**Superseded by `plans/architecture.md`** for the full app. This section describes the gate design.
+
 Each decision below states the reason. The reasons come from the Rust profiles in
 `once-campfire-rust/plans/perf-attribution.md` and `bench/results/profile-20260929/`.
 
@@ -178,6 +180,8 @@ Each function writes into the response buffer. The Rust golden tests check the o
 - CI builds three ways: release, ASan with UBSan, and TSan. Tests must pass in all three.
 
 ## 8. Work breakdown
+
+**Superseded by `plans/tasks.md`** for Phases 1 to 8. Phase 0 is done.
 
 Each task is one branch in its own git worktree. A task is done when its tests pass in all
 three builds and Opus reviews and merges it. Sonnet does well-specified port tasks. Opus does the

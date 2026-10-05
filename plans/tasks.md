@@ -101,3 +101,12 @@ its requests in the diff sweep pass.
 | T2 | merged (verified by Opus) | `task/T2` | All vector groups pass in release and ASan. `passwords` (bcrypt) and `csrf` groups moved to T6. Needs T1's doctest wiring. |
 | T3 | in progress (Sonnet) | `task/T3` | |
 | T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |
+| T5 | in progress (Sonnet) | `task/T5` | |
+| T6 | in progress (Sonnet) | `task/T6` | |
+| T7 | in progress (Sonnet) | `task/T7` | |
+| T8 | in progress (Sonnet) | `task/T8` | |
+| T9 | in progress (Sonnet) | `task/T9` | |
+| T11 | in progress (Sonnet) | `task/T11` | |
+| T12 | in progress (Sonnet) | `task/T12` | |
+| T13 | in progress (Sonnet) | `task/T13` | |
+| T10 | waits for T3 | | |

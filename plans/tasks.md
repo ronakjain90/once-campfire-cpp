@@ -92,7 +92,7 @@ its requests in the diff sweep pass.
 
 | ID | Status | Branch | Notes |
 |---|---|---|---|
-| T1 | in progress (Sonnet) | `task/T1` | |
+| T1 | merged (verified by Opus) | `task/T1` | `test_core` and `test_compat` pass in release, asan and tsan. `bin/dev` needs `seccomp=unconfined` for TSan. |
 | T2 | merged (verified by Opus) | `task/T2` | All vector groups pass in release and ASan. `passwords` (bcrypt) and `csrf` groups moved to T6. Needs T1's doctest wiring. |
 | T3 | in progress (Sonnet) | `task/T3` | |
 | T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |

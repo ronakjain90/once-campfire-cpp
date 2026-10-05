@@ -2850,6 +2850,13 @@ static void handle_in_body(GumboParser* parser, GumboToken* token) {
     }
     assert(parser->_output->root != NULL);
     assert(parser->_output->root->type == GUMBO_NODE_ELEMENT);
+    // Campfire patch: in a fragment parse nothing reads the attributes of the root html
+    // element (Nokogiri copies only its children). Merging them checked each attribute against
+    // all that the root had collected, so a body of <html> tags took quadratic time.
+    if (parser->_options->fragment_context != NULL) {
+      ignore_token(parser);
+      return;
+    }
     merge_attributes(token, parser->_output->root);
     return;
   }

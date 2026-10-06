@@ -9,9 +9,9 @@ namespace campfire::models::push_subscriptions {
 
 namespace {
 
-#define CF_PS_COLUMNS                                                                                          \
+#define CF_PS_COLUMNS                                                                                           \
   "\"push_subscriptions\".\"id\", \"push_subscriptions\".\"auth_key\", \"push_subscriptions\".\"created_at\", " \
-  "\"push_subscriptions\".\"endpoint\", \"push_subscriptions\".\"p256dh_key\", "                               \
+  "\"push_subscriptions\".\"endpoint\", \"push_subscriptions\".\"p256dh_key\", "                                \
   "\"push_subscriptions\".\"updated_at\", \"push_subscriptions\".\"user_agent\", \"push_subscriptions\".\"user_id\""
 
 using Row = db::schema::PushSubscriptionRow;
@@ -33,7 +33,8 @@ const db::Query<Row(std::int64_t)> kForUser{
     "SELECT " CF_PS_COLUMNS " FROM \"push_subscriptions\" WHERE \"push_subscriptions\".\"user_id\" = ?"};
 const db::Query<Row(std::int64_t, std::int64_t)> kFind{
     "SELECT " CF_PS_COLUMNS
-    " FROM \"push_subscriptions\" WHERE \"push_subscriptions\".\"user_id\" = ? AND \"push_subscriptions\".\"id\" = ? LIMIT 1"};
+    " FROM \"push_subscriptions\" WHERE \"push_subscriptions\".\"user_id\" = ? AND \"push_subscriptions\".\"id\" = ? "
+    "LIMIT 1"};
 const db::Query<Row(std::int64_t, std::int64_t, std::optional<std::string_view>, std::int64_t,
                     std::optional<std::string_view>, std::int64_t, std::optional<std::string_view>)>
     kFindBy{"SELECT " CF_PS_COLUMNS
@@ -52,7 +53,8 @@ const db::Query<void(std::int64_t, std::int64_t)> kDestroyBy{
     "DELETE FROM \"push_subscriptions\" WHERE \"push_subscriptions\".\"user_id\" = ? AND "
     "\"push_subscriptions\".\"id\" = ?"};
 const db::Query<std::int64_t(std::int64_t)> kUnread{
-    "SELECT COUNT(*) FROM \"memberships\" WHERE \"memberships\".\"user_id\" = ? AND \"memberships\".\"unread_at\" IS NOT "
+    "SELECT COUNT(*) FROM \"memberships\" WHERE \"memberships\".\"user_id\" = ? AND \"memberships\".\"unread_at\" IS "
+    "NOT "
     "NULL"};
 
 constexpr std::array<std::string_view, 5> kPermittedHosts = {"jmt17.google.com", "fcm.googleapis.com",
@@ -65,7 +67,8 @@ std::optional<std::string_view> view(const std::optional<std::string>& s) {
 
 std::string lower(std::string_view text) {
   std::string out(text);
-  std::transform(out.begin(), out.end(), out.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+  std::transform(out.begin(), out.end(), out.begin(),
+                 [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
   return out;
 }
 
@@ -77,7 +80,8 @@ struct EndpointUri {
 };
 
 std::optional<EndpointUri> parse_endpoint(std::string_view endpoint) {
-  if (endpoint.empty() || std::any_of(endpoint.begin(), endpoint.end(), [](unsigned char c) { return std::isspace(c) != 0; })) {
+  if (endpoint.empty() ||
+      std::any_of(endpoint.begin(), endpoint.end(), [](unsigned char c) { return std::isspace(c) != 0; })) {
     return std::nullopt;
   }
   const std::size_t sep = endpoint.find("://");
@@ -102,7 +106,10 @@ std::optional<EndpointUri> parse_endpoint(std::string_view endpoint) {
     }
   }
   uri.host = std::string(authority);
-  if (!port) port = uri.scheme == "https" ? std::optional<int>(443) : uri.scheme == "http" ? std::optional<int>(80) : std::nullopt;
+  if (!port)
+    port = uri.scheme == "https"  ? std::optional<int>(443)
+           : uri.scheme == "http" ? std::optional<int>(80)
+                                  : std::nullopt;
   uri.port = port;
   return uri;
 }

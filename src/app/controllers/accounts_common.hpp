@@ -24,13 +24,15 @@ namespace campfire::app::controllers {
 
 // `expires_in seconds, public:, stale_while_revalidate:`: the cache control, and the `Date` header if the action did
 // not set it (`response.date = Time.now unless response.date?`).
-void expires_in(Rq& rq, std::uint64_t seconds, bool is_public, std::optional<std::uint64_t> stale_while_revalidate = {});
+void expires_in(Rq& rq, std::uint64_t seconds, bool is_public,
+                std::optional<std::uint64_t> stale_while_revalidate = {});
 
 // The chain of ApplicationController, then `before_action :ensure_can_administer`.
 [[nodiscard]] Task<Flow<void>> administrate(Rq& rq);
 
 // `redirect_to edit_account_url` and the other redirects of the area: `redirect_to` with the URL of a path.
-[[nodiscard]] Flow<net::Response> redirect_to_path(Rq& rq, std::string_view path, std::optional<std::string> notice = {});
+[[nodiscard]] Flow<net::Response> redirect_to_path(Rq& rq, std::string_view path,
+                                                   std::optional<std::string> notice = {});
 
 // The page of `render_page`, for a controller that reads its data first: `deps = rq.track()` and `layout =
 // load_layout(rq)` come before the reads, so that the reads are in the key of the page cache. This adds the facets

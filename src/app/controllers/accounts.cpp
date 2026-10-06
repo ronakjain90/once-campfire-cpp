@@ -44,7 +44,8 @@ Task<Flow<net::Response>> accounts_edit(Rq& rq) {
   views::AccountEditView view;
   view.account_id = (*account)->id;
   view.join_code = (*account)->join_code;
-  view.restrict_room_creation_to_administrators = *restricted && (*restricted)->restrict_room_creation_to_administrators;
+  view.restrict_room_creation_to_administrators =
+      *restricted && (*restricted)->restrict_room_creation_to_administrators;
   for (const models::User& user : *users) {
     views::AccountUser row = account_user(rq, user);
     (user.is_administrator() ? view.administrators : view.members).push_back(std::move(row));
@@ -54,12 +55,18 @@ Task<Flow<net::Response>> accounts_edit(Rq& rq) {
   // `form_with model: @account, method: :patch ...`: four forms, the first two with the logo field.
   // `form_with model: @account`: the singular route takes the record as its format, `/account.1`.
   const std::string action = campfire::routes::account() + "." + std::to_string(view.account_id);
-  const views::helpers::FormWith logo_form =
-      views::helpers::form_with_url(action).model("account").method("patch").cls("txt--medium").data("controller", "form");
+  const views::helpers::FormWith logo_form = views::helpers::form_with_url(action)
+                                                 .model("account")
+                                                 .method("patch")
+                                                 .cls("txt--medium")
+                                                 .data("controller", "form");
   const views::helpers::FormWith image_form =
       views::helpers::form_with_url(action).model("account").method("patch").data("controller", "form");
-  const views::helpers::FormWith name_form =
-      views::helpers::form_with_url(action).model("account").method("patch").data("controller", "form").cls("flex flex-column gap");
+  const views::helpers::FormWith name_form = views::helpers::form_with_url(action)
+                                                 .model("account")
+                                                 .method("patch")
+                                                 .data("controller", "form")
+                                                 .cls("flex flex-column gap");
   const views::helpers::FormWith settings_form = views::helpers::form_with_url(action)
                                                      .model("account")
                                                      .method("put")
@@ -90,9 +97,9 @@ Task<Flow<net::Response>> accounts_update(Rq& rq) {
   auto required = rq.params().require("account");
   if (!required) co_return fail_with(ErrorKind::ParameterMissing, required.error().message);
   const req::ParamMap* hash = (*required)->as_hash();
-  req::ParamMap params = hash == nullptr ? req::ParamMap(rq.ctx.resource())
-                                         : hash->permit({"name", "logo", req::Permit::any_hash("settings")},
-                                                        rq.ctx.resource());
+  req::ParamMap params = hash == nullptr
+                             ? req::ParamMap(rq.ctx.resource())
+                             : hash->permit({"name", "logo", req::Permit::any_hash("settings")}, rq.ctx.resource());
   models::accounts::Changes changes;
   if (const req::Param* name = params.get("name"); name != nullptr) changes.name = name->to_s();
   if (const req::Param* settings = params.get("settings"); settings != nullptr) {
@@ -105,7 +112,8 @@ Task<Flow<net::Response>> accounts_update(Rq& rq) {
     }
   }
   active_storage::Assignment logo = active_storage::assignment_from(params, "logo");
-  if (auto staged = co_await active_storage::stage(rq, logo); !staged) co_return std::unexpected(std::move(staged.error()));
+  if (auto staged = co_await active_storage::stage(rq, logo); !staged)
+    co_return std::unexpected(std::move(staged.error()));
   active_storage::Applied applied;
   const auto record = models::attachments::Record::account(account_id);
   auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {

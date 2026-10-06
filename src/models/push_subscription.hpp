@@ -52,8 +52,8 @@ struct Conditions {
   bool auth_key_given = false;
   std::optional<std::string> auth_key;
 };
-[[nodiscard]] Result<std::optional<PushSubscription>> find_by(db::Connection& conn, Arena& arena,
-                                                              std::int64_t user_id, const Conditions& conditions);
+[[nodiscard]] Result<std::optional<PushSubscription>> find_by(db::Connection& conn, Arena& arena, std::int64_t user_id,
+                                                              const Conditions& conditions);
 // `subscription.touch`
 [[nodiscard]] Status touch(db::Tx& tx, std::int64_t id);
 // `create`: validates, then inserts. A failed validation gives `InvalidArgument` with the messages.

@@ -4,6 +4,7 @@
 #include "app/concerns.hpp"
 #include "app/controllers/accounts_common.hpp"
 #include "app/controllers/common.hpp"
+#include "app/controllers/sidebars.hpp"
 #include "app/dispatch.hpp"
 #include "models/attachments.hpp"
 #include "models/user_admin.hpp"
@@ -12,7 +13,6 @@
 #include "views/helpers/forms.hpp"
 #include "views/helpers/users.hpp"
 #include "views/templates.gen.hpp"
-#include "app/controllers/sidebars.hpp"
 
 namespace campfire::app::controllers {
 
@@ -42,8 +42,7 @@ Flow<void> load_memberships(Rq& rq, const models::User& user, views::ProfileShow
         if (member.id != user.id) others.push_back(member.name);
       }
       const std::string sentence = views::helpers::to_sentence(others, " and ");
-      item.room_display_name =
-          sentence.find_first_not_of(" \t\n\v\f\r") == std::string::npos ? user.name : sentence;
+      item.room_display_name = sentence.find_first_not_of(" \t\n\v\f\r") == std::string::npos ? user.name : sentence;
       view.direct_memberships.push_back(std::move(item));
     } else {
       item.room_display_name = m.room_name.value_or("");
@@ -68,7 +67,8 @@ Task<Flow<net::Response>> profiles_show(Rq& rq) {
   view.user = user_summary(rq, user);
   view.email_address = user.email_address;
   view.bio = user.bio;
-  auto attached = models::attachments::is_attached(rq.db(), rq.arena(), models::attachments::Record::user(user.id), "avatar");
+  auto attached =
+      models::attachments::is_attached(rq.db(), rq.arena(), models::attachments::Record::user(user.id), "avatar");
   if (!attached) co_return fail_internal(attached.error().message);
   view.avatar_attached = *attached;
   if (auto loaded = load_memberships(rq, user, view); !loaded) co_return std::unexpected(std::move(loaded.error()));
@@ -78,11 +78,8 @@ Task<Flow<net::Response>> profiles_show(Rq& rq) {
 
   // `profile_form_with @user, class: "txt-medium"` and `profile_form_with @user`.
   const std::string action = campfire::routes::user_profile();
-  const views::helpers::FormWith first = views::helpers::form_with_url(action)
-                                             .model("user")
-                                             .method("patch")
-                                             .cls("txt-medium")
-                                             .data("controller", "form");
+  const views::helpers::FormWith first =
+      views::helpers::form_with_url(action).model("user").method("patch").cls("txt-medium").data("controller", "form");
   const views::helpers::FormWith form =
       views::helpers::form_with_url(action).model("user").method("patch").data("controller", "form");
   const views::helpers::FormWith text_form =
@@ -112,9 +109,9 @@ Task<Flow<net::Response>> profiles_update(Rq& rq) {
   auto required = rq.params().require("user");
   if (!required) co_return fail_with(ErrorKind::ParameterMissing, required.error().message);
   const req::ParamMap* hash = (*required)->as_hash();
-  req::ParamMap params = hash == nullptr ? req::ParamMap(rq.ctx.resource())
-                                         : hash->permit({"name", "avatar", "email_address", "password", "bio"},
-                                                        rq.ctx.resource());
+  req::ParamMap params = hash == nullptr
+                             ? req::ParamMap(rq.ctx.resource())
+                             : hash->permit({"name", "avatar", "email_address", "password", "bio"}, rq.ctx.resource());
   // A key with a nil value is dropped by `compact`; a value that is not text counts as nil.
   const auto present = [&](std::string_view key) -> std::optional<std::string> {
     const req::Param* value = params.get(key);
@@ -138,7 +135,8 @@ Task<Flow<net::Response>> profiles_update(Rq& rq) {
   const bool avatar_given = original != nullptr && !original->is_null();
   const char* notice = avatar_given ? "It may take up to 30 minutes to change everywhere." : "\xE2\x9C\x93";
 
-  if (auto staged = co_await active_storage::stage(rq, avatar); !staged) co_return std::unexpected(std::move(staged.error()));
+  if (auto staged = co_await active_storage::stage(rq, avatar); !staged)
+    co_return std::unexpected(std::move(staged.error()));
   active_storage::Applied applied;
   const auto record = models::attachments::Record::user(user_id);
   auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {

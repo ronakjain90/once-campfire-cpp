@@ -103,7 +103,8 @@ Task<Flow<net::Response>> bots_create(Rq& rq) {
   // `create_webhook!(url: webhook_url) if webhook_url`: any value that is not nil, "" too.
   const auto webhook_url = text_of(*params, "webhook_url");
   active_storage::Assignment avatar = active_storage::assignment_from(*params, "avatar");
-  if (auto staged = co_await active_storage::stage(rq, avatar); !staged) co_return std::unexpected(std::move(staged.error()));
+  if (auto staged = co_await active_storage::stage(rq, avatar); !staged)
+    co_return std::unexpected(std::move(staged.error()));
   active_storage::Applied applied;
   std::int64_t bot_id = 0;
   auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
@@ -167,7 +168,8 @@ Task<Flow<net::Response>> bots_update(Rq& rq) {
   changes.name = text_of(*params, "name");
   const auto webhook_url = text_of(*params, "webhook_url");
   active_storage::Assignment avatar = active_storage::assignment_from(*params, "avatar");
-  if (auto staged = co_await active_storage::stage(rq, avatar); !staged) co_return std::unexpected(std::move(staged.error()));
+  if (auto staged = co_await active_storage::stage(rq, avatar); !staged)
+    co_return std::unexpected(std::move(staged.error()));
   active_storage::Applied applied;
   const std::int64_t bot_id = bot->id;
   auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
@@ -198,8 +200,8 @@ Task<Flow<net::Response>> bot_keys_update(Rq& rq) {
   auto bot = find_active_bot(rq, "bot_id");
   if (!bot) co_return std::unexpected(std::move(bot.error()));
   const std::int64_t bot_id = bot->id;
-  auto written = co_await rq.app.db->write(rq.ctx.scheduler(),
-                                           [&](db::Tx& tx) -> Status { return models::users::reset_bot_key(tx, bot_id); });
+  auto written = co_await rq.app.db->write(
+      rq.ctx.scheduler(), [&](db::Tx& tx) -> Status { return models::users::reset_bot_key(tx, bot_id); });
   if (!written) co_return fail_internal(written.error().message);
   co_return redirect_to_bots(rq);
 }

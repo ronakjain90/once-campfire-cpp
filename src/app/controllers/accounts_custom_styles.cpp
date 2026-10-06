@@ -54,11 +54,12 @@ Task<Flow<net::Response>> custom_styles_update(Rq& rq) {
   auto required = rq.params().require("account");
   if (!required) co_return fail_with(ErrorKind::ParameterMissing, required.error().message);
   const req::ParamMap* hash = (*required)->as_hash();
-  req::ParamMap params = hash == nullptr ? req::ParamMap(rq.ctx.resource()) : hash->permit({"custom_styles"}, rq.ctx.resource());
+  req::ParamMap params =
+      hash == nullptr ? req::ParamMap(rq.ctx.resource()) : hash->permit({"custom_styles"}, rq.ctx.resource());
   models::accounts::Changes changes;
   if (params.contains("custom_styles")) changes.custom_styles = params.get("custom_styles")->to_s();
-  auto written = co_await rq.app.db->write(rq.ctx.scheduler(),
-                                           [&](db::Tx& tx) -> Status { return models::accounts::update(tx, id, changes); });
+  auto written = co_await rq.app.db->write(
+      rq.ctx.scheduler(), [&](db::Tx& tx) -> Status { return models::accounts::update(tx, id, changes); });
   if (!written) co_return fail_internal(written.error().message);
   co_return redirect_to_path(rq, campfire::routes::edit_account_custom_styles(), std::string("\xE2\x9C\x93"));
 }

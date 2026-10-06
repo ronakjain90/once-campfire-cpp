@@ -133,7 +133,8 @@ Task<Flow<std::optional<storage::Blob>>> processed_variant(Rq& rq, models::attac
   if (*existing) co_return std::optional<storage::Blob>(std::move(**existing));
   // `VariantWithRecord#process`: the file work off the writer, then the rows.
   const storage::Variation wanted = *variation;
-  auto image = co_await rq.ctx.offload(rq.app.jobs, [&storage, blob, wanted] { return storage.transform_variant(blob, wanted); });
+  auto image = co_await rq.ctx.offload(rq.app.jobs,
+                                       [&storage, blob, wanted] { return storage.transform_variant(blob, wanted); });
   if (!image) co_return fail_internal(image.error().message);
   std::optional<storage::Blob> recorded;
   auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {

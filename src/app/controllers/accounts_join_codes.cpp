@@ -17,8 +17,8 @@ Task<Flow<net::Response>> join_codes_create(Rq& rq) {
   if (!account) co_return fail_internal(account.error().message);
   if (!*account) co_return fail_internal("undefined method 'reset_join_code' for nil");
   const std::int64_t id = (*account)->id;
-  auto written = co_await rq.app.db->write(rq.ctx.scheduler(),
-                                           [&](db::Tx& tx) -> Status { return models::accounts::reset_join_code(tx, id); });
+  auto written = co_await rq.app.db->write(
+      rq.ctx.scheduler(), [&](db::Tx& tx) -> Status { return models::accounts::reset_join_code(tx, id); });
   if (!written) co_return fail_internal(written.error().message);
   co_return redirect_to_path(rq, campfire::routes::edit_account());
 }

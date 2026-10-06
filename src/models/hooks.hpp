@@ -19,8 +19,9 @@ void disconnect_user(std::int64_t user_id, bool reconnect);
 void set_remove_banned_content(RemoveBannedContent fn);
 void remove_banned_content(std::int64_t user_id);
 
-// `@push_subscription.notification(title: "Campfire Test", body: Random.uuid, path: user_push_subscriptions_url).deliver`:
-// the job area (A9) sends it. `path` is the absolute URL, `badge` is `user.memberships.unread.count`.
+// `@push_subscription.notification(title: "Campfire Test", body: Random.uuid, path:
+// user_push_subscriptions_url).deliver`: the job area (A9) sends it. `path` is the absolute URL, `badge` is
+// `user.memberships.unread.count`.
 using EnqueueTestNotification = std::function<void(std::int64_t subscription_id, std::string path, std::int64_t badge)>;
 void set_enqueue_test_notification(EnqueueTestNotification fn);
 void enqueue_test_notification(std::int64_t subscription_id, std::string path, std::int64_t badge);

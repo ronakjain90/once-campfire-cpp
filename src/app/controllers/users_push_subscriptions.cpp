@@ -38,7 +38,8 @@ Task<Flow<net::Response>> push_subscriptions_index(Rq& rq) {
   auto subscriptions = models::push_subscriptions::for_user(rq.db(), rq.arena(), rq.current_user()->id);
   if (!subscriptions) co_return fail_internal(subscriptions.error().message);
   std::vector<views::PushSubscriptionView> views;
-  for (const models::PushSubscription& subscription : *subscriptions) views.push_back(push_subscription_view(subscription));
+  for (const models::PushSubscription& subscription : *subscriptions)
+    views.push_back(push_subscription_view(subscription));
 
   PageSpec spec;
   spec.name = "users/push_subscriptions#index";
@@ -123,8 +124,8 @@ Task<Flow<net::Response>> push_subscriptions_create(Rq& rq) {
     const Resolved resolved = co_await resolve_endpoint(rq, **existing);
     if (!models::push_subscriptions::validate(**existing, resolver_of(resolved)).empty()) co_return rq.head(422);
     const std::int64_t id = (*existing)->id;
-    auto touched = co_await rq.app.db->write(rq.ctx.scheduler(),
-                                             [&](db::Tx& tx) -> Status { return models::push_subscriptions::touch(tx, id); });
+    auto touched = co_await rq.app.db->write(
+        rq.ctx.scheduler(), [&](db::Tx& tx) -> Status { return models::push_subscriptions::touch(tx, id); });
     if (!touched) co_return fail_internal(touched.error().message);
     co_return rq.head(200);
   }

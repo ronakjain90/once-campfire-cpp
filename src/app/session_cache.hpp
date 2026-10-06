@@ -50,7 +50,9 @@ class ChangeHub {
   [[nodiscard]] std::size_t size() const;
   // How many commits changed a row of `users`. A cache of data from user rows (the avatar responses) stores the number
   // and drops its entry when the number changes.
-  [[nodiscard]] std::uint64_t users_generation() const noexcept { return users_generation_.load(std::memory_order_acquire); }
+  [[nodiscard]] std::uint64_t users_generation() const noexcept {
+    return users_generation_.load(std::memory_order_acquire);
+  }
 
  private:
   mutable std::mutex mutex_;

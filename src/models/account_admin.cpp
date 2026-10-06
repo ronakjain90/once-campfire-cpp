@@ -78,10 +78,10 @@ Status update(db::Tx& tx, std::int64_t id, const Changes& changes) {
   if (!*found) return fail(Errc::NotFound, "Couldn't find Account");
   const EditRow& row = **found;
   std::string name(row.name);
-  std::optional<std::string> styles = row.custom_styles ? std::optional<std::string>(std::string(*row.custom_styles))
-                                                        : std::nullopt;
-  std::optional<std::string> settings_json = row.settings ? std::optional<std::string>(std::string(*row.settings))
-                                                          : std::nullopt;
+  std::optional<std::string> styles =
+      row.custom_styles ? std::optional<std::string>(std::string(*row.custom_styles)) : std::nullopt;
+  std::optional<std::string> settings_json =
+      row.settings ? std::optional<std::string>(std::string(*row.settings)) : std::nullopt;
   bool dirty = false;
   if (changes.name && *changes.name != name) {
     name = *changes.name;

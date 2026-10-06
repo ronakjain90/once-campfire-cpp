@@ -7,11 +7,11 @@
 #include <string>
 #include <string_view>
 
+#include "views/accounts/types.hpp"
 #include "views/context.hpp"
 #include "views/helpers/assets.hpp"
 #include "views/helpers/links.hpp"
 #include "views/helpers/tag.hpp"
-#include "views/accounts/types.hpp"
 
 namespace campfire::views::helpers {
 
@@ -67,8 +67,8 @@ void link_to_zoom_qr_code(Out& out, std::string_view url, Body&& body) {
 // `profile_form_submit_button`.
 void profile_form_submit_button(Out& out, const ViewContext& ctx);
 
-// `form_with model: user, url: account_user_path(user), data: { controller: "form" }, method: :patch do |form| ... end`:
-// the form of the role switch in `accounts/users/_user`.
+// `form_with model: user, url: account_user_path(user), data: { controller: "form" }, method: :patch do |form| ...
+// end`: the form of the role switch in `accounts/users/_user`.
 void account_role_form(Out& out, const ViewContext& ctx, const AccountUser& user);
 
 // The curl lines of `accounts/bots/_bot`.

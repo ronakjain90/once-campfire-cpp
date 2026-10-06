@@ -1,4 +1,5 @@
-// Rails: app/helpers/qr_code_helper.rb, users/avatars_helper.rb, users/profiles_helper.rb. Rust: crates/views/src/helpers/users.rs.
+// Rails: app/helpers/qr_code_helper.rb, users/avatars_helper.rb, users/profiles_helper.rb. Rust:
+// crates/views/src/helpers/users.rs.
 #include "views/helpers/accounts.hpp"
 
 #include <array>

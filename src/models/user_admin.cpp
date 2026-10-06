@@ -25,7 +25,8 @@ using db::schema::UserRow;
   "\"users\".\"status\", \"users\".\"updated_at\""
 
 const db::Query<UserRow(std::int64_t)> kById{CF_UA_USER "WHERE \"users\".\"id\" = ? LIMIT 1"};
-const db::Query<UserRow(std::int64_t)> kActiveById{CF_UA_USER "WHERE \"users\".\"status\" = 0 AND \"users\".\"id\" = ? LIMIT 1"};
+const db::Query<UserRow(std::int64_t)> kActiveById{CF_UA_USER
+                                                   "WHERE \"users\".\"status\" = 0 AND \"users\".\"id\" = ? LIMIT 1"};
 const db::Query<UserRow(std::int64_t)> kActiveBotById{
     CF_UA_USER "WHERE \"users\".\"status\" = 0 AND \"users\".\"role\" = 2 AND \"users\".\"id\" = ? LIMIT 1"};
 const db::Query<UserRow()> kAccountUsers{
@@ -76,8 +77,10 @@ struct ProfileRow {
   static ProfileRow read(db::RowReader& r) { return {r.i64(0), r.text(1), r.text_opt(2), r.text_opt(3)}; }
 };
 const db::Query<ProfileRow(std::int64_t)> kProfileMemberships{
-    "SELECT \"rooms\".\"id\", \"rooms\".\"type\", \"rooms\".\"name\", \"memberships\".\"involvement\" FROM \"memberships\" "
-    "INNER JOIN \"rooms\" ON \"rooms\".\"id\" = \"memberships\".\"room_id\" WHERE \"memberships\".\"user_id\" = ? ORDER BY "
+    "SELECT \"rooms\".\"id\", \"rooms\".\"type\", \"rooms\".\"name\", \"memberships\".\"involvement\" FROM "
+    "\"memberships\" "
+    "INNER JOIN \"rooms\" ON \"rooms\".\"id\" = \"memberships\".\"room_id\" WHERE \"memberships\".\"user_id\" = ? "
+    "ORDER BY "
     "LOWER(rooms.name)"};
 
 const db::Query<void(std::string_view, std::optional<std::string_view>, std::optional<std::string_view>,
@@ -91,7 +94,8 @@ const db::Query<void(std::int64_t)> kDeleteMemberships{
     "DELETE FROM \"memberships\" WHERE (\"memberships\".\"id\") IN (SELECT \"memberships\".\"id\" FROM "
     "\"memberships\" INNER JOIN \"rooms\" AS \"room\" ON \"room\".\"id\" = \"memberships\".\"room_id\" WHERE "
     "\"memberships\".\"user_id\" = ? AND \"room\".\"type\" != 'Rooms::Direct')"};
-const db::Query<void(std::int64_t)> kDeletePush{"DELETE FROM \"push_subscriptions\" WHERE \"push_subscriptions\".\"user_id\" = ?"};
+const db::Query<void(std::int64_t)> kDeletePush{
+    "DELETE FROM \"push_subscriptions\" WHERE \"push_subscriptions\".\"user_id\" = ?"};
 const db::Query<void(std::int64_t)> kDeleteSearches{"DELETE FROM \"searches\" WHERE \"searches\".\"user_id\" = ?"};
 const db::Query<void(std::int64_t)> kDeleteSessions{"DELETE FROM \"sessions\" WHERE \"sessions\".\"user_id\" = ?"};
 const db::Query<void(std::int64_t)> kDeleteBans{"DELETE FROM \"bans\" WHERE \"bans\".\"user_id\" = ?"};
@@ -165,7 +169,8 @@ std::optional<Parsed> parse_ipaddr(std::string_view text) {
     prefix = std::stoi(digits);
     address.resize(slash);
   }
-  if (address.size() >= 2 && address.front() == '[' && address.back() == ']') address = address.substr(1, address.size() - 2);
+  if (address.size() >= 2 && address.front() == '[' && address.back() == ']')
+    address = address.substr(1, address.size() - 2);
   Parsed parsed;
   in_addr v4{};
   in6_addr v6{};
@@ -198,8 +203,8 @@ bool internal_address(const Parsed& p) {
   if (!p.v6) return internal_v4(p.bytes.data());
   static constexpr std::array<unsigned char, 16> kLoopback = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
   if (p.bytes == kLoopback) return true;
-  if ((p.bytes[0] & 0xFE) == 0xFC) return true;                          // fc00::/7
-  if (p.bytes[0] == 0xFE && (p.bytes[1] & 0xC0) == 0x80) return true;    // fe80::/10
+  if ((p.bytes[0] & 0xFE) == 0xFC) return true;                        // fc00::/7
+  if (p.bytes[0] == 0xFE && (p.bytes[1] & 0xC0) == 0x80) return true;  // fe80::/10
   // Ruby only checks the `ffff` bits of an IPv4 mapped address.
   if (p.bytes[10] == 0xFF && p.bytes[11] == 0xFF) return internal_v4(p.bytes.data() + 12);
   return false;
@@ -351,8 +356,10 @@ Status deactivate(db::Tx& tx, std::int64_t id) {
     const std::string tag = "-deactivated-" + uuid() + "@";
     std::string replaced;
     for (const char c : *email) {
-      if (c == '@') replaced += tag;
-      else replaced.push_back(c);
+      if (c == '@')
+        replaced += tag;
+      else
+        replaced.push_back(c);
     }
     changes.email_address = std::optional<std::string>(std::move(replaced));
   }
@@ -372,7 +379,8 @@ Status ban(db::Tx& tx, std::int64_t id) {
     if (!row.ip || blank(*row.ip)) continue;
     if (std::find(seen.begin(), seen.end(), *row.ip) != seen.end()) continue;
     seen.emplace_back(*row.ip);
-    if (const auto problem = bans::validate(*row.ip)) return fail(Errc::InvalidArgument, "Validation failed: " + *problem);
+    if (const auto problem = bans::validate(*row.ip))
+      return fail(Errc::InvalidArgument, "Validation failed: " + *problem);
     auto inserted = tx.conn().first(kBanInsert, arena, now, *row.ip, now, id);
     if (!inserted) return std::unexpected(inserted.error());
     tx.changed(db::schema::Table::Bans, **inserted);
@@ -414,7 +422,8 @@ Result<User> create_bot(db::Tx& tx, std::string_view name, const std::optional<s
   return with_token;
 }
 
-Status update_bot(db::Tx& tx, std::int64_t id, const UserChanges& changes, const std::optional<std::string>& webhook_url) {
+Status update_bot(db::Tx& tx, std::int64_t id, const UserChanges& changes,
+                  const std::optional<std::string>& webhook_url) {
   Arena arena(256);
   auto webhook = tx.conn().first(kWebhook, arena, id);
   if (!webhook) return std::unexpected(webhook.error());

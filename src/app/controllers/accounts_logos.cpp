@@ -30,7 +30,8 @@ Task<Flow<net::Response>> logos_show(Rq& rq) {
   Freshness freshness;
   if (*account) {
     const auto updated = parse_db((*account)->updated_at);
-    freshness.etag = "accounts/" + std::to_string((*account)->id) + "-" + (updated ? format_cache_version(*updated) : "");
+    freshness.etag =
+        "accounts/" + std::to_string((*account)->id) + "-" + (updated ? format_cache_version(*updated) : "");
   }
   if (auto not_modified = rq.fresh_when(freshness)) co_return std::move(*not_modified);
   expires_in(rq, kMaxAge, true, kStaleWhileRevalidate);
@@ -39,9 +40,9 @@ Task<Flow<net::Response>> logos_show(Rq& rq) {
   if (*account) {
     // `logo.variant(size).processed if logo.variable?`: :small is 192, :large 512, both PNG.
     const std::int64_t size = small ? 192 : 512;
-    auto variant = co_await active_storage::processed_variant(
-        rq, models::attachments::Record::account((*account)->id), "logo",
-        storage::Variation::resize_to_limit(size, size, "png"));
+    auto variant =
+        co_await active_storage::processed_variant(rq, models::attachments::Record::account((*account)->id), "logo",
+                                                   storage::Variation::resize_to_limit(size, size, "png"));
     if (!variant) co_return std::unexpected(std::move(variant.error()));
     if (*variant) {
       const std::string path = rq.app.storage->path_for(**variant).string();

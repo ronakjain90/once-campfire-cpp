@@ -1,5 +1,6 @@
 // Users::PushSubscriptions::TestNotificationsController. Rails: app/controllers/users/push_subscriptions/
-// test_notifications_controller.rb. Rust: crates/campfire/src/controllers/users/push_subscriptions/test_notifications.rs.
+// test_notifications_controller.rb. Rust:
+// crates/campfire/src/controllers/users/push_subscriptions/test_notifications.rs.
 //
 // The delivery is the task of the job area (A9): this only finds the subscription and hands the job to the hook.
 #include "app/concerns.hpp"

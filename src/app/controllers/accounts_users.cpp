@@ -76,9 +76,8 @@ Task<Flow<net::Response>> users_destroy(Rq& rq) {
   auto user_id = set_user(rq);
   if (!user_id) co_return std::unexpected(std::move(user_id.error()));
   const std::int64_t id = *user_id;
-  auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
-    return models::users::deactivate(tx, id);
-  });
+  auto written = co_await rq.app.db->write(rq.ctx.scheduler(),
+                                           [&](db::Tx& tx) -> Status { return models::users::deactivate(tx, id); });
   if (!written) co_return fail_internal(written.error().message);
   co_return redirect_to_path(rq, campfire::routes::edit_account());
 }

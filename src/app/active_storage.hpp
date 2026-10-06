@@ -43,8 +43,8 @@ struct Applied {
   std::vector<std::int64_t> purge;    // the old blobs: purge them
 };
 // In the write of the record: `record.<name> = value`.
-[[nodiscard]] Status apply(db::Tx& tx, models::attachments::Record record, std::string_view name, Assignment& assignment,
-                           Applied& applied);
+[[nodiscard]] Status apply(db::Tx& tx, models::attachments::Record record, std::string_view name,
+                           Assignment& assignment, Applied& applied);
 // After the commit: keeps the file, analyzes the new blob and purges the old ones. The Rails jobs run in the
 // background. This runs in the request after the write. A failure is logged and does not change the response.
 [[nodiscard]] Task<void> after_write(Rq& rq, models::attachments::Record record, Assignment& assignment,

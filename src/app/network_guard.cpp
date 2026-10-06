@@ -31,22 +31,22 @@ bool blocked_v4(std::uint32_t a) {
     int prefix;
   };
   static constexpr std::array<Range, 16> kRanges = {{
-      {0x00000000U, 8},    // "this" network
-      {0x0A000000U, 8},    // 10/8
-      {0x64400000U, 10},   // 100.64/10 shared address space
-      {0x7F000000U, 8},    // loopback
-      {0xA9FE0000U, 16},   // link local
-      {0xAC100000U, 12},   // 172.16/12
-      {0xC0000000U, 24},   // 192.0.0.0/24
-      {0xC0000200U, 24},   // TEST-NET-1
-      {0xC0586300U, 24},   // 192.88.99/24
-      {0xC0A80000U, 16},   // 192.168/16
-      {0xC6120000U, 15},   // 198.18/15 benchmarking
-      {0xC6336400U, 24},   // TEST-NET-2
-      {0xCB007100U, 24},   // TEST-NET-3
-      {0xE0000000U, 4},    // multicast
-      {0xF0000000U, 4},    // reserved
-      {0xFFFFFFFFU, 32},   // broadcast
+      {0x00000000U, 8},   // "this" network
+      {0x0A000000U, 8},   // 10/8
+      {0x64400000U, 10},  // 100.64/10 shared address space
+      {0x7F000000U, 8},   // loopback
+      {0xA9FE0000U, 16},  // link local
+      {0xAC100000U, 12},  // 172.16/12
+      {0xC0000000U, 24},  // 192.0.0.0/24
+      {0xC0000200U, 24},  // TEST-NET-1
+      {0xC0586300U, 24},  // 192.88.99/24
+      {0xC0A80000U, 16},  // 192.168/16
+      {0xC6120000U, 15},  // 198.18/15 benchmarking
+      {0xC6336400U, 24},  // TEST-NET-2
+      {0xCB007100U, 24},  // TEST-NET-3
+      {0xE0000000U, 4},   // multicast
+      {0xF0000000U, 4},   // reserved
+      {0xFFFFFFFFU, 32},  // broadcast
   }};
   return std::any_of(kRanges.begin(), kRanges.end(), [&](const Range& r) { return in_v4(a, r.network, r.prefix); });
 }
@@ -64,11 +64,11 @@ bool blocked_v6(const unsigned char* b) {
   // An IPv4 mapped address: the rules of the IPv4 address.
   if (prefix_is({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF})) return blocked_v4(v4_value(b + 12));
   if (prefix_is({0x00, 0x64, 0xFF, 0x9B, 0, 0, 0, 0, 0, 0, 0, 0})) return blocked_v4(v4_value(b + 12));  // NAT64
-  if (prefix_is({0x01, 0x00, 0, 0, 0, 0, 0, 0})) return true;                      // 100::/64 discard
-  if (prefix_is({0x20, 0x01, 0x0D, 0xB8})) return true;                            // documentation
-  if ((b[0] & 0xFE) == 0xFC) return true;                                          // fc00::/7
-  if (b[0] == 0xFE && (b[1] & 0xC0) == 0x80) return true;                          // fe80::/10
-  if (b[0] == 0xFF) return true;                                                   // multicast
+  if (prefix_is({0x01, 0x00, 0, 0, 0, 0, 0, 0})) return true;  // 100::/64 discard
+  if (prefix_is({0x20, 0x01, 0x0D, 0xB8})) return true;        // documentation
+  if ((b[0] & 0xFE) == 0xFC) return true;                      // fc00::/7
+  if (b[0] == 0xFE && (b[1] & 0xC0) == 0x80) return true;      // fe80::/10
+  if (b[0] == 0xFF) return true;                               // multicast
   return false;
 }
 
@@ -82,7 +82,9 @@ bool plain_host_name(std::string_view host) {
     if (dot == std::string_view::npos) dot = host.size();
     const std::string_view label = host.substr(start, dot - start);
     if (label.empty() || label.size() > 63) return false;
-    const auto alnum = [](char c) { return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); };
+    const auto alnum = [](char c) {
+      return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    };
     if (!alnum(label.front()) || !alnum(label.back())) return false;
     if (!std::all_of(label.begin(), label.end(), [&](char c) { return alnum(c) || c == '-'; })) return false;
     start = dot + 1;

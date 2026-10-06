@@ -114,9 +114,9 @@ Result<User> create(db::Tx& tx, const NewUser& attributes) {
     return s ? std::optional<std::string_view>(*s) : std::nullopt;
   };
   Arena arena(256);
-  auto id =
-      tx.conn().first(kInsert, arena, std::nullopt, view(attributes.bot_token), now, view(attributes.email_address), attributes.name,
-                      view(attributes.password_digest), static_cast<std::int64_t>(attributes.role), kStatusActive, now);
+  auto id = tx.conn().first(kInsert, arena, std::nullopt, view(attributes.bot_token), now,
+                            view(attributes.email_address), attributes.name, view(attributes.password_digest),
+                            static_cast<std::int64_t>(attributes.role), kStatusActive, now);
   if (!id) return std::unexpected(id.error());
   if (auto granted = tx.conn().exec(kGrantOpenRooms, **id); !granted) return std::unexpected(granted.error());
   User u;

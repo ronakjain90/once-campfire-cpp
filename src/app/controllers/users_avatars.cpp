@@ -9,8 +9,8 @@
 #include <unordered_map>
 
 #include "app/active_storage.hpp"
-#include "app/controllers/accounts_common.hpp"
 #include "app/concerns.hpp"
+#include "app/controllers/accounts_common.hpp"
 #include "app/dispatch.hpp"
 #include "assets/assets.hpp"
 #include "compat/ruby.hpp"
@@ -27,8 +27,8 @@ namespace campfire::app::controllers {
 
 namespace {
 
-// `ActionView::Digestor.digest(name: "users/avatars/show", ...)`: the digest of `show.svg.erb`. `EtagWithTemplateDigest`
-// adds it when the template can be found for the formats of the request.
+// `ActionView::Digestor.digest(name: "users/avatars/show", ...)`: the digest of `show.svg.erb`.
+// `EtagWithTemplateDigest` adds it when the template can be found for the formats of the request.
 constexpr std::string_view kTemplateDigest = "d500db55e2a67222018ef0156839c3c9";
 
 // `expires_in 30.minutes, public: true, stale_while_revalidate: 1.week`
@@ -130,9 +130,9 @@ Task<Flow<net::Response>> avatars_show(Rq& rq) {
 
   if (entry->has_variant) {
     // `send_file ..., content_type: "image/webp", disposition: :inline`
-    auto variant = co_await active_storage::processed_variant(
-        rq, models::attachments::Record::user(entry->user_id), "avatar",
-        storage::Variation::resize_to_limit(512, 512, "webp"));
+    auto variant =
+        co_await active_storage::processed_variant(rq, models::attachments::Record::user(entry->user_id), "avatar",
+                                                   storage::Variation::resize_to_limit(512, 512, "webp"));
     if (!variant) co_return std::unexpected(std::move(variant.error()));
     if (*variant) {
       const std::string path = rq.app.storage->path_for(**variant).string();
@@ -169,7 +169,8 @@ Task<Flow<net::Response>> avatars_destroy(Rq& rq) {
   active_storage::Applied applied;
   auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
     applied.purge.clear();
-    auto removed = models::attachments::destroy(tx, models::attachments::Record::user(user_id), "avatar", applied.purge);
+    auto removed =
+        models::attachments::destroy(tx, models::attachments::Record::user(user_id), "avatar", applied.purge);
     if (!removed) return std::unexpected(removed.error());
     return {};
   });

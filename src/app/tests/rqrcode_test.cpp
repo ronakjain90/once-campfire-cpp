@@ -1,10 +1,12 @@
-// Tests of the QR code port against the vectors that the Rust port made with the rqrcode gem (spec/vectors/rqrcode.json).
+// Tests of the QR code port against the vectors that the Rust port made with the rqrcode gem
+// (spec/vectors/rqrcode.json).
+#include "app/rqrcode.hpp"
+
 #include <doctest.h>
 
 #include <fstream>
 #include <sstream>
 
-#include "app/rqrcode.hpp"
 #include "compat/base64.hpp"
 #include "compat/json.hpp"
 

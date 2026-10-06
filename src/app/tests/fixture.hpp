@@ -5,6 +5,7 @@
 #include <libdeflate.h>
 
 #include <filesystem>
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -42,13 +43,14 @@ inline Config test_config(const std::filesystem::path& dir) {
 }
 
 struct Fixture {
-  explicit Fixture(AppOptions options = {}) {
+  // `seeded` false: an empty database, as before the first run.
+  explicit Fixture(AppOptions options = {}, bool seeded = true) {
     options.job_threads = 2;
     clock = TestClock::frozen_at(*from_civil(2026, 3, 2, 16, 0, 0));
     auto created = App::create(test_config(dir.file("storage")), clock, options);
     REQUIRE(created.has_value());
     state = std::move(*created);
-    seed();
+    if (seeded) seed();
     set_app(state.get());
     net::ServerOptions server_options;
     server_options.http_port = 0;
@@ -60,6 +62,13 @@ struct Fixture {
   ~Fixture() {
     server->stop();
     server.reset();
+  }
+
+  // Runs SQL on the writer.
+  void write(const std::function<Status(db::Tx&)>& fn) {
+    QueueScheduler scheduler;
+    auto wrote = db::testing::run_task(scheduler, state->db->write(scheduler, fn));
+    REQUIRE(wrote.has_value());
   }
 
   void seed() {

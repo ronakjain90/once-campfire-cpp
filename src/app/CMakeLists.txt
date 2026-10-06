@@ -70,6 +70,7 @@ campfire_test(app
     tests/app_test.cpp
     tests/cache_test.cpp
     tests/finish_test.cpp
+    tests/signin_area_test.cpp
     tests/user_agent_test.cpp
   WERROR)
 target_compile_definitions(test_app PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")

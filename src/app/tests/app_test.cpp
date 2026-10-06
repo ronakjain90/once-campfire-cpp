@@ -82,11 +82,12 @@ TEST_CASE("sign in, resume, sign out") {
   CHECK(r.header("set-cookie").find("httponly") != std::string::npos);
   CHECK(r.header("set-cookie").find("samesite=lax") != std::string::npos);
 
-  // The session works (welcome is a placeholder that answers 404 to a signed in request).
+  // The session works (a user with no rooms gets the welcome page).
   r = c.request("GET", "/", "Cookie: " + token + "\r\n");
-  CHECK(r.status == 404);
+  CHECK(r.status == 200);
+  CHECK(r.body.find("No rooms yet") != std::string::npos);
   r = c.request("GET", "/", "Cookie: " + token + "\r\n");
-  CHECK(r.status == 404);
+  CHECK(r.status == 200);
 
   // Sign out destroys the session and deletes the cookie.
   r = c.request("DELETE", "/session", kSameOrigin + "Cookie: " + token + "\r\n");

@@ -41,7 +41,7 @@ constexpr std::int64_t kMaxBufferedBody = std::int64_t{16} << 20;
 Flow<storage::Blob> set_blob(Rq& rq) {
   const std::string_view signed_id = rq.param_str("signed_blob_id").value_or(rq.param_str("signed_id").value_or(""));
   const auto blob_id = storage::paths::verify_signed_blob_id(rq.app.storage->verifier(), signed_id, to_compat(rq.now()));
-  if (!blob_id) return halt(rq.head(404));
+  if (!blob_id) return halt(concerns::head_in_before_action(rq, 404));
   auto blob = models::attachments::find_blob(rq.db(), *blob_id);
   if (!blob) return fail_internal(blob.error().message);
   if (!*blob) return fail_with(ErrorKind::NotFound, "Couldn't find ActiveStorage::Blob");
@@ -53,7 +53,7 @@ Flow<storage::Blob> set_blob(Rq& rq) {
 Task<Flow<storage::Blob>> set_representation(Rq& rq, const storage::Blob& blob) {
   const auto variation = storage::Variation::decode(rq.app.storage->verifier(),
                                                     rq.param_str("variation_key").value_or(""), to_compat(rq.now()));
-  if (!variation) co_return halt(rq.head(404));
+  if (!variation) co_return halt(concerns::head_in_before_action(rq, 404));
   co_return co_await active_storage::processed_representation(rq, blob, *variation);
 }
 
@@ -245,7 +245,7 @@ Flow<void> require_active_storage_authentication(Rq& rq) {
     if (!session) return fail_internal(session.error().message);
     if (*session) return {};
   }
-  return halt(rq.head(401));
+  return halt(concerns::head_in_before_action(rq, 401));
 }
 
 // `token[:content_type] == request.content_mime_type && token[:content_length] == request.content_length`

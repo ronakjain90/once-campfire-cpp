@@ -6,11 +6,13 @@
 #include <cstdint>
 #include <optional>
 #include <string_view>
+#include <vector>
 
 #include "compat/time.hpp"
 #include "core/arena.hpp"
 #include "core/timestamp.hpp"
 #include "db/connection.hpp"
+#include "db/database.hpp"
 #include "storage/records.hpp"
 
 namespace campfire::models {
@@ -39,6 +41,16 @@ class DbRecords final : public storage::Records {
  private:
   db::Connection* conn_;
 };
+
+// The rows that `ActiveStorage::Blob#purge` removes in its transaction.
+struct PurgedBlob {
+  std::optional<storage::Blob> blob;       // nothing when the blob is gone or still attached
+  std::vector<std::int64_t> dependent_ids;  // blobs of the variant images and the preview image: purge them next
+};
+// `blob.purge`: `destroy` is refused while an attachment points at the blob. It destroys the variant records (and the
+// attachments of their images) and the `preview_image` attachment. The caller deletes the files and purges the
+// dependents (`after_destroy_commit :purge_dependent_blob_later`).
+[[nodiscard]] Result<PurgedBlob> purge_blob_rows(db::Tx& tx, std::int64_t blob_id);
 
 // `ActiveStorage::Blob.find_by(id:)`
 [[nodiscard]] Result<std::optional<storage::Blob>> find_blob(db::Connection& conn, int64_t id);

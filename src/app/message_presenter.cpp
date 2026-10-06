@@ -177,7 +177,7 @@ Result<std::optional<views::messages::AttachmentView>> MessagePresenter::attachm
   const storage::Blob& b = **blob;
   const compat::MessageVerifier& verifier = app_->storage->verifier();
   AttachmentView view;
-  view.filename = b.filename.raw();
+  view.filename = b.filename.sanitized();
   view.blob_path = storage::paths::blob_redirect_path(verifier, b);
   view.download_path = storage::paths::blob_redirect_path(verifier, b, "attachment");
   if (b.is_previewable() || b.is_variable()) {

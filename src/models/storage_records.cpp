@@ -46,6 +46,16 @@ const db::Query<int64_t(int64_t, std::string_view)> kFindVariant{
 const db::Query<int64_t(int64_t, std::string_view)> kInsertVariant{
     "INSERT INTO active_storage_variant_records (blob_id, variation_digest) VALUES (?, ?) RETURNING id"};
 
+const db::Query<int64_t(int64_t)> kAnyAttachment{
+    "SELECT 1 FROM active_storage_attachments WHERE blob_id = ? LIMIT 1"};
+const db::Query<int64_t(int64_t)> kVariantIds{"SELECT id FROM active_storage_variant_records WHERE blob_id = ?"};
+const db::Query<int64_t(std::string_view, int64_t, std::string_view)> kAttachmentBlobId{
+    "SELECT blob_id FROM active_storage_attachments WHERE record_type = ? AND record_id = ? AND name = ? LIMIT 1"};
+const db::Query<void(std::string_view, int64_t, std::string_view)> kDeleteAttachmentOf{
+    "DELETE FROM active_storage_attachments WHERE record_type = ? AND record_id = ? AND name = ?"};
+const db::Query<void(int64_t)> kDeleteVariant{"DELETE FROM active_storage_variant_records WHERE id = ?"};
+const db::Query<void(int64_t)> kDeleteBlob{"DELETE FROM active_storage_blobs WHERE id = ?"};
+
 storage::Blob make_blob(const BlobCols& row) {
   storage::Blob blob;
   blob.id = row.id;
@@ -132,6 +142,40 @@ Result<std::optional<storage::Blob>> find_blob(db::Connection& conn, int64_t id)
   if (!row) return std::unexpected(row.error());
   if (!*row) return std::optional<storage::Blob>{};
   return std::optional<storage::Blob>(make_blob(**row));
+}
+
+Result<PurgedBlob> purge_blob_rows(db::Tx& tx, int64_t blob_id) {
+  Arena arena(512);
+  PurgedBlob out;
+  auto blob = find_blob(tx.conn(), blob_id);
+  if (!blob) return std::unexpected(blob.error());
+  if (!*blob) return out;
+  // before_destroy(prepend: true) { raise ActiveRecord::InvalidForeignKey if attachments.exists? }
+  auto attached = tx.conn().first(kAnyAttachment, arena, blob_id);
+  if (!attached) return std::unexpected(attached.error());
+  if (*attached) return out;
+  const auto destroy_attachment = [&](std::string_view type, int64_t id, std::string_view name) -> Status {
+    auto dependent = tx.conn().first(kAttachmentBlobId, arena, type, id, name);
+    if (!dependent) return std::unexpected(dependent.error());
+    if (!*dependent) return {};
+    if (auto r = tx.conn().exec(kDeleteAttachmentOf, type, id, name); !r) return std::unexpected(r.error());
+    out.dependent_ids.push_back(**dependent);
+    return {};
+  };
+  // before_destroy { variant_records.destroy_all }
+  auto variants = tx.conn().all(kVariantIds, arena, blob_id);
+  if (!variants) return std::unexpected(variants.error());
+  for (const int64_t variant_id : *variants) {
+    if (auto s = destroy_attachment("ActiveStorage::VariantRecord", variant_id, "image"); !s) {
+      return std::unexpected(s.error());
+    }
+    if (auto r = tx.conn().exec(kDeleteVariant, variant_id); !r) return std::unexpected(r.error());
+  }
+  // has_one_attached :preview_image
+  if (auto s = destroy_attachment("ActiveStorage::Blob", blob_id, "preview_image"); !s) return std::unexpected(s.error());
+  if (auto r = tx.conn().exec(kDeleteBlob, blob_id); !r) return std::unexpected(r.error());
+  out.blob = std::move(**blob);
+  return out;
 }
 
 }  // namespace campfire::models

@@ -106,7 +106,9 @@ std::optional<std::string_view> by_extension(std::string_view extension) {
   return entry ? std::optional<std::string_view>(entry->second) : std::nullopt;
 }
 
-std::optional<std::string_view> by_path(std::string_view path) { return by_extension(extname(path)); }
+std::optional<std::string_view> by_path(std::string_view path) {
+  return by_extension(extname(path));
+}
 
 std::span<const std::string_view> extensions(std::string_view content_type) {
   const auto* entry = find_sorted(tables::kTypeExts, content_type);

@@ -26,12 +26,18 @@ namespace campfire::storage {
 class Staged {
  public:
   Staged(NewBlob blob, DiskService service) : blob_(std::move(blob)), service_(std::move(service)) {}
-  Staged(Staged&& o) noexcept : blob_(std::move(o.blob_)), service_(std::move(o.service_)), kept_(o.kept_) { o.kept_ = true; }
+  Staged(Staged&& o) noexcept : blob_(std::move(o.blob_)), service_(std::move(o.service_)), kept_(o.kept_) {
+    o.kept_ = true;
+  }
   Staged(const Staged&) = delete;
   Staged& operator=(const Staged&) = delete;
   Staged& operator=(Staged&&) = delete;
   ~Staged() {
-    if (!kept_) (void)service_.remove(blob_.key);
+    if (!kept_) {
+      // A file left behind when remove fails is not an error here.
+      const auto removed = service_.remove(blob_.key);
+      static_cast<void>(removed);
+    }
   }
 
   const NewBlob& blob() const { return blob_; }
@@ -106,7 +112,8 @@ class Storage {
   Status delete_files(const Blob& blob) const;
 
  private:
-  Result<Staged> stage_analyzed(const std::filesystem::path& path, Filename filename, std::string_view content_type) const;
+  Result<Staged> stage_analyzed(const std::filesystem::path& path, Filename filename,
+                                std::string_view content_type) const;
 
   DiskService service_;
   compat::MessageVerifier verifier_;

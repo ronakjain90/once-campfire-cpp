@@ -47,9 +47,11 @@ TEST_CASE("storage marcel identification") {
       data = unhex(at(s, "data_hex").as_string());
     }
     auto got = st::marcel::identify(data, opt_str(at(s, "name")), opt_str(at(s, "declared_type")));
-    std::string label = (at(s, "name").is_string() ? at(s, "name").as_string() : "nil") + " declared " +
-                        (at(s, "declared_type").is_string() ? at(s, "declared_type").as_string() : "nil");
-    g.check(got == at(s, "content_type").as_string(), label + " got " + got);
+    std::string label = at(s, "name").is_string() ? at(s, "name").as_string() : "nil";
+    label += " declared ";
+    label += at(s, "declared_type").is_string() ? at(s, "declared_type").as_string() : "nil";
+    label += " got " + got;
+    g.check(got == at(s, "content_type").as_string(), label);
   }
   g.finish();
 }
@@ -75,7 +77,8 @@ TEST_CASE("storage disk urls and tokens") {
   st::DiskService service("/tmp/unused", "local");
   const std::string key = "abcdefghijklmnopqrstuvwxyz12";
   st::Filename weird("weird & <name> \xC3\xBCn\xC3\xAF.png");
-  g.check(service.url_path(verifier(), key, std::nullopt, weird, "image/png", "inline") == at(v, "disk_url_path").as_string(),
+  g.check(service.url_path(verifier(), key, std::nullopt, weird, "image/png", "inline") ==
+              at(v, "disk_url_path").as_string(),
           "url path");
   g.check(service.url_path(verifier(), key, std::nullopt, weird, std::nullopt, "attachment") ==
               at(v, "disk_url_path_nil_type").as_string(),
@@ -95,32 +98,40 @@ TEST_CASE("storage route paths") {
   for (const auto& m : items(at(vectors(), "messages"))) {
     st::Blob blob = blob_from(at(m, "blob"));
     std::string name = at(m, "fixture").as_string();
-    g.check(st::paths::blob_redirect_path(verifier(), blob) == at(m, "rails_blob_path").as_string(), name + " redirect");
-    g.check(st::paths::blob_redirect_path(verifier(), blob, "attachment") == at(m, "rails_blob_download_path").as_string(),
-            name + " download");
-    g.check(st::paths::blob_proxy_path(verifier(), blob) == at(m, "rails_blob_proxy_path").as_string(), name + " proxy");
-    g.check(st::paths::verify_signed_blob_id(verifier(), segment(at(m, "rails_blob_path").as_string(), 5), now()) == blob.id,
+    g.check(st::paths::blob_redirect_path(verifier(), blob) == at(m, "rails_blob_path").as_string(),
+            name + " redirect");
+    g.check(
+        st::paths::blob_redirect_path(verifier(), blob, "attachment") == at(m, "rails_blob_download_path").as_string(),
+        name + " download");
+    g.check(st::paths::blob_proxy_path(verifier(), blob) == at(m, "rails_blob_proxy_path").as_string(),
+            name + " proxy");
+    g.check(st::paths::verify_signed_blob_id(verifier(), segment(at(m, "rails_blob_path").as_string(), 5), now()) ==
+                blob.id,
             name + " verify");
     auto service_path = [&](std::string_view disposition) {
       std::string_view type = blob.type();
       auto forced = st::content_types::forced_disposition(type);
-      return "http://campfire.test" +
-             service.url_path(verifier(), blob.key, std::nullopt, blob.filename, st::content_types::for_serving(type),
-                              forced ? *forced : disposition);
+      return "http://campfire.test" + service.url_path(verifier(), blob.key, std::nullopt, blob.filename,
+                                                       st::content_types::for_serving(type),
+                                                       forced ? *forced : disposition);
     };
     g.check(service_path("inline") == at(m, "service_url").as_string(), name + " service url");
-    g.check(service_path("attachment") == at(m, "service_url_attachment").as_string(), name + " service url attachment");
+    g.check(service_path("attachment") == at(m, "service_url_attachment").as_string(),
+            name + " service url attachment");
     if (at(m, "thumb_path").is_string()) {
       auto thumb = variation_of(at(items(at(m, "variants"))[0], "transformations_typed"));
-      g.check(st::paths::representation_redirect_path(verifier(), blob, thumb) == at(m, "thumb_path").as_string(), name + " thumb");
+      g.check(st::paths::representation_redirect_path(verifier(), blob, thumb) == at(m, "thumb_path").as_string(),
+              name + " thumb");
       g.check(st::paths::representation_proxy_path(verifier(), blob, thumb) == at(m, "thumb_proxy_path").as_string(),
               name + " thumb proxy");
     }
     if (at(m, "poster_path").is_string()) {
       auto poster = compat::Variation(compat::Variation::Transformations{
           {"format", compat::marshal::Value::symbol("webp")},
-          {"resize_to_limit", compat::marshal::Value::array({compat::marshal::Value::integer(1200), compat::marshal::Value::integer(800)})}});
-      g.check(st::paths::representation_redirect_path(verifier(), blob, poster) == at(m, "poster_path").as_string(), name + " poster");
+          {"resize_to_limit", compat::marshal::Value::array(
+                                  {compat::marshal::Value::integer(1200), compat::marshal::Value::integer(800)})}});
+      g.check(st::paths::representation_redirect_path(verifier(), blob, poster) == at(m, "poster_path").as_string(),
+              name + " poster");
       g.check(st::paths::representation_proxy_path(verifier(), blob, poster) == at(m, "poster_proxy_path").as_string(),
               name + " poster proxy");
     }

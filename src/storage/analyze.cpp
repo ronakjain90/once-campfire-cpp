@@ -18,7 +18,9 @@ namespace {
 
 using json::Value;
 
-std::unexpected<Error> analyze_failure(std::string detail) { return prefixed(Errc::Internal, kAnalyze, detail); }
+std::unexpected<Error> analyze_failure(std::string_view detail) {
+  return prefixed(Errc::Internal, kAnalyze, detail);
+}
 
 // ImageAnalyzer::Vips#metadata: dimensions, swapped for EXIF orientations that turn the image
 // by 90 degrees. A file that libvips cannot read gives {}.
@@ -56,7 +58,9 @@ const Value* stream(const Value& probe, std::string_view codec_type) {
   return nullptr;
 }
 
-bool present(const Value* s) { return s && s->is_object() && !s->as_object().empty(); }
+bool present(const Value* s) {
+  return s && s->is_object() && !s->as_object().empty();
+}
 
 // Ruby's Float(value) for the numbers and numeric strings that ffprobe prints.
 Result<double> ruby_float(const Value& v) {
@@ -168,7 +172,8 @@ Result<Value> video_metadata(const Value& probe) {
   if (height) out.emplace_back("height", Value(*height));
   if (duration) out.emplace_back("duration", Value(*duration));
   if (angle) out.emplace_back("angle", Value(*angle));
-  if (aspect) out.emplace_back("display_aspect_ratio", Value(Value::Array{Value(aspect->first), Value(aspect->second)}));
+  if (aspect)
+    out.emplace_back("display_aspect_ratio", Value(Value::Array{Value(aspect->first), Value(aspect->second)}));
   out.emplace_back("audio", Value(present(audio)));
   out.emplace_back("video", Value(present(video)));
   return Value(std::move(out));

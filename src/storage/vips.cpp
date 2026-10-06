@@ -19,7 +19,9 @@ std::string take_error() {
   return message;
 }
 
-std::unexpected<Error> vips_failure() { return prefixed(Errc::Internal, kVips, take_error()); }
+std::unexpected<Error> vips_failure() {
+  return prefixed(Errc::Internal, kVips, take_error());
+}
 
 // Introspect#optional_input in ruby-vips: construct-time inputs that are not required. A
 // deprecated required input counts as optional.
@@ -112,14 +114,18 @@ Result<Image> Image::open_sequential(const std::filesystem::path& path) {
 Result<Image> Image::load_for_processing(const std::filesystem::path& path) {
   if (auto s = init(); !s) return std::unexpected(s.error());
   VipsImage* raw = loader_accepts_page(path.c_str()) ? vips_image_new_from_file(path.c_str(), "page", 0, nullptr)
-                                                      : vips_image_new_from_file(path.c_str(), nullptr);
+                                                     : vips_image_new_from_file(path.c_str(), nullptr);
   auto image = wrap(raw);
   if (!image) return image;
   return image->autorot();
 }
 
-int Image::width() const { return vips_image_get_width(image_); }
-int Image::height() const { return vips_image_get_height(image_); }
+int Image::width() const {
+  return vips_image_get_width(image_);
+}
+int Image::height() const {
+  return vips_image_get_height(image_);
+}
 
 std::optional<std::string> Image::get_string(const char* name) const {
   if (vips_image_get_typeof(image_, name) == 0) return std::nullopt;

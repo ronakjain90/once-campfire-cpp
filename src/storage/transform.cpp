@@ -14,7 +14,9 @@ namespace marshal = compat::marshal;
 
 namespace {
 
-std::unexpected<Error> invalid(std::string detail) { return prefixed(Errc::InvalidArgument, kInvalidVariation, detail); }
+std::unexpected<Error> invalid(std::string_view detail) {
+  return prefixed(Errc::InvalidArgument, kInvalidVariation, detail);
+}
 
 struct Operation {
   std::optional<int> width;
@@ -31,7 +33,8 @@ bool blank(const marshal::Value& value) {
         } else if constexpr (std::is_same_v<T, bool>) {
           return !x;
         } else if constexpr (std::is_same_v<T, marshal::Value::Str>) {
-          return std::all_of(x.text.begin(), x.text.end(), [](unsigned char c) { return c == ' ' || (c >= 9 && c <= 13); });
+          return std::all_of(x.text.begin(), x.text.end(),
+                             [](unsigned char c) { return c == ' ' || (c >= 9 && c <= 13); });
         } else if constexpr (std::is_same_v<T, marshal::Value::Array> || std::is_same_v<T, marshal::Value::Hash>) {
           return x.empty();
         } else {

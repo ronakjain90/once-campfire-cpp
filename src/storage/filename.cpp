@@ -16,20 +16,39 @@ size_t utf8_step(std::string_view s, bool& valid) {
   if (c < 0x80) return 1;
   size_t need = 0;
   unsigned char lo = 0x80, hi = 0xBF;
-  if (c >= 0xC2 && c <= 0xDF) need = 1;
-  else if (c == 0xE0) { need = 2; lo = 0xA0; }
-  else if (c >= 0xE1 && c <= 0xEC) need = 2;
-  else if (c == 0xED) { need = 2; hi = 0x9F; }
-  else if (c >= 0xEE && c <= 0xEF) need = 2;
-  else if (c == 0xF0) { need = 3; lo = 0x90; }
-  else if (c >= 0xF1 && c <= 0xF3) need = 3;
-  else if (c == 0xF4) { need = 3; hi = 0x8F; }
-  else { valid = false; return 1; }
+  if (c >= 0xC2 && c <= 0xDF)
+    need = 1;
+  else if (c == 0xE0) {
+    need = 2;
+    lo = 0xA0;
+  } else if (c == 0xED) {
+    need = 2;
+    hi = 0x9F;
+  } else if ((c >= 0xE1 && c <= 0xEC) || c == 0xEE || c == 0xEF)
+    need = 2;
+  else if (c == 0xF0) {
+    need = 3;
+    lo = 0x90;
+  } else if (c >= 0xF1 && c <= 0xF3)
+    need = 3;
+  else if (c == 0xF4) {
+    need = 3;
+    hi = 0x8F;
+  } else {
+    valid = false;
+    return 1;
+  }
   size_t i = 1;
   for (; i <= need; ++i) {
-    if (i >= s.size()) { valid = false; return i; }
+    if (i >= s.size()) {
+      valid = false;
+      return i;
+    }
     unsigned char lower = i == 1 ? lo : 0x80, upper = i == 1 ? hi : 0xBF;
-    if (b(i) < lower || b(i) > upper) { valid = false; return i; }
+    if (b(i) < lower || b(i) > upper) {
+      valid = false;
+      return i;
+    }
   }
   return need + 1;
 }
@@ -42,14 +61,18 @@ std::string utf8_lossy(std::string_view bytes) {
   while (!bytes.empty()) {
     bool valid = true;
     size_t n = utf8_step(bytes, valid);
-    if (valid) out.append(bytes.substr(0, n));
-    else out.append("\xEF\xBF\xBD");
+    if (valid)
+      out.append(bytes.substr(0, n));
+    else
+      out.append("\xEF\xBF\xBD");
     bytes.remove_prefix(n);
   }
   return out;
 }
 
-Filename Filename::from_bytes(std::string_view bytes) { return Filename(utf8_lossy(bytes)); }
+Filename Filename::from_bytes(std::string_view bytes) {
+  return Filename(utf8_lossy(bytes));
+}
 
 std::string_view basename(std::string_view path) {
   size_t end = path.size();
@@ -69,7 +92,9 @@ std::string_view extname(std::string_view path) {
   return dot == std::string_view::npos ? std::string_view() : rest.substr(dot);
 }
 
-std::string_view Filename::extension_with_delimiter() const { return extname(raw_); }
+std::string_view Filename::extension_with_delimiter() const {
+  return extname(raw_);
+}
 
 std::string_view Filename::extension() const {
   std::string_view ext = extension_with_delimiter();

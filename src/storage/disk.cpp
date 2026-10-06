@@ -23,7 +23,9 @@ std::string folder_for(std::string_view key) {
   return std::string(a) + "/" + std::string(b);
 }
 
-json::Value optional_string(std::optional<std::string_view> s) { return s ? json::Value(*s) : json::Value(); }
+json::Value optional_string(std::optional<std::string_view> s) {
+  return s ? json::Value(*s) : json::Value();
+}
 
 const std::string* string_member(const json::Value& object, std::string_view name) {
   const json::Value* v = object.find(name);
@@ -32,7 +34,9 @@ const std::string* string_member(const json::Value& object, std::string_view nam
 
 }  // namespace
 
-fs::path DiskService::path_for(std::string_view key) const { return root_ / folder_for(key) / std::string(key); }
+fs::path DiskService::path_for(std::string_view key) const {
+  return root_ / folder_for(key) / std::string(key);
+}
 
 Result<fs::path> DiskService::make_path_for(std::string_view key) const {
   fs::path path = path_for(key);
@@ -66,7 +70,8 @@ Status DiskService::upload_file(std::string_view key, const fs::path& source,
   return {};
 }
 
-Status DiskService::upload(std::string_view key, std::string_view data, std::optional<std::string_view> checksum) const {
+Status DiskService::upload(std::string_view key, std::string_view data,
+                           std::optional<std::string_view> checksum) const {
   auto path = make_path_for(key);
   if (!path) return std::unexpected(path.error());
   {
@@ -161,8 +166,8 @@ std::optional<DiskKey> decode_verified_key(const compat::MessageVerifier& verifi
   return out;
 }
 
-std::optional<DiskToken> decode_verified_token(const compat::MessageVerifier& verifier,
-                                               std::string_view encoded_token, compat::Timestamp now) {
+std::optional<DiskToken> decode_verified_token(const compat::MessageVerifier& verifier, std::string_view encoded_token,
+                                               compat::Timestamp now) {
   auto text = verifier.verify_raw(encoded_token, "blob_token", now);
   if (!text) return std::nullopt;
   auto data = json::parse(*text);

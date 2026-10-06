@@ -10,7 +10,7 @@
 
 #include "core/error.hpp"
 
-typedef struct _VipsImage VipsImage;
+typedef struct _VipsImage VipsImage;  // NOLINT(bugprone-reserved-identifier): the libvips name
 
 namespace campfire::storage::vips {
 

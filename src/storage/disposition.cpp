@@ -32,7 +32,11 @@ std::string content_disposition_with(std::string_view disposition, std::string_v
   return compat::content_disposition(disposition == "attachment" ? "attachment" : "inline", sanitized_filename);
 }
 
-std::string escape_path(std::string_view s) { return percent_escape(s, "-._~!$&'()*+,;=:@/"); }
-std::string escape_segment(std::string_view s) { return percent_escape(s, "-._~!$&'()*+,;=:@"); }
+std::string escape_path(std::string_view s) {
+  return percent_escape(s, "-._~!$&'()*+,;=:@/");
+}
+std::string escape_segment(std::string_view s) {
+  return percent_escape(s, "-._~!$&'()*+,;=:@");
+}
 
 }  // namespace campfire::storage

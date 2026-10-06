@@ -19,15 +19,27 @@ inline constexpr std::string_view kUnrepresentable = "no previewer found and can
 inline constexpr std::string_view kVips = "libvips: ";
 inline constexpr std::string_view kAnalyze = "analysis failed: ";
 
-inline std::unexpected<Error> file_not_found() { return fail(Errc::NotFound, std::string(kFileNotFound)); }
-inline std::unexpected<Error> integrity_error() { return fail(Errc::Internal, std::string(kIntegrity)); }
-inline std::unexpected<Error> io_error(std::string message) { return fail(Errc::Io, std::move(message)); }
+inline std::unexpected<Error> file_not_found() {
+  return fail(Errc::NotFound, std::string(kFileNotFound));
+}
+inline std::unexpected<Error> integrity_error() {
+  return fail(Errc::Internal, std::string(kIntegrity));
+}
+inline std::unexpected<Error> io_error(std::string message) {
+  return fail(Errc::Io, std::move(message));
+}
 inline std::unexpected<Error> prefixed(Errc code, std::string_view prefix, std::string_view detail) {
   return fail(code, std::string(prefix) + std::string(detail));
 }
 
-inline bool is_file_not_found(const Error& e) { return e.code == Errc::NotFound && e.message == kFileNotFound; }
-inline bool is_integrity(const Error& e) { return e.message == kIntegrity; }
-inline bool starts_with_prefix(const Error& e, std::string_view prefix) { return e.message.starts_with(prefix); }
+inline bool is_file_not_found(const Error& e) {
+  return e.code == Errc::NotFound && e.message == kFileNotFound;
+}
+inline bool is_integrity(const Error& e) {
+  return e.message == kIntegrity;
+}
+inline bool starts_with_prefix(const Error& e, std::string_view prefix) {
+  return e.message.starts_with(prefix);
+}
 
 }  // namespace campfire::storage

@@ -124,8 +124,7 @@ Result<Staged> Storage::draw_preview_image(const Blob& blob) const {
 
 Result<Variation> Storage::variation_for(const Blob& blob, const Variation& transformations) const {
   if (!blob.is_variable()) return prefixed(Errc::InvalidArgument, kInvariable, blob.type());
-  return default_to(transformations,
-                    {{"format", compat::marshal::Value::string(blob.default_variant_format())}});
+  return default_to(transformations, {{"format", compat::marshal::Value::string(blob.default_variant_format())}});
 }
 
 Result<std::optional<Blob>> Storage::existing_variant(Records& records, const Blob& blob,

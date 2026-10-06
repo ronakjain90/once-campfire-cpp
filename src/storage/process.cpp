@@ -9,15 +9,13 @@
 
 #include <cerrno>
 #include <cstdlib>
-#include <string_view>
 #include <cstring>
 #include <mutex>
+#include <string_view>
 
 #include "storage/content_types.hpp"
 #include "storage/errors.hpp"
 #include "storage/tempfile.hpp"
-
-extern char** environ;
 
 namespace campfire::storage {
 
@@ -35,9 +33,18 @@ struct Pipe {
     write_fd = fds[1];
     return true;
   }
-  void close_read() { if (read_fd >= 0) ::close(read_fd); read_fd = -1; }
-  void close_write() { if (write_fd >= 0) ::close(write_fd); write_fd = -1; }
-  ~Pipe() { close_read(); close_write(); }
+  void close_read() {
+    if (read_fd >= 0) ::close(read_fd);
+    read_fd = -1;
+  }
+  void close_write() {
+    if (write_fd >= 0) ::close(write_fd);
+    write_fd = -1;
+  }
+  ~Pipe() {
+    close_read();
+    close_write();
+  }
 };
 
 }  // namespace
@@ -51,6 +58,7 @@ Result<ProcessOutput> run_within(const std::vector<std::string>& argv, std::chro
   if (!status.open()) return io_error("pipe failed");
 
   std::vector<char*> args;
+  args.reserve(argv.size() + 1);
   for (const auto& a : argv) args.push_back(const_cast<char*>(a.c_str()));
   args.push_back(nullptr);
 
@@ -81,7 +89,10 @@ Result<ProcessOutput> run_within(const std::vector<std::string>& argv, std::chro
   ProcessOutput result;
   auto deadline = Clock::now() + timeout;
   bool timed_out = false;
-  struct Watch { int* fd; std::string* sink; };
+  struct Watch {
+    int* fd;
+    std::string* sink;
+  };
   Watch watches[2] = {{&out.read_fd, &result.out}, {&err.read_fd, &result.err}};
   char buffer[65536];
   for (;;) {
@@ -96,16 +107,26 @@ Result<ProcessOutput> run_within(const std::vector<std::string>& argv, std::chro
     }
     if (n == 0) break;
     auto left = std::chrono::duration_cast<std::chrono::milliseconds>(deadline - Clock::now());
-    if (left.count() <= 0) { timed_out = true; break; }
+    if (left.count() <= 0) {
+      timed_out = true;
+      break;
+    }
     int ready = ::poll(fds, n, static_cast<int>(left.count()));
     if (ready < 0 && errno == EINTR) continue;
     if (ready < 0) break;
-    if (ready == 0) { timed_out = true; break; }
+    if (ready == 0) {
+      timed_out = true;
+      break;
+    }
     for (nfds_t i = 0; i < n; ++i) {
       if (!(fds[i].revents & (POLLIN | POLLHUP | POLLERR))) continue;
       ssize_t got = ::read(*owners[i]->fd, buffer, sizeof buffer);
-      if (got > 0) owners[i]->sink->append(buffer, static_cast<size_t>(got));
-      else if (got == 0 || errno != EINTR) { ::close(*owners[i]->fd); *owners[i]->fd = -1; }
+      if (got > 0)
+        owners[i]->sink->append(buffer, static_cast<size_t>(got));
+      else if (got == 0 || errno != EINTR) {
+        ::close(*owners[i]->fd);
+        *owners[i]->fd = -1;
+      }
     }
   }
   if (timed_out) {
@@ -148,14 +169,15 @@ Result<std::string> video_preview(const std::filesystem::path& input) {
   if (r->exit_code != 0) {
     std::string err = r->err;
     while (!err.empty() && (err.back() == '\n' || err.back() == ' ')) err.pop_back();
-    return fail(Errc::Internal, std::string(content_types::kFfmpeg) + " failed (status " +
-                                    std::to_string(r->exit_code) + "): " + err);
+    return fail(Errc::Internal,
+                std::string(content_types::kFfmpeg) + " failed (status " + std::to_string(r->exit_code) + "): " + err);
   }
   return std::move(r->out);
 }
 
 Result<TempFile> TempFile::create(std::string_view prefix, std::string_view suffix) {
-  std::string pattern = (std::filesystem::temp_directory_path() / std::string(prefix)).string() + "XXXXXX" + std::string(suffix);
+  std::string pattern =
+      (std::filesystem::temp_directory_path() / std::string(prefix)).string() + "XXXXXX" + std::string(suffix);
   int fd = ::mkstemps(pattern.data(), static_cast<int>(suffix.size()));
   if (fd < 0) return io_error(std::string("mkstemps failed: ") + std::strerror(errno));
   ::close(fd);

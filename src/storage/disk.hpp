@@ -78,7 +78,7 @@ class DiskService {
 std::optional<DiskKey> decode_verified_key(const compat::MessageVerifier& verifier, std::string_view encoded_key,
                                            compat::Timestamp now);
 // DiskController#decode_verified_token.
-std::optional<DiskToken> decode_verified_token(const compat::MessageVerifier& verifier,
-                                               std::string_view encoded_token, compat::Timestamp now);
+std::optional<DiskToken> decode_verified_token(const compat::MessageVerifier& verifier, std::string_view encoded_token,
+                                               compat::Timestamp now);
 
 }  // namespace campfire::storage

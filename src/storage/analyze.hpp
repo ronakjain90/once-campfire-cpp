@@ -10,11 +10,13 @@
 
 namespace campfire::storage {
 
-enum class Analyzer { Image, Video, Audio, Null };
+enum class Analyzer : unsigned char { Image, Video, Audio, Null };
 
 Analyzer analyzer_for(std::string_view content_type);
 // analyze_later?: only the null analyzer does not queue a job.
-inline bool analyze_later(Analyzer a) { return a != Analyzer::Null; }
+inline bool analyze_later(Analyzer a) {
+  return a != Analyzer::Null;
+}
 
 // analyzer.metadata for a local copy of the blob. Video and audio run ffprobe (30 s limit); an
 // absent ffprobe gives {}.

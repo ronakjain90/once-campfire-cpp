@@ -25,9 +25,10 @@ class MemoryRecords : public st::Records {
     int64_t record_id, blob_id;
   };
   campfire::Result<std::optional<st::Blob>> attached(std::string_view record_type, int64_t record_id,
-                                               std::string_view name) override {
+                                                     std::string_view name) override {
     for (const auto& a : attachments) {
-      if (a.record_type == record_type && a.record_id == record_id && a.name == name) return std::optional(blobs.at(a.blob_id));
+      if (a.record_type == record_type && a.record_id == record_id && a.name == name)
+        return std::optional(blobs.at(a.blob_id));
     }
     return std::optional<st::Blob>();
   }
@@ -45,7 +46,7 @@ class MemoryRecords : public st::Records {
     return b;
   }
   campfire::Result<int64_t> insert_attachment(std::string_view name, std::string_view record_type, int64_t record_id,
-                                        int64_t blob_id, compat::Timestamp) override {
+                                              int64_t blob_id, compat::Timestamp) override {
     attachments.push_back({std::string(name), std::string(record_type), record_id, blob_id});
     return int64_t(attachments.size());
   }
@@ -128,7 +129,8 @@ TEST_CASE("storage pipeline matches the reference") {
   bool same_vips = *vips_version == at(versions, "libvips").as_string();
   bool same_ffmpeg = ffmpeg_version == at(versions, "ffmpeg").as_string();
   std::printf("MEDIA libvips local=%s reference=%s | ffmpeg local=[%s] reference=[%s]\n", vips_version->c_str(),
-              at(versions, "libvips").as_string().c_str(), ffmpeg_version.c_str(), at(versions, "ffmpeg").as_string().c_str());
+              at(versions, "libvips").as_string().c_str(), ffmpeg_version.c_str(),
+              at(versions, "ffmpeg").as_string().c_str());
   bool strict = std::getenv("CAMPFIRE_REQUIRE_MEDIA_VECTORS") != nullptr;
   if (strict) REQUIRE_MESSAGE((same_vips && same_ffmpeg), "byte comparisons would be skipped: library versions differ");
 
@@ -138,14 +140,16 @@ TEST_CASE("storage pipeline matches the reference") {
   Tally tally;
   bool video_host_differs = false;  // the preview frame equals local ffmpeg but not the vector file
 
-  auto compare = [&](const std::string& label, const st::Blob& actual, const json::Value& expected, bool processed, bool video) {
+  auto compare = [&](const std::string& label, const st::Blob& actual, const json::Value& expected, bool processed,
+                     bool video) {
     CHECK_MESSAGE(actual.filename.raw() == at(expected, "filename").as_string(), label << " filename");
     CHECK_MESSAGE(actual.type() == at(expected, "content_type").as_string(), label << " content_type");
     CHECK_MESSAGE(actual.service_name == at(expected, "service_name").as_string(), label << " service_name");
     bool comparable = !processed || (video ? same_vips && same_ffmpeg : same_vips);
     if (!comparable) return;
     CHECK_MESSAGE(json::encode(actual.metadata) == at(expected, "metadata").as_string(), label << " metadata");
-    if (actual.checksum == at(expected, "checksum").as_string() && actual.byte_size == *at(expected, "byte_size").to_int64()) {
+    if (actual.checksum == at(expected, "checksum").as_string() &&
+        actual.byte_size == *at(expected, "byte_size").to_int64()) {
       ++tally.identical;
     } else if (video && video_host_differs) {
       tally.host_different.push_back(label);
@@ -155,15 +159,18 @@ TEST_CASE("storage pipeline matches the reference") {
     }
   };
 
-  auto check_variant = [&](const std::string& label, const st::Blob& source, const json::Value& v, const st::Blob& image, bool video) {
-    CHECK_MESSAGE(variation_of(at(v, "transformations_typed")).digest() == at(v, "variation_digest").as_string(), label << " digest");
+  auto check_variant = [&](const std::string& label, const st::Blob& source, const json::Value& v,
+                           const st::Blob& image, bool video) {
+    CHECK_MESSAGE(variation_of(at(v, "transformations_typed")).digest() == at(v, "variation_digest").as_string(),
+                  label << " digest");
     compare(label, image, at(v, "blob"), true, video);
     std::string expected_file = read_file(std::string(CAMPFIRE_VECTORS_DIR) + "/storage/" + at(v, "file").as_string());
     CHECK_MESSAGE(st::checksum(expected_file) == at(at(v, "blob"), "checksum").as_string(), label << " vector file");
     auto actual = storage.service().download(image.key);
     REQUIRE(actual.has_value());
     CHECK_MESSAGE(st::checksum(*actual) == *image.checksum, label << " stored file");
-    if (same_vips && (!video || (same_ffmpeg && !video_host_differs))) CHECK_MESSAGE(*actual == expected_file, label << " bytes");
+    if (same_vips && (!video || (same_ffmpeg && !video_host_differs)))
+      CHECK_MESSAGE(*actual == expected_file, label << " bytes");
     auto record = records.find_variant_record(source.id, at(v, "variation_digest").as_string());
     CHECK_MESSAGE((record.has_value() && record->has_value()), label << " variant record");
   };
@@ -174,7 +181,7 @@ TEST_CASE("storage pipeline matches the reference") {
     auto created = storage.create_and_upload(records, data, st::Filename(name), opt_str(at(m, "declared_type")), now());
     REQUIRE_MESSAGE(created.has_value(), name << ": " << (created ? "" : created.error().message));
     st::Blob blob = *created;
-    records.insert_attachment("attachment", "Message", 1, blob.id, now());
+    REQUIRE(records.insert_attachment("attachment", "Message", 1, blob.id, now()).has_value());
     REQUIRE(storage.analyze(records, blob).has_value());
     compare(name, blob, at(m, "blob"), false, false);
     CHECK_MESSAGE(blob.is_variable() == at(m, "variable").as_bool(), name << " variable?");
@@ -188,7 +195,8 @@ TEST_CASE("storage pipeline matches the reference") {
         REQUIRE(stored.has_value());
         std::string local = local_preview(fixture_path(name));
         CHECK_MESSAGE(*stored == local, name << " preview frame equals the output of the ffmpeg CLI");
-        std::string vector_bytes = read_file(std::string(CAMPFIRE_VECTORS_DIR) + "/storage/" + at(at(m, "preview_image"), "file").as_string());
+        std::string vector_bytes =
+            read_file(std::string(CAMPFIRE_VECTORS_DIR) + "/storage/" + at(at(m, "preview_image"), "file").as_string());
         video_host_differs = *stored != vector_bytes && *stored == local;
       }
       compare(name + " preview_image", *preview, at(at(m, "preview_image"), "blob"), true, true);

@@ -42,7 +42,9 @@ ChecksumBuilder::ChecksumBuilder() : impl_(std::make_unique<Impl>()) {
 }
 ChecksumBuilder::~ChecksumBuilder() = default;
 
-void ChecksumBuilder::update(std::string_view data) { EVP_DigestUpdate(impl_->ctx, data.data(), data.size()); }
+void ChecksumBuilder::update(std::string_view data) {
+  EVP_DigestUpdate(impl_->ctx, data.data(), data.size());
+}
 
 std::string ChecksumBuilder::finish() {
   std::array<unsigned char, EVP_MAX_MD_SIZE> digest{};

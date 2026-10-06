@@ -1,13 +1,9 @@
 <ul>
-
 <li data-i="2">a</li>
-
 
 <li data-i="2">b</li>
 
-
 <li data-i="2">c</li>
-
 
 </ul>
 <li data-i="0">x</li>

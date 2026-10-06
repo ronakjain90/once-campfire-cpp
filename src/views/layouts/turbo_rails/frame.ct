@@ -1,4 +1,4 @@
-{#- turbo-rails app/views/layouts/turbo_rails/frame.html.erb, without the csrf_meta_tags line (no CSRF tags, Rust "Known differences") -#}
+{# turbo-rails app/views/layouts/turbo_rails/frame.html.erb, without the csrf_meta_tags line (no CSRF tags, Rust "Known differences") #}
 {% include views/layout.hpp %}
 {% params const LayoutParts& page %}
 <html>

@@ -1,4 +1,4 @@
-{#- reference/app/views/layouts/mailer.html.erb -#}
+{# reference/app/views/layouts/mailer.html.erb #}
 {% include views/layout.hpp %}
 {% params const Region& content %}
 <!DOCTYPE html>

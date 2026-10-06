@@ -1,5 +1,5 @@
 // Tests of tools/ctc.py and the template runtime. ERB is the oracle: erb/<case>.<set>.expected is
-// the output of the ERB twin with trim_mode "-" (test/gen_expected.rb, run in campfire-reference).
+// the output of the ERB twin compiled by Erubi (test/gen_expected.rb, run in campfire-reference).
 #include <doctest.h>
 
 #include <fstream>
@@ -60,7 +60,7 @@ std::string render(const Case& c, const Data& d) {
 
 }  // namespace
 
-TEST_CASE("ctc: output equals the ERB twin (trim_mode '-')") {
+TEST_CASE("ctc: output equals the ERB twin (Erubi)") {
   int compared = 0;
   for (const Case& c : kCases) {
     for (const char* set : {"a", "b"}) {

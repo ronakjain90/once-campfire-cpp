@@ -3,6 +3,8 @@
 // content, footer, sidebar, flash, user), renders the C++ layout from them, and compares the bytes
 // with the page. Only the CSRF tags (and the empty csp line) are not in our output: the test
 // removes them from the golden page first (Rust "Known differences").
+#include "views/layout.hpp"
+
 #include <doctest.h>
 
 #include <cstdio>
@@ -12,7 +14,6 @@
 #include <sstream>
 #include <string>
 
-#include "views/layout.hpp"
 #include "views/templates.gen.hpp"
 
 namespace {
@@ -98,8 +99,9 @@ Page cut(const std::string& page) {
   p.nav = between(page, "<nav id=\"nav\">\n      ", "\n    </nav>", &pos);
   p.content = between(page, "<main id=\"main-content\">\n      ", "\n\n      <footer id=\"footer\">", &pos);
   p.footer = between(page, "\n        ", "\n      </footer>", &pos);
-  p.sidebar = between(page, "<aside id=\"sidebar\" data-controller=\"toggle-class\" data-toggle-class-toggle-class=\"open\">\n      ",
-                      "\n    </aside>", &pos);
+  p.sidebar = between(
+      page, "<aside id=\"sidebar\" data-controller=\"toggle-class\" data-toggle-class-toggle-class=\"open\">\n      ",
+      "\n    </aside>", &pos);
   const std::size_t flash = page.find("<span class=\"for-screen-reader\" role=\"alert\"");
   if (flash != std::string::npos) {
     const std::string text = str_match(page.substr(flash), R"re(aria-atomic="true">([^<]*)</span>)re");
@@ -110,7 +112,9 @@ Page cut(const std::string& page) {
     }
   }
   std::smatch user;
-  if (std::regex_search(page, user, std::regex(R"re(current-user-id" content="(\d+)" /><meta name="current-user-name" content="([^"]*)")re"))) {
+  if (std::regex_search(
+          page, user,
+          std::regex(R"re(current-user-id" content="(\d+)" /><meta name="current-user-name" content="([^"]*)")re"))) {
     p.ctx.current_user = CurrentUser{std::stoll(user[1]), user[2], false, false, ""};
   }
   p.ctx.cable_url = str_match(page, R"re(action-cable-url" content="([^"]*)")re");
@@ -158,8 +162,8 @@ std::string render_application(Page& p) {
 TEST_CASE("layouts: application layout equals the pages of Rails") {
   int total = 0;
   int passed = 0;
-  for (const char* name : {"custom_styles_layout", "account_edit_notice", "account_edit_with_logo", "sessions_new_rejected",
-                           "sessions_new", "welcome"}) {
+  for (const char* name : {"custom_styles_layout", "account_edit_notice", "account_edit_with_logo",
+                           "sessions_new_rejected", "sessions_new", "welcome"}) {
     const std::string golden = read_golden(name);
     Page p = cut(golden);
     const std::string expected = without_csrf(golden, true);
@@ -170,8 +174,9 @@ TEST_CASE("layouts: application layout equals the pages of Rails") {
     } else {
       std::size_t i = 0;
       while (i < actual.size() && i < expected.size() && actual[i] == expected[i]) ++i;
-      FAIL_CHECK(name << ": first difference at byte " << i << "\n  expected: "
-                      << expected.substr(i > 40 ? i - 40 : 0, 120) << "\n  actual:   " << actual.substr(i > 40 ? i - 40 : 0, 120));
+      FAIL_CHECK(name << ": first difference at byte " << i
+                      << "\n  expected: " << expected.substr(i > 40 ? i - 40 : 0, 120)
+                      << "\n  actual:   " << actual.substr(i > 40 ? i - 40 : 0, 120));
     }
   }
   std::printf("GOLDEN layouts application comparisons=%d pass=%d\n", total, passed);

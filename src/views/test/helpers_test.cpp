@@ -1,5 +1,7 @@
 // Helpers against the bytes that the Rails helpers write (test/helper_golden.json, made by
 // gen_helper_golden.rb in campfire-reference). Rails: ActionView and turbo-rails helpers.
+#include "views/helpers/helpers.hpp"
+
 #include <doctest.h>
 
 #include <cstdio>
@@ -11,18 +13,19 @@
 
 #include "compat/json.hpp"
 #include "core/timestamp.hpp"
-#include "views/helpers/helpers.hpp"
 
 namespace {
 
-using namespace campfire;  // NOLINT
-using namespace campfire::views;  // NOLINT
+using namespace campfire;                  // NOLINT
+using namespace campfire::views;           // NOLINT
 using namespace campfire::views::helpers;  // NOLINT
 namespace json = campfire::compat::json;
 
 using Render = std::function<void(Out&, const ViewContext&, std::string_view signed_name)>;
 
-SafeHtml lit(std::string_view s) { return SafeHtml::trusted(s); }
+SafeHtml lit(std::string_view s) {
+  return SafeHtml::trusted(s);
+}
 
 Attrs with_nil(std::string_view name) {
   Attrs a;
@@ -32,67 +35,95 @@ Attrs with_nil(std::string_view name) {
 
 const std::map<std::string, Render>& cases() {
   static const std::map<std::string, Render> table = {
-      {"tag_div", [](Out& o, const ViewContext&, auto) {
-         content_tag_text(o, "div", attrs().cls("a&b").hidden().data("turbo_frame", "_top").data("x", "<").aria("hidden", "true").tabindex(-1), "x<");
+      {"tag_div",
+       [](Out& o, const ViewContext&, auto) {
+         content_tag_text(
+             o, "div",
+             attrs().cls("a&b").hidden().data("turbo_frame", "_top").data("x", "<").aria("hidden", "true").tabindex(-1),
+             "x<");
        }},
       {"tag_br", [](Out& o, const ViewContext&, auto) { builder_tag(o, "br", attrs().cls("c")); }},
-      {"tag_turbo_frame_name", [](Out& o, const ViewContext&, auto) { builder_tag(o, "turbo_frame", attrs().id("f")); }},
-      {"content_tag_textarea", [](Out& o, const ViewContext&, auto) { content_tag_text(o, "textarea", attrs().id("t"), "x<"); }},
-      {"attrs_boolean", [](Out& o, const ViewContext&, auto) {
-         builder_tag(o, "input", attrs().type("checkbox").checked(false).disabled(true).required(false).attr("data-x", false).attr("aria-y", true));
+      {"tag_turbo_frame_name",
+       [](Out& o, const ViewContext&, auto) { builder_tag(o, "turbo_frame", attrs().id("f")); }},
+      {"content_tag_textarea",
+       [](Out& o, const ViewContext&, auto) { content_tag_text(o, "textarea", attrs().id("t"), "x<"); }},
+      {"attrs_boolean",
+       [](Out& o, const ViewContext&, auto) {
+         builder_tag(o, "input",
+                     attrs()
+                         .type("checkbox")
+                         .checked(false)
+                         .disabled(true)
+                         .required(false)
+                         .attr("data-x", false)
+                         .attr("aria-y", true));
        }},
-      {"attrs_safe_value", [](Out& o, const ViewContext&, auto) {
-         builder_tag(o, "div", attrs().attr("data-action", lit("a->\"b\"&c")));
-       }},
-      {"legacy_tag", [](Out& o, const ViewContext&, auto) { legacy_tag(o, "img", attrs().alt("a").attr("src", "/x.png")); }},
-      {"link_to", [](Out& o, const ViewContext&, auto) {
-         link_to_text(o, "a<b", "/x?y=1&z=2", attrs().cls("btn").data("turbo", false));
-       }},
-      {"link_to_block", [](Out& o, const ViewContext&, auto) {
-         link_to(o, "/x", attrs().cls("btn").id("i"), lit("<b>c</b>"));
-       }},
+      {"attrs_safe_value",
+       [](Out& o, const ViewContext&, auto) { builder_tag(o, "div", attrs().attr("data-action", lit("a->\"b\"&c"))); }},
+      {"legacy_tag",
+       [](Out& o, const ViewContext&, auto) { legacy_tag(o, "img", attrs().alt("a").attr("src", "/x.png")); }},
+      {"link_to", [](Out& o, const ViewContext&,
+                     auto) { link_to_text(o, "a<b", "/x?y=1&z=2", attrs().cls("btn").data("turbo", false)); }},
+      {"link_to_block",
+       [](Out& o, const ViewContext&, auto) { link_to(o, "/x", attrs().cls("btn").id("i"), lit("<b>c</b>")); }},
       {"link_to_if_false", [](Out& o, const ViewContext&, auto) { link_to_if(o, false, "a<", "/x", {}); }},
-      {"link_to_if_true", [](Out& o, const ViewContext&, auto) { link_to_if(o, true, "a<", "/x", attrs().title("t")); }},
+      {"link_to_if_true",
+       [](Out& o, const ViewContext&, auto) { link_to_if(o, true, "a<", "/x", attrs().title("t")); }},
       {"mail_to", [](Out& o, const ViewContext&, auto) { mail_to(o, "a+b@x.com"); }},
-      {"button_to_delete", [](Out& o, const ViewContext&, auto) {
+      {"button_to_delete",
+       [](Out& o, const ViewContext&, auto) {
          button_to(o, "/x?a=1&b=2", attrs().method("delete").cls("btn").attr("form_class", "f"), lit("go"));
        }},
-      {"button_to_default", [](Out& o, const ViewContext&, auto) {
-         button_to(o, "/x", attrs().cls("btn").data("turbo", false), lit("go<"));
-       }},
-      {"button_to_put_and_get", [](Out& o, const ViewContext&, auto) {
+      {"button_to_default", [](Out& o, const ViewContext&,
+                               auto) { button_to(o, "/x", attrs().cls("btn").data("turbo", false), lit("go<")); }},
+      {"button_to_put_and_get",
+       [](Out& o, const ViewContext&, auto) {
          button_to(o, "/x", attrs().method("put"), lit("a"));
          button_to(o, "/y", attrs().method("get"), lit("b"));
          button_to(o, "/z", attrs().method("patch").title("p"), lit("c"));
        }},
-      {"image_tag_size", [](Out& o, const ViewContext& c, auto) { image_tag(o, c, "/img.svg", attrs().aria("hidden", true).size(20)); }},
-      {"image_tag_size_xy", [](Out& o, const ViewContext& c, auto) {
-         image_tag(o, c, "/img.svg", attrs().alt("A<").size("20x30").cls("c"));
+      {"image_tag_size",
+       [](Out& o, const ViewContext& c, auto) { image_tag(o, c, "/img.svg", attrs().aria("hidden", true).size(20)); }},
+      {"image_tag_size_xy", [](Out& o, const ViewContext& c,
+                               auto) { image_tag(o, c, "/img.svg", attrs().alt("A<").size("20x30").cls("c")); }},
+      {"image_tag_url",
+       [](Out& o, const ViewContext& c, auto) { image_tag(o, c, "https://example.com/a.png", attrs().cls("c")); }},
+      {"turbo_frame_tag",
+       [](Out& o, const ViewContext&, auto) {
+         turbo_frame_tag(o, "f", attrs().cls("c").attr("src", "/x").attr("target", "_top"),
+                         [](Out& i) { i.append(lit("in")); });
        }},
-      {"image_tag_url", [](Out& o, const ViewContext& c, auto) { image_tag(o, c, "https://example.com/a.png", attrs().cls("c")); }},
-      {"turbo_frame_tag", [](Out& o, const ViewContext&, auto) {
-         turbo_frame_tag(o, "f", attrs().cls("c").attr("src", "/x").attr("target", "_top"), [](Out& i) { i.append(lit("in")); });
-       }},
-      {"turbo_frame_tag_plain", [](Out& o, const ViewContext&, auto) {
+      {"turbo_frame_tag_plain",
+       [](Out& o, const ViewContext&, auto) {
          turbo_frame_tag(o, "room_1", attrs().cls("c"), [](Out& i) { i.append(lit("in")); });
        }},
-      {"turbo_stream_append", [](Out& o, const ViewContext&, auto) {
+      {"turbo_stream_append",
+       [](Out& o, const ViewContext&, auto) {
          turbo_stream(o, "append", "messages", [](Out& i) { i.append(lit("<p>x</p>")); });
        }},
-      {"turbo_stream_replace", [](Out& o, const ViewContext&, auto) {
+      {"turbo_stream_replace",
+       [](Out& o, const ViewContext&, auto) {
          turbo_stream(o, "replace", "message_1", [](Out& i) { i.append(lit("<p>y</p>")); });
        }},
       {"turbo_stream_remove", [](Out& o, const ViewContext&, auto) { turbo_stream_remove(o, "message_1"); }},
-      {"local_datetime_tag", [](Out& o, const ViewContext&, auto) {
+      {"local_datetime_tag",
+       [](Out& o, const ViewContext&, auto) {
          local_datetime_tag(o, Timestamp::from_seconds(1767270605), "date", attrs().cls("x"));
        }},
-      {"local_datetime_tag_time", [](Out& o, const ViewContext&, auto) {
-         local_datetime_tag(o, Timestamp::from_seconds(1780272000), "time");
-       }},
+      {"local_datetime_tag_time",
+       [](Out& o, const ViewContext&, auto) { local_datetime_tag(o, Timestamp::from_seconds(1780272000), "time"); }},
       {"page_requires_reload", [](Out& o, const ViewContext&, auto) { turbo_page_requires_reload_tag(o); }},
-      {"turbo_stream_from", [](Out& o, const ViewContext&, std::string_view signed_name) { turbo_stream_from(o, signed_name); }},
-      {"form_with_fields", [](Out& o, const ViewContext&, auto) {
-         const FormWith form = FormWith("/x?a=1").model("user").cls("c").id("i").method("patch").data("controller", "form").data("action", "a->b");
+      {"turbo_stream_from",
+       [](Out& o, const ViewContext&, std::string_view signed_name) { turbo_stream_from(o, signed_name); }},
+      {"form_with_fields",
+       [](Out& o, const ViewContext&, auto) {
+         const FormWith form = FormWith("/x?a=1")
+                                   .model("user")
+                                   .cls("c")
+                                   .id("i")
+                                   .method("patch")
+                                   .data("controller", "form")
+                                   .data("action", "a->b");
          form_with(o, form, [&](Out& i) {
            form.text_field(i, "name", std::nullopt, attrs().value("a<b").cls("input").maxlength(5));
            form.email_field(i, "email", std::nullopt, with_nil("value").merge(attrs().required(true)));
@@ -106,26 +137,30 @@ const std::map<std::string, Render>& cases() {
            button_tag(i, attrs().cls("btn"), [](Out& b) { b.append(lit("Save")); });
          });
        }},
-      {"form_with_plain", [](Out& o, const ViewContext&, auto) {
+      {"form_with_plain",
+       [](Out& o, const ViewContext&, auto) {
          const FormWith form = FormWith("/search").method("get");
          form_with(o, form, [&](Out& i) { form.text_field(i, "q", std::nullopt, attrs().value("v").cls("input")); });
        }},
-      {"form_with_post_no_model", [](Out& o, const ViewContext&, auto) {
+      {"form_with_post_no_model",
+       [](Out& o, const ViewContext&, auto) {
          const FormWith form = FormWith("/s").cls("k");
          form_with(o, form, [&](Out& i) {
            form.text_field(i, "q", std::nullopt, {});
            form.text_area(i, "body", std::nullopt, {});
          });
        }},
-      {"form_with_nested", [](Out& o, const ViewContext&, auto) {
+      {"form_with_nested",
+       [](Out& o, const ViewContext&, auto) {
          const FormWith form = FormWith("/s").model("account");
-         form_with(o, form, [&](Out& i) { form.fields_for("settings").text_field(i, "a", std::nullopt, attrs().value("1")); });
+         form_with(o, form,
+                   [&](Out& i) { form.fields_for("settings").text_field(i, "a", std::nullopt, attrs().value("1")); });
        }},
-      {"hidden_field_tag", [](Out& o, const ViewContext&, auto) { hidden_field_tag(o, "a[b]", "v<", attrs().cls("c")); }},
+      {"hidden_field_tag",
+       [](Out& o, const ViewContext&, auto) { hidden_field_tag(o, "a[b]", "v<", attrs().cls("c")); }},
       {"hidden_field_tag_nil", [](Out& o, const ViewContext&, auto) { hidden_field_tag(o, "q", std::nullopt, {}); }},
-      {"button_tag", [](Out& o, const ViewContext&, auto) {
-         button_tag(o, attrs().cls("b").data("a", 1), [](Out& b) { html_escape(b, "x<"); });
-       }},
+      {"button_tag", [](Out& o, const ViewContext&,
+                        auto) { button_tag(o, attrs().cls("b").data("a", 1), [](Out& b) { html_escape(b, "x<"); }); }},
   };
   return table;
 }

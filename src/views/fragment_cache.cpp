@@ -19,8 +19,12 @@ FragmentCache& null_fragment_cache() noexcept {
   return cache;
 }
 
-FragmentCache& fragment_cache() noexcept { return g_current != nullptr ? *g_current : null_fragment_cache(); }
+FragmentCache& fragment_cache() noexcept {
+  return g_current != nullptr ? *g_current : null_fragment_cache();
+}
 
-void set_fragment_cache(FragmentCache* cache) noexcept { g_current = cache; }
+void set_fragment_cache(FragmentCache* cache) noexcept {
+  g_current = cache;
+}
 
 }  // namespace campfire::views

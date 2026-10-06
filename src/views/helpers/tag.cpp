@@ -8,20 +8,54 @@ namespace campfire::views::helpers {
 namespace {
 
 // TagHelper::BOOLEAN_ATTRIBUTES
-constexpr std::array<std::string_view, 44> kBooleanAttributes = {
-    "allowfullscreen", "allowpaymentrequest", "async",       "autofocus",  "autoplay",       "checked",
-    "compact",         "controls",            "declare",     "default",    "defaultchecked", "defaultmuted",
-    "defaultselected", "defer",               "disabled",    "enabled",    "formnovalidate", "hidden",
-    "indeterminate",   "inert",               "ismap",       "itemscope",  "loop",           "multiple",
-    "muted",           "nohref",              "nomodule",    "noresize",   "noshade",        "novalidate",
-    "nowrap",          "open",                "pauseonexit", "playsinline", "readonly",      "required",
-    "reversed",        "scoped",              "seamless",    "selected",   "sortable",       "truespeed",
-    "typemustmatch",   "visible"};
+constexpr std::array<std::string_view, 44> kBooleanAttributes = {"allowfullscreen",
+                                                                 "allowpaymentrequest",
+                                                                 "async",
+                                                                 "autofocus",
+                                                                 "autoplay",
+                                                                 "checked",
+                                                                 "compact",
+                                                                 "controls",
+                                                                 "declare",
+                                                                 "default",
+                                                                 "defaultchecked",
+                                                                 "defaultmuted",
+                                                                 "defaultselected",
+                                                                 "defer",
+                                                                 "disabled",
+                                                                 "enabled",
+                                                                 "formnovalidate",
+                                                                 "hidden",
+                                                                 "indeterminate",
+                                                                 "inert",
+                                                                 "ismap",
+                                                                 "itemscope",
+                                                                 "loop",
+                                                                 "multiple",
+                                                                 "muted",
+                                                                 "nohref",
+                                                                 "nomodule",
+                                                                 "noresize",
+                                                                 "noshade",
+                                                                 "novalidate",
+                                                                 "nowrap",
+                                                                 "open",
+                                                                 "pauseonexit",
+                                                                 "playsinline",
+                                                                 "readonly",
+                                                                 "required",
+                                                                 "reversed",
+                                                                 "scoped",
+                                                                 "seamless",
+                                                                 "selected",
+                                                                 "sortable",
+                                                                 "truespeed",
+                                                                 "typemustmatch",
+                                                                 "visible"};
 
 // HTML void elements.
-constexpr std::array<std::string_view, 14> kVoidElements = {"area", "base", "br",   "col",   "embed",
-                                                            "hr",   "img",  "input", "keygen", "link",
-                                                            "meta", "source", "track", "wbr"};
+constexpr std::array<std::string_view, 14> kVoidElements = {
+    "area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "meta", "source", "track", "wbr"};
 
 template <class Array>
 bool contains(const Array& list, std::string_view name) {

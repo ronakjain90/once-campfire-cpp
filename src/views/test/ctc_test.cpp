@@ -36,9 +36,9 @@ struct Case {
 };
 
 const Case kCases[] = {
-    {"text", &cases::text},         {"out_escape", &cases::out_escape}, {"safe", &cases::safe},
-    {"if_else", &cases::if_else},   {"for_loop", &cases::for_loop},     {"trim", &cases::trim},
-    {"nested", &cases::nested},     {"comment", &cases::comment},       {"braces", &cases::braces},
+    {"text", &cases::text},       {"out_escape", &cases::out_escape}, {"safe", &cases::safe},
+    {"if_else", &cases::if_else}, {"for_loop", &cases::for_loop},     {"trim", &cases::trim},
+    {"nested", &cases::nested},   {"comment", &cases::comment},       {"braces", &cases::braces},
     {"partial", &cases::partial},
 };
 

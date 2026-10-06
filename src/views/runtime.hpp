@@ -21,9 +21,15 @@ namespace campfire::views {
 //   bool          "true" or "false"
 //   optional<T>   nothing if empty (Ruby nil), else the value
 // Any other type is a compile error.
-inline void write(Out& out, SafeHtml html) { out.append(html); }
-inline void write(Out& out, std::string_view text) { html_escape(out, text); }
-inline void write(Out& out, bool value) { out.append_raw(value ? "true" : "false"); }
+inline void write(Out& out, SafeHtml html) {
+  out.append(html);
+}
+inline void write(Out& out, std::string_view text) {
+  html_escape(out, text);
+}
+inline void write(Out& out, bool value) {
+  out.append_raw(value ? "true" : "false");
+}
 
 template <std::integral T>
   requires(!std::same_as<T, bool> && !std::same_as<T, char>)

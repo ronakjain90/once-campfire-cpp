@@ -17,8 +17,8 @@ std::string sanitize_object_name(std::string_view name) {
       continue;
     }
     const char c = name[i];
-    const bool keep = (std::isalnum(static_cast<unsigned char>(c)) != 0 && static_cast<unsigned char>(c) < 128) || c == '-' ||
-                      c == ':' || c == '.';
+    const bool keep = (std::isalnum(static_cast<unsigned char>(c)) != 0 && static_cast<unsigned char>(c) < 128) ||
+                      c == '-' || c == ':' || c == '.';
     out += keep ? c : '_';
   }
   if (out.ends_with('_')) {
@@ -34,8 +34,8 @@ std::string sanitize_to_id(std::string_view name) {
     if (c == ']') {
       continue;
     }
-    const bool keep = (std::isalnum(static_cast<unsigned char>(c)) != 0 && static_cast<unsigned char>(c) < 128) || c == '-' ||
-                      c == '_' || c == ':' || c == '.';
+    const bool keep = (std::isalnum(static_cast<unsigned char>(c)) != 0 && static_cast<unsigned char>(c) < 128) ||
+                      c == '-' || c == '_' || c == ':' || c == '.';
     out += keep ? c : '_';
   }
   return out;
@@ -119,13 +119,16 @@ std::optional<Value> opt_value(std::optional<std::string_view> v) {
 }
 }  // namespace
 
-void FormWith::text_field(Out& out, std::string_view method, std::optional<std::string_view> value, Attrs options) const {
+void FormWith::text_field(Out& out, std::string_view method, std::optional<std::string_view> value,
+                          Attrs options) const {
   input_field(out, "text", method, opt_value(value), std::move(options));
 }
-void FormWith::email_field(Out& out, std::string_view method, std::optional<std::string_view> value, Attrs options) const {
+void FormWith::email_field(Out& out, std::string_view method, std::optional<std::string_view> value,
+                           Attrs options) const {
   input_field(out, "email", method, opt_value(value), std::move(options));
 }
-void FormWith::url_field(Out& out, std::string_view method, std::optional<std::string_view> value, Attrs options) const {
+void FormWith::url_field(Out& out, std::string_view method, std::optional<std::string_view> value,
+                         Attrs options) const {
   input_field(out, "url", method, opt_value(value), std::move(options));
 }
 void FormWith::password_field(Out& out, std::string_view method, Attrs options) const {
@@ -133,14 +136,16 @@ void FormWith::password_field(Out& out, std::string_view method, Attrs options) 
   merged.set("value", std::nullopt);
   input_field(out, "password", method, std::nullopt, std::move(merged).merge(std::move(options)));
 }
-void FormWith::hidden_field(Out& out, std::string_view method, std::optional<std::string_view> value, Attrs options) const {
+void FormWith::hidden_field(Out& out, std::string_view method, std::optional<std::string_view> value,
+                            Attrs options) const {
   input_field(out, "hidden", method, opt_value(value), std::move(options));
 }
 void FormWith::file_field(Out& out, std::string_view method, Attrs options) const {
   input_field(out, "file", method, std::nullopt, std::move(options));
 }
 
-void FormWith::text_area(Out& out, std::string_view method, std::optional<std::string_view> value, Attrs options) const {
+void FormWith::text_area(Out& out, std::string_view method, std::optional<std::string_view> value,
+                         Attrs options) const {
   default_name_and_id(method, options);
   std::optional<Value> own = options.remove("value");
   std::string content = own ? own->to_s() : std::string(value.value_or(""));
@@ -194,7 +199,9 @@ void open_button_to(Out& out, std::string_view url, Attrs options) {
   out.append_char('>');
 }
 
-void close_button_to(Out& out) { out.append_raw("</button></form>"); }
+void close_button_to(Out& out) {
+  out.append_raw("</button></form>");
+}
 
 void button_to(Out& out, std::string_view url, Attrs options, SafeHtml content) {
   open_button_to(out, url, std::move(options));

@@ -35,14 +35,14 @@ struct Value {
   std::string text;
 
   Value() = default;
-  Value(std::string_view s) : text(s) {}                          // NOLINT(google-explicit-constructor)
-  Value(const std::string& s) : text(s) {}                        // NOLINT(google-explicit-constructor)
-  Value(const char* s) : text(s) {}                               // NOLINT(google-explicit-constructor)
-  Value(bool b) : kind(Kind::Bool), flag(b) {}                    // NOLINT(google-explicit-constructor)
-  Value(SafeHtml html) : kind(Kind::Safe), text(html.view()) {}   // NOLINT(google-explicit-constructor)
+  Value(std::string_view s) : text(s) {}                         // NOLINT(google-explicit-constructor)
+  Value(const std::string& s) : text(s) {}                       // NOLINT(google-explicit-constructor)
+  Value(const char* s) : text(s) {}                              // NOLINT(google-explicit-constructor)
+  Value(bool b) : kind(Kind::Bool), flag(b) {}                   // NOLINT(google-explicit-constructor)
+  Value(SafeHtml html) : kind(Kind::Safe), text(html.view()) {}  // NOLINT(google-explicit-constructor)
   template <std::integral T>
     requires(!std::same_as<T, bool>)
-  Value(T n) : text(std::to_string(n)) {}                         // NOLINT(google-explicit-constructor)
+  Value(T n) : text(std::to_string(n)) {}  // NOLINT(google-explicit-constructor)
 
   // The value as Ruby `to_s` prints it.
   [[nodiscard]] std::string to_s() const { return kind == Kind::Bool ? (flag ? "true" : "false") : text; }
@@ -113,7 +113,9 @@ class Attrs {
   std::vector<Entry> entries_;
 };
 
-inline Attrs attrs() { return {}; }
+inline Attrs attrs() {
+  return {};
+}
 
 // `tag_options`: each attribute with a leading space.
 void render_attrs(Out& out, const Attrs& attrs);

@@ -84,7 +84,9 @@ class FormWith {
   mutable bool multipart_ = false;
 };
 
-inline FormWith form_with_url(std::string_view url) { return FormWith(url); }
+inline FormWith form_with_url(std::string_view url) {
+  return FormWith(url);
+}
 
 // `form_with(...) do |form| ... end`.
 template <BodyFn Body>

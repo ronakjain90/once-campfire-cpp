@@ -53,7 +53,8 @@ std::string fresh_user_avatar(std::string_view avatar_token, std::string_view up
   return out;
 }
 
-std::string fresh_account_logo(std::optional<std::string_view> updated_at_number, std::optional<std::string_view> size) {
+std::string fresh_account_logo(std::optional<std::string_view> updated_at_number,
+                               std::optional<std::string_view> size) {
   std::string out = account_logo();
   char separator = '?';
   if (size) {

@@ -2,6 +2,8 @@
 //   spec/vectors/campfire_routes.json   routes and recognitions of config/routes.rb
 //   test/named_routes.json              named routes (dump_named_routes.rb, run in campfire-reference)
 //   test/path_cases.json                what the Rails *_path helpers return (dump_path_cases.rb)
+#include "routes/routes.hpp"
+
 #include <doctest.h>
 
 #include <cstdio>
@@ -16,7 +18,6 @@
 #include "compat/json.hpp"
 #include "compat/test/vectors.hpp"
 #include "routes/query.hpp"
-#include "routes/routes.hpp"
 
 namespace routes = campfire::routes;
 namespace json = campfire::compat::json;
@@ -49,13 +50,13 @@ std::string call_with(const F& f, const Args& args, std::index_sequence<I...> /*
 const std::map<std::string, std::pair<std::size_t, Dispatch>>& dispatch_table() {
   static const auto table = [] {
     std::map<std::string, std::pair<std::size_t, Dispatch>> t;
-#define CF_ROUTE(name, pattern, endpoint)                                                                         \
-  {                                                                                                               \
-    constexpr std::size_t kCount = routes::detail::Pattern<pattern>::kParams;                                      \
-    t[#name] = {kCount, [](const Args& args) {                                                                    \
-                  return call_with([](const auto&... a) { return routes::name(a...); }, args,                    \
-                                   std::make_index_sequence<kCount>{});                                          \
-                }};                                                                                               \
+#define CF_ROUTE(name, pattern, endpoint)                                                     \
+  {                                                                                           \
+    constexpr std::size_t kCount = routes::detail::Pattern<pattern>::kParams;                 \
+    t[#name] = {kCount, [](const Args& args) {                                                \
+                  return call_with([](const auto&... a) { return routes::name(a...); }, args, \
+                                   std::make_index_sequence<kCount>{});                       \
+                }};                                                                           \
   }
 #define CF_ROUTE_ME(name, pattern, endpoint) CF_ROUTE(name, pattern, endpoint)
 #include "routes/routes.def"
@@ -158,7 +159,8 @@ TEST_CASE("routes: a route with the default user_id leaves it out") {
   CHECK_EQ(routes::user_push_subscriptions(), "/users/me/push_subscriptions");
   CHECK_EQ(routes::user_push_subscription(4), "/users/me/push_subscriptions/4");
   CHECK_EQ(routes::user_push_subscription_test_notifications(4), "/users/me/push_subscriptions/4/test_notifications");
-  CHECK_EQ(routes::user_push_subscription_test_notifications("me", 4), "/users/me/push_subscriptions/4/test_notifications");
+  CHECK_EQ(routes::user_push_subscription_test_notifications("me", 4),
+           "/users/me/push_subscriptions/4/test_notifications");
 }
 
 TEST_CASE("routes: simple helpers") {
@@ -183,8 +185,9 @@ TEST_CASE("routes: direct routes fresh_account_logo and fresh_user_avatar") {
   logo.finish();
   Group avatar("path_cases.json", "fresh_user_avatar");
   for (const auto& c : items(at(cases, "avatars"))) {
-    avatar.check(routes::fresh_user_avatar(at(c, "token").as_string(), at(c, "v").as_string()) == at(c, "path").as_string(),
-                 at(c, "path").as_string());
+    avatar.check(
+        routes::fresh_user_avatar(at(c, "token").as_string(), at(c, "v").as_string()) == at(c, "path").as_string(),
+        at(c, "path").as_string());
   }
   avatar.finish();
   CHECK_EQ(routes::fresh_account_logo(), "/account/logo");

@@ -57,7 +57,8 @@ struct Pattern {
       }
       parts[index++] = text.substr(start, i - start);
       std::size_t j = i + 1;
-      while (j < text.size() && (text[j] == '_' || (text[j] >= 'a' && text[j] <= 'z') || (text[j] >= '0' && text[j] <= '9'))) {
+      while (j < text.size() &&
+             (text[j] == '_' || (text[j] >= 'a' && text[j] <= 'z') || (text[j] >= '0' && text[j] <= '9'))) {
         ++j;
       }
       start = j;
@@ -106,12 +107,16 @@ template <FixedString P, class... Args>
   }
 }
 
-#define CF_ROUTE(name, pattern, endpoint) \
-  template <class... Args>                \
-  [[nodiscard]] std::string name(const Args&... args) { return path<pattern>(args...); }
-#define CF_ROUTE_ME(name, pattern, endpoint) \
-  template <class... Args>                   \
-  [[nodiscard]] std::string name(const Args&... args) { return path_with_default_user<pattern>(args...); }
+#define CF_ROUTE(name, pattern, endpoint)               \
+  template <class... Args>                              \
+  [[nodiscard]] std::string name(const Args&... args) { \
+    return path<pattern>(args...);                      \
+  }
+#define CF_ROUTE_ME(name, pattern, endpoint)            \
+  template <class... Args>                              \
+  [[nodiscard]] std::string name(const Args&... args) { \
+    return path_with_default_user<pattern>(args...);    \
+  }
 #include "routes/routes.def"
 #undef CF_ROUTE_ME
 #undef CF_ROUTE

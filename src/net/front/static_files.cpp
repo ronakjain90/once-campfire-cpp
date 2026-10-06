@@ -134,6 +134,12 @@ std::string_view lower_copy(Arena& arena, std::string_view name) {
 
 }  // namespace
 
+DeflaterChoice choose_deflater_encoding(std::string_view accept_encoding) {
+  const std::string_view choice = select_best_encoding(parse_accept_encoding(accept_encoding));
+  if (choice == "gzip") return DeflaterChoice::Gzip;
+  return choice.empty() ? DeflaterChoice::None : DeflaterChoice::Identity;
+}
+
 std::optional<Response> serve_static(Ctx& ctx) {
   const Request& request = ctx.request();
   if (request.method != Method::Get && request.method != Method::Head) return std::nullopt;

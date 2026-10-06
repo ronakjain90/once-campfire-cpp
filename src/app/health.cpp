@@ -6,6 +6,7 @@
 namespace campfire::routes::health {
 
 campfire::Task<net::Response> show(net::Ctx& ctx) {
+  if (app::refuses_every_encoding(ctx.request())) co_return app::not_acceptable(ctx);
   net::Response response = ctx.response(200);
   const bool gzip = ctx.request().method != net::Method::Head && app::wants_gzip(ctx.request());
   response.add("content-type", "text/html; charset=utf-8");

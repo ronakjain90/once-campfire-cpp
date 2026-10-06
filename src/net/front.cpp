@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "net/front/cache.hpp"
+#include "net/front/headers.hpp"
 
 namespace campfire::net {
 
@@ -58,46 +59,20 @@ bool should_cache_request(const Request& request) noexcept {
   return front::should_cache_request(request);
 }
 
+// Rust: `suppress_bodiless_headers`. `HeaderMap::remove` moves the last header into the slot of the
+// removed one, so e.g. a 304's "content-length" gives its slot to the "vary" that the compression
+// appended after it.
 void suppress_bodiless_headers(Response& response) {
   const int status = response.status;
   if (status == 304) {
-    response.erase("content-type");
-    response.erase("content-length");
-    response.erase("transfer-encoding");
+    front::remove_header(response, "content-type");
+    front::remove_header(response, "content-length");
+    front::remove_header(response, "transfer-encoding");
   } else if ((status >= 100 && status < 200) || status == 204) {
-    response.erase("content-length");
-    response.erase("transfer-encoding");
+    front::remove_header(response, "content-length");
+    front::remove_header(response, "transfer-encoding");
   }
 }
-
-namespace {
-
-// `http::HeaderMap::remove`: the last header takes the place of the removed one. The front uses it
-// where Rust does (`suppress_bodiless_headers`), so that e.g. a 304's "content-length" gives its
-// slot to the "vary" the compression appended after it.
-void swap_remove_header(Response& response, std::string_view name) {
-  auto& headers = response.headers;
-  for (std::size_t i = 0; i < headers.size(); ++i) {
-    if (!iequals(headers[i].name, name)) continue;
-    headers[i] = headers.back();
-    headers.pop_back();
-    return;
-  }
-}
-
-void front_suppress_bodiless_headers(Response& response) {
-  const int status = response.status;
-  if (status == 304) {
-    swap_remove_header(response, "content-type");
-    swap_remove_header(response, "content-length");
-    swap_remove_header(response, "transfer-encoding");
-  } else if ((status >= 100 && status < 200) || status == 204) {
-    swap_remove_header(response, "content-length");
-    swap_remove_header(response, "transfer-encoding");
-  }
-}
-
-}  // namespace
 
 void apply_front_headers(const Request& request, Response& response) {
   if (response.status >= 100 && response.status < 200) return;
@@ -134,7 +109,7 @@ void apply_front_headers(const Request& request, Response& response) {
     if (!response.has("vary")) response.add("vary", "Accept-Encoding");
   }
   // The date goes on last, after the headers a bodiless status drops, as the Rust connection does.
-  front_suppress_bodiless_headers(response);
+  suppress_bodiless_headers(response);
   if (!response.has("date")) {
     char buffer[32];
     response.add_copy("date", http_date_now(buffer));

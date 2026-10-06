@@ -21,6 +21,8 @@ campfire::Task<net::Response> not_found(net::Ctx& ctx) {
   const net::Request& request = ctx.request();
   net::Response response = ctx.response(404);
   const bool head = request.method == net::Method::Head;
+  // The "content-length: 0" of a HEAD answer keeps Rack::Deflater from touching it.
+  if (!head && refuses_every_encoding(request)) co_return not_acceptable(ctx);
   if (wants_json(request)) {
     constexpr std::string_view kBody = R"({"status":404,"error":"Not Found"})";
     response.add("content-type", "application/json; charset=UTF-8");

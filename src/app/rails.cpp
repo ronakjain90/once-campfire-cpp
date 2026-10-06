@@ -5,6 +5,9 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <string>
+
+#include "net/front/static_files.hpp"
 
 namespace campfire::app {
 
@@ -50,29 +53,22 @@ void add_rails_tail(net::Ctx& ctx, net::Response& response) {
 }
 
 bool wants_gzip(const net::Request& request) noexcept {
-  // Rack::Request#accept_encoding and select_best_encoding(["gzip", "identity"]): gzip wins if
-  // the client lists it (or "*") with a q above 0 and q(gzip) >= q(identity, default 1... ).
-  std::string_view value = request.header("accept-encoding");
-  double gzip = -1;
-  double star = -1;
-  while (!value.empty()) {
-    const std::size_t comma = value.find(',');
-    std::string_view part = value.substr(0, comma);
-    value = comma == std::string_view::npos ? std::string_view{} : value.substr(comma + 1);
-    const std::size_t semi = part.find(';');
-    std::string_view name = part.substr(0, semi);
-    while (!name.empty() && name.front() == ' ') name.remove_prefix(1);
-    while (!name.empty() && name.back() == ' ') name.remove_suffix(1);
-    double q = 1.0;
-    if (semi != std::string_view::npos) {
-      const std::size_t eq = part.find("q=", semi);
-      if (eq != std::string_view::npos) q = std::strtod(std::string(part.substr(eq + 2)).c_str(), nullptr);
-    }
-    if (net::iequals(name, "gzip") && gzip < 0) gzip = q;
-    if (name == "*" && star < 0) star = q;
-  }
-  const double q = gzip >= 0 ? gzip : star;
-  return q > 0;
+  return net::front::choose_deflater_encoding(request.header("accept-encoding")) == net::front::DeflaterChoice::Gzip;
+}
+
+bool refuses_every_encoding(const net::Request& request) {
+  return net::front::choose_deflater_encoding(request.header("accept-encoding")) == net::front::DeflaterChoice::None;
+}
+
+net::Response not_acceptable(net::Ctx& ctx) {
+  const net::Request& request = ctx.request();
+  const std::string message = "An acceptable encoding for the requested resource " + std::string(request.target) +
+                              " could not be found.";
+  net::Response response = ctx.response(406);
+  response.add("content-type", "text/plain");
+  response.add_copy("content-length", std::to_string(message.size()));
+  response.body_view(ctx.arena().copy(message));
+  return response;
 }
 
 }  // namespace campfire::app

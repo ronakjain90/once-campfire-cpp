@@ -30,6 +30,7 @@ const db::Query<std::int64_t(std::int64_t)> kMemberIds{
   "\"users\".\"status\", \"users\".\"updated_at\""
 #define CF_MEMBER_JOIN " INNER JOIN \"memberships\" ON \"users\".\"id\" = \"memberships\".\"user_id\""
 
+const db::Query<UserRow(std::int64_t)> kRoomUsers{CF_USERS CF_MEMBER_JOIN " WHERE \"memberships\".\"room_id\" = ?"};
 const db::Query<UserRow(std::int64_t)> kActiveBots{
     CF_USERS CF_MEMBER_JOIN
     " WHERE \"memberships\".\"room_id\" = ? AND \"users\".\"status\" = 0 AND \"users\".\"role\" = 2"};
@@ -95,6 +96,10 @@ Result<std::vector<std::int64_t>> member_user_ids(db::Connection& conn, Arena& a
   auto rows = conn.all(kMemberIds, arena, room_id);
   if (!rows) return std::unexpected(rows.error());
   return std::vector<std::int64_t>(rows->begin(), rows->end());
+}
+
+Result<std::vector<User>> users(db::Connection& conn, Arena& arena, std::int64_t room_id) {
+  return users_of(conn.all(kRoomUsers, arena, room_id));
 }
 
 Result<std::vector<User>> active_bots(db::Connection& conn, Arena& arena, std::int64_t room_id) {

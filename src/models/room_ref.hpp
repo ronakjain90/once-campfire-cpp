@@ -40,6 +40,8 @@ namespace room_refs {
 // `room.memberships.pluck(:user_id)`
 [[nodiscard]] Result<std::vector<std::int64_t>> member_user_ids(db::Connection& conn, Arena& arena,
                                                                 std::int64_t room_id);
+// `room.users`
+[[nodiscard]] Result<std::vector<User>> users(db::Connection& conn, Arena& arena, std::int64_t room_id);
 // `room.users.active_bots`
 [[nodiscard]] Result<std::vector<User>> active_bots(db::Connection& conn, Arena& arena, std::int64_t room_id);
 // `room.users.where(id: ids)`

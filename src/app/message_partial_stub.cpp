@@ -33,6 +33,14 @@ void boosts(Out& out, const ViewContext&, const MessageView& message) {
   out.append_raw("\" data-stub=\"true\"></turbo-frame>");
 }
 
+void boost(Out& out, const ViewContext&, const BoostView& boost) {
+  out.append_raw("<div id=\"boost_");
+  out.append_int(boost.id);
+  out.append_raw("\" data-stub=\"true\">");
+  html_escape(out, boost.content);
+  out.append_raw("</div>\n");
+}
+
 void attachment_presentation(Out& out, const ViewContext&, const AttachmentView& attachment) {
   out.append_raw("<div data-stub=\"true\">");
   html_escape(out, attachment.filename);

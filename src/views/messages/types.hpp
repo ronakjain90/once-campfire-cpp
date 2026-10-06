@@ -102,14 +102,14 @@ struct MessageView {
   [[nodiscard]] const AttachmentView* attachment() const { return std::get_if<AttachmentView>(&content); }
   // `dom_id(message, prefix)`
   [[nodiscard]] std::string dom_id(std::string_view prefix = {}) const {
-    std::string id;
+    std::string result;
     if (!prefix.empty()) {
-      id.append(prefix);
-      id.push_back('_');
+      result.append(prefix);
+      result.push_back('_');
     }
-    id += "message_";
-    id += client_message_id;
-    return id;
+    result += "message_";
+    result += client_message_id;
+    return result;
   }
 };
 

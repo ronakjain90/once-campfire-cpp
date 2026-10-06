@@ -19,6 +19,8 @@ void message(Out& out, const ViewContext& ctx, const MessageView& message);
 void presentation(Out& out, const ViewContext& ctx, const MessageView& message);
 // `render "messages/boosts/boosts", message: message`: the boosts frame of a message.
 void boosts(Out& out, const ViewContext& ctx, const MessageView& message);
+// `render "messages/boosts/boost", boost: boost`: `messages/boosts/_boost`, whose body is `cache boost`.
+void boost(Out& out, const ViewContext& ctx, const BoostView& boost);
 // `message_attachment_presentation(message)`: the attachment of a message, as `messages/edit` shows it.
 void attachment_presentation(Out& out, const ViewContext& ctx, const AttachmentView& attachment);
 

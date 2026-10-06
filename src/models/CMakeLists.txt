@@ -9,6 +9,7 @@ campfire_library(models
     message.cpp
     room_ref.cpp
     session.cpp
+    sound.cpp
     storage_records.cpp
     user.cpp
     user_rooms.cpp

@@ -26,11 +26,13 @@ add_custom_command(
 find_package(OpenSSL REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBDEFLATE REQUIRED IMPORTED_TARGET libdeflate)
+pkg_check_modules(PCRE2 REQUIRED IMPORTED_TARGET libpcre2-8)
 
 campfire_library(app
   SOURCES
     allow_browser.cpp
     app.cpp
+    broadcasts.cpp
     compress.cpp
     concerns.cpp
     controllers/action_not_found.cpp
@@ -45,6 +47,8 @@ campfire_library(app
     finish.cpp
     fragment_cache.cpp
     health.cpp
+    message_partial_stub.cpp
+    message_presenter.cpp
     not_found.cpp
     page.cpp
     page_cache.cpp
@@ -61,8 +65,8 @@ campfire_library(app
     "${campfire_routes_cpp}"
     "${campfire_data_cpp}"
   PUBLIC_DEPS campfire_net campfire_core campfire_compat campfire_db campfire_models campfire_req campfire_views
-              campfire_assets campfire_routes
-  DEPS OpenSSL::Crypto PkgConfig::LIBDEFLATE
+              campfire_assets campfire_routes campfire_richtext campfire_storage campfire_cable
+  DEPS OpenSSL::Crypto PkgConfig::LIBDEFLATE PkgConfig::PCRE2
   WERROR)
 
 campfire_test(app

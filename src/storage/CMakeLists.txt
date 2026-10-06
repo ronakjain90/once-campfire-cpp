@@ -23,7 +23,16 @@ campfire_library(storage
 
 # Golden vectors: spec/vectors/. Fixtures: read in place from the Rust repo (51 MB, not copied).
 set(CAMPFIRE_VECTORS_DIR "${PROJECT_SOURCE_DIR}/spec/vectors" CACHE PATH "Directory of the golden vector JSON files")
-set(CAMPFIRE_FIXTURES_DIR "${PROJECT_SOURCE_DIR}/../../once-campfire-rust/reference/test/fixtures/files" CACHE PATH "Directory of the media fixture files")
+# The fixtures of the Rails app: the environment (set by bin/dev), else the Rust repo next to the
+# main checkout or next to the worktree directory.
+if(DEFINED ENV{CAMPFIRE_FIXTURES_DIR})
+  set(_campfire_fixtures "$ENV{CAMPFIRE_FIXTURES_DIR}")
+elseif(EXISTS "${PROJECT_SOURCE_DIR}/../once-campfire-rust/reference/test/fixtures/files")
+  set(_campfire_fixtures "${PROJECT_SOURCE_DIR}/../once-campfire-rust/reference/test/fixtures/files")
+else()
+  set(_campfire_fixtures "${PROJECT_SOURCE_DIR}/../../once-campfire-rust/reference/test/fixtures/files")
+endif()
+set(CAMPFIRE_FIXTURES_DIR "${_campfire_fixtures}" CACHE PATH "Directory of the media fixture files")
 
 campfire_test(storage
   SOURCES

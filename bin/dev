@@ -31,6 +31,22 @@ tty_flags() {
   if [ -t 0 ] && [ -t 1 ]; then printf '%s' "-it"; else printf '%s' "-i"; fi
 }
 
+# The media fixtures of the Rails app, read only, at the same path (src/storage tests read them).
+# The Rust repo is a sibling of the main checkout; a worktree is one level deeper.
+fixtures_dir() {
+  local d
+  for d in "$ROOT/../once-campfire-rust/reference/test/fixtures/files" \
+           "$ROOT/../../once-campfire-rust/reference/test/fixtures/files"; do
+    if [ -d "$d" ]; then (cd "$d" && pwd); return; fi
+  done
+}
+
+fixtures_mount() {
+  local d
+  d="$(fixtures_dir)"
+  if [ -n "$d" ]; then printf -- '-v %s:%s:ro -e CAMPFIRE_FIXTURES_DIR=%s' "$d" "$d" "$d"; fi
+}
+
 # Run a bash -lc script in the container. The arguments of the script are \$1, \$2, ...
 in_container() {
   local script="$1"
@@ -40,6 +56,7 @@ in_container() {
     --name "${LOWER}-dev-$$" \
     --security-opt seccomp=unconfined \
     -v "$ROOT:$ROOT" -v "$VOLUME:/build" -w "$ROOT" \
+    $(fixtures_mount) \
     -e CC=clang -e CXX=clang++ \
     "$IMAGE" bash -lc "$script" campfire-dev "$@"
 }

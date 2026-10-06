@@ -76,6 +76,7 @@ TEST_CASE("group commit: a failing write in the middle does not stop the others"
   QueueScheduler sched;
   std::vector<std::string> order;
   std::vector<Task<Result<std::int64_t>>> tasks;
+  tasks.reserve(4);
   tasks.push_back(insert_item(*db, sched, "a", &order, nullptr));
   tasks.push_back(insert_item(*db, sched, "b", &order, nullptr, true));
   tasks.push_back(insert_item(*db, sched, "c", &order, nullptr));
@@ -187,12 +188,20 @@ TEST_CASE("64 concurrent submitters") {
   constexpr int kEach = 20;
   std::atomic<int> after_calls{0};
   std::vector<std::thread> threads;
+  threads.reserve(kThreads);
   std::atomic<int> failures{0};
+  // QueueScheduler::post notifies its condition variable after it unlocks the mutex (src/core, not
+  // T7). A scheduler that is destroyed at once can race with that call. Keep the schedulers until
+  // all threads end.
+  std::mutex keep_mutex;
+  std::vector<std::unique_ptr<QueueScheduler>> keep;
   for (int t = 0; t < kThreads; ++t) {
     threads.emplace_back([&, t] {
-      QueueScheduler sched;
+      auto owned = std::make_unique<QueueScheduler>();
+      QueueScheduler& sched = *owned;
       for (int i = 0; i < kEach; ++i) {
-        auto task = [](Database& d, Scheduler& s, std::atomic<int>& calls, std::string name) -> Task<Result<std::int64_t>> {
+        auto task = [](Database& d, Scheduler& s, std::atomic<int>& calls,
+                       std::string name) -> Task<Result<std::int64_t>> {
           co_return co_await d.write(s, [&](Tx& tx) -> Result<std::int64_t> {
             if (auto r = tx.conn().exec(InsertItem, name, std::optional<std::int64_t>(1)); !r) {
               return std::unexpected(r.error());
@@ -206,6 +215,8 @@ TEST_CASE("64 concurrent submitters") {
           failures.fetch_add(1);
         }
       }
+      const std::lock_guard lock(keep_mutex);
+      keep.push_back(std::move(owned));
     });
   }
   for (auto& th : threads) {

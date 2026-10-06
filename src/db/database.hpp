@@ -75,8 +75,8 @@ struct DatabaseOptions {
 };
 
 struct DatabaseStats {
-  std::uint64_t commits = 0;           // COMMIT statements of the writer
-  std::uint64_t writes = 0;            // writes that were run, failed or not
+  std::uint64_t commits = 0;  // COMMIT statements of the writer
+  std::uint64_t writes = 0;   // writes that were run, failed or not
   std::uint64_t passive_checkpoints = 0;
   std::uint64_t restart_checkpoints = 0;
 };
@@ -99,8 +99,7 @@ struct ResultValue<std::expected<T, Error>> {
 class Database {
  public:
   // Opens the file (it is created if it is not there), starts the writer and the checkpointer.
-  [[nodiscard]] static Result<std::unique_ptr<Database>> open(const std::string& path,
-                                                              DatabaseOptions options = {});
+  [[nodiscard]] static Result<std::unique_ptr<Database>> open(const std::string& path, DatabaseOptions options = {});
   Database(const Database&) = delete;
   Database& operator=(const Database&) = delete;
   ~Database();
@@ -157,8 +156,8 @@ class Database {
   bool checkpoint_stop_ = false;
   std::mutex running_mutex_;  // held while a checkpoint runs: one at a time
 
-  int wal_pages_ = 0;     // writer thread only (set by the WAL hook)
-  int woken_at_ = 0;      // writer thread only
+  int wal_pages_ = 0;  // writer thread only (set by the WAL hook)
+  int woken_at_ = 0;   // writer thread only
 
   std::shared_mutex subscribers_mutex_;
   std::vector<std::pair<std::uint64_t, ChangeSubscriber>> subscribers_;
@@ -184,31 +183,28 @@ auto Database::write(Scheduler& scheduler, F fn)
   std::optional<Out> result;
   auto [completion, setter] = make_completion<AfterQueue>(scheduler);
   // The frame of this coroutine keeps `fn` and `result` alive: the task waits for the writer.
-  submit(Job{
-      [&fn, &result](Tx& tx) -> bool {
-        try {
-          if constexpr (detail::ResultValue<Raw>::kIsResult) {
-            result.emplace(fn(tx));
-          } else if constexpr (std::is_void_v<Raw>) {
-            fn(tx);
-            result.emplace();
-          } else {
-            result.emplace(fn(tx));
-          }
-          return result->has_value();
-        } catch (const std::exception& e) {
-          result.emplace(std::unexpected(Error{Errc::Internal, std::string("write threw: ") + e.what()}));
-        } catch (...) {
-          result.emplace(std::unexpected(Error{Errc::Internal, "write threw"}));
-        }
-        return false;
-      },
-      [&result, setter](std::optional<Error> error, AfterQueue after) {
-        if (error) {
-          result.emplace(std::unexpected(std::move(*error)));
-        }
-        setter.set_value(std::move(after));
-      }});
+  submit(Job{[&fn, &result](Tx& tx) -> bool {
+               try {
+                 if constexpr (std::is_void_v<Raw>) {
+                   fn(tx);
+                   result.emplace();
+                 } else {
+                   result.emplace(fn(tx));
+                 }
+                 return result->has_value();
+               } catch (const std::exception& e) {
+                 result.emplace(std::unexpected(Error{Errc::Internal, std::string("write threw: ") + e.what()}));
+               } catch (...) {
+                 result.emplace(std::unexpected(Error{Errc::Internal, "write threw"}));
+               }
+               return false;
+             },
+             [&result, setter](std::optional<Error> error, AfterQueue after) {
+               if (error) {
+                 result.emplace(std::unexpected(std::move(*error)));
+               }
+               setter.set_value(std::move(after));
+             }});
   AfterQueue after = co_await std::move(completion);
   for (auto& item : after) {
     try {

@@ -150,8 +150,8 @@ Status Connection::exec_sql(const std::string& sql) {
 Result<sqlite3_stmt*> Connection::prepare_slow(const QueryBase& q) {
   sqlite3_stmt* st = nullptr;
   const std::string_view sql = q.sql();
-  const int rc = sqlite3_prepare_v3(db_, sql.data(), static_cast<int>(sql.size()), SQLITE_PREPARE_PERSISTENT, &st,
-                                    nullptr);
+  const int rc =
+      sqlite3_prepare_v3(db_, sql.data(), static_cast<int>(sql.size()), SQLITE_PREPARE_PERSISTENT, &st, nullptr);
   if (rc != SQLITE_OK) {
     return std::unexpected(make_error(db_, rc, sql));
   }

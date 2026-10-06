@@ -2,7 +2,6 @@
 #pragma once
 
 #include <doctest.h>
-
 #include <unistd.h>
 
 #include <chrono>
@@ -49,8 +48,7 @@ struct ItemRow {
 
 inline const Query<void(std::string_view, std::optional<std::int64_t>)> InsertItem{
     "INSERT INTO items (name, n) VALUES (?, ?)"};
-inline const Query<void(std::int64_t, std::string_view)> BadInsertItem{
-    "INSERT INTO items (id, name) VALUES (?, ?)"};
+inline const Query<void(std::int64_t, std::string_view)> BadInsertItem{"INSERT INTO items (id, name) VALUES (?, ?)"};
 inline const Query<ItemRow(std::int64_t)> ItemById{"SELECT id, name, n FROM items WHERE id = ?"};
 inline const Query<ItemRow(std::int64_t)> ItemsAbove{"SELECT id, name, n FROM items WHERE id > ? ORDER BY id"};
 inline const Query<void(std::string_view, std::int64_t)> RenameItem{"UPDATE items SET name = ? WHERE id = ?"};

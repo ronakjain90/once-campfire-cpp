@@ -2,6 +2,7 @@
 // Usage: db_bench [directory]   (default: /var/lib/campfire-bench/t7)
 #include <chrono>
 #include <cstdio>
+#include <cstdlib>
 #include <filesystem>
 #include <thread>
 
@@ -25,7 +26,16 @@ struct Item {
 const Query<void(std::string_view, std::optional<std::int64_t>)> Insert{"INSERT INTO items (name, n) VALUES (?, ?)"};
 const Query<Item(std::int64_t)> Forty{"SELECT id, name, n FROM items WHERE id > ? ORDER BY id LIMIT 40"};
 
-double seconds(Clock::time_point a) { return std::chrono::duration<double>(Clock::now() - a).count(); }
+void must(bool ok) {
+  if (!ok) {
+    std::puts("database error");
+    std::exit(1);
+  }
+}
+
+double seconds(Clock::time_point a) {
+  return std::chrono::duration<double>(Clock::now() - a).count();
+}
 
 double reads_per_second(Connection& conn, DependencyScope* scope, int iterations) {
   Arena arena;
@@ -64,10 +74,11 @@ double writes_per_second(const std::string& path, std::size_t group, int threads
   auto db = Database::open(path, options);
   {
     auto conn = Connection::open(path, Role::Writer);
-    (void)conn->exec_sql("CREATE TABLE items (id INTEGER PRIMARY KEY, name TEXT NOT NULL, n INTEGER)");
+    must(conn->exec_sql("CREATE TABLE items (id INTEGER PRIMARY KEY, name TEXT NOT NULL, n INTEGER)").has_value());
   }
   const auto start = Clock::now();
   std::vector<std::thread> pool;
+  pool.reserve(static_cast<std::size_t>(threads));
   for (int t = 0; t < threads; ++t) {
     pool.emplace_back([&] {
       QueueScheduler sched;
@@ -98,12 +109,12 @@ int main(int argc, char** argv) {
   std::filesystem::remove(path);
   {
     auto conn = Connection::open(path, Role::Writer);
-    (void)conn->exec_sql("CREATE TABLE items (id INTEGER PRIMARY KEY, name TEXT NOT NULL, n INTEGER)");
-    (void)conn->exec_sql("BEGIN");
+    must(conn->exec_sql("CREATE TABLE items (id INTEGER PRIMARY KEY, name TEXT NOT NULL, n INTEGER)").has_value());
+    must(conn->exec_sql("BEGIN").has_value());
     for (int i = 0; i < 200; ++i) {
-      (void)conn->exec(Insert, "item name of some typical length", std::optional<std::int64_t>(i));
+      must(conn->exec(Insert, "item name of some typical length", std::optional<std::int64_t>(i)).has_value());
     }
-    (void)conn->exec_sql("COMMIT");
+    must(conn->exec_sql("COMMIT").has_value());
   }
   auto reader = Connection::open(path, Role::Reader);
   (void)reads_per_second(*reader, nullptr, 20000);  // warm up
@@ -115,8 +126,8 @@ int main(int argc, char** argv) {
     plain = std::max(plain, reads_per_second(*reader, nullptr, 100000));
     tracked = std::max(tracked, reads_per_second(*reader, &scope, 100000));
   }
-  std::printf("  untracked: %.0f reads/s\n  tracked:   %.0f reads/s\n  dependency tracking overhead: %.1f %%\n",
-              plain, tracked, (plain / tracked - 1.0) * 100.0);
+  std::printf("  untracked: %.0f reads/s\n  tracked:   %.0f reads/s\n  dependency tracking overhead: %.1f %%\n", plain,
+              tracked, (plain / tracked - 1.0) * 100.0);
   std::puts("writes (VM-local file, journal_mode=wal, synchronous=normal):");
   const double grouped = writes_per_second(path, 64, 64, 200);
   std::printf("  group commit (64 submitters): %.0f writes/s\n", grouped);

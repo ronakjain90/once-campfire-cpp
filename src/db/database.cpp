@@ -67,20 +67,16 @@ int Database::wal_hook(void* self, sqlite3*, const char*, int pages) noexcept {
 }
 
 void Database::submit(Job job) {
-  bool rejected = false;
   {
-    const std::lock_guard lock(queue_mutex_);
-    if (stopping_) {
-      rejected = true;
-    } else {
+    std::unique_lock lock(queue_mutex_);
+    if (!stopping_) {
       queue_.push_back(std::move(job));
+      lock.unlock();
+      queue_ready_.notify_one();
+      return;
     }
   }
-  if (rejected) {
-    job.finish(Error{Errc::Internal, "the database is closing"}, {});
-    return;
-  }
-  queue_ready_.notify_one();
+  job.finish(Error{Errc::Internal, "the database is closing"}, {});
 }
 
 std::uint64_t Database::subscribe(ChangeSubscriber fn) {

@@ -108,7 +108,7 @@ its requests in the diff sweep pass.
 | T9 | paused (usage limit, 2026-10-06 02:45) | `task/T9` | 1 commit. Load path code in progress. |
 | T11 | paused (usage limit, 2026-10-06 02:45) | `task/T11` | 1 commit, uncommitted work. |
 | T12 | paused (usage limit, 2026-10-06 02:45) | `task/T12` | 1 commit. libvips wrapper in progress. |
-| T13 | paused (usage limit, 2026-10-06 02:45) | `task/T13` | 1 commit. Main script and launcher in progress. |
+| T13 | in progress (fresh Sonnet agent, 09:50) | `task/T13` | |
 | T10 | in progress (Sonnet) | `task/T10` | |
 
 ## Restart rule

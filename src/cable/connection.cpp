@@ -96,6 +96,11 @@ void Connection::on_write_stall() {
   transport_.close(std::chrono::milliseconds(0));
 }
 
+void Connection::on_lagged() {
+  pending_.clear();  // Connection::Base#close without a reason: the client reconnects.
+  disconnect(std::nullopt, "true");
+}
+
 void Connection::on_closed() {
   if (cleaned_) return;
   cleaned_ = true;

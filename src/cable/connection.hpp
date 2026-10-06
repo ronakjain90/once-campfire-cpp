@@ -57,6 +57,9 @@ class Connection final : private Sink, private Peer {
   void on_data(std::string_view bytes);
   // The transport detected that a write did not progress for kWriteStallSeconds.
   void on_write_stall();
+  // The transport has more unsent bytes than it allows (the client does not read). Rust: a stream
+  // that lags. The connection sends {"reason":null,"reconnect":true} and closes.
+  void on_lagged();
   // The transport closed. This runs handle_close: it unsubscribes every channel.
   void on_closed();
 

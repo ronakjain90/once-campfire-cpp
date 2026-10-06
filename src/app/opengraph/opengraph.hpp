@@ -23,7 +23,7 @@
 namespace campfire::app::opengraph {
 
 inline constexpr std::chrono::seconds kUnfurlDeadline{10};
-inline constexpr std::size_t kMaxBodySize = 5 * 1024 * 1024;
+inline constexpr std::size_t kMaxBodySize = std::size_t{5} * 1024 * 1024;
 inline constexpr std::size_t kMaxRedirects = 10;
 inline constexpr std::size_t kMaxConcurrentUnfurls = 16;
 

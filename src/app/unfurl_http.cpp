@@ -25,7 +25,7 @@ namespace {
 
 // The `Accept-Encoding` that `Net::HTTP` adds to a request whose response has a body, and then decodes itself.
 constexpr std::string_view kAcceptEncoding = "gzip;q=1.0,deflate;q=0.6,identity;q=0.3";
-constexpr std::size_t kMaxHead = 64 * 1024;
+constexpr std::size_t kMaxHead = std::size_t{64} * 1024;
 
 Error timeout_error(std::string message) {
   return Error{Errc::Timeout, std::move(message)};

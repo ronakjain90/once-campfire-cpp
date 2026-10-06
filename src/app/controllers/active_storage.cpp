@@ -31,7 +31,7 @@ namespace {
 namespace content_types = storage::content_types;
 
 // `ActiveStorage.service_urls_expire_in`
-constexpr std::int64_t kServiceUrlsExpireIn = 5 * 60;
+constexpr std::int64_t kServiceUrlsExpireIn = std::int64_t{5} * 60;
 // `http_cache_forever`: `expires_in 100.years`
 constexpr std::uint64_t kHundredYears = 3'155'695'200;
 // The most that the server keeps of a request body (net/options.hpp, `max_buffered_body`).
@@ -153,11 +153,22 @@ Flow<net::Response> send_blob_byte_range_data(Rq& rq, const storage::Blob& blob,
     const std::string boundary = random_boundary();
     content_type = "multipart/byteranges; boundary=" + boundary;
     for (const auto& r : *ranges) {
-      body += "\r\n--" + boundary + "\r\nContent-Type: " + content_type_for_serving + "\r\nContent-Range: bytes " +
-              std::to_string(r.first) + "-" + std::to_string(r.last) + "/" + size_text + "\r\n\r\n";
+      body += "\r\n--";
+      body += boundary;
+      body += "\r\nContent-Type: ";
+      body += content_type_for_serving;
+      body += "\r\nContent-Range: bytes ";
+      body += std::to_string(r.first);
+      body += "-";
+      body += std::to_string(r.last);
+      body += "/";
+      body += size_text;
+      body += "\r\n\r\n";
       if (auto done = read(r); !done) return fail_internal(done.error().message);
     }
-    body += "\r\n--" + boundary + "--\r\n";
+    body += "\r\n--";
+    body += boundary;
+    body += "--\r\n";
   }
   net::Response response = rq.send_data(body, content_type, std::nullopt, std::nullopt, 206);
   add_disposition(response, content_types::forced_disposition(blob.type()).value_or("inline"), blob);
@@ -181,7 +192,7 @@ Task<Flow<net::Response>> blobs_proxy(Rq& rq) {
     co_return std::unexpected(std::move(verified.error()));
   auto blob = set_blob(rq);
   if (!blob) co_return std::unexpected(std::move(blob.error()));
-  if (const std::string_view range = rq.request.header("range"); compat::strip(range).size() != 0) {
+  if (const std::string_view range = rq.request.header("range"); !compat::strip(range).empty()) {
     co_return send_blob_byte_range_data(rq, *blob, range);
   }
   if (auto fresh = http_cache_forever(rq)) co_return std::move(*fresh);

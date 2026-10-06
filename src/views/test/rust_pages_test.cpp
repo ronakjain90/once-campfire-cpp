@@ -162,3 +162,38 @@ TEST_CASE("rust pages: closed room forms") {
     f.check(parts);
   }
 }
+
+TEST_CASE("rust pages: direct room pages") {
+  {
+    const Fixture f("rooms_directs_new");
+    LayoutParts parts;
+    rooms::directs_new(parts, f.ctx);
+    f.check(parts);
+  }
+  {
+    const Fixture f("rooms_directs_edit");
+    DirectEditView edit;
+    edit.room_id = integer(f.input(), "room_id");
+    edit.display_name = str(f.input(), "display_name");
+    edit.users = users_of(*f.input().find("users"));
+    LayoutParts parts;
+    std::string title;
+    rooms::directs_edit(parts, title, f.ctx, edit);
+    f.check(parts);
+  }
+}
+
+TEST_CASE("rust pages: involvement frame") {
+  for (const char* name : {"rooms_involvements_show", "rooms_involvements_show_direct"}) {
+    CAPTURE(name);
+    const Fixture f(name);
+    InvolvementView view;
+    view.room_id = integer(f.input(), "room_id");
+    const std::string kind = str(f.input(), "kind");
+    view.kind = kind == "open" ? RoomKind::Open : kind == "closed" ? RoomKind::Closed : RoomKind::Direct;
+    view.involvement = str(f.input(), "involvement");
+    Out out;
+    rooms::involvements::show(out, f.ctx, view);
+    CHECK(out.to_string() == f.expected);
+  }
+}

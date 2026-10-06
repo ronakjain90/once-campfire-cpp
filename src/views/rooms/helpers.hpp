@@ -16,6 +16,12 @@ namespace campfire::views::helpers {
 void room_form(Out& out, const ViewContext& ctx, const FormRoom& room, bool can_administer, RoomKind kind,
                const std::function<void(Out&)>& body);
 
+// `humanize_involvement`, `next_involvement_for(room, involvement:)`.
+[[nodiscard]] std::string_view humanize_involvement(std::string_view involvement);
+[[nodiscard]] std::string_view next_involvement(bool direct, std::string_view involvement);
+// `button_to_change_involvement(room, involvement)`.
+void button_to_change_involvement(Out& out, const ViewContext& ctx, const InvolvementView& view);
+
 // `String#downcase` for the ASCII letters (the data-value of a user).
 [[nodiscard]] std::string lowercase(std::string_view text);
 

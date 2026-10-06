@@ -1,0 +1,7 @@
+{# reference/app/views/rooms/involvements/show.html.erb, with Rooms::InvolvementsHelper #}
+{% include views/rooms/helpers.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const InvolvementView& involvement %}
+<turbo-frame data-controller="turbo-frame" data-action="notifications:ready@window-&gt;turbo-frame#load" data-turbo-frame-url-param="{{ routes::room_involvement(involvement.room_id) }}" id="{{ dom_id(room_param_key(involvement.kind), std::to_string(involvement.room_id), "involvement") }}">
+  {% call button_to_change_involvement(ctx, involvement) %}
+</turbo-frame>

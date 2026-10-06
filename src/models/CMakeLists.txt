@@ -3,14 +3,19 @@
 campfire_library(models
   SOURCES
     account.cpp
+    account_admin.cpp
+    attachments.cpp
     ban.cpp
     first_run.cpp
+    hooks.cpp
     membership.cpp
+    push_subscription.cpp
     room.cpp
     session.cpp
     user.cpp
+    user_admin.cpp
     user_rooms.cpp
-  PUBLIC_DEPS campfire_core campfire_db campfire_req
+  PUBLIC_DEPS campfire_core campfire_db campfire_req campfire_compat campfire_storage
   WERROR)
 
 campfire_test(models

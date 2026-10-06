@@ -87,6 +87,7 @@ campfire_test(app
     tests/signin_area_test.cpp
     tests/user_agent_test.cpp
     tests/rooms_test.cpp
+    tests/room_pages_test.cpp
   WERROR)
 target_compile_definitions(test_app PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")
 

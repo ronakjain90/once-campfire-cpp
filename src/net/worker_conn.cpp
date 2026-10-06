@@ -88,6 +88,21 @@ bool Worker::fill(Conn& c) {
   return true;
 }
 
+bool Worker::fill_body(Conn& c) {
+  const char* before = c.rbuf.data();
+  const bool more = fill(c);
+  if (c.rbuf.data() != before && c.state == ConnState::Body) {
+    // The views of the request (method, path, headers) pointed into the old buffer.
+    c.arena->reset();
+    const HeadResult again = parse_head(std::string_view(c.rbuf.data(), c.rbuf.size()), 0, *c.arena, options_.parser, c.head);
+    if (again.status != HeadStatus::Ok) {
+      reply_error(c, 400);
+      return false;
+    }
+  }
+  return more;
+}
+
 bool Worker::step_head(Conn& c) {
   if (c.h2c) {
     // `Protocol::Auto`: the first bytes decide between HTTP/1.1 and HTTP/2 (the preface).
@@ -133,7 +148,7 @@ bool Worker::step_body(Conn& c) {
       const std::size_t total = head_size + static_cast<std::size_t>(c.head.content_length);
       if (c.rbuf.size() < total) {
         if (c.head.expect_continue && !c.continue_sent) send_continue(c);
-        return c.readable && fill(c);
+        return c.readable && fill_body(c);
       }
       c.body_size = static_cast<std::size_t>(c.head.content_length);
       break;
@@ -162,7 +177,7 @@ bool Worker::step_body(Conn& c) {
         }
       }
       if (c.head.expect_continue && !c.continue_sent) send_continue(c);
-      return c.readable && fill(c);
+      return c.readable && fill_body(c);
     }
   }
   c.head.request.body = std::string_view(c.rbuf.data() + head_size, c.body_size);

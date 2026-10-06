@@ -1,0 +1,17 @@
+# libvips, glib and the image codec libraries are not built with TSan. TSan does not see how
+# libvips hands memory between its worker threads (glib queues, semaphores), so it reports false
+# races in malloc, free, memcpy and memset. Races in our own code stay visible when no frame of
+# these libraries is in the stack.
+called_from_lib:libvips.so.42
+called_from_lib:libglib-2.0.so.0
+called_from_lib:libgobject-2.0.so.0
+called_from_lib:libjpeg.so.62
+called_from_lib:libspng.so.0
+called_from_lib:libpng16.so.16
+called_from_lib:libwebp.so.7
+called_from_lib:libwebpmux.so.3
+called_from_lib:libwebpdemux.so.2
+called_from_lib:libz.so.1
+called_from_lib:libtiff.so.6
+called_from_lib:libheif.so.1
+called_from_lib:libhwy.so.1

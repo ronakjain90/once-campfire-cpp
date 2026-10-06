@@ -46,6 +46,26 @@ TEST_CASE("users/sidebars/show equals the page of Rails") {
   expected = std::regex_replace(
       expected, std::regex(R"re(<input type="hidden" name="authenticity_token" value="[^"]*" />)re"), "");
 
+  // The Rust port prints no newline after the last item of the two lists (`{% endfor %}        </div>`), where the
+  // Rails page has one. The diff sweep compares with Rust, so the template follows Rust.
+  for (const std::string end : {"</a>\n        </div>", "</form>\n        </div>"}) {
+    const std::size_t at = expected.find(end);
+    REQUIRE(at != std::string::npos);
+    expected.erase(at + end.find('\n'), 1);
+  }
+
+  {
+    // The same for the shared rooms: each one is the indentation and the link, with no newline after it.
+    const std::size_t from = expected.find("<div id=\"shared_rooms\"");
+    REQUIRE(from != std::string::npos);
+    const std::size_t to = expected.find("      </div>", from);
+    std::string block = expected.substr(from, to - from);
+    for (std::size_t at = block.find("</a>\n"); at != std::string::npos; at = block.find("</a>\n", at + 4)) {
+      block.erase(at + 4, 1);
+    }
+    expected = expected.substr(0, from) + block + expected.substr(to);
+  }
+
   std::vector<std::string> avatars;
   const std::regex avatar_re(R"re(src="(/users/[^"]*)")re");
   for (auto it = std::sregex_iterator(golden.begin(), golden.end(), avatar_re); it != std::sregex_iterator(); ++it) {

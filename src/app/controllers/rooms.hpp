@@ -25,6 +25,8 @@ namespace campfire::app::controllers {
 // `remember_last_room_visited`: `cookies.permanent[:last_room] = @room.id`.
 void remember_last_room_visited(Rq& rq, const models::Room& room);
 
+// The implicit render of an action whose only template is HTML: a request that does not accept HTML is a 406.
+[[nodiscard]] Flow<void> ensure_html(Rq& rq);
 // `ensure_can_administer`: `head :forbidden unless Current.user.can_administer?(@room)`.
 [[nodiscard]] Flow<void> ensure_can_administer(Rq& rq, const models::Room& room);
 // `ensure_permission_to_create_rooms`.
@@ -48,6 +50,8 @@ void remember_last_room_visited(Rq& rq, const models::Room& room);
 // A route whose action Rails does not have (`AbstractController::ActionNotFound`), and the one whose controller
 // does not exist: both are a 404 before any callback.
 [[nodiscard]] Task<Flow<net::Response>> action_not_found(Rq& rq);
+// `GET /rooms/:room_id/settings`: the route has no controller (`uninitialized constant`): a 500.
+[[nodiscard]] Task<Flow<net::Response>> missing_controller(Rq& rq);
 // `destroy` that Opens and Closeds inherit without `set_room`: `nil.destroy` raises.
 [[nodiscard]] Task<Flow<net::Response>> destroy_without_room(Rq& rq);
 

@@ -2,7 +2,7 @@
 # the order of the Rails routes: `/rooms/:id` comes before `/rooms/opens`, so `GET /rooms/opens` is `rooms#show` with
 # the id "opens". An action that Rails does not have is `rooms::action_not_found`.
 GET    /rooms/:room_id/refresh(.:format)        rooms_refreshes::show
-GET    /rooms/:room_id/settings(.:format)       rooms::action_not_found
+GET    /rooms/:room_id/settings(.:format)       rooms::missing_controller
 GET    /rooms/:room_id/involvement(.:format)    rooms_involvements::show
 PATCH  /rooms/:room_id/involvement(.:format)    rooms_involvements::update
 PUT    /rooms/:room_id/involvement(.:format)    rooms_involvements::update

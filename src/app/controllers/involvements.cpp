@@ -44,11 +44,10 @@ views::RoomKind kind_of(const models::Room& room) {
 Task<Flow<net::Response>> involvements_show(Rq& rq) {
   auto before = co_await concerns::before_actions(rq, concerns::Before{});
   if (!before) co_return std::unexpected(std::move(before.error()));
-  const req::Format offered[] = {&req::mime::HTML};
-  if (auto format = rq.respond_to(offered); !format) co_return std::unexpected(std::move(format.error()));
+  db::DependencyScope& deps = rq.track();
   auto scoped = set_scoped_room(rq);
   if (!scoped) co_return std::unexpected(std::move(scoped.error()));
-  db::DependencyScope& deps = rq.track();
+  if (auto format = ensure_html(rq); !format) co_return std::unexpected(std::move(format.error()));
   auto layout = load_layout(rq);
   if (!layout) co_return std::unexpected(std::move(layout.error()));
   views::InvolvementView involvement;

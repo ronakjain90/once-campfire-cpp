@@ -25,6 +25,9 @@ struct FrontState {
   std::shared_ptr<const CachedResponse> hit;     // the entry that answers the request
   std::shared_ptr<const CachedResponse> stored;  // the entry that this request made
   std::optional<Variant> variant;
+  // The key that `begin` looked up. A response that is stored goes under it (Rust: the `key` of
+  // `cache_handler.go`, which a variant mismatch makes the longer one).
+  std::string key;
 };
 
 class Front {

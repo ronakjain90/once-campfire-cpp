@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include <cerrno>
+#include <csignal>
 #include <cstring>
 #include <string>
 
@@ -135,6 +136,8 @@ std::size_t cpuset_size() noexcept {
 Server::Server(ServerOptions options, App app) : options_(std::move(options)), app_(app) {
   if (options_.front_headers && !options_.front) options_.front = std::make_shared<front::Front>(FrontConfig{});
   if (!options_.front_headers) options_.front.reset();
+  // TLS_DOMAIN (or a TlsServer that a test makes) means the HTTPS port listens (Rust: front.rs).
+  if (options_.tls) options_.listen_https = true;
 }
 
 Server::~Server() {
@@ -143,6 +146,9 @@ Server::~Server() {
 
 Status Server::start() {
   if (!workers_.empty()) return fail(Errc::Internal, "the server is already started");
+  // A write to a socket that the peer closed must not end the process (Rust: Tokio ignores
+  // SIGPIPE; `main` does the same for the app). TLS writes cannot pass MSG_NOSIGNAL.
+  std::signal(SIGPIPE, SIG_IGN);
   const std::size_t count = options_.workers != 0 ? options_.workers : cpuset_size();
   std::vector<std::unique_ptr<Worker>> workers;
   std::uint16_t http_port = options_.http_port;

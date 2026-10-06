@@ -47,6 +47,7 @@ struct H2Stream {
   std::string method_text;
   std::string target;
   std::string body;       // the DATA frames of the request
+  std::size_t send_at = 0;
   std::string send_body;  // the body of the response, while nghttp2 sends it
 
   std::unique_ptr<Arena> arena;
@@ -63,13 +64,14 @@ struct H2Stream {
 // socket (plain or TLS).
 class H2Session {
  public:
-  H2Session(Worker& worker, Conn& conn, bool prior_knowledge);
+  H2Session(Worker& worker, Conn& conn);
   ~H2Session();
   H2Session(const H2Session&) = delete;
   H2Session& operator=(const H2Session&) = delete;
 
-  // Gives bytes to nghttp2. False if the session ended with an error.
-  [[nodiscard]] bool receive(std::string_view bytes);
+  // Gives bytes to nghttp2. Returns the number of bytes it used, or -1 if the session ended with
+  // an error. A value smaller than the length means a part of a frame stays for the next call.
+  [[nodiscard]] ssize_t receive(std::string_view bytes);
   // Makes every frame that nghttp2 has, then writes as many as the socket takes. `wrote` is the
   // number of bytes that reached the socket.
   bool flush(std::size_t& wrote);
@@ -94,8 +96,7 @@ class H2Session {
   int on_data_chunk(std::int32_t id, const std::uint8_t* bytes, std::size_t length);
   int on_frame_recv(const nghttp2_frame& frame);
   int on_stream_close(std::int32_t id);
-  ssize_t send_callback(const std::uint8_t* data, std::size_t length);
-  ssize_t read_data(std::uint8_t* data, std::size_t length, std::uint32_t* data_flags);
+  static ssize_t read_data(H2Stream& stream, std::uint8_t* data, std::size_t length, std::uint32_t* data_flags);
 
   [[nodiscard]] Conn& conn() const noexcept { return *conn_; }
   [[nodiscard]] bool broken() const noexcept { return broken_; }
@@ -114,11 +115,6 @@ class H2Session {
   std::unordered_map<std::int32_t, std::unique_ptr<H2Stream>> streams_;
   std::string out_;  // the frames that nghttp2 made, waiting for the socket
   std::size_t limit_ = 0;
-  std::string field_name_;  // the header field that is in parts
-  std::string field_value_;
-  std::string_view data_view_;  // the body that nghttp2 sends now
-  std::size_t data_at_ = 0;
-  std::int32_t data_stream_ = 0;
   std::int32_t last_stream_ = 0;
   bool broken_ = false;
 };

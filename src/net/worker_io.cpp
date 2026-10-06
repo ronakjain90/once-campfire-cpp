@@ -120,7 +120,7 @@ bool Worker::step_handshake(Conn& c) {
       return false;
     }
     if (front::TlsServer::protocol(c.ssl.get()) == "h2") {
-      h2_start(c, false);
+      h2_start(c);
       return true;
     }
     c.state = ConnState::Head;
@@ -141,7 +141,7 @@ bool Worker::step_handshake(Conn& c) {
     arm(c, 100, now_ms_, kTimerHandshake);
     return false;
   }
-  log_debug("http: TLS handshake error remote={}: {}", c.remote, ssl_error_text());
+  log_debug("http: TLS handshake error remote={} reason={} error={}", c.remote, reason, ssl_error_text());
   close_conn(c);
   return false;
 }

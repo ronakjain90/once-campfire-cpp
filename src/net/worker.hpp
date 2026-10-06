@@ -86,7 +86,7 @@ class Worker final : public Scheduler {
   void shutdown_write(Conn& c);
 
   // The HTTP/2 code (worker_h2.cpp) calls these.
-  void h2_start(Conn& c, bool prior_knowledge);
+  void h2_start(Conn& c);
   bool h2_step(Conn& c);
   void h2_on_timer(Conn& c);
   void h2_begin_request(Conn& c, H2Stream& stream);

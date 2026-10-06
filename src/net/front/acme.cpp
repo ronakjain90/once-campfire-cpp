@@ -133,6 +133,13 @@ CertManager::State CertManager::certificate(std::string_view server_name, std::s
     error = "acme/autocert: host \"" + name + "\" not configured in HostWhitelist";
     return State::Failed;
   }
+  // `GetCertificate` reads the cache file itself, so a restart serves the stored certificate
+  // without asking the CA.
+  if (auto cached = read_cached(name)) {
+    install(name, std::move(cached));
+    out = loaded(name);
+    return State::Ready;
+  }
   const std::lock_guard lock(work_mutex_);
   const auto now = std::chrono::steady_clock::now();
   if (const auto it = attempts_.find(name); it != attempts_.end()) {

@@ -181,10 +181,11 @@ void Worker::handle_event(void* tag, std::uint32_t events) {
   }
   if (value == kTagHttp || value == kTagTarget || value == kTagHttps) {
     if (!stopping_.load()) {
+      // The front owns the HTTP and HTTPS ports; only TARGET_PORT is the bare app.
       on_accept(value == kTagHttp     ? http_listener_
                 : value == kTagTarget ? target_listener_
                                       : https_listener_,
-                value == kTagHttp, value == kTagHttps);
+                value != kTagTarget, value == kTagHttps);
     }
     return;
   }
@@ -210,6 +211,7 @@ void Worker::on_accept(int listener_fd, bool via_front, bool tls) {
     Conn& c = *conn;
     c.fd = fd;
     c.via_front = via_front;
+    c.tls = tls;
     c.timer.owner = &c;
     c.accepted_ms = now_ms_;
     // The text of the peer address in canonical form: an IPv4-mapped IPv6 address is IPv4.

@@ -48,6 +48,8 @@ add_custom_command(
 
 campfire_test(net
   SOURCES
+    tests/front_test.cpp
+    tests/h2_test.cpp
     tests/misc_test.cpp
     tests/parser_test.cpp
     tests/router_test.cpp

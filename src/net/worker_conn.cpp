@@ -84,12 +84,13 @@ bool Worker::fill(Conn& c) {
 }
 
 bool Worker::step_head(Conn& c) {
+  log_info("step_head h2c={} rbuf={}", c.h2c, c.rbuf.size());
   if (c.h2c) {
     // `Protocol::Auto`: the first bytes decide between HTTP/1.1 and HTTP/2 (the preface).
     const std::size_t compared = std::min(c.rbuf.size(), kH2Preface.size());
     if (std::string_view(c.rbuf.data(), compared) == kH2Preface.substr(0, compared)) {
       if (c.rbuf.size() < kH2Preface.size()) return c.readable && fill(c);
-      h2_start(c, true);
+      h2_start(c);
       return true;
     }
     c.h2c = false;

@@ -82,10 +82,14 @@ void Front::begin(FrontState& state, const Request& request) const {
   state.variant.emplace(request);
   Variant& variant = *state.variant;
   const auto now = CacheClock::now();
-  std::shared_ptr<const CachedResponse> found = cache_->get(variant.cache_key(), now);
+  state.key = std::string(variant.cache_key());
+  std::shared_ptr<const CachedResponse> found = cache_->get(state.key, now);
   if (found) {
     variant.set_response_vary(found->header("vary"));
-    if (!variant.matches(found->variant)) found = cache_->get(variant.cache_key(), now);
+    if (!variant.matches(found->variant)) {
+      state.key = std::string(variant.cache_key());
+      found = cache_->get(state.key, now);
+    }
   }
   if (found) {
     state.status = CacheStatus::Hit;
@@ -227,12 +231,11 @@ void Front::finish(FrontState& state, const Request& request, Response& response
         if (!head) response.body_append_to(entry->body);
         state.variant->set_response_vary(first_value(response, "vary"));
         entry->variant = state.variant->variant_headers();
-        // Thruster keys the entry with the key that has no `vary` names (Rust: `key` is made before
-        // `set_response_headers`).
-        const std::string key(state.variant->base_key());
+        // The entry goes under the key that the lookup used (Rust: the `key` of `cache_handler.go`,
+        // which a variant mismatch made longer before anything was stored).
         const auto now = CacheClock::now();
         const std::shared_ptr<const CachedResponse> shared = entry;
-        if (cache_->set(key, shared, now + *lifetime, now)) state.stored = shared;
+        if (cache_->set(state.key, shared, now + *lifetime, now)) state.stored = shared;
       }
       insert_header(response, "x-cache", "miss");
       if (!response.has("vary")) response.add("vary", "Accept-Encoding");

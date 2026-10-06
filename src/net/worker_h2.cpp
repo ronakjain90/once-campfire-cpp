@@ -59,7 +59,7 @@ bool bodiless(const Response& response) {
 
 }  // namespace
 
-H2Session::H2Session(Worker& worker, Conn& conn, bool prior_knowledge) : worker_(worker), conn_(&conn) {
+H2Session::H2Session(Worker& worker, Conn& conn) : worker_(worker), conn_(&conn) {
   nghttp2_session_callbacks* raw = nullptr;
   if (nghttp2_session_callbacks_new(&raw) != 0 || raw == nullptr) {
     broken_ = true;
@@ -88,9 +88,10 @@ H2Session::H2Session(Worker& worker, Conn& conn, bool prior_knowledge) : worker_
       callbacks_, [](nghttp2_session*, std::int32_t id, std::uint32_t, void* data) -> int {
         return static_cast<H2Session*>(data)->on_stream_close(id);
       });
-  nghttp2_session_callbacks_set_send_callback(
-      callbacks_, [](nghttp2_session*, const std::uint8_t* data, std::size_t length, int, void* user_data) -> ssize_t {
-        return static_cast<H2Session*>(user_data)->send_callback(data, length);
+  nghttp2_session_callbacks_set_on_invalid_frame_recv_callback(
+      callbacks_,
+      [](nghttp2_session*, const nghttp2_frame* frame, int lib_error_code, void*) -> int {
+        return 0;
       });
 
   const nghttp2_settings_entry settings[] = {
@@ -104,10 +105,6 @@ H2Session::H2Session(Worker& worker, Conn& conn, bool prior_knowledge) : worker_
   }
   session_ = session;
   queue_settings(settings, sizeof settings / sizeof settings[0]);
-  if (prior_knowledge) {
-    // H2C_ENABLED: the client speaks HTTP/2 with no negotiation, so its preface is the first bytes.
-    [[maybe_unused]] const bool got = receive(kH2Preface);
-  }
   std::size_t wrote = 0;
   flush(wrote);
 }
@@ -117,37 +114,35 @@ H2Session::~H2Session() {
   if (callbacks_ != nullptr) nghttp2_session_callbacks_del(callbacks_);
 }
 
-ssize_t H2Session::send_callback(const std::uint8_t* data, std::size_t length) {
-  out_.append(reinterpret_cast<const char*>(data), length);
-  return static_cast<ssize_t>(length);
-}
-
 void H2Session::queue_settings(const nghttp2_settings_entry* settings, std::size_t count) {
   if (session_ == nullptr) return;
   [[maybe_unused]] const int sent = nghttp2_submit_settings(session_, NGHTTP2_FLAG_NONE, settings, count);
 }
 
-bool H2Session::receive(std::string_view bytes) {
-  if (broken_ || session_ == nullptr) return false;
+ssize_t H2Session::receive(std::string_view bytes) {
+  if (broken_ || session_ == nullptr) return -1;
   const ssize_t used =
       nghttp2_session_mem_recv(session_, reinterpret_cast<const std::uint8_t*>(bytes.data()), bytes.size());
   if (used < 0) {
     on_error("mem_recv", static_cast<int>(used));
-    return false;
+    return -1;
   }
-  return static_cast<std::size_t>(used) == bytes.size();
+  return used;
 }
 
 bool H2Session::flush(std::size_t& wrote) {
   wrote = 0;
   if (session_ == nullptr) return false;
+  // nghttp2 1.64 hands out the bytes itself (`mem_send2`), so no send callback is needed.
   while (true) {
-    const ssize_t n = nghttp2_session_mem_send(session_, nullptr);
+    const std::uint8_t* frame = nullptr;
+    const ssize_t n = nghttp2_session_mem_send2(session_, &frame);
     if (n < 0) {
       on_error("mem_send", static_cast<int>(n));
       return false;
     }
     if (n == 0) break;
+    out_.append(reinterpret_cast<const char*>(frame), static_cast<std::size_t>(n));
   }
   while (limit_ < out_.size()) {
     std::size_t put = 0;
@@ -212,14 +207,14 @@ int H2Session::on_begin_headers(const nghttp2_frame& frame) {
 
 int H2Session::on_header(const std::uint8_t* name, std::size_t name_len, const std::uint8_t* value,
                          std::size_t value_len, std::uint8_t flags) {
-  if (name != nullptr) {
-    field_name_.assign(reinterpret_cast<const char*>(name), name_len);
-    field_value_.clear();
-  }
-  field_value_.append(reinterpret_cast<const char*>(value), value_len);
-  if ((flags & NGHTTP2_FLAG_END_HEADERS) == 0) return 0;  // the field is in parts
+  (void)flags;  // NGHTTP2_NV_FLAG_*: it says how to forward the field, not that the head ended
+  // nghttp2 gives one complete name/value pair for each call (CONTINUATIONs are transparent),
+  // and it calls on_frame_recv after the last pair of the frame.
   H2Stream* stream = find(last_stream_);
-  if (stream != nullptr) stream->fields.emplace_back(field_name_, field_value_);
+  if (stream != nullptr) {
+    stream->fields.emplace_back(std::string(reinterpret_cast<const char*>(name), name_len),
+                                std::string(reinterpret_cast<const char*>(value), value_len));
+  }
   return 0;
 }
 
@@ -354,6 +349,11 @@ void H2Session::answer(H2Stream& stream, Response&& response) {
     char buffer[32];
     response.add_copy("date", http_date_now(buffer));
   }
+  if (conn_->via_front && worker_.options().front) {
+    worker_.options().front->finish(stream.front_state, stream.request, response);
+  } else {
+    suppress_bodiless_headers(response);
+  }
   if (session_ == nullptr) return;
   const std::size_t body_size = bodiless(response) ? 0 : response.body_size();
   const bool no_body = stream.request.method == Method::Head || body_size == 0;
@@ -390,15 +390,13 @@ void H2Session::answer(H2Stream& stream, Response&& response) {
   stream.send_body.clear();
   if (!no_body) {
     response.body_append_to(stream.send_body);
-    data_view_ = stream.send_body;
-    data_at_ = 0;
-    data_stream_ = stream.id;
+    stream.send_at = 0;
   }
   nghttp2_data_provider provider{};
-  provider.source.ptr = this;
+  provider.source.ptr = &stream;
   provider.read_callback = [](nghttp2_session*, std::int32_t, std::uint8_t* data, std::size_t length,
                               std::uint32_t* data_flags, nghttp2_data_source* source, void*) -> ssize_t {
-    return static_cast<H2Session*>(source->ptr)->read_data(data, length, data_flags);
+    return H2Session::read_data(*static_cast<H2Stream*>(source->ptr), data, length, data_flags);
   };
   [[maybe_unused]] const int sent =
       nghttp2_submit_response(session_, stream.id, fields.data(), fields.size(), no_body ? nullptr : &provider);
@@ -406,16 +404,12 @@ void H2Session::answer(H2Stream& stream, Response&& response) {
   if (!flush(wrote)) broken_ = true;
 }
 
-ssize_t H2Session::read_data(std::uint8_t* data, std::size_t length, std::uint32_t* data_flags) {
-  if (data_stream_ == 0) {
-    *data_flags |= NGHTTP2_DATA_FLAG_EOF;
-    return 0;
-  }
-  const std::size_t left = data_view_.size() - data_at_;
+ssize_t H2Session::read_data(H2Stream& stream, std::uint8_t* data, std::size_t length, std::uint32_t* data_flags) {
+  const std::size_t left = stream.send_body.size() - stream.send_at;
   const std::size_t take = std::min(left, length);
-  if (take != 0) std::memcpy(data, data_view_.data() + data_at_, take);
-  data_at_ += take;
-  if (data_at_ == data_view_.size()) *data_flags |= NGHTTP2_DATA_FLAG_EOF;
+  if (take != 0) std::memcpy(data, stream.send_body.data() + stream.send_at, take);
+  stream.send_at += take;
+  if (stream.send_at == stream.send_body.size()) *data_flags |= NGHTTP2_DATA_FLAG_EOF;
   return static_cast<ssize_t>(take);
 }
 
@@ -428,16 +422,26 @@ void H2Session::goaway() {
   flush(wrote);
 }
 
-// The connection speaks HTTP/2 from now on. `prior_knowledge` for a cleartext client that sent the
-// preface (H2C_ENABLED, Rust: `Protocol::Auto`).
-void Worker::h2_start(Conn& c, bool prior_knowledge) {
-  c.h2 = std::make_unique<H2Session>(*this, c, prior_knowledge);
+// The connection speaks HTTP/2 from now on. nghttp2 handles the client preface itself, so the
+// bytes already read (the preface, for a cleartext client) go to the session.
+void Worker::h2_start(Conn& c) {
+  c.h2 = std::make_unique<H2Session>(*this, c);
   if (c.h2->broken()) {
     close_conn(c);
     return;
   }
   c.state = ConnState::Http2;
   c.scanned = 0;
+  if (!c.rbuf.empty()) {
+    const ssize_t used = c.h2->receive(std::string_view(c.rbuf.data(), c.rbuf.size()));
+    if (used < 0) {
+      close_conn(c);
+      return;
+    }
+    c.rbuf.consume(static_cast<std::size_t>(used));
+  }
+  std::size_t wrote = 0;
+  c.h2->flush(wrote);
   arm(c, options_.idle_timeout_ms, now_ms_, kTimerH2);
 }
 
@@ -452,27 +456,32 @@ bool Worker::h2_step(Conn& c) {
     session.answer(*stream, std::move(*stream->response));
     progress = true;
   }
+  bool closed = false;
   if (c.readable) {
     c.rbuf.reserve(c.rbuf.size() + kReadStep);
     const std::size_t room = c.rbuf.room();
     std::size_t got = 0;
     const Io result = io_read(c, c.rbuf.tail(), room, got);
     if (got != 0) {
-      const bool all = session.receive(std::string_view(c.rbuf.data(), got));
-      c.rbuf.consume(got);
+      c.rbuf.commit(got);
       if (result == Io::Ok && got < room) c.readable = false;
       progress = true;
-      if (!all) {
-        session.goaway();
-        close_conn(c);
-        return false;
-      }
     } else if (result == Io::WouldBlock) {
       c.readable = false;
     } else {
+      closed = true;  // the peer ended: the bytes still in `rbuf` go to nghttp2 first
+    }
+  }
+  if (!c.rbuf.empty()) {
+    log_debug("h2: feed {} bytes", c.rbuf.size());
+    const ssize_t used = session.receive(std::string_view(c.rbuf.data(), c.rbuf.size()));
+    if (used < 0) {
+      session.goaway();
       close_conn(c);
       return false;
     }
+    c.rbuf.consume(static_cast<std::size_t>(used));
+    progress = true;
   }
   std::size_t wrote = 0;
   if (!session.flush(wrote)) {
@@ -480,6 +489,10 @@ bool Worker::h2_step(Conn& c) {
     return false;
   }
   if (wrote != 0) progress = true;
+  if (closed && c.rbuf.empty()) {
+    close_conn(c);
+    return false;
+  }
   // Rust's `Activity`: the idle timer runs while nothing is in flight, from the end of the last
   // response. A request in flight is bounded by HTTP_WRITE_TIMEOUT instead.
   if (session.idle()) {

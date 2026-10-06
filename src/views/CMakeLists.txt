@@ -33,6 +33,7 @@ campfire_views_templates(CAMPFIRE_VIEWS_GENERATED "${CMAKE_CURRENT_SOURCE_DIR}" 
 campfire_library(views
   SOURCES
     fragment_cache.cpp
+    helpers/accounts.cpp
     helpers/application.cpp
     helpers/assets.cpp
     helpers/forms.cpp

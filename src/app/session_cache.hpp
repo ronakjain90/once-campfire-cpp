@@ -48,10 +48,14 @@ class ChangeHub {
   // not cached, so they are dropped here.
   void publish(std::span<const db::Change> changes);
   [[nodiscard]] std::size_t size() const;
+  // How many commits changed a row of `users`. A cache of data from user rows (the avatar responses) stores the number
+  // and drops its entry when the number changes.
+  [[nodiscard]] std::uint64_t users_generation() const noexcept { return users_generation_.load(std::memory_order_acquire); }
 
  private:
   mutable std::mutex mutex_;
   std::vector<ChangeInbox*> inboxes_;
+  std::atomic<std::uint64_t> users_generation_{0};
 };
 
 // From the raw `session_token` cookie value to the session row and the user row.

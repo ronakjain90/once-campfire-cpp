@@ -7,6 +7,7 @@
 #include "app/data.hpp"
 #include "core/log.hpp"
 #include "core/time_format.hpp"
+#include "storage/storage.hpp"
 
 namespace campfire::app {
 
@@ -37,7 +38,9 @@ App::App(Config c, SharedClock k, std::size_t job_threads, PageCache::Options pa
       fragments(std::make_shared<SharedFragmentCache>(config.fragment_cache_bytes)),
       pages(page_options),
       changes(std::make_shared<ChangeHub>()),
-      jobs(job_threads == 0 ? 1 : job_threads) {}
+      jobs(job_threads == 0 ? 1 : job_threads),
+      storage(std::make_unique<storage::Storage>(storage::DiskService(config.storage.files, "local"),
+                                                 secrets.active_storage_verifier())) {}
 
 App::~App() {
   if (db && subscription_ != 0) db->unsubscribe(subscription_);

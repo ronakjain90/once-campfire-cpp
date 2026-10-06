@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <optional>
 #include <string_view>
+#include <vector>
 
 #include "compat/time.hpp"
 #include "core/arena.hpp"
@@ -45,13 +46,24 @@ class AttachmentRecords final : public storage::Records {
 // `record.<name>.attached?`
 [[nodiscard]] Result<bool> is_attached(db::Connection& conn, Arena& arena, Record record, std::string_view name);
 
-// `record.<name> = uploaded_file`, in the save of the record: the old attachment goes first, then the blob and the
-// attachment rows, then the record is touched. It gives the id of the new blob (to analyze after the commit). The
-// file of `staged` is already in the service. The caller calls `staged.keep()` after the commit: a destroyed
-// `Staged` deletes the file, so a write that rolls back leaves no file.
-[[nodiscard]] Result<std::int64_t> attach(db::Tx& tx, Record record, std::string_view name, storage::Staged& staged);
-// `record.<name>.destroy`: the attachment row, the touch, and the purge of the blob after the commit.
-// It gives true if there was an attachment.
-[[nodiscard]] Result<bool> destroy(db::Tx& tx, Record record, std::string_view name);
+// `record.<name> = uploaded_file`, in the save of the record: the old attachment goes first (its blob id goes in
+// `purge`), then the blob and the attachment rows, then the record is touched. It gives the new blob. The file of
+// `staged` is already in the service. The caller calls `staged.keep()` after the commit: a destroyed `Staged` deletes
+// the file, so a write that rolls back leaves no file.
+[[nodiscard]] Result<storage::Blob> attach(db::Tx& tx, Record record, std::string_view name, storage::Staged& staged,
+                                           std::vector<std::int64_t>& purge);
+// `record.<name>.destroy`: the attachment row and the touch. The id of the blob goes in `purge` (`dependent:
+// :purge_later`: the caller purges it after the commit). It gives true if there was an attachment.
+[[nodiscard]] Result<bool> destroy(db::Tx& tx, Record record, std::string_view name, std::vector<std::int64_t>& purge);
+
+// `ActiveStorage::Blob#purge`, the row half: nothing happens while an attachment uses the blob. The variant records
+// and the preview image attachment go with it, and the ids of their blobs go in `dependents` (purged later). It gives
+// the blob that was destroyed, whose files the caller deletes.
+[[nodiscard]] Result<std::optional<storage::Blob>> purge_rows(db::Tx& tx, std::int64_t blob_id,
+                                                              std::vector<std::int64_t>& dependents);
+// `ActiveStorage::Blob.find_by(id:)`
+[[nodiscard]] Result<std::optional<storage::Blob>> find_blob(db::Connection& conn, std::int64_t id);
+// `record.touch` for a record type of this file.
+[[nodiscard]] Status touch(db::Tx& tx, Record record);
 
 }  // namespace campfire::models::attachments

@@ -42,9 +42,12 @@ std::size_t ChangeHub::size() const {
 
 void ChangeHub::publish(std::span<const db::Change> changes) {
   std::vector<db::Change> relevant;
+  bool users_changed = false;
   for (const db::Change& change : changes) {
+    users_changed = users_changed || change.table == db::schema::Table::Users;
     if (cached_table(change.table)) relevant.push_back(change);
   }
+  if (users_changed) users_generation_.fetch_add(1, std::memory_order_acq_rel);
   if (relevant.empty()) return;
   const std::lock_guard lock(mutex_);
   for (ChangeInbox* inbox : inboxes_) inbox->post(relevant);

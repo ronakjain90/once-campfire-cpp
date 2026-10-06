@@ -22,6 +22,10 @@
 #include "db/database.hpp"
 #include "net/thread_pool.hpp"
 
+namespace campfire::storage {
+class Storage;
+}
+
 namespace campfire::app {
 
 // Settings that only this layer reads.
@@ -48,6 +52,8 @@ struct App {
   // `ActionCable.server.broadcast(stream, html)` for the Turbo Stream broadcasts of the controllers. The cable
   // (A7) sets it. Without it a broadcast goes nowhere.
   std::function<void(std::string_view stream, std::string_view html)> turbo_broadcast;
+  // Active Storage on the disk service (storage/files). The upload flows of the message area use it.
+  std::unique_ptr<storage::Storage> storage;
 
   App(Config c, SharedClock k, std::size_t job_threads, PageCache::Options page_options);
   App(const App&) = delete;

@@ -78,11 +78,58 @@ Timestamp from_compat(compat::Timestamp t) {
   return Timestamp::from_nanos(t.time_since_epoch().count());
 }
 
+const db::Query<BlobCols(int64_t)> kBlobById{"SELECT " CF_BLOB_COLS("") " FROM active_storage_blobs WHERE id = ?"};
+const db::Query<int64_t(int64_t)> kBlobAttachments{"SELECT id FROM active_storage_attachments WHERE blob_id = ? LIMIT 1"};
+const db::Query<int64_t(int64_t)> kVariantRecords{"SELECT id FROM active_storage_variant_records WHERE blob_id = ?"};
+const db::Query<void(int64_t)> kDeleteVariantRecord{"DELETE FROM active_storage_variant_records WHERE id = ?"};
+const db::Query<void(int64_t)> kDeleteBlob{"DELETE FROM active_storage_blobs WHERE id = ?"};
+
+}  // namespace
+
 Status touch(db::Tx& tx, Record record) {
   return record.type == "Account" ? accounts::touch_account(tx, record.id) : accounts::touch_user(tx, record.id);
 }
 
-}  // namespace
+Result<std::optional<storage::Blob>> find_blob(db::Connection& conn, std::int64_t id) {
+  Arena arena(512);
+  auto row = conn.first(kBlobById, arena, id);
+  if (!row) return std::unexpected(row.error());
+  if (!*row) return std::optional<storage::Blob>{};
+  return std::optional<storage::Blob>(make_blob(**row));
+}
+
+Result<std::optional<storage::Blob>> purge_rows(db::Tx& tx, std::int64_t blob_id, std::vector<std::int64_t>& dependents) {
+  auto blob = find_blob(tx.conn(), blob_id);
+  if (!blob) return std::unexpected(blob.error());
+  if (!*blob) return std::optional<storage::Blob>{};
+  Arena arena(512);
+  // `before_destroy(prepend: true) { raise ActiveRecord::InvalidForeignKey if attachments.exists? }`
+  auto used = tx.conn().first(kBlobAttachments, arena, blob_id);
+  if (!used) return std::unexpected(used.error());
+  if (*used) return std::optional<storage::Blob>{};
+  // `before_destroy { variant_records.destroy_all }`: the image of each record goes with it.
+  auto records = tx.conn().all(kVariantRecords, arena, blob_id);
+  if (!records) return std::unexpected(records.error());
+  for (const std::int64_t record_id : *records) {
+    auto found = tx.conn().first(kFindAttachment, arena, "ActiveStorage::VariantRecord", record_id, "image");
+    if (!found) return std::unexpected(found.error());
+    if (*found) {
+      if (auto done = tx.conn().exec(kDeleteAttachment, (*found)->id); !done) return std::unexpected(done.error());
+      dependents.push_back((*found)->blob_id);
+    }
+    if (auto done = tx.conn().exec(kDeleteVariantRecord, record_id); !done) return std::unexpected(done.error());
+  }
+  // `has_one_attached :preview_image`
+  auto preview = tx.conn().first(kFindAttachment, arena, "ActiveStorage::Blob", blob_id, "preview_image");
+  if (!preview) return std::unexpected(preview.error());
+  if (*preview) {
+    if (auto done = tx.conn().exec(kDeleteAttachment, (*preview)->id); !done) return std::unexpected(done.error());
+    dependents.push_back((*preview)->blob_id);
+  }
+  if (auto done = tx.conn().exec(kDeleteBlob, blob_id); !done) return std::unexpected(done.error());
+  tx.changed(db::schema::Table::ActiveStorageBlobs, blob_id);
+  return blob;
+}
 
 Result<std::optional<storage::Blob>> AttachmentRecords::attached(std::string_view record_type, int64_t record_id,
                                                                  std::string_view name) {
@@ -154,7 +201,7 @@ Result<bool> is_attached(db::Connection& conn, Arena& arena, Record record, std:
   return row->has_value();
 }
 
-Result<bool> destroy(db::Tx& tx, Record record, std::string_view name) {
+Result<bool> destroy(db::Tx& tx, Record record, std::string_view name, std::vector<std::int64_t>& purge) {
   Arena arena(256);
   auto found = tx.conn().first(kFindAttachment, arena, record.type, record.id, name);
   if (!found) return std::unexpected(found.error());
@@ -163,15 +210,16 @@ Result<bool> destroy(db::Tx& tx, Record record, std::string_view name) {
   if (auto done = tx.conn().exec(kDeleteAttachment, ids.id); !done) return std::unexpected(done.error());
   tx.changed(db::schema::Table::ActiveStorageAttachments, ids.id);
   if (auto touched = touch(tx, record); !touched) return std::unexpected(touched.error());
-  // `dependent: :purge_later`
-  tx.after_commit([blob_id = ids.blob_id] { hooks::purge_blob(blob_id); });
+  purge.push_back(ids.blob_id);
   return true;
 }
 
-Result<std::int64_t> attach(db::Tx& tx, Record record, std::string_view name, storage::Staged& staged) {
-  if (auto removed = destroy(tx, record, name); !removed) return std::unexpected(removed.error());
+Result<storage::Blob> attach(db::Tx& tx, Record record, std::string_view name, storage::Staged& staged,
+                             std::vector<std::int64_t>& purge) {
+  if (auto removed = destroy(tx, record, name, purge); !removed) return std::unexpected(removed.error());
   AttachmentRecords records(tx.conn());
-  const compat::Timestamp now = compat::Timestamp{std::chrono::nanoseconds(tx.now().seconds * 1'000'000'000LL + tx.now().nanos)};
+  const Timestamp at = tx.now();
+  const compat::Timestamp now{std::chrono::nanoseconds(at.seconds * 1'000'000'000LL + at.nanos)};
   auto blob = staged.insert(records, now);
   if (!blob) return std::unexpected(blob.error());
   auto attachment = records.insert_attachment(name, record.type, record.id, blob->id, now);
@@ -179,7 +227,7 @@ Result<std::int64_t> attach(db::Tx& tx, Record record, std::string_view name, st
   tx.changed(db::schema::Table::ActiveStorageBlobs, blob->id);
   tx.changed(db::schema::Table::ActiveStorageAttachments, *attachment);
   if (auto touched = touch(tx, record); !touched) return std::unexpected(touched.error());
-  return blob->id;
+  return blob;
 }
 
 }  // namespace campfire::models::attachments

@@ -32,17 +32,20 @@ campfire_library(app
     allow_browser.cpp
     app.cpp
     broadcasts.cpp
+    active_storage.cpp
     compress.cpp
     concerns.cpp
     controllers/action_not_found.cpp
     controllers/common.cpp
     controllers/first_runs.cpp
+    controllers/qr_codes.cpp
     controllers/session_transfers.cpp
     controllers/directs.cpp
     controllers/involvements.cpp
     controllers/rooms.cpp
     controllers/sessions.cpp
     controllers/users.cpp
+    controllers/users_avatars.cpp
     controllers/sidebars.cpp
     controllers/welcome.cpp
     dispatch.cpp
@@ -60,6 +63,7 @@ campfire_library(app
     render_page.cpp
     rq.cpp
     rq_response.cpp
+    rqrcode.cpp
     session_cache.cpp
     user_agent.cpp
     worker_state.cpp
@@ -75,6 +79,7 @@ campfire_test(app
     tests/app_test.cpp
     tests/cache_test.cpp
     tests/finish_test.cpp
+    tests/rqrcode_test.cpp
     tests/signin_area_test.cpp
     tests/user_agent_test.cpp
     tests/rooms_test.cpp

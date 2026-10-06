@@ -12,8 +12,6 @@ struct State {
   std::mutex mutex;
   DisconnectUser disconnect;
   RemoveBannedContent remove;
-  PurgeBlob purge;
-  AnalyzeBlob analyze;
 };
 
 State& state() {
@@ -49,34 +47,6 @@ void remove_banned_content(std::int64_t user_id) {
     fn = state().remove;
   }
   if (fn) fn(user_id);
-}
-
-void set_purge_blob(PurgeBlob fn) {
-  const std::scoped_lock lock(state().mutex);
-  state().purge = std::move(fn);
-}
-
-void purge_blob(std::int64_t blob_id) {
-  PurgeBlob fn;
-  {
-    const std::scoped_lock lock(state().mutex);
-    fn = state().purge;
-  }
-  if (fn) fn(blob_id);
-}
-
-void set_analyze_blob(AnalyzeBlob fn) {
-  const std::scoped_lock lock(state().mutex);
-  state().analyze = std::move(fn);
-}
-
-void analyze_blob(std::int64_t blob_id) {
-  AnalyzeBlob fn;
-  {
-    const std::scoped_lock lock(state().mutex);
-    fn = state().analyze;
-  }
-  if (fn) fn(blob_id);
 }
 
 }  // namespace campfire::models::hooks

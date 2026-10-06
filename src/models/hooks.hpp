@@ -18,14 +18,4 @@ void disconnect_user(std::int64_t user_id, bool reconnect);
 void set_remove_banned_content(RemoveBannedContent fn);
 void remove_banned_content(std::int64_t user_id);
 
-using PurgeBlob = std::function<void(std::int64_t blob_id)>;
-using AnalyzeBlob = std::function<void(std::int64_t blob_id)>;
-
-// `ActiveStorage::PurgeJob`: the blob row and its files, when no attachment uses the blob.
-void set_purge_blob(PurgeBlob fn);
-void purge_blob(std::int64_t blob_id);
-// `ActiveStorage::AnalyzeJob`
-void set_analyze_blob(AnalyzeBlob fn);
-void analyze_blob(std::int64_t blob_id);
-
 }  // namespace campfire::models::hooks

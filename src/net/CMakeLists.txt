@@ -48,6 +48,7 @@ add_custom_command(
 
 campfire_test(net
   SOURCES
+    tests/acme_test.cpp
     tests/front_test.cpp
     tests/h2_test.cpp
     tests/misc_test.cpp

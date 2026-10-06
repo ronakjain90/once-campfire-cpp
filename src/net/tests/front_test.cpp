@@ -443,6 +443,15 @@ TEST_CASE("the HTTP port answers HTTP-01 challenges and redirects when TLS is on
   Client refused(f.http());
   refused.send("GET /.well-known/acme-challenge/abc HTTP/1.1\r\nHost: other.example.com\r\nConnection: close\r\n\r\n");
   CHECK(refused.read_reply().status == 403);
+
+  // A token that an order set is the body of a 200.
+  options.tls->certs().set_http_token("/.well-known/acme-challenge/abc", "abc.thumbprint");
+  Client answered(f.http());
+  answered.send("GET /.well-known/acme-challenge/abc HTTP/1.1\r\nHost: chat.example.com\r\nConnection: close\r\n\r\n");
+  reply = answered.read_reply();
+  CHECK(reply.status == 200);
+  CHECK(reply.get("content-type") == "text/plain; charset=utf-8");
+  CHECK(reply.body == "abc.thumbprint");
 }
 
 // The server logs what it does with a handshake, so the TLS tests can show it.

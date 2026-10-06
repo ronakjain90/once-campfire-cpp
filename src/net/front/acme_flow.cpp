@@ -127,8 +127,7 @@ Status CertManager::order(const std::string& name, ChallengeType type, std::shar
       provisioned.domains.push_back(domain);
     } else {
       const std::string path = "/.well-known/acme-challenge/" + token;
-      const std::unique_lock lock(mutex_);
-      http_tokens_[path] = key_authorization;
+      set_http_token(path, key_authorization);
       provisioned.paths.push_back(path);
     }
     if (auto ready = account.post_json(std::string(chosen->str("url")), "{}", false); !ready)

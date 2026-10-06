@@ -71,6 +71,8 @@ class CertManager {
   [[nodiscard]] std::shared_ptr<const CertifiedKey> loaded(std::string_view name) const;
   // The HTTP-01 answer for a "/.well-known/acme-challenge/<token>" path.
   [[nodiscard]] std::optional<std::string> http_token(std::string_view path) const;
+  // Sets the HTTP-01 answer for a path (an order does this, and a test).
+  void set_http_token(const std::string& path, std::string key_authorization);
 
   // autocert's server name checks and normalization. Returns the error text in `error`.
   [[nodiscard]] static std::string server_name_to_domain(std::string_view server_name, std::string& error);

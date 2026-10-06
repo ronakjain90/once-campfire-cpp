@@ -28,6 +28,7 @@ struct Url {
   bool tls = true;
   std::string host;
   std::string port;
+  std::string authority;  // the host and the port as the URL has them: the Host header
   std::string target;
 };
 
@@ -44,6 +45,7 @@ Result<Url> parse_url(std::string_view url) {
   const std::size_t slash = url.find('/');
   std::string_view authority = url.substr(0, slash);
   out.target = slash == std::string_view::npos ? "/" : std::string(url.substr(slash));
+  out.authority = std::string(authority);
   out.port = out.tls ? "443" : "80";
   if (authority.starts_with('[')) {
     const std::size_t close = authority.find(']');
@@ -150,7 +152,7 @@ Result<HttpResult> http_request(std::string_view method, std::string_view url_te
       return fail(Errc::Io, "TLS handshake with " + url->host + " failed");
     }
   }
-  std::string request = std::string(method) + " " + url->target + " HTTP/1.1\r\nhost: " + url->host + "\r\n" +
+  std::string request = std::string(method) + " " + url->target + " HTTP/1.1\r\nhost: " + url->authority + "\r\n" +
                         "user-agent: campfire-front\r\nconnection: close\r\n";
   for (const auto& [name, value] : headers) request += name + ": " + value + "\r\n";
   if (!body.empty() || method == "POST") request += "content-length: " + std::to_string(body.size()) + "\r\n";

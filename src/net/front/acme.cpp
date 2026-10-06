@@ -96,6 +96,11 @@ std::shared_ptr<const CertifiedKey> CertManager::challenge_certificate_for(std::
   return found == challenge_certificates_.end() ? nullptr : found->second;
 }
 
+void CertManager::set_http_token(const std::string& path, std::string key_authorization) {
+  const std::unique_lock lock(mutex_);
+  http_tokens_[path] = std::move(key_authorization);
+}
+
 std::optional<std::string> CertManager::http_token(std::string_view path) const {
   const std::shared_lock lock(mutex_);
   const auto found = http_tokens_.find(std::string(path));
@@ -237,6 +242,7 @@ void CertManager::run() {
       }
     } else {
       status = obtain_now(job);
+      if (!status) log_error("TLS: certificate order failed domain={} error={}", job, status.error().message);
     }
     lock.lock();
     if (!renewal) {

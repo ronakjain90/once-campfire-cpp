@@ -144,6 +144,23 @@ class Dom {
 // Gumbo's limits. The caller strips the input where Rails does.
 [[nodiscard]] std::expected<Dom, ParseError> parse_fragment(std::string_view html);
 
+// The element that Nokogiri uses as the parse context of a fragment: `Document#fragment` uses a
+// body, `Node#fragment` (replace, inner_html=) uses the node itself.
+struct FragmentContext {
+  std::string_view name = "body";
+  Ns ns = Ns::Html;
+};
+
+// Parses `html` in `context` and appends the nodes to `parent`. The nodes live in the arena of `dom`.
+[[nodiscard]] std::expected<void, ParseError> parse_into(Dom& dom, Node* parent, std::string_view html,
+                                                         const FragmentContext& context = {});
+
+// How `serialize` writes `<` and `>` in attribute values. Nokogiri writes them raw. `Escaped` writes
+// `&lt;` and `&gt;`, as the HTML serialization algorithm does (the autolink step needs it).
+enum class AttrBrackets : std::uint8_t { Raw, Escaped };
+void serialize(const Node* node, std::string& out, AttrBrackets brackets);
+[[nodiscard]] std::string to_html(const Node* node, AttrBrackets brackets);
+
 // `node.to_html` for an HTML5 document (Nokogiri's html_standard_serialize): the node itself,
 // or the children of a fragment. Appends to `out`.
 void serialize(const Node* node, std::string& out);

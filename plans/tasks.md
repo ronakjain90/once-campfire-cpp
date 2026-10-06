@@ -50,8 +50,8 @@ format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
 | T9 | merged (verified by Opus) | `task/T9` | 314/314 digested names equal Rails; 321/321 bodies equal the live Rust app; importmap is a byte-equal substring of the Rust page. Thruster headers (vary, x-cache, compression choice) belong to A8. |
 | T10 | merged (verified by Opus) | `task/T10` | 658/658 on all 6 corpus fields. Rules apply to the Rails expected value only. Style text compared in canonical form; the diff sweep checks exact bytes. |
 | T8b | merged (verified by Opus) | `task/T8b` | Erubi trim rule applied by `ctc.py`. Expected files made by Erubi in the Rails container. |
-| T11 | in progress (Sonnet) | `task/T11` | |
-| T12 | in progress (Sonnet) | `task/T12` | |
+| T11 | merged (verified by Opus) | `task/T11` | Rust recorded Cable sessions replay byte for byte (golden file equals the Rust one). Hub: 110M deliveries/s in memory. Fuzz coverage needs `-fsanitize=fuzzer-no-link` on the library: apply the same fix to the T5 parser target in H1. |
+| T12 | merged (verified by Opus) | `task/T12` | 15/15 media outputs byte-identical with libvips 8.16.1 and ffmpeg 7.1.5. The 4 video-frame vectors were made on x86; on arm64 our frames equal the Rust and Rails images' frames (checked by Opus). Media tests run in `bin/dev` now. |
 | T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
 
 ## Wave 3: the app (parallel, after wave 2)
@@ -108,8 +108,8 @@ its requests in the diff sweep pass.
 | T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
 | T8 | merged (verified by Opus) | `task/T8` | 1,134 Rails path cases, 81 named routes, 34 Rails helper goldens, 7 layout goldens pass. Follow-up T8b: Erubi trim rules. |
 | T9 | merged (verified by Opus) | `task/T9` | 314/314 digested names equal Rails; 321/321 bodies equal the live Rust app; importmap is a byte-equal substring of the Rust page. Thruster headers (vary, x-cache, compression choice) belong to A8. |
-| T11 | in progress (Sonnet) | `task/T11` | |
-| T12 | in progress (Sonnet) | `task/T12` | |
+| T11 | merged (verified by Opus) | `task/T11` | Rust recorded Cable sessions replay byte for byte (golden file equals the Rust one). Hub: 110M deliveries/s in memory. Fuzz coverage needs `-fsanitize=fuzzer-no-link` on the library: apply the same fix to the T5 parser target in H1. |
+| T12 | merged (verified by Opus) | `task/T12` | 15/15 media outputs byte-identical with libvips 8.16.1 and ffmpeg 7.1.5. The 4 video-frame vectors were made on x86; on arm64 our frames equal the Rust and Rails images' frames (checked by Opus). Media tests run in `bin/dev` now. |
 | T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
 | T10 | merged (verified by Opus) | `task/T10` | 658/658 on all 6 corpus fields. Rules apply to the Rails expected value only. Style text compared in canonical form; the diff sweep checks exact bytes. |
 | T8b | merged (verified by Opus) | `task/T8b` | Erubi trim rule applied by `ctc.py`. Expected files made by Erubi in the Rails container. |
@@ -126,3 +126,4 @@ limit fast. To restart a paused task, start a **new** agent with a short prompt:
 agent brief, and "continue from the commits and files in the worktree". Do not resume an agent
 whose transcript is long.
 | A0 | in progress (Sonnet) | `task/A0` | |
+| A8 | in progress (Sonnet) | `task/A8` | |

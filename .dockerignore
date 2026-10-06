@@ -15,3 +15,5 @@
 /docker/README.md
 /.dockerignore
 *.md
+!/tests/CMakeLists.txt
+!/tests/doctest_main.cpp

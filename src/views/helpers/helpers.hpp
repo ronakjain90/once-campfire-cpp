@@ -7,6 +7,7 @@
 #include "views/helpers/assets.hpp"
 #include "views/helpers/forms.hpp"
 #include "views/helpers/links.hpp"
+#include "views/helpers/rooms.hpp"
 #include "views/helpers/tag.hpp"
 #include "views/helpers/turbo.hpp"
 #include "views/helpers/users.hpp"

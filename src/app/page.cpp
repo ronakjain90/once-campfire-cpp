@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 
+#include "app/platform.hpp"
 #include "assets/assets.hpp"
 #include "compat/signed_id.hpp"
 #include "core/time_format.hpp"
@@ -67,6 +68,8 @@ views::ViewContext make_view_context(Rq& rq, const LayoutData& data) {
   if (rq.request.has_header("referer")) ctx.referrer = std::string(rq.request.header("referer"));
   ctx.last_room_visited_id = data.last_room_visited_id;
   ctx.app_version = rq.app.config.app_version;
+  // `platform`: a page that prints it must add a facet for the User-Agent to its cache key.
+  ctx.platform = ApplicationPlatform(rq.user_agent()).to_view();
   return ctx;
 }
 

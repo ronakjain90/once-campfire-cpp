@@ -9,6 +9,7 @@
 #include "core/arena.hpp"
 #include "core/error.hpp"
 #include "db/connection.hpp"
+#include "db/database.hpp"
 #include "db/schema.gen.hpp"
 
 namespace campfire::models {
@@ -42,7 +43,20 @@ struct User {
   [[nodiscard]] bool authenticate(std::string_view password) const;
 };
 
+// The attributes of `User.create!`.
+struct NewUser {
+  std::string name;
+  std::optional<std::string> email_address;
+  std::optional<std::string> password_digest;  // `has_secure_password`: nil for a blank password
+  Role role = Role::Member;
+};
+
 namespace users {
+
+// `User.create!`: the row, then `grant_membership_to_open_rooms` (`after_create_commit`: the writer runs it in the
+// same transaction). A duplicate email address gives a constraint error with "UNIQUE" in its message
+// (`ActiveRecord::RecordNotUnique`). Records changes of `users` and `memberships`.
+[[nodiscard]] Result<User> create(db::Tx& tx, const NewUser& attributes);
 
 [[nodiscard]] Result<std::optional<User>> find_by_id(db::Connection& conn, Arena& arena, std::int64_t id);
 // `User.active.find_by(email_address:)`: the lookup half of `authenticate_by`.

@@ -9,3 +9,4 @@
 #include "views/helpers/links.hpp"
 #include "views/helpers/tag.hpp"
 #include "views/helpers/turbo.hpp"
+#include "views/helpers/users.hpp"

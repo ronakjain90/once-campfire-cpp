@@ -1,0 +1,10 @@
+{# reference/app/views/welcome/show.html.erb: the content of the page. The title, the body class, the sidebar and the layout come from the controller. #}
+{% params const ViewContext& ctx %}
+<div id="message-area" class="message-area">
+  <div class="message-area--empty min-width center">
+    <figure class="center pad">
+      {% call image_tag(ctx, "messages-empty.svg", attrs().aria_hidden().cls("colorize--black translucent")) %}
+      <span class="for-screen-reader">{{ ctx.current_user->name }}</span>
+    </figure>
+  </div>
+</div>

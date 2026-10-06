@@ -1,6 +1,10 @@
 // Rails: app/models/account.rb. Rust: crates/db/src/models/account.rs, presenters/view_context.rs.
 #include "models/account.hpp"
 
+#include <sys/random.h>
+
+#include <cstdlib>
+
 namespace campfire::models {
 
 namespace {
@@ -21,9 +25,61 @@ const db::Query<std::int64_t(std::int64_t)> kLogo{
     "SELECT 1 AS one FROM active_storage_blobs b JOIN active_storage_attachments a ON a.blob_id = b.id WHERE "
     "a.record_type = 'Account' AND a.record_id = ? AND a.name = 'logo' ORDER BY a.id LIMIT 1"};
 
+const db::Query<std::int64_t()> kAny{"SELECT 1 AS one FROM \"accounts\" LIMIT 1"};
+
+struct JoinCodeRow {
+  std::string_view join_code;
+  static JoinCodeRow read(db::RowReader& r) { return {r.text(0)}; }
+};
+const db::Query<JoinCodeRow()> kJoinCode{
+    "SELECT \"accounts\".\"join_code\" FROM \"accounts\" ORDER BY \"accounts\".\"id\" ASC LIMIT 1"};
+
+const db::Query<std::int64_t(std::string_view, std::string_view, std::string_view, std::string_view, std::string_view)>
+    kInsert{
+        "INSERT INTO \"accounts\" (\"created_at\", \"custom_styles\", \"join_code\", \"name\", \"settings\", "
+        "\"singleton_guard\", \"updated_at\") VALUES (?, NULL, ?, ?, ?, 0, ?) RETURNING \"id\""};
+
 }  // namespace
 
 namespace accounts {
+
+std::string generate_join_code() {
+  static constexpr std::string_view kAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  std::string raw;
+  while (raw.size() < 12) {
+    unsigned char b[32];
+    if (getrandom(b, sizeof b, 0) != static_cast<ssize_t>(sizeof b)) std::abort();
+    for (const unsigned char byte : b) {
+      if (byte < 248 && raw.size() < 12) raw.push_back(kAlphabet[byte % 62]);  // 248 = 62 * 4: no bias
+    }
+  }
+  return raw.substr(0, 4) + "-" + raw.substr(4, 4) + "-" + raw.substr(8, 4);
+}
+
+Result<bool> any(db::Connection& conn, Arena& arena) {
+  auto row = conn.first(kAny, arena);
+  if (!row) return std::unexpected(row.error());
+  return row->has_value();
+}
+
+Result<std::optional<std::string>> first_join_code(db::Connection& conn, Arena& arena) {
+  auto row = conn.first(kJoinCode, arena);
+  if (!row) return std::unexpected(row.error());
+  if (!*row) return std::optional<std::string>{};
+  return std::optional<std::string>(std::string((*row)->join_code));
+}
+
+Result<std::int64_t> create(db::Tx& tx, std::string_view name) {
+  const std::string now = tx.now_db();
+  const std::string join_code = generate_join_code();
+  Arena arena(256);
+  // `has_json :settings, restrict_room_creation_to_administrators: false`: the defaults are written out.
+  auto id = tx.conn().first(kInsert, arena, now, join_code, name,
+                            "{\"restrict_room_creation_to_administrators\":false}", now);
+  if (!id) return std::unexpected(id.error());
+  tx.changed(db::schema::Table::Accounts, **id);
+  return **id;
+}
 
 Result<std::optional<Account>> first(db::Connection& conn, Arena& arena) {
   auto row = conn.first(kFirst, arena);

@@ -1,0 +1,26 @@
+{# reference/app/views/sessions/incompatible_browser.html.erb: the content of the page. The title and the layout come from the controller. #}
+{% include views/sessions/helpers.hpp %}
+{% params const ViewContext& ctx %}
+<div class="panel center">
+  <header>
+    <h1 class="txt-x-large txt-tight-lines txt-align-center margin-none-block-start margin-block-end">
+      Upgrade to a supported web browser
+    </h1>
+    <div class="flex align-start gap">
+      {% call translation_button(ctx, "incompatible_browser_messsage") %}
+      <p class="margin-none-block-start">Campfire requires a modern web browser. Please use one of the browsers listed below and make sure auto-updates are enabled.</p>
+    </div>
+  </header>
+
+  <div class="browser-list flex align-center flex-wrap gap justify-center margin-block">
+{% for browser : kAllowBrowserVersions %}
+      <div class="browser flex flex-column">
+        {% call image_tag(ctx, "browsers/" + std::string(browser.name) + ".svg", attrs().aria_hidden().cls("center")) %}
+        <div class="flex flex-column align-center margin-block-start-half">
+          <strong>{{ browser.title }}</strong>
+          <span> {{ browser.version }}+</span>
+        </div>
+      </div>
+{% end %}
+  </div>
+</div>

@@ -41,9 +41,13 @@ struct Before {
   [[nodiscard]] Before skip_forgery_protection() const { return {authentication, deny_bots, false}; }
 };
 
-// The hook for `allow_browser`. A1 sets it from the user agent rules. The default passes every browser.
+// The hook for `allow_browser`. The default is `allow_browser` below.
 using AllowBrowserFn = Task<Flow<void>> (*)(Rq&);
 void set_allow_browser(AllowBrowserFn fn) noexcept;
+
+// `allow_browser versions: VERSIONS, block: -> { render template: "sessions/incompatible_browser" }`. A header that is
+// missing or blank is not checked. A browser that is too old gets the page with status 200, in any format.
+[[nodiscard]] Task<Flow<void>> allow_browser(Rq& rq);
 
 [[nodiscard]] Task<Flow<void>> before_actions(Rq& rq, Before before);
 
@@ -62,6 +66,9 @@ void set_version_headers(Rq& rq);
 // `User.active.authenticate_by(email_address:, password:)`: the lookup is inline, bcrypt runs on the job pool.
 [[nodiscard]] Task<Flow<std::optional<models::User>>> authenticate_by(Rq& rq, std::string email_address,
                                                                       std::string password);
+// `has_secure_password#password=`: the bcrypt digest of a password that is not empty, on the job pool. Nothing for a
+// nil or an empty password.
+[[nodiscard]] Task<Flow<std::optional<std::string>>> password_digest(Rq& rq, std::optional<std::string> password);
 // `start_new_session_for(user)`: the session row through the writer, and the signed cookie.
 [[nodiscard]] Task<Flow<void>> start_new_session_for(Rq& rq, models::User user);
 // `terminate_current_session`: destroys the session, resets the Rails session, deletes the cookie.

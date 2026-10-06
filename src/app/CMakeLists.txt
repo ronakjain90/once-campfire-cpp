@@ -120,5 +120,11 @@ campfire_test(app
   WERROR)
 target_compile_definitions(test_app PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")
 
+# Fuzz targets (architecture section 14): built only with -DCAMPFIRE_FUZZ=ON.
+option(CAMPFIRE_FUZZ "Build the libFuzzer targets" OFF)
+if(CAMPFIRE_FUZZ)
+  add_subdirectory(fuzz)
+endif()
+
 campfire_executable(campfire SOURCES main.cpp DEPS campfire_app)
 set_target_properties(campfire PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")

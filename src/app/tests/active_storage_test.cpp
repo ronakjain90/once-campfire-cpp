@@ -3,6 +3,8 @@
 // config/initializers/active_storage*.rb. Rust: crates/campfire/src/active_storage.rs.
 #include <doctest.h>
 
+#include <cstdlib>
+
 #include "app/controllers/accounts_common.hpp"
 #include "app/tests/fixture.hpp"
 #include "compat/base64.hpp"
@@ -11,8 +13,6 @@
 #include "storage/key.hpp"
 #include "storage/paths.hpp"
 
-extern "C" void vips_concurrency_set(int concurrency);  // libvips
-
 namespace campfire::app::testing {
 
 namespace {
@@ -20,8 +20,8 @@ namespace {
 // libvips works with its own threads, whose locks (in glib) ThreadSanitizer cannot see: it reports a race in the
 // queues of glib. The tests of this binary run libvips on the calling thread.
 [[maybe_unused]] const bool kVipsOnOneThread = [] {
-  vips_concurrency_set(1);
-  return true;
+  // `vips_init` reads this when it sets the number of threads.
+  return ::setenv("VIPS_CONCURRENCY", "1", 1) == 0;
 }();
 
 std::string cookie_pair(const Reply& reply, const std::string& name) {

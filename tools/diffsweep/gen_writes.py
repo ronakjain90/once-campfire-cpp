@@ -118,7 +118,7 @@ def a3():
     return [
         s("post edit delete", [
             LOGIN("david"), LOGIN("jason"),
-            msg(des, "Hello from the sweep", capture=body("mid", r'id="message_(\d+)"')),
+            msg(des, "Hello from the sweep", capture=body("mid", r'data-message-id="(\d+)"')),
             get("fragment", f"/rooms/{des}/messages/{{{{mid}}}}"), get("edit form", f"/rooms/{des}/messages/{{{{mid}}}}/edit"),
             q("edit", "PUT", f"/rooms/{des}/messages/{{{{mid}}}}", multipart={"fields": {"message[body]": "<p>Edited</p>"}}, headers=TURBO),
             q("edit by other user", "PUT", f"/rooms/{des}/messages/{{{{mid}}}}", "jason", multipart={"fields": {"message[body]": "<p>x</p>"}}, headers=TURBO),
@@ -145,8 +145,8 @@ def a3():
         s("boosts", [
             LOGIN("david"), LOGIN("jason"),
             get("message", f"/rooms/{des}/@{{{{messages.unboosted}}}}"),
-            q("boost", "POST", "/messages/{{messages.unboosted}}/boosts", "jason", form={"boost[content]": "👍"}, headers=TURBO,
-              capture=body("bid", r'id="boost_(\d+)"')),
+            q("boost", "POST", "/messages/{{messages.unboosted}}/boosts", "jason", form={"boost[content]": "👍"}, headers=TURBO),
+            get("boosts of message", "/messages/{{messages.unboosted}}/boosts", "jason", capture=body("bid", r'id="boost_(\d+)"')),
             q("boost again", "POST", "/messages/{{messages.unboosted}}/boosts", "david", form={"boost[content]": "🎉"}, headers=TURBO),
             get("boosts index", "/messages/{{messages.unboosted}}/boosts", "david"),
             q("delete other boost", "DELETE", "/messages/{{messages.unboosted}}/boosts/{{bid}}", "david", headers=TURBO),
@@ -156,7 +156,7 @@ def a3():
         s("bot api", [
             LOGIN("david"),
             q("create text", "POST", "/rooms/{{rooms.watercooler}}/{{bot_keys.bender}}/messages", "bot", csrf=False,
-              headers={"Content-Type": "text/plain"}, body="Build 1044 passed", capture=body("bm", r'(\d+)')),
+              headers={"Content-Type": "text/plain"}, body="Build 1044 passed"),
             q("create html", "POST", "/rooms/{{rooms.watercooler}}/{{bot_keys.bender}}/messages", "bot", csrf=False,
               headers={"Content-Type": "text/html"}, body="<strong>Bold</strong> news"),
             q("create upload", "POST", "/rooms/{{rooms.watercooler}}/{{bot_keys.bender}}/messages", "bot", csrf=False,

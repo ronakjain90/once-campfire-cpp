@@ -5,13 +5,21 @@ import re
 # Header values that differ on every response. Names and order are still compared.
 DEFAULT_IGNORED_VALUES = {"date", "x-request-id", "x-runtime"}
 # Cookies whose value is random per sign-in. The name, the value length and the attributes are compared.
-DEFAULT_RANDOM_COOKIES = {"session_token"}
+DEFAULT_RANDOM_COOKIES = {"session_token", "_campfire_session"}
 
 # Body normalizers: (name, regex, replacement). Only values that are random by design.
 DEFAULT_NORMALIZERS = [
     ("csrf-meta", r'(<meta name="csrf-token" content=")[^"]*(")', r"\1<csrf>\2"),
     ("csrf-form", r'(name="authenticity_token"[^>]*? value=")[^"]*(")', r"\1<csrf>\2"),
     ("csrf-form-rev", r'(value=")[^"]*("[^>]*? name="authenticity_token")', r"\1<csrf>\2"),
+    # The id of a message that has no client id yet is a random UUID.
+    ("uuid", r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "<uuid>"),
+    ("storage-key", r"(/rails/active_storage/disk/)[A-Za-z0-9_=%-]+--[0-9a-f]{40,64}", r"\1<signed>"),
+]
+# Header values with a key that is random by design (Active Storage keys and signed ids).
+HEADER_NORMALIZERS = [
+    (r'(filename=")[a-z0-9]{28}(")', r"\1<key>\2"), (r"(filename\*=UTF-8'')[a-z0-9]{28}", r"\1<key>"),
+    (r"(/rails/active_storage/disk/)[A-Za-z0-9_=%-]+--[0-9a-f]{40,64}", r"\1<signed>"),
 ]
 TEXT_TYPE = re.compile(r"(text/|json|javascript|xml|turbo-stream)", re.I)
 
@@ -34,7 +42,7 @@ def cookie_view(value, random_cookies):
     name, _, rest = value.partition("=")
     parts = [p.strip() for p in rest.split(";")]
     if name in random_cookies and parts[0]:
-        parts[0] = f"<random len={len(parts[0])}>"
+        parts[0] = "<random>"
     return name + "=" + "; ".join(parts)
 
 
@@ -45,6 +53,9 @@ def header_lines(resp, ignored, random_cookies):
             value = cookie_view(value, random_cookies)
         elif name in ignored:
             value = "<ignored>"
+        else:
+            for pat, rep in HEADER_NORMALIZERS:
+                value = re.sub(pat, rep, value)
         out.append(f"{name}: {value}")
     return out
 

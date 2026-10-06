@@ -102,14 +102,12 @@ class Run:
     # ---- csrf
     def ensure_csrf(self, actor, side):
         c = self.client(actor)[side]
-        if c.csrf:
+        if c.csrf is not None:
             return c.csrf
         page = "/users/me/profile" if c.logged_in else "/session/new"
         r = c.request("GET", page)
         m = re.search(r'<meta name="csrf-token" content="([^"]+)"', r.text())
-        if not m:
-            raise StepError(f"no csrf token on {page} for {actor} (status {r.status})")
-        c.csrf = m.group(1)
+        c.csrf = m.group(1) if m else ""  # the Rust app has no token: it checks Sec-Fetch-Site
         return c.csrf
 
     # ---- request
@@ -154,7 +152,9 @@ class Run:
             shown_path = path if side == 0 else shown_path
             c = self.client(actor)[side]
             if m not in ("GET", "HEAD") and step.get("csrf", True) and "X-CSRF-Token" not in headers:
-                headers["X-CSRF-Token"] = self.ensure_csrf(actor, side)
+                token = self.ensure_csrf(actor, side)
+                if token:
+                    headers["X-CSRF-Token"] = token
                 headers.setdefault("Sec-Fetch-Site", "same-origin")
             r = c.request(m, path, headers, body, use_cookies=step.get("cookies", True))
             resps.append(r)

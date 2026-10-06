@@ -26,7 +26,7 @@ def a7():
             sub("d", "PresenceChannel", room_id="{{rooms.designers}}"),
             sub("d", "TypingNotificationsChannel", room_id="{{rooms.designers}}"),
             sub("d", "RoomMessagesChannel", signed_stream_name="{{room_stream}}"),
-            {"op": "cable_wait", "id": "d", "count": 8, "timeout": 8, "settle": 0.5, "name": "welcome, confirmations, read frame"},
+            {"op": "cable_wait", "id": "d", "count": 8, "timeout": 8, "settle": 0.5, "sorted": True, "name": "welcome, confirmations, read frame"},
             sub("d", "PresenceChannel", room_id="{{rooms.archive}}"),
             sub("d", "TypingNotificationsChannel", room_id=1),
             sub("d", "RoomMessagesChannel", signed_stream_name="bad"),

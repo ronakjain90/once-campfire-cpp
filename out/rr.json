@@ -1,0 +1,8303 @@
+{
+ "expected": "campfire-rust:app",
+ "actual": "campfire-rust:app",
+ "results": [
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens crowd david",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens crowd david",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens crowd david",
+   "name": "account/users/next_page/fragment",
+   "method": "GET",
+   "path": "/account/users?page=2&format=turbo_stream",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens crowd david",
+   "name": "account/users/next_page/fragment (revisit)",
+   "method": "GET",
+   "path": "/account/users?page=2&format=turbo_stream",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "crowd users",
+   "name": "page 1",
+   "method": "GET",
+   "path": "/account/users",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "crowd users",
+   "name": "page 2",
+   "method": "GET",
+   "path": "/account/users?page=2",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "crowd users",
+   "name": "page 2 stream",
+   "method": "GET",
+   "path": "/account/users?page=2",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "custom styles seed",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "custom styles seed",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "custom styles seed",
+   "name": "room",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "custom styles seed",
+   "name": "edit",
+   "method": "GET",
+   "path": "/account/custom_styles/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default anon",
+   "name": "auth/sign_in",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default anon",
+   "name": "auth/sign_in/banned_ip",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default anon",
+   "name": "auth/join",
+   "method": "GET",
+   "path": "/join/CRMu-l8Ge-KB9B",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default anon",
+   "name": "auth/join/invalid_code",
+   "method": "GET",
+   "path": "/join/not-a-code",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default anon",
+   "name": "auth/transfer/valid",
+   "method": "GET",
+   "path": "/session/transfers/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJleHAiOiIyMDI2LTAzLTAyVDIwOjAwOjAwLjAwMFoiLCJwdXIiOiJ1c2VyL3RyYW5zZmVyIn19--476cf868cb8cf4840014cdfa2913750a0adb93110f2e0ecb9c8ff1a32edd0161",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default anon",
+   "name": "auth/transfer/expired",
+   "method": "GET",
+   "path": "/session/transfers/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJleHAiOiIyMDI2LTAzLTAyVDE1OjAwOjAwLjAwMFoiLCJwdXIiOiJ1c2VyL3RyYW5zZmVyIn19--be00f8d4b515189e626e9425bcd60bc1f9dc963e0082e18898fcb742c5b840b4",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default anon",
+   "name": "auth/incompatible_browser",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default anon",
+   "name": "auth/incompatible_browser/apple_messages",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default loner",
+   "name": "login loner: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default loner",
+   "name": "login loner: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens default loner",
+   "name": "welcome/no_rooms",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default anon",
+   "name": "auth/signed_out_redirect",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default anon",
+   "name": "realtime/message_edited",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434505",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default anon",
+   "name": "realtime/boosted",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434506",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default anon",
+   "name": "realtime/boost_removed",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434509",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default anon",
+   "name": "realtime/room_deleted_then_send",
+   "method": "GET",
+   "path": "/rooms/699448326",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default anon",
+   "name": "realtime/presence_read",
+   "method": "GET",
+   "path": "/rooms/486777696",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/show/designers",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/show/original_with_invitation",
+   "method": "GET",
+   "path": "/rooms/104393281",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/show/closed",
+   "method": "GET",
+   "path": "/rooms/486777696",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/show/busy/top_of_pagination",
+   "method": "GET",
+   "path": "/rooms/486777696/@933434510",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/show/busy/page_around_middle",
+   "method": "GET",
+   "path": "/rooms/486777696/@933434569",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/show/busy/page_around_newest",
+   "method": "GET",
+   "path": "/rooms/486777696/@136976342",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/show/direct",
+   "method": "GET",
+   "path": "/rooms/186869642",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/show/direct/group",
+   "method": "GET",
+   "path": "/rooms/699448329",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/show/unrenderable_message",
+   "method": "GET",
+   "path": "/rooms/699448328",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/involvement/nothing",
+   "method": "GET",
+   "path": "/rooms/201306877",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/involvement/invisible",
+   "method": "GET",
+   "path": "/rooms/699448327",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/involvement/direct_nothing",
+   "method": "GET",
+   "path": "/rooms/699448325",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/involvement/fragment",
+   "method": "GET",
+   "path": "/rooms/654632876/involvement",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/involvement/fragment (revisit)",
+   "method": "GET",
+   "path": "/rooms/654632876/involvement",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/refresh/fragment",
+   "method": "GET",
+   "path": "/rooms/654632876/refresh?since=1772380800000",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/refresh/fragment (revisit)",
+   "method": "GET",
+   "path": "/rooms/654632876/refresh?since=1772380800000",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/plain",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434482",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/threaded",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434483",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/long",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434484",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/emoji_only",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434485",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/code_with_language",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434486",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/code_without_language",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434487",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/table",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434488",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/formatting",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434489",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/mention",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434490",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/mention_marshal_era_sgid",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434491",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/sound_with_image",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434492",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/sound_with_text",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434493",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/opengraph_embed",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434494",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/solo_unfurled_link",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434495",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/opengraph_trix_twitter_avatar",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434496",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/autolinked",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434497",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/image",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434498",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/image_downscaled",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434499",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/video",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434500",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/file",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434501",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/file_unvariable_image",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434502",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/from_bot",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434503",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/from_deactivated_user",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434504",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/edited",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434505",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/boosts/none",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434506",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/boosts/one",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434508",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/boosts/yours",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434509",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "messages/boosts/text_boost",
+   "method": "GET",
+   "path": "/rooms/654632876/@309456473",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/chrome_mac",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/chrome_windows",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/chrome_android",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/chrome_ios",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/safari_mac",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/safari_ios",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/firefox_mac",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/firefox_windows",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/firefox_android",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "pwa/notifications_help/opera_linux",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/opens/new",
+   "method": "GET",
+   "path": "/rooms/opens/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/opens/edit/admin",
+   "method": "GET",
+   "path": "/rooms/opens/104393281/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/closeds/new",
+   "method": "GET",
+   "path": "/rooms/closeds/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/closeds/edit/admin",
+   "method": "GET",
+   "path": "/rooms/closeds/654632876/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/closeds/edit/from_open",
+   "method": "GET",
+   "path": "/rooms/closeds/104393281/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/opens/edit/from_closed",
+   "method": "GET",
+   "path": "/rooms/opens/654632876/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/directs/edit",
+   "method": "GET",
+   "path": "/rooms/directs/186869642/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/directs/edit/group",
+   "method": "GET",
+   "path": "/rooms/directs/699448329/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default david",
+   "name": "rooms/directs/new",
+   "method": "GET",
+   "path": "/rooms/directs/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default jason",
+   "name": "login jason: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default jason",
+   "name": "login jason: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default jason",
+   "name": "rooms/show/original_with_invitation/member",
+   "method": "GET",
+   "path": "/rooms/104393281",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "login kevin: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "login kevin: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "rooms/show/designers/member",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "rooms/show/empty",
+   "method": "GET",
+   "path": "/rooms/699448326",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "rooms/show/open",
+   "method": "GET",
+   "path": "/rooms/201306877",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "rooms/show/direct/with_bot",
+   "method": "GET",
+   "path": "/rooms/340026324",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "rooms/show/non_member",
+   "method": "GET",
+   "path": "/rooms/486777696",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "messages/mention/mentioned",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434490",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "messages/boosts/many",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434507",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "rooms/opens/new/member",
+   "method": "GET",
+   "path": "/rooms/opens/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "rooms/opens/edit/member",
+   "method": "GET",
+   "path": "/rooms/opens/201306877/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "rooms/closeds/edit/member",
+   "method": "GET",
+   "path": "/rooms/closeds/654632876/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "screens-A2.json",
+   "scenario": "screens default kevin",
+   "name": "rooms/closeds/edit/member_creator",
+   "method": "GET",
+   "path": "/rooms/closeds/699448326/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon",
+   "name": "bot_api/messages/index",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon",
+   "name": "bot_api/messages/index (revisit)",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon",
+   "name": "bot_api/messages/index/before",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages?before=933434569",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon",
+   "name": "bot_api/messages/index/before (revisit)",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages?before=933434569",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "messages/index/fragment",
+   "method": "GET",
+   "path": "/rooms/486777696/messages?before=933434569",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "messages/index/fragment (revisit)",
+   "method": "GET",
+   "path": "/rooms/486777696/messages?before=933434569",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "messages/show/fragment",
+   "method": "GET",
+   "path": "/rooms/654632876/messages/933434482",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "messages/show/fragment (revisit)",
+   "method": "GET",
+   "path": "/rooms/654632876/messages/933434482",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "autocompletable/users/fragment",
+   "method": "GET",
+   "path": "/autocompletable/users?room_id=654632876&filter=a",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "autocompletable/users/fragment (revisit)",
+   "method": "GET",
+   "path": "/autocompletable/users?room_id=654632876&filter=a",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "autocompletable/users/json",
+   "method": "GET",
+   "path": "/autocompletable/users.json?query=j",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "autocompletable/users/json (revisit)",
+   "method": "GET",
+   "path": "/autocompletable/users.json?query=j",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "errors/404",
+   "method": "GET",
+   "path": "/users/999999999",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "interactions/flash_notice",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "interactions/pwa_install/default",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "pwa/install/safari_ios",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "pwa/install/firefox_android",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "pwa/install/opera_linux",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "pwa/install/absent_chrome",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "pwa/install/absent_firefox",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "account/edit/admin",
+   "method": "GET",
+   "path": "/account/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "account/bots",
+   "method": "GET",
+   "path": "/account/bots",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "account/bots/new",
+   "method": "GET",
+   "path": "/account/bots/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "account/bots/edit/with_webhook",
+   "method": "GET",
+   "path": "/account/bots/394959859/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "account/bots/edit/with_avatar",
+   "method": "GET",
+   "path": "/account/bots/773523956/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "account/custom_styles/empty",
+   "method": "GET",
+   "path": "/account/custom_styles/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/show/self",
+   "method": "GET",
+   "path": "/users/127326141",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/show/admin_viewing_member",
+   "method": "GET",
+   "path": "/users/712064548",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/show/bot_deactivated",
+   "method": "GET",
+   "path": "/users/773523957",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/show/deactivated",
+   "method": "GET",
+   "path": "/users/773523954",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/show/banned",
+   "method": "GET",
+   "path": "/users/773523955",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/avatar/initials",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/avatar/initials (revisit)",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/avatar/image",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/avatar/image (revisit)",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default david",
+   "name": "users/push_subscriptions",
+   "method": "GET",
+   "path": "/users/me/push_subscriptions",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default jason",
+   "name": "users/profile/with_avatar",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default jz",
+   "name": "login jz: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default jz",
+   "name": "login jz: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default jz",
+   "name": "users/push_subscriptions/none",
+   "method": "GET",
+   "path": "/users/me/push_subscriptions",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default kevin",
+   "name": "account/edit/member",
+   "method": "GET",
+   "path": "/account/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default kevin",
+   "name": "users/profile/member",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default kevin",
+   "name": "users/show/member_viewing_admin",
+   "method": "GET",
+   "path": "/users/127326141",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default kevin",
+   "name": "users/show/with_avatar",
+   "method": "GET",
+   "path": "/users/149087659",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "screens-A4.json",
+   "scenario": "screens default kevin",
+   "name": "users/show/bot",
+   "method": "GET",
+   "path": "/users/394959859",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "screens-A5.json",
+   "scenario": "screens default david",
+   "name": "search/recent",
+   "method": "GET",
+   "path": "/searches",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "screens-A5.json",
+   "scenario": "screens default david",
+   "name": "search/results",
+   "method": "GET",
+   "path": "/searches?q=Borgias",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "screens-A5.json",
+   "scenario": "screens default david",
+   "name": "search/results/many",
+   "method": "GET",
+   "path": "/searches?q=wifi",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "screens-A5.json",
+   "scenario": "screens default david",
+   "name": "search/no_results",
+   "method": "GET",
+   "path": "/searches?q=zebra",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "screens-A5.json",
+   "scenario": "screens default kevin",
+   "name": "search/empty",
+   "method": "GET",
+   "path": "/searches",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "screens-A6.json",
+   "scenario": "screens default anon",
+   "name": "errors/404/static",
+   "method": "GET",
+   "path": "/404.html",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "screens-A6.json",
+   "scenario": "screens default anon",
+   "name": "errors/422/static",
+   "method": "GET",
+   "path": "/422.html",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "screens-A6.json",
+   "scenario": "screens default anon",
+   "name": "errors/500/static",
+   "method": "GET",
+   "path": "/500.html",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "screens-A6.json",
+   "scenario": "screens default anon",
+   "name": "errors/502/static",
+   "method": "GET",
+   "path": "/502.html",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "screens-A6.json",
+   "scenario": "screens default anon",
+   "name": "pwa/manifest",
+   "method": "GET",
+   "path": "/webmanifest.json",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "screens-A6.json",
+   "scenario": "screens default anon",
+   "name": "pwa/manifest (revisit)",
+   "method": "GET",
+   "path": "/webmanifest.json",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "screens-A6.json",
+   "scenario": "screens default anon",
+   "name": "pwa/service_worker",
+   "method": "GET",
+   "path": "/service-worker.js",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "screens-A6.json",
+   "scenario": "screens default anon",
+   "name": "pwa/service_worker (revisit)",
+   "method": "GET",
+   "path": "/service-worker.js",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "shape-A1.json",
+   "scenario": "http_shape requests",
+   "name": "root",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "shape-A1.json",
+   "scenario": "http_shape requests",
+   "name": "anon root",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "shape-A1.json",
+   "scenario": "http_shape requests",
+   "name": "anon sign in",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "shape-A1.json",
+   "scenario": "http_shape requests",
+   "name": "anon sign in (revisit)",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "shape-A1.json",
+   "scenario": "http_shape requests",
+   "name": "anon join bad",
+   "method": "GET",
+   "path": "/join/nope",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "shape-A1.json",
+   "scenario": "http_shape requests",
+   "name": "401 bad sign in",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "room",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "room (revisit)",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "room empty",
+   "method": "GET",
+   "path": "/rooms/201306877",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "room busy",
+   "method": "GET",
+   "path": "/rooms/486777696",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "room direct",
+   "method": "GET",
+   "path": "/rooms/186869642",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "room at message",
+   "method": "GET",
+   "path": "/rooms/654632876/@309456473",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "room settings",
+   "method": "GET",
+   "path": "/rooms/201306877/settings",
+   "status": [
+    500,
+    500
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "room involvement",
+   "method": "GET",
+   "path": "/rooms/201306877/involvement",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "room edit",
+   "method": "GET",
+   "path": "/rooms/opens/104393281/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "new open room",
+   "method": "GET",
+   "path": "/rooms/opens/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "new direct",
+   "method": "GET",
+   "path": "/rooms/directs/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "sidebar frame",
+   "method": "GET",
+   "path": "/users/me/sidebar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "sidebar frame (revisit)",
+   "method": "GET",
+   "path": "/users/me/sidebar",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "refresh",
+   "method": "GET",
+   "path": "/rooms/654632876/refresh?since=0",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "refresh (revisit)",
+   "method": "GET",
+   "path": "/rooms/654632876/refresh?since=0",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "refresh unchanged",
+   "method": "GET",
+   "path": "/rooms/201306877/refresh?since=1772467200000",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "refresh unchanged (revisit)",
+   "method": "GET",
+   "path": "/rooms/201306877/refresh?since=1772467200000",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "refresh empty",
+   "method": "GET",
+   "path": "/rooms/201306877/refresh?since=99999999999999",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "refresh empty (revisit)",
+   "method": "GET",
+   "path": "/rooms/201306877/refresh?since=99999999999999",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "refresh html",
+   "method": "GET",
+   "path": "/rooms/201306877/refresh",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "head room",
+   "method": "HEAD",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "head refresh",
+   "method": "HEAD",
+   "path": "/rooms/201306877/refresh?since=1772467200000",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "shape-A2.json",
+   "scenario": "http_shape requests",
+   "name": "anon room",
+   "method": "GET",
+   "path": "/rooms/201306877",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages before",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?before=933434498",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages before (revisit)",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?before=933434498",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages after",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?after=309456473",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages empty page",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?after=933434509",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages none",
+   "method": "GET",
+   "path": "/rooms/201306877/messages?before=933434498",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "xhr",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?before=933434498",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "autocomplete json",
+   "method": "GET",
+   "path": "/autocompletable/users?query=j",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "autocomplete json (revisit)",
+   "method": "GET",
+   "path": "/autocompletable/users?query=j",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "autocomplete html",
+   "method": "GET",
+   "path": "/autocompletable/users?query=j",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "bot messages",
+   "method": "GET",
+   "path": "/rooms/201306877/394959859-BenderBot123/messages",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "bot messages bad key",
+   "method": "GET",
+   "path": "/rooms/201306877/1-nope/messages",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "avatar initials",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "avatar initials (revisit)",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "avatar initials browser",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "avatar initials browser (revisit)",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416bb81e7107534db5702d351533dc2ecd3876e97f/avatar",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "avatar image",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "avatar image (revisit)",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "account logo",
+   "method": "GET",
+   "path": "/account/logo?size=small",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "account logo (revisit)",
+   "method": "GET",
+   "path": "/account/logo?size=small",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "profile",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "user",
+   "method": "GET",
+   "path": "/users/149087659",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "account edit",
+   "method": "GET",
+   "path": "/account/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "account users",
+   "method": "GET",
+   "path": "/account/users",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "account bots",
+   "method": "GET",
+   "path": "/account/bots",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "custom styles",
+   "method": "GET",
+   "path": "/account/custom_styles/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "account users stream",
+   "method": "GET",
+   "path": "/account/users?page=2",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "push subscriptions",
+   "method": "GET",
+   "path": "/users/me/push_subscriptions",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "qr code",
+   "method": "GET",
+   "path": "/qr_code/aHR0cDovL2V4YW1wbGUuY29t",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "qr code (revisit)",
+   "method": "GET",
+   "path": "/qr_code/aHR0cDovL2V4YW1wbGUuY29t",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "shape-A4.json",
+   "scenario": "http_shape requests",
+   "name": "qr code bad",
+   "method": "GET",
+   "path": "/qr_code/aHR0cDovL2V4YW1wbGUuY29t2",
+   "status": [
+    500,
+    500
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "shape-A5.json",
+   "scenario": "http_shape requests",
+   "name": "searches",
+   "method": "GET",
+   "path": "/searches?q=pizza",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "shape-A5.json",
+   "scenario": "http_shape requests",
+   "name": "searches empty",
+   "method": "GET",
+   "path": "/searches",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "discover room page",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "css",
+   "method": "GET",
+   "path": "/assets/_reset-9c3efd7b.css",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "css (revisit)",
+   "method": "GET",
+   "path": "/assets/_reset-9c3efd7b.css",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "js",
+   "method": "GET",
+   "path": "/assets/application-a54c74a7.js",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "js (revisit)",
+   "method": "GET",
+   "path": "/assets/application-a54c74a7.js",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "image asset",
+   "method": "GET",
+   "path": "/assets/menu-dots-horizontal-f6a5d793.svg",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "image asset (revisit)",
+   "method": "GET",
+   "path": "/assets/menu-dots-horizontal-f6a5d793.svg",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "robots",
+   "method": "GET",
+   "path": "/robots.txt",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "robots (revisit)",
+   "method": "GET",
+   "path": "/robots.txt",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "blob representation",
+   "method": "GET",
+   "path": "/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJqcGciLCJyZXNpemVfdG9fbGltaXQiOlsxMjAwLDgwMF19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--28426ca1e33b0fea71b8b10b7f52a844de5886cf/moon.jpg",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "blob redirect",
+   "method": "GET",
+   "path": "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NSwicHVyIjoiYmxvYl9pZCJ9fQ==--4ceb3a7460a929db324ca5fd0dffee9c8527bfad/moon.jpg?disposition=attachment",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "head css",
+   "method": "HEAD",
+   "path": "/assets/_reset-9c3efd7b.css",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "webmanifest",
+   "method": "GET",
+   "path": "/webmanifest",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "webmanifest (revisit)",
+   "method": "GET",
+   "path": "/webmanifest",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "service worker",
+   "method": "GET",
+   "path": "/service-worker",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "service worker (revisit)",
+   "method": "GET",
+   "path": "/service-worker",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "health",
+   "method": "GET",
+   "path": "/up",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "404 room",
+   "method": "GET",
+   "path": "/rooms/1",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "404 route",
+   "method": "GET",
+   "path": "/nope",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "404 route json",
+   "method": "GET",
+   "path": "/nope.json",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "406 format",
+   "method": "GET",
+   "path": "/rooms/201306877.xml",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "406 yaml",
+   "method": "GET",
+   "path": "/rooms/201306877.yaml",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "406 stream only",
+   "method": "GET",
+   "path": "/rooms/201306877/refresh?since=1772467200000",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "head 404 any",
+   "method": "HEAD",
+   "path": "/nope",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "head 406 xml",
+   "method": "HEAD",
+   "path": "/rooms/201306877.xml",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "422 csrf",
+   "method": "POST",
+   "path": "/rooms/201306877/messages",
+   "status": [
+    422,
+    422
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "blob 404",
+   "method": "GET",
+   "path": "/rails/active_storage/blobs/redirect/nope/x.png",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "old browser",
+   "method": "GET",
+   "path": "/rooms/201306877",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "shape-A6.json",
+   "scenario": "http_shape requests",
+   "name": "avatar missing user 404",
+   "method": "GET",
+   "path": "/users/nope/avatar",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "shape-A8.json",
+   "scenario": "http_shape requests",
+   "name": "406 encoding",
+   "method": "GET",
+   "path": "/rooms/201306877",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "shape-A8.json",
+   "scenario": "http_shape requests",
+   "name": "no gzip",
+   "method": "GET",
+   "path": "/rooms/201306877",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "smoke.json",
+   "scenario": "smoke",
+   "name": "GET /up",
+   "method": "GET",
+   "path": "/up",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "smoke.json",
+   "scenario": "smoke",
+   "name": "GET /session/new",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "smoke.json",
+   "scenario": "smoke",
+   "name": "GET /rooms/{{rooms.watercooler}}",
+   "method": "GET",
+   "path": "/rooms/486777696",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "gzip",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "zstd",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "br",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "all",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "identity",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "none",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "gzip;q=0",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "room revisit",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "room revisit (revisit)",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "head",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "range",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "long url",
+   "method": "GET",
+   "path": "/rooms/654632876?a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&a=b&",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "trailing slash",
+   "method": "GET",
+   "path": "/rooms/654632876/",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "double slash",
+   "method": "GET",
+   "path": "//rooms",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "percent path",
+   "method": "GET",
+   "path": "/rooms/%41",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "dotfile",
+   "method": "GET",
+   "path": "/.env",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "traversal",
+   "method": "GET",
+   "path": "/assets/../etc/passwd",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "options",
+   "method": "OPTIONS",
+   "path": "/rooms/654632876",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A8",
+   "list": "writes-A8.json",
+   "scenario": "encodings and conditional requests",
+   "name": "unknown method",
+   "method": "PROPFIND",
+   "path": "/",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "channels subscribe",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "channels subscribe",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "channels subscribe",
+   "name": "room page",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "channels subscribe",
+   "name": "cable d: connect",
+   "method": "GET",
+   "path": "/cable",
+   "status": [
+    101,
+    101
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "channels subscribe",
+   "name": "welcome, confirmations, read frame",
+   "method": "WS",
+   "path": "/cable",
+   "status": [
+    8,
+    8
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "channels subscribe",
+   "name": "rejections",
+   "method": "WS",
+   "path": "/cable",
+   "status": [
+    4,
+    4
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "login jason: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "login jason: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "cable d: connect",
+   "method": "GET",
+   "path": "/cable",
+   "status": [
+    101,
+    101
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "cable j: connect",
+   "method": "GET",
+   "path": "/cable",
+   "status": [
+    101,
+    101
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "d welcome and confirm",
+   "method": "WS",
+   "path": "/cable",
+   "status": [
+    2,
+    2
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "j welcome and confirm",
+   "method": "WS",
+   "path": "/cable",
+   "status": [
+    2,
+    2
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "d sees typing",
+   "method": "WS",
+   "path": "/cable",
+   "status": [
+    2,
+    2
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "j sees own typing",
+   "method": "WS",
+   "path": "/cable",
+   "status": [
+    2,
+    2
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "typing and presence",
+   "name": "d presence confirm",
+   "method": "WS",
+   "path": "/cable",
+   "status": [
+    1,
+    1
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "login jason: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "login jason: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "room page",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "cable d: connect",
+   "method": "GET",
+   "path": "/cable",
+   "status": [
+    101,
+    101
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "welcome and confirmations",
+   "method": "WS",
+   "path": "/cable",
+   "status": [
+    3,
+    3
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "post message 'Cable one'",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "edit",
+   "method": "PUT",
+   "path": "/rooms/654632876/messages/933434505",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "boost",
+   "method": "POST",
+   "path": "/messages/933434506/boosts",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "delete",
+   "method": "DELETE",
+   "path": "/rooms/654632876/messages/933434505",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "message broadcasts",
+   "name": "broadcasts for create, edit, boost, delete, unread",
+   "method": "WS",
+   "path": "/cable",
+   "status": [
+    5,
+    5
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "connect rejected",
+   "name": "cable v: connect",
+   "method": "GET",
+   "path": "/cable",
+   "status": [
+    101,
+    101
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "connect rejected",
+   "name": "cable bad_origin: connect",
+   "method": "GET",
+   "path": "/cable",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "connect rejected",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "connect rejected",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "connect rejected",
+   "name": "cable d2: connect",
+   "method": "GET",
+   "path": "/cable",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A7",
+   "list": "cable-A7.json",
+   "scenario": "connect rejected",
+   "name": "cable d3: connect",
+   "method": "GET",
+   "path": "/cable?x=1",
+   "status": [
+    101,
+    101
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon requests",
+   "name": "bot_api/messages/update",
+   "method": "PUT",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/933434630",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon requests",
+   "name": "bot_api/boosts/create",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/136976342/boosts",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in and out",
+   "name": "home signed out",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in and out",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in and out",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in and out",
+   "name": "home",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in and out",
+   "name": "profile",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in and out",
+   "name": "sign out",
+   "method": "DELETE",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in and out",
+   "name": "home after sign out",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in and out",
+   "name": "room after sign out",
+   "method": "GET",
+   "path": "/rooms/201306877",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 1",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 2",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 3",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 4",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 5",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 6",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 7",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 8",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 9",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 10",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 11",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    429,
+    429
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in failures",
+   "name": "bad password 12",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    429,
+    429
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in with a bad email",
+   "name": "form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in with a bad email",
+   "name": "unknown email",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "sign in with a bad email",
+   "name": "banned user",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "transfer sign in",
+   "name": "transfer page",
+   "method": "GET",
+   "path": "/session/transfers/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJleHAiOiIyMDI2LTAzLTAyVDIwOjAwOjAwLjAwMFoiLCJwdXIiOiJ1c2VyL3RyYW5zZmVyIn19--476cf868cb8cf4840014cdfa2913750a0adb93110f2e0ecb9c8ff1a32edd0161",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "transfer sign in",
+   "name": "transfer update",
+   "method": "PATCH",
+   "path": "/session/transfers/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJleHAiOiIyMDI2LTAzLTAyVDIwOjAwOjAwLjAwMFoiLCJwdXIiOiJ1c2VyL3RyYW5zZmVyIn19--476cf868cb8cf4840014cdfa2913750a0adb93110f2e0ecb9c8ff1a32edd0161",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "transfer sign in",
+   "name": "home",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "transfer sign in",
+   "name": "expired transfer",
+   "method": "GET",
+   "path": "/session/transfers/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJleHAiOiIyMDI2LTAzLTAyVDE1OjAwOjAwLjAwMFoiLCJwdXIiOiJ1c2VyL3RyYW5zZmVyIn19--be00f8d4b515189e626e9425bcd60bc1f9dc963e0082e18898fcb742c5b840b4",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "transfer sign in",
+   "name": "bad transfer",
+   "method": "GET",
+   "path": "/session/transfers/nope",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "join the account",
+   "name": "join form",
+   "method": "GET",
+   "path": "/join/CRMu-l8Ge-KB9B",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "join the account",
+   "name": "join bad code",
+   "method": "GET",
+   "path": "/join/nope",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "join the account",
+   "name": "join create",
+   "method": "POST",
+   "path": "/join/CRMu-l8Ge-KB9B",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "join the account",
+   "name": "join invalid",
+   "method": "POST",
+   "path": "/join/CRMu-l8Ge-KB9B",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "join the account",
+   "name": "home after join",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "join the account",
+   "name": "join bad code create",
+   "method": "POST",
+   "path": "/join/nope",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "new form",
+   "method": "GET",
+   "path": "/rooms/opens/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "create open room",
+   "method": "POST",
+   "path": "/rooms/opens",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "show",
+   "method": "GET",
+   "path": "/rooms/699448330",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "edit",
+   "method": "GET",
+   "path": "/rooms/opens/699448330/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "rename",
+   "method": "PATCH",
+   "path": "/rooms/opens/699448330",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "sidebar",
+   "method": "GET",
+   "path": "/users/me/sidebar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "create with empty name",
+   "method": "POST",
+   "path": "/rooms/opens",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "delete",
+   "method": "DELETE",
+   "path": "/rooms/closeds/699448330",
+   "status": [
+    500,
+    500
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "open room lifecycle",
+   "name": "show deleted",
+   "method": "GET",
+   "path": "/rooms/699448330",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "new closed",
+   "method": "GET",
+   "path": "/rooms/closeds/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "create closed",
+   "method": "POST",
+   "path": "/rooms/closeds",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "closed edit",
+   "method": "GET",
+   "path": "/rooms/closeds/699448330/edit",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "update members",
+   "method": "PATCH",
+   "path": "/rooms/closeds/699448330",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "closed show",
+   "method": "GET",
+   "path": "/rooms/699448330",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "new direct",
+   "method": "GET",
+   "path": "/rooms/directs/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "create direct",
+   "method": "POST",
+   "path": "/rooms/directs",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "create direct again",
+   "method": "POST",
+   "path": "/rooms/directs",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "create group direct",
+   "method": "POST",
+   "path": "/rooms/directs",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "direct show",
+   "method": "GET",
+   "path": "/rooms/699448331",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "closed and direct rooms",
+   "name": "direct edit",
+   "method": "GET",
+   "path": "/rooms/directs/699448331/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "involvement",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "involvement",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "involvement",
+   "name": "show",
+   "method": "GET",
+   "path": "/rooms/201306877/involvement",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "involvement",
+   "name": "set invisible",
+   "method": "PUT",
+   "path": "/rooms/201306877/involvement",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "involvement",
+   "name": "sidebar",
+   "method": "GET",
+   "path": "/users/me/sidebar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "involvement",
+   "name": "set everything",
+   "method": "PUT",
+   "path": "/rooms/201306877/involvement",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "involvement",
+   "name": "set mentions",
+   "method": "PUT",
+   "path": "/rooms/201306877/involvement",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "involvement",
+   "name": "set bad value",
+   "method": "PUT",
+   "path": "/rooms/201306877/involvement",
+   "status": [
+    500,
+    500
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "room access limits",
+   "name": "login kevin: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "room access limits",
+   "name": "login kevin: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "room access limits",
+   "name": "kevin opens hq",
+   "method": "GET",
+   "path": "/rooms/201306877",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "room access limits",
+   "name": "kevin renames designers",
+   "method": "PATCH",
+   "path": "/rooms/opens/104393281",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "room access limits",
+   "name": "kevin deletes pets",
+   "method": "DELETE",
+   "path": "/rooms/opens/104393281",
+   "status": [
+    500,
+    500
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "room access limits",
+   "name": "login rita: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "room access limits",
+   "name": "login rita: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    401,
+    401
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A2",
+   "list": "writes-A2.json",
+   "scenario": "room access limits",
+   "name": "rita opens designers",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "login jason: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "login jason: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "post message 'Hello from the sweep'",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "fragment",
+   "method": "GET",
+   "path": "/rooms/654632876/messages/933434638",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "edit form",
+   "method": "GET",
+   "path": "/rooms/654632876/messages/933434638/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "edit",
+   "method": "PUT",
+   "path": "/rooms/654632876/messages/933434638",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "edit by other user",
+   "method": "PUT",
+   "path": "/rooms/654632876/messages/933434638",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "room",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "page",
+   "method": "GET",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "delete by other user",
+   "method": "DELETE",
+   "path": "/rooms/654632876/messages/933434638",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "delete",
+   "method": "DELETE",
+   "path": "/rooms/654632876/messages/933434638",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "deleted fragment",
+   "method": "GET",
+   "path": "/rooms/654632876/messages/933434638",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "refresh",
+   "method": "GET",
+   "path": "/rooms/654632876/refresh?since=1772467200000",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "empty body",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "post message 'Mention <em>x</em> @'",
+   "method": "POST",
+   "path": "/rooms/486777696/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "plain text body",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "room not found",
+   "method": "POST",
+   "path": "/rooms/1/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "no room access",
+   "method": "POST",
+   "path": "/rooms/699448327/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "upload image",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "upload bmp",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "room with uploads",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "blob",
+   "method": "GET",
+   "path": "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTUsInB1ciI6ImJsb2JfaWQifX0=--e4a6db3768ecbc8f6034ed4a1805bfdf51f318f7/moon.jpg?disposition=attachment",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "login jason: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "login jason: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "message",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434506",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "boost",
+   "method": "POST",
+   "path": "/messages/933434506/boosts",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "boosts of message",
+   "method": "GET",
+   "path": "/messages/933434506/boosts",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "boost again",
+   "method": "POST",
+   "path": "/messages/933434506/boosts",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "boosts index",
+   "method": "GET",
+   "path": "/messages/933434506/boosts",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "delete other boost",
+   "method": "DELETE",
+   "path": "/messages/933434506/boosts/329428245",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "delete boost",
+   "method": "DELETE",
+   "path": "/messages/933434506/boosts/329428245",
+   "status": [
+    204,
+    204
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "boost too long",
+   "method": "POST",
+   "path": "/messages/933434506/boosts",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "boost missing message",
+   "method": "POST",
+   "path": "/messages/1/boosts",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "create text",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "create html",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "create upload",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "create empty",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    422,
+    422
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "bad key",
+   "method": "POST",
+   "path": "/rooms/486777696/1-nope/messages",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "index",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "index after",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages?after=933434569",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "update",
+   "method": "PUT",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/933434630",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "bot boost",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/136976342/boosts",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "bot delete boost",
+   "method": "DELETE",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/136976342/boosts/136976342",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "bot delete",
+   "method": "DELETE",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/933434630",
+   "status": [
+    204,
+    204
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "room",
+   "method": "GET",
+   "path": "/rooms/486777696",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "login jason: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "login jason: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "profile",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "rename",
+   "method": "PATCH",
+   "path": "/users/me/profile",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "bad email",
+   "method": "PATCH",
+   "path": "/users/me/profile",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "password",
+   "method": "PATCH",
+   "path": "/users/me/profile",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "avatar",
+   "method": "PATCH",
+   "path": "/users/me/profile",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "profile after",
+   "method": "GET",
+   "path": "/users/me/profile",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "user",
+   "method": "GET",
+   "path": "/users/149087659",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "avatar",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "delete avatar",
+   "method": "DELETE",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "profile edits",
+   "name": "avatar after",
+   "method": "GET",
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "edit",
+   "method": "GET",
+   "path": "/account/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "rename account",
+   "method": "PATCH",
+   "path": "/account",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "restrict rooms",
+   "method": "PATCH",
+   "path": "/account",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "logo",
+   "method": "PATCH",
+   "path": "/account",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "logo",
+   "method": "GET",
+   "path": "/account/logo",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "logo small",
+   "method": "GET",
+   "path": "/account/logo?size=small",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "delete logo",
+   "method": "DELETE",
+   "path": "/account/logo",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "logo after",
+   "method": "GET",
+   "path": "/account/logo",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "custom styles",
+   "method": "GET",
+   "path": "/account/custom_styles/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "set styles",
+   "method": "PATCH",
+   "path": "/account/custom_styles",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "manifest",
+   "method": "GET",
+   "path": "/webmanifest",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "rooms",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "reset join code",
+   "method": "POST",
+   "path": "/account/join_code",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "edit after",
+   "method": "GET",
+   "path": "/account/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "body"
+   ],
+   "report": "body (decoded, normalized): first differing byte at offset 25031 (expected 37679 bytes, actual 37679 bytes)\n  expected[24971..]: 'box-url-value=\"/qr_code/aHR0cDovLzEyNy4wLjAuMTo0MzkwL2pvaW4vWVEwQy1rZm5WLXVKM3k=\" href=\"/qr_code/aHR0cDovLzEyNy4wLjAuMTo'\n  actual  [24971..]: 'box-url-value=\"/qr_code/aHR0cDovLzEyNy4wLjAuMTo0MzkwL2pvaW4vaGdLeS1ySnQ4LXlUUXM=\" href=\"/qr_code/aHR0cDovLzEyNy4wLjAuMTo'\n--- expected\n+++ actual\n@@ -323,5 +323,5 @@\n \n   <div class=\"flex align-center gap\">\n-    <a class=\"btn\" data-lightbox-target=\"image\" data-action=\"lightbox#open\" data-lightbox-url-value=\"/qr_code/aHR0cDovLzEyNy4wLjAuMTo0MzkwL2pvaW4vWVEwQy1rZm5WLXVKM3k=\" href=\"/qr_code/aHR0cDovLzEyNy4wLjAuMTo0MzkwL2pvaW4v...(+22 chars)\n+    <a class=\"btn\" data-lightbox-target=\"image\" data-action=\"lightbox#open\" data-lightbox-url-value=\"/qr_code/aHR0cDovLzEyNy4wLjAuMTo0MzkwL2pvaW4vaGdLeS1ySnQ4LXlUUXM=\" href=\"/qr_code/aHR0cDovLzEyNy4wLjAuMTo0MzkwL2pvaW4v...(+22 chars)\n       <span class=\"for-screen-reader\">Show join link QR code</span>\n       <img aria-hidden=\"true\" class=\"colorize--black\" src=\"/assets/qr-code-dac3b273.svg\" width=\"20\" height=\"20\" />"
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "login kevin: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "login kevin: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "member edits account",
+   "method": "PATCH",
+   "path": "/account",
+   "status": [
+    403,
+    403
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "account admin",
+   "name": "member opens users",
+   "method": "GET",
+   "path": "/account/users",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "users",
+   "method": "GET",
+   "path": "/account/users",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "new user",
+   "method": "GET",
+   "path": "/account/users/new",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "make admin",
+   "method": "PATCH",
+   "path": "/account/users/712064548",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "make member",
+   "method": "PATCH",
+   "path": "/account/users/712064548",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "user edit",
+   "method": "GET",
+   "path": "/account/users/773523954/edit",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "ban",
+   "method": "POST",
+   "path": "/users/773523954/ban",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "users after ban",
+   "method": "GET",
+   "path": "/account/users",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "unban",
+   "method": "DELETE",
+   "path": "/users/773523954/ban",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "remove user",
+   "method": "DELETE",
+   "path": "/account/users/773523953",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "users after remove",
+   "method": "GET",
+   "path": "/account/users",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "login rita: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "login rita: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "users and bans",
+   "name": "rita after ban",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "bots",
+   "method": "GET",
+   "path": "/account/bots",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "new bot",
+   "method": "GET",
+   "path": "/account/bots/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "create bot",
+   "method": "POST",
+   "path": "/account/bots",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "bots with new bot",
+   "method": "GET",
+   "path": "/account/bots",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "bot",
+   "method": "GET",
+   "path": "/account/bots/773523959",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "bot edit",
+   "method": "GET",
+   "path": "/account/bots/773523959/edit",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "update bot",
+   "method": "PATCH",
+   "path": "/account/bots/773523959",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "reset key",
+   "method": "PUT",
+   "path": "/account/bots/773523959/key",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "bots after",
+   "method": "GET",
+   "path": "/account/bots",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "delete bot",
+   "method": "DELETE",
+   "path": "/account/bots/773523959",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "bots",
+   "name": "bots end",
+   "method": "GET",
+   "path": "/account/bots",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "push subscriptions",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "push subscriptions",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "push subscriptions",
+   "name": "index",
+   "method": "GET",
+   "path": "/users/me/push_subscriptions",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "push subscriptions",
+   "name": "create",
+   "method": "POST",
+   "path": "/users/me/push_subscriptions",
+   "status": [
+    422,
+    422
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "push subscriptions",
+   "name": "index after",
+   "method": "GET",
+   "path": "/users/me/push_subscriptions",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "push subscriptions",
+   "name": "test notification",
+   "method": "POST",
+   "path": "/users/me/push_subscriptions/56887440/test_notifications",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "push subscriptions",
+   "name": "delete",
+   "method": "DELETE",
+   "path": "/users/me/push_subscriptions/56887440",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "form",
+   "method": "GET",
+   "path": "/searches",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "search",
+   "method": "POST",
+   "path": "/searches",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "results",
+   "method": "GET",
+   "path": "/searches?q=pizza",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "results many",
+   "method": "GET",
+   "path": "/searches?q=wifi",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "no results",
+   "method": "GET",
+   "path": "/searches?q=zzzznothing",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "symbols",
+   "method": "GET",
+   "path": "/searches?q=a%26b%22c",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "clear",
+   "method": "DELETE",
+   "path": "/searches/clear",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A5",
+   "list": "writes-A5.json",
+   "scenario": "search",
+   "name": "after clear",
+   "method": "GET",
+   "path": "/searches",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "writes-A6.json",
+   "scenario": "unfurl and misc",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "writes-A6.json",
+   "scenario": "unfurl and misc",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "writes-A6.json",
+   "scenario": "unfurl and misc",
+   "name": "unfurl unreachable",
+   "method": "POST",
+   "path": "/unfurl_link",
+   "status": [
+    204,
+    204
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "writes-A6.json",
+   "scenario": "unfurl and misc",
+   "name": "unfurl no url",
+   "method": "POST",
+   "path": "/unfurl_link",
+   "status": [
+    400,
+    400
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "writes-A6.json",
+   "scenario": "unfurl and misc",
+   "name": "unfurl bad scheme",
+   "method": "POST",
+   "path": "/unfurl_link",
+   "status": [
+    204,
+    204
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "writes-A6.json",
+   "scenario": "unfurl and misc",
+   "name": "old route",
+   "method": "GET",
+   "path": "/rooms/654632876/messages/933434482.json",
+   "status": [
+    406,
+    406
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A6",
+   "list": "writes-A6.json",
+   "scenario": "unfurl and misc",
+   "name": "not found format",
+   "method": "GET",
+   "path": "/nope.json",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "login kevin: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "login kevin: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "post message 'ping the bot'",
+   "method": "POST",
+   "path": "/rooms/340026324/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "post message 'push me'",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "room",
+   "method": "GET",
+   "path": "/rooms/340026324",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "unreads",
+   "method": "GET",
+   "path": "/users/me/sidebar",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "test push",
+   "method": "POST",
+   "path": "/users/me/push_subscriptions/56887440/test_notifications",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "banned content removal: ban",
+   "method": "POST",
+   "path": "/users/773523954/ban",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A9",
+   "list": "writes-A9.json",
+   "scenario": "webhook and push on message",
+   "name": "room after ban",
+   "method": "GET",
+   "path": "/rooms/654632876",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "screens-A1.json",
+   "scenario": "screens first_run anon",
+   "name": "auth/first_run",
+   "method": "GET",
+   "path": "/first_run",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "first run",
+   "name": "redirect to first run",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "first run",
+   "name": "first run form",
+   "method": "GET",
+   "path": "/first_run",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "first run",
+   "name": "first run create",
+   "method": "POST",
+   "path": "/first_run",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "first run",
+   "name": "home",
+   "method": "GET",
+   "path": "/",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A1",
+   "list": "writes-A1.json",
+   "scenario": "first run",
+   "name": "first run again",
+   "method": "GET",
+   "path": "/first_run",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "restricted account",
+   "name": "login kevin: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "restricted account",
+   "name": "login kevin: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "restricted account",
+   "name": "new room",
+   "method": "GET",
+   "path": "/rooms/opens/new",
+   "status": [
+    403,
+    403
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A4",
+   "list": "writes-A4.json",
+   "scenario": "restricted account",
+   "name": "create room",
+   "method": "POST",
+   "path": "/rooms/opens",
+   "status": [
+    403,
+    403
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  }
+ ]
+}

@@ -34,11 +34,8 @@ def steps():
             "css": {"regex": r'href="(/assets/[^"]+\.css)"', "unescape": True, "optional": True},
             "js": {"regex": r'"(/assets/[^"]+\.js)"', "unescape": True, "optional": True},
             "image": {"regex": r'src="(/assets/[^"]+\.(?:svg|png))"', "unescape": True, "optional": True},
-            "avatar_initials": {"regex": r'src="(/users/[^"/]+/avatar\?v=[^"]+)"[^>]*alt="David',
-                                "unescape": True, "optional": True},
             "representation": {"regex": r'"(/rails/active_storage/representations/[^"]+)"', "unescape": True, "optional": True},
             "blob": {"regex": r'"(/rails/active_storage/blobs/[^"]+)"', "unescape": True, "optional": True}}),
-        {"op": "set", "vars": {"avatar_image": "/users/{{avatar_tokens.jason}}/avatar?v=1"}},
     ]
     img = {"Accept": "image/*"}
     out = {a: [] for a in g.AREAS}
@@ -64,10 +61,10 @@ def steps():
         r("avatar missing user 404", "/users/nope/avatar", headers=img),
     ]
     out["A4"] += [
-        r("avatar initials", "{{avatar_initials}}", headers=img, revisit=True),
-        r("avatar initials browser", "{{avatar_initials}}", revisit=True,
+        r("avatar initials", "/users/{{avatar_tokens.david}}/avatar", headers=img, revisit=True),
+        r("avatar initials browser", "/users/{{avatar_tokens.david}}/avatar", revisit=True,
           headers={"Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"}),
-        r("avatar image", "{{avatar_image}}", headers=img, revisit=True),
+        r("avatar image", "/users/{{avatar_tokens.jason}}/avatar", headers=img, revisit=True),
         r("account logo", "/account/logo?size=small", headers=img, revisit=True),
         r("profile", "/users/me/profile"), r("user", "/users/{{users.jason}}"),
         r("account edit", "/account/edit"), r("account users", "/account/users"),

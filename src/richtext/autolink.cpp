@@ -319,7 +319,7 @@ Result<std::string> auto_link_urls(std::string_view text) {
     }
     std::string link_text = href;
     if (!m->has_scheme) {
-      href = "http://" + href;
+      href.insert(0, "http://");
     }
     auto safe_text = sanitize_text(link_text);
     if (!safe_text) return std::unexpected(safe_text.error());

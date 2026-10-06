@@ -343,13 +343,9 @@ void escape(std::string_view text, bool attribute, std::string& out, bool bracke
       skip = 2;
     } else if (attribute && c == '"') {
       replacement = "&quot;";
-    } else if (attribute && brackets && c == '<') {
+    } else if (c == '<' && (!attribute || brackets)) {
       replacement = "&lt;";
-    } else if (attribute && brackets && c == '>') {
-      replacement = "&gt;";
-    } else if (!attribute && c == '<') {
-      replacement = "&lt;";
-    } else if (!attribute && c == '>') {
+    } else if (c == '>' && (!attribute || brackets)) {
       replacement = "&gt;";
     } else {
       continue;

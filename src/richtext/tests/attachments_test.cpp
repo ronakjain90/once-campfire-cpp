@@ -143,7 +143,7 @@ class TestResolver final : public AttachableResolver {
 // XSS) stay the text they replaced, and `name` attributes are dropped.
 std::string with_port_divergences(const std::string& rails) {
   constexpr std::string_view kInsertedLink = "<a target=\"_blank\" href=\"";
-  enum class State { Text, Tag, Value };
+  enum class State : std::uint8_t { Text, Tag, Value };
   std::string out;
   State state = State::Text;
   std::size_t i = 0;
@@ -169,14 +169,16 @@ std::string with_port_divergences(const std::string& rails) {
       i += value_end + 1;
       continue;
     }
-    if (state == State::Text && c == '<') {
+    if (c == '<' && state == State::Text) {
       state = State::Tag;
-    } else if (state == State::Tag && c == '>') {
+    } else if (c == '>' && state == State::Tag) {
       state = State::Text;
-    } else if (state == State::Tag && c == '"') {
-      state = State::Value;
-    } else if (state == State::Value && c == '"') {
-      state = State::Tag;
+    } else if (c == '"') {
+      if (state == State::Tag) {
+        state = State::Value;
+      } else if (state == State::Value) {
+        state = State::Tag;
+      }
     }
     if (state == State::Value && c == '<') {
       out += "&lt;";

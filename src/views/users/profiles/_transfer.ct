@@ -1,0 +1,42 @@
+{# reference/app/views/users/profiles/_transfer.html.erb #}
+{% include views/helpers/accounts.hpp %}
+{% params const ViewContext& ctx, bool is_current, const std::string& url %}
+
+<fieldset>
+  <legend class="gap">
+    {% call image_tag(ctx, "laptop.svg", attrs().aria_hidden().size(36).cls("colorize--black")) %}
+    {% call image_tag(ctx, "transfer.svg", attrs().aria_hidden().size(36).cls("colorize--black")) %}
+    {% call image_tag(ctx, "mobile-phone.svg", attrs().aria_hidden().size(36).cls("colorize--black")) %}
+  </legend>
+
+
+  <div class="flex flex-column gap">
+    {% if !is_current %}
+      <div class="flex align-center gap justify-center">
+        {% call image_tag(ctx, "crown.svg", attrs().size(16).aria_hidden().cls("flex-item-no-shrink colorize--black")) %}
+        <label for="session_transfer_url">Share to get them back into their account</label>
+      </div>
+    {% else %}
+      <label for="session_transfer_url" class="for-screen-reader">Use this link to login automatically on another device</label>
+    {% end %}
+
+    <input type="text" class="input" value="{{ url }}" id="session_transfer_url" readonly>
+
+    <div class="flex align-center center gap">
+      {% wrap link_to_zoom_qr_code(url) %}
+        <span class="for-screen-reader">Show auto-login QR code</span>
+        {% call image_tag(ctx, "qr-code.svg", attrs().aria_hidden().size(20).cls("colorize--black")) %}
+      {% end %}
+
+      {% wrap button_to_copy_to_clipboard(url) %}
+        <span class="for-screen-reader">Copy auto-login link</span>
+        {% call image_tag(ctx, "copy-paste.svg", attrs().aria_hidden().size(20).cls("flex-item-no-shrink colorize--black")) %}
+      {% end %}
+
+      {% wrap web_share_session_button(url, "Your sign-in link", "This is your own private sign-in URL, DO NOT SHARE IT. Use it to sign-in on another device or if you get locked out.") %}
+        <span class="for-screen-reader">Share auto-login link</span>
+        {% call image_tag(ctx, "share.svg", attrs().aria_hidden().size(20).cls("flex-item-no-shrink colorize--black")) %}
+      {% end %}
+    </div>
+  </div>
+</fieldset>

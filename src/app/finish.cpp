@@ -159,7 +159,7 @@ void Finisher::cache_headers(Rq& rq, net::Response& response) {
 
 void Finisher::rack_etag(Rq& rq, net::Response& response) {
   bool digested = false;
-  const bool skip = response.has("etag") || response.has("last-modified");
+  const bool skip = rq.live_response || response.has("etag") || response.has("last-modified");
   if ((response.status == 200 || response.status == 201) && !skip && response.body_size() != 0) {
     const std::string etag = rq.page_entry_ ? rq.page_entry_->etag : digest_etag(response);
     response.add_copy("etag", etag);
@@ -319,8 +319,10 @@ net::Response Finisher::run(Rq& rq, Flow<net::Response> result) {
   }
   if (!failed) {
     cache_headers(rq, *out);
-    for (const auto& [name, value] : kDefaultHeaders) {
-      if (!out->has(name)) out->add(name, value);
+    if (!rq.live_response) {
+      for (const auto& [name, value] : kDefaultHeaders) {
+        if (!out->has(name)) out->add(name, value);
+      }
     }
     if (!out->has("content-type") && !bodiless(out->status)) out->add("content-type", "text/html; charset=utf-8");
     rack_etag(rq, *out);

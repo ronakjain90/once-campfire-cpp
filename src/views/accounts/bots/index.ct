@@ -1,0 +1,26 @@
+{# reference/app/views/accounts/bots/index.html.erb: the content of the page. #}
+{% include views/accounts/types.hpp %}
+{% include views/sessions/helpers.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const std::vector<BotView>& bots %}
+<section class="panel panel--wide txt-align-center flex flex-column position-relative" style="view-transition-name: chat-bots">
+  <div class="flex align-center gap">
+    <div class="panel__button">
+      {% call translation_button(ctx, "chat_bots") %}
+    </div>
+    <div class="pad-inline-double center">
+      <h1 class="margin-none">Chat bots</h1>
+      <p class="margin-none-block-start">With Chat bots, other sites and services can post updates directly to Campfire.</p>
+
+      {% wrap link_to(routes::new_account_bot(), attrs().cls("btn btn--reversed txt-large").aria("label", "Add a chat bot")) %}
+        {% call image_tag(ctx, "bot.svg", attrs().aria_hidden().size(20)) %}
+        {% call image_tag(ctx, "add.svg", attrs().aria_hidden().size(20)) %}
+      {% end %}
+    </div>
+  </div>
+
+  <div class="pad-inline pad-block-start ">
+    <menu class="flex flex-column gap margin-none pad">
+      {% for bot : bots %}{% render accounts/bots/bot(ctx, bot) %}{% end %}    </menu>
+  </div>
+</section>

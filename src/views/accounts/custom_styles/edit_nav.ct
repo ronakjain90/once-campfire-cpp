@@ -1,0 +1,6 @@
+{# reference/app/views/accounts/custom_styles/edit.html.erb: `content_for :nav`. #}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx %}
+  <div class="flex-item-justify-start">
+    {% call link_back_to(ctx, routes::edit_account()) %}
+  </div>

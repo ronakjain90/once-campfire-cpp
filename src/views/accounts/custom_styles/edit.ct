@@ -1,0 +1,29 @@
+{# reference/app/views/accounts/custom_styles/edit.html.erb: the content of the page. #}
+{% include views/helpers/forms.hpp %}
+{% include views/sessions/helpers.hpp %}
+{% params const ViewContext& ctx, const std::optional<std::string>& custom_styles, const helpers::FormWith& form %}
+<section class="panel panel--wide txt-align-center flex flex-column position-relative" style="view-transition-name: custom-styles">
+  {% wrap form_with(form) %}
+    <div class="panel__button">
+      {% call translation_button(ctx, "custom_styles") %}
+    </div>
+
+    <div class="pad-inline-double margin-inline">
+      <h1 class="margin-none">Custom CSS</h1>
+      <p class="flex flex-wrap align-center justify-center gap margin-none-block-start" style="--column-gap: 0.5ch; --row-gap: 0">
+        <span>Add custom CSS styles.</span>
+        {% call image_tag(ctx, "alert.svg", attrs().cls("flex-inline colorize--black").size(16).aria_hidden()) %}
+        <span>Use Caution: you could break things.</span>
+      </p>
+    </div>
+
+    <label class="flex align-start gap flex-item-grow">
+      {% call form.text_area("custom_styles", custom_styles ? std::optional<std::string_view>(*custom_styles) : std::nullopt, attrs().cls("input input--code txt--small").placeholder("Add CSS styles…").autocomplete("off").attr("spellcheck", "false").attr("autocorrect", "off").attr("autocapitalize", "off").rows(16).required(false)) %}
+    </label>
+
+    {% wrap button_tag(attrs().cls("btn btn--reversed center txt-large").type("submit")) %}
+      {% call image_tag(ctx, "check.svg", attrs().aria_hidden().size(20)) %}
+      <span class="for-screen-reader">Save changes</span>
+    {% end %}
+  {% end %}
+</section>

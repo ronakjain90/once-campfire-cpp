@@ -1,0 +1,20 @@
+{# reference/app/views/accounts/edit.html.erb: `content_for :nav`. #}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx %}
+  <div class="flex-item-justify-start">
+    {% call link_back_to_last_room_visited(ctx) %}
+  </div>
+
+  {% if ctx.can_administer() %}
+    <div class="flex align-center gap flex-item-justify-end">
+      {% wrap link_to(routes::account_bots(), attrs().cls("btn").style("view-transition-name: chat-bots")) %}
+        {% call image_tag(ctx, "bot.svg", attrs().aria_hidden().size(20)) %}
+        <span class="for-screen-reader">Set up chat bots</span>
+      {% end %}
+
+      {% wrap link_to(routes::edit_account_custom_styles(), attrs().cls("btn").style("view-transition-name: custom-styles")) %}
+        {% call image_tag(ctx, "art.svg", attrs().size(20).aria_hidden()) %}
+        <span class="for-screen-reader">Custom styles</span>
+      {% end %}
+    </div>
+  {% end %}

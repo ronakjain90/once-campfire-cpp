@@ -1,0 +1,10 @@
+{# reference/app/views/users/push_subscriptions/index.html.erb: the content of the page. #}
+{% include views/accounts/types.hpp %}
+{% params const ViewContext& ctx, const std::vector<PushSubscriptionView>& push_subscriptions %}
+<section class="panel panel--wide flex flex-column gap">
+  <h1 class="txt-align-center txt-large margin-none">Push Notification Subscriptions</h1>
+  <div class="pad-inline fill-shade border-radius" id="push_subscriptions">
+    <menu class="pad flex flex-column gap">
+      {% for push_subscription : push_subscriptions %}{% render users/push_subscriptions/push_subscription(ctx, push_subscription) %}{% end %}    </menu>
+  </div>
+</section>

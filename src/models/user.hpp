@@ -55,6 +55,7 @@ struct NewUser {
   std::optional<std::string> email_address;
   std::optional<std::string> password_digest;  // `has_secure_password`: nil for a blank password
   Role role = Role::Member;
+  std::optional<std::string> bot_token;  // `User.create_bot!`
 };
 
 namespace users {

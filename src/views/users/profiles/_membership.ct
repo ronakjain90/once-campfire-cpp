@@ -1,0 +1,18 @@
+{# reference/app/views/users/profiles/_membership.html.erb #}
+{% include views/rooms/helpers.hpp %}
+{% include views/accounts/types.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const ProfileMembership& membership %}
+<li class="flex align-center gap margin-none min-width membership-item">
+  {% wrap link_to(routes::room(membership.room_id), attrs().cls("overflow-ellipsis fill-shade txt-primary txt-undecorated")) %}
+    <strong>{{ membership.room_display_name }}</strong>
+  {% end %}
+
+  <hr class="separator" aria-hidden="true">
+
+  <span class="txt-small">
+    {% wrap turbo_frame_tag(dom_id(room_param_key(membership.kind), std::to_string(membership.room_id), "involvement"), attrs()) %}
+      {% call button_to_change_involvement(ctx, membership.involvement_view()) %}
+    {% end %}
+  </span>
+</li>

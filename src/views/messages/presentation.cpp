@@ -71,16 +71,18 @@ void video_preview(Out& out, const AttachmentView& attachment) {
     html_escape(out, attachment.blob_path);
     out.append_raw("\" poster=\"");
     html_escape(out, attachment.preview.url);
-    out.append_raw("\" controls=\"controls\" preload=\"none\" width=\"100%\" height=\"100%\" "
-                   "class=\"message__attachment\"></video>");
+    out.append_raw(
+        "\" controls=\"controls\" preload=\"none\" width=\"100%\" height=\"100%\" "
+        "class=\"message__attachment\"></video>");
   });
 }
 
 void lightboxed_image_preview(Out& out, const AttachmentView& attachment) {
   const std::optional<Dimensions> dimensions = preview_dimensions(attachment);
   inline_media_dimension_constraints(out, dimensions, [&] {
-    out.append_raw("<a class=\"flex\" data-lightbox-target=\"image\" data-action=\"lightbox#open\" "
-                   "data-lightbox-url-value=\"");
+    out.append_raw(
+        "<a class=\"flex\" data-lightbox-target=\"image\" data-action=\"lightbox#open\" "
+        "data-lightbox-url-value=\"");
     html_escape(out, attachment.download_path);
     out.append_raw("\" href=\"");
     html_escape(out, attachment.blob_path);
@@ -122,8 +124,9 @@ void file_link(Out& out, const ViewContext& ctx, const AttachmentView& attachmen
   image_icon(out, ctx, "download.svg", "", 20);
   out.append_raw("<span class=\"for-screen-reader\">Download ");
   html_escape(out, attachment.filename);
-  out.append_raw("</span></a><button class=\"btn message__action-btn\" style=\"--width: auto;\" "
-                 "data-controller=\"web-share\" data-action=\"web-share#share\" data-web-share-files-value=\"");
+  out.append_raw(
+      "</span></a><button class=\"btn message__action-btn\" style=\"--width: auto;\" "
+      "data-controller=\"web-share\" data-action=\"web-share#share\" data-web-share-files-value=\"");
   html_escape(out, attachment.download_path);
   out.append_raw("\">");
   image_icon(out, ctx, "share.svg", "", 20);
@@ -133,8 +136,9 @@ void file_link(Out& out, const ViewContext& ctx, const AttachmentView& attachmen
 }
 
 void sound_presentation(Out& out, const SoundView& sound) {
-  out.append_raw("<div class=\"sound\" data-controller=\"sound\" data-action=\"messages:play-&gt;sound#play\" "
-                 "data-sound-url-value=\"");
+  out.append_raw(
+      "<div class=\"sound\" data-controller=\"sound\" data-action=\"messages:play-&gt;sound#play\" "
+      "data-sound-url-value=\"");
   html_escape(out, sound.url);
   out.append_raw("\"><button class=\"btn btn--plain\" data-action=\"sound#play\">\xF0\x9F\x94\x8A</button>");
   if (sound.image) {

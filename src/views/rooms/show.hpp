@@ -44,7 +44,7 @@ struct RoomView {
 // `rooms/show`.
 struct ShowView {
   RoomView room;
-  std::string loaded_at;  // `room.updated_at.to_fs(:epoch)`
+  std::string loaded_at;    // `room.updated_at.to_fs(:epoch)`
   messages::UserView user;  // `Current.user`, for the client template
   std::vector<messages::MessageItem> items;
   bool invitation = false;  // `@room == Room.original && !@room.messages.paged?`

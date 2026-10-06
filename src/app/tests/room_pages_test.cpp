@@ -37,8 +37,8 @@ const std::string kTurbo = "Accept: text/vnd.turbo-stream.html, text/html, appli
 
 void post_message(Client& c, const std::string& cookie, int n) {
   const Reply r = c.request("POST", "/rooms/1/messages", cookie + kSameOrigin + kForm + kTurbo,
-                            "message%5Bbody%5D=%3Cp%3EHello+" + std::to_string(n) + "%3C%2Fp%3E&message%5Bclient_message_id%5D=cm-" +
-                                std::to_string(n));
+                            "message%5Bbody%5D=%3Cp%3EHello+" + std::to_string(n) +
+                                "%3C%2Fp%3E&message%5Bclient_message_id%5D=cm-" + std::to_string(n));
   REQUIRE(r.status == 200);
 }
 
@@ -151,7 +151,8 @@ TEST_CASE("messages: a large body does not break the request") {
   seed_room(f);
   Client c(f.port());
   const std::string david = sign_in(c, "david@example.com");
-  const std::string body = "message%5Bbody%5D=%3Cp%3E" + std::string(200000, 'x') + "%3C%2Fp%3E&message%5Bclient_message_id%5D=cm-big";
+  const std::string body =
+      "message%5Bbody%5D=%3Cp%3E" + std::string(200000, 'x') + "%3C%2Fp%3E&message%5Bclient_message_id%5D=cm-big";
   const Reply r = c.request("POST", "/rooms/1/messages", david + kSameOrigin + kForm + kTurbo, body);
   CHECK(r.status == 200);
   CHECK(r.body.starts_with("<turbo-stream action=\"append\" target=\"messages_rooms_open_1\"><template>"));

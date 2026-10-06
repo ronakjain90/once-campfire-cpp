@@ -39,8 +39,8 @@ struct PageSpec {
 // `status` is the status of the response.
 [[nodiscard]] Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec);
 
-// The same, for a handler that has read its data in the scope `deps` already (`rq.track()` was called before the reads).
-// `layout` is the result of `load_layout`, which ran in the same scope.
+// The same, for a handler that has read its data in the scope `deps` already (`rq.track()` was called before the
+// reads). `layout` is the result of `load_layout`, which ran in the same scope.
 [[nodiscard]] Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec, db::DependencyScope& deps,
                                               const LayoutData& layout);
 

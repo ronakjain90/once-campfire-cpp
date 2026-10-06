@@ -3,8 +3,8 @@
 
 #include <stdexcept>
 
-#include "app/platform.hpp"
 #include "app/controllers/rooms.hpp"
+#include "app/platform.hpp"
 #include "assets/assets.hpp"
 #include "compat/signed_id.hpp"
 #include "core/time_format.hpp"

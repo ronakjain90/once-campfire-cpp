@@ -94,7 +94,8 @@ bool Worker::fill_body(Conn& c) {
   if (c.rbuf.data() != before && c.state == ConnState::Body) {
     // The views of the request (method, path, headers) pointed into the old buffer.
     c.arena->reset();
-    const HeadResult again = parse_head(std::string_view(c.rbuf.data(), c.rbuf.size()), 0, *c.arena, options_.parser, c.head);
+    const HeadResult again =
+        parse_head(std::string_view(c.rbuf.data(), c.rbuf.size()), 0, *c.arena, options_.parser, c.head);
     if (again.status != HeadStatus::Ok) {
       reply_error(c, 400);
       return false;

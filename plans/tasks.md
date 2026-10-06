@@ -36,10 +36,15 @@ each branch against its acceptance list, runs the tests, and merges it into `mai
 
 ## Wave 2: frameworks (parallel, after wave 1)
 
+Directory ownership in wave 2: T5 `src/net/`, `src/app/` (only `main.cpp` and the route table
+format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
+`tools/schema_gen.py`. T8 `src/views/`, `src/routes/`, `tools/ctc.py`. T9 `src/assets/`,
+`third_party/`. T11 `src/cable/`. T12 `src/storage/`. T13 `tools/diffsweep/`.
+
 | ID | Task | Depends on |
 |---|---|---|
 | T5 | **Server.** `src/net/`: event loop, HTTP/1.1, the router generator, `Ctx`, the response builder, timers, worker threads, the cross-worker queues. | T1 |
-| T6 | **Request parts.** Rack-compatible params (nested keys), multipart, cookies, encrypted session, flash, `Sec-Fetch-Site` forgery protection, formats and `Accept` rules. Fuzz targets for each parser. | T1, T2 |
+| T6 | **Request parts.** Rack-compatible params (nested keys), multipart, cookies, encrypted session, flash, `Sec-Fetch-Site` forgery protection with the old-token path, formats and `Accept` rules, bcrypt (vendored `crypt_blowfish`). Vector groups `csrf` and `passwords` of `rails_compat.json`. Fuzz targets for each parser. | T1, T2 |
 | T7 | **Database.** `src/db/`: connections, typed statements, `schema_gen.py`, the writer with group commit and after-commit hand-back, change events, the checkpointer, the tracked dependency hash. | T1 |
 | T8 | **Templates.** `tools/ctc.py`, `src/views/` foundation: tag helpers with Rails attribute order, URL helpers (`vectors/campfire_routes.json`), form builders, `time_tag`, `turbo_frame_tag`, the layout and the shared partials. | T1, T2 |
 | T9 | **Assets.** `src/assets/`: Propshaft digests, importmap, the overrides, precompressed bodies, and the vendored frontend files. | T1 |
@@ -92,7 +97,23 @@ its requests in the diff sweep pass.
 
 | ID | Status | Branch | Notes |
 |---|---|---|---|
-| T1 | not started | | |
-| T2 | not started | | |
-| T3 | not started | | |
-| T4 | not started | | |
+| T1 | merged (verified by Opus) | `task/T1` | `test_core` and `test_compat` pass in release, asan and tsan. `bin/dev` needs `seccomp=unconfined` for TSan. |
+| T2 | merged (verified by Opus) | `task/T2` | All vector groups pass in release and ASan. `passwords` (bcrypt) and `csrf` groups moved to T6. Needs T1's doctest wiring. |
+| T3 | paused (usage limit, 2026-10-06 02:45) | `task/T3` | 3 commits. Library compiles. Fuzz run was starting. |
+| T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |
+| T5 | paused (usage limit, 2026-10-06 02:45) | `task/T5` | 3 commits. Response builder in progress. |
+| T6 | paused (usage limit, 2026-10-06 02:45) | `task/T6` | No commits. `param.hpp`/`param.cpp` written, not built. |
+| T7 | paused (usage limit, 2026-10-06 02:45) | `task/T7` | 3 commits. Dependency scope written. Typed statements next. |
+| T8 | paused (usage limit, 2026-10-06 02:45) | `task/T8` | No commits yet. |
+| T9 | paused (usage limit, 2026-10-06 02:45) | `task/T9` | 1 commit. Load path code in progress. |
+| T11 | paused (usage limit, 2026-10-06 02:45) | `task/T11` | 1 commit, uncommitted work. |
+| T12 | paused (usage limit, 2026-10-06 02:45) | `task/T12` | 1 commit. libvips wrapper in progress. |
+| T13 | paused (usage limit, 2026-10-06 02:45) | `task/T13` | 1 commit. Main script and launcher in progress. |
+| T10 | waits for T3 | | |
+
+## Restart rule
+
+A resumed agent sends its whole transcript again on each step. A long transcript uses the usage
+limit fast. To restart a paused task, start a **new** agent with a short prompt: the task row, the
+agent brief, and "continue from the commits and files in the worktree". Do not resume an agent
+whose transcript is long.

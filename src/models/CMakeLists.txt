@@ -5,6 +5,7 @@ campfire_library(models
     account.cpp
     ban.cpp
     first_run.cpp
+    room.cpp
     session.cpp
     user.cpp
     user_rooms.cpp

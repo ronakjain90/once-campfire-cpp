@@ -95,7 +95,7 @@ Flow<std::string> room_display_name(Rq& rq, const models::Room& room) {
   for (const models::User& member : *members) {
     if (member.id != current.id) names.push_back(member.name);
   }
-  const std::string sentence = to_sentence(names, " and ");
+  std::string sentence = to_sentence(names, " and ");
   if (sentence.find_first_not_of(" \t\n\v\f\r") == std::string::npos) return current.name;
   return sentence;
 }

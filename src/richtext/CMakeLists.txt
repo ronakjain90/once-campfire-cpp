@@ -14,6 +14,6 @@ campfire_library(richtext
           content.cpp message_filters.cpp autolink.cpp richtext.cpp resolver.cpp
   PUBLIC_DEPS campfire_gumbo campfire_core campfire_compat)
 campfire_test(richtext
-  SOURCES tests/dom_test.cpp tests/sanitizer_test.cpp tests/corpus_test.cpp)
+  SOURCES tests/dom_test.cpp tests/sanitizer_test.cpp tests/corpus_test.cpp tests/attachments_test.cpp)
 target_compile_definitions(test_richtext PRIVATE
   RICHTEXT_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/data")

@@ -129,3 +129,4 @@ whose transcript is long.
 | A8 | paused (DeepSeek work, unfinished) | `task/A8` | Last commit 810109b builds and tests pass. Uncommitted HTTP/2 work does not compile. Runtime image lacks `libnghttp2.so.14`. No acceptance check has passed yet. |
 | A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
 | A2 | in progress (Claude cloud session, started by the user) | | Local agent stopped. Verify the cloud branch when it is done. |
+| A3 | in progress (Sonnet) | `task/A3` | Message partial is a stub until A2 (cloud) merges. |

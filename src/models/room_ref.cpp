@@ -10,7 +10,7 @@ namespace {
 using db::schema::RoomRow;
 using db::schema::UserRow;
 
-#define CF_ROOM_COLUMNS                                                                                     \
+#define CF_ROOM_COLUMNS                                                                                            \
   "\"rooms\".\"id\", \"rooms\".\"created_at\", \"rooms\".\"creator_id\", \"rooms\".\"name\", \"rooms\".\"type\", " \
   "\"rooms\".\"updated_at\""
 
@@ -25,7 +25,7 @@ const db::Query<std::int64_t(std::int64_t)> kMemberIds{
 
 #define CF_USERS "SELECT " CF_USER_COLS " FROM \"users\""
 #define CF_USER_COLS                                                                                     \
-  "\"users\".\"id\", \"users\".\"bio\", \"users\".\"bot_token\", \"users\".\"created_at\", "           \
+  "\"users\".\"id\", \"users\".\"bio\", \"users\".\"bot_token\", \"users\".\"created_at\", "             \
   "\"users\".\"email_address\", \"users\".\"name\", \"users\".\"password_digest\", \"users\".\"role\", " \
   "\"users\".\"status\", \"users\".\"updated_at\""
 #define CF_MEMBER_JOIN " INNER JOIN \"memberships\" ON \"users\".\"id\" = \"memberships\".\"user_id\""
@@ -115,16 +115,14 @@ Result<std::vector<User>> members_among(db::Connection& conn, Arena& arena, std:
   return users_of(conn.all(kMembersAmong, arena, room_id, std::string_view(json)));
 }
 
-Result<std::vector<User>> autocompletable_users(db::Connection& conn, Arena& arena,
-                                                std::optional<std::int64_t> room_id,
+Result<std::vector<User>> autocompletable_users(db::Connection& conn, Arena& arena, std::optional<std::int64_t> room_id,
                                                 std::optional<std::string_view> query) {
   const std::string pattern = query ? "%" + std::string(*query) + "%" : std::string();
   if (room_id) {
     return users_of(query ? conn.all(kRoomActiveFiltered, arena, *room_id, std::string_view(pattern))
                           : conn.all(kRoomActive, arena, *room_id));
   }
-  return users_of(query ? conn.all(kAllActiveFiltered, arena, std::string_view(pattern))
-                        : conn.all(kAllActive, arena));
+  return users_of(query ? conn.all(kAllActiveFiltered, arena, std::string_view(pattern)) : conn.all(kAllActive, arena));
 }
 
 }  // namespace room_refs

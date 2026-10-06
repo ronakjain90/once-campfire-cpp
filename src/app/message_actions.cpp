@@ -14,11 +14,11 @@
 #include "models/job_sink.hpp"
 #include "models/storage_records.hpp"
 #include "richtext/content.hpp"
-#include "views/layout.hpp"
-#include "views/templates.gen.hpp"
 #include "richtext/richtext.hpp"
 #include "richtext/text_util.hpp"
 #include "storage/storage.hpp"
+#include "views/layout.hpp"
+#include "views/templates.gen.hpp"
 
 namespace campfire::app::messages {
 
@@ -328,8 +328,8 @@ Task<Flow<void>> purge_blob(Rq& rq, std::int64_t blob_id) {
   while (!pending.empty()) {
     const std::int64_t id = pending.back();
     pending.pop_back();
-    auto purged = co_await rq.app.db->write(rq.ctx.scheduler(),
-                                            [&](db::Tx& tx) { return models::purge_blob_rows(tx, id); });
+    auto purged =
+        co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) { return models::purge_blob_rows(tx, id); });
     if (!purged) co_return db_failure(purged.error());
     if (!purged->blob) continue;
     const storage::Blob& blob = *purged->blob;

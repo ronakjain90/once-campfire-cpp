@@ -16,15 +16,14 @@ namespace {
 
 using db::schema::MessageRow;
 
-#define CF_MESSAGE_COLUMNS                                                                                     \
-  "\"messages\".\"id\", \"messages\".\"client_message_id\", \"messages\".\"created_at\", "                    \
+#define CF_MESSAGE_COLUMNS                                                                 \
+  "\"messages\".\"id\", \"messages\".\"client_message_id\", \"messages\".\"created_at\", " \
   "\"messages\".\"creator_id\", \"messages\".\"room_id\", \"messages\".\"updated_at\""
 #define CF_IN_ROOM "SELECT " CF_MESSAGE_COLUMNS " FROM \"messages\" WHERE \"messages\".\"room_id\" = ?"
 
 const db::Query<MessageRow(std::int64_t)> kById{"SELECT " CF_MESSAGE_COLUMNS
                                                 " FROM \"messages\" WHERE \"messages\".\"id\" = ? LIMIT 1"};
-const db::Query<MessageRow(std::int64_t, std::int64_t)> kInRoom{
-    CF_IN_ROOM " AND \"messages\".\"id\" = ? LIMIT 1"};
+const db::Query<MessageRow(std::int64_t, std::int64_t)> kInRoom{CF_IN_ROOM " AND \"messages\".\"id\" = ? LIMIT 1"};
 const db::Query<MessageRow(std::int64_t, std::int64_t)> kReachable{
     "SELECT " CF_MESSAGE_COLUMNS
     " FROM \"messages\" INNER JOIN \"rooms\" ON \"messages\".\"room_id\" = \"rooms\".\"id\" INNER JOIN "
@@ -32,8 +31,7 @@ const db::Query<MessageRow(std::int64_t, std::int64_t)> kReachable{
     "\"messages\".\"id\" = ? LIMIT 1"};
 const db::Query<std::int64_t(std::int64_t)> kCountInRoom{
     "SELECT COUNT(*) FROM \"messages\" WHERE \"messages\".\"room_id\" = ?"};
-const db::Query<MessageRow(std::int64_t)> kLastPage{
-    CF_IN_ROOM " ORDER BY \"messages\".\"created_at\" DESC LIMIT 40"};
+const db::Query<MessageRow(std::int64_t)> kLastPage{CF_IN_ROOM " ORDER BY \"messages\".\"created_at\" DESC LIMIT 40"};
 const db::Query<MessageRow(std::int64_t, std::string_view)> kPageBefore{
     CF_IN_ROOM " AND (created_at < ?) ORDER BY \"messages\".\"created_at\" DESC LIMIT 40"};
 const db::Query<MessageRow(std::int64_t, std::string_view)> kPageAfter{
@@ -47,10 +45,9 @@ const db::Query<std::optional<std::string_view>(std::int64_t)> kBodyHtml{
     "\"action_text_rich_texts\".\"record_id\" = ? AND \"action_text_rich_texts\".\"record_type\" = 'Message' AND "
     "\"action_text_rich_texts\".\"name\" = 'body' LIMIT 1"};
 
-const db::Query<std::int64_t(std::string_view, std::string_view, std::int64_t, std::int64_t, std::string_view)>
-    kInsert{
-        "INSERT INTO \"messages\" (\"client_message_id\", \"created_at\", \"creator_id\", \"room_id\", "
-        "\"updated_at\") VALUES (?, ?, ?, ?, ?) RETURNING \"id\""};
+const db::Query<std::int64_t(std::string_view, std::string_view, std::int64_t, std::int64_t, std::string_view)> kInsert{
+    "INSERT INTO \"messages\" (\"client_message_id\", \"created_at\", \"creator_id\", \"room_id\", "
+    "\"updated_at\") VALUES (?, ?, ?, ?, ?) RETURNING \"id\""};
 const db::Query<std::int64_t(std::string_view, std::string_view, std::string_view, std::int64_t, std::string_view,
                              std::string_view)>
     kInsertBody{
@@ -141,7 +138,11 @@ std::string random_uuid() {
 }  // namespace
 
 Message Message::from_row(const MessageRow& row) {
-  return {row.id, row.room_id, row.creator_id, std::string(row.client_message_id), std::string(row.created_at),
+  return {row.id,
+          row.room_id,
+          row.creator_id,
+          std::string(row.client_message_id),
+          std::string(row.created_at),
           std::string(row.updated_at)};
 }
 
@@ -204,22 +205,21 @@ Result<Message> create(db::Tx& tx, const NewMessage& attributes, JobSink* jobs) 
   const Timestamp now = tx.now();
   const std::string now_text = format_db(now);
   const std::string client_message_id = attributes.client_message_id ? *attributes.client_message_id : random_uuid();
-  auto id = tx.conn().first(kInsert, arena, client_message_id, now_text, attributes.creator_id, attributes.room_id,
-                            now_text);
+  auto id =
+      tx.conn().first(kInsert, arena, client_message_id, now_text, attributes.creator_id, attributes.room_id, now_text);
   if (!id) return std::unexpected(id.error());
   Message message{**id, attributes.room_id, attributes.creator_id, client_message_id, now_text, now_text};
 
   bool touched = false;
   if (attributes.body) {
     const std::string at = tx.now_db();
-    auto body = tx.conn().first(kInsertBody, arena, std::string_view(*attributes.body), at, "body", message.id,
-                                "Message", at);
+    auto body =
+        tx.conn().first(kInsertBody, arena, std::string_view(*attributes.body), at, "body", message.id, "Message", at);
     if (!body) return std::unexpected(body.error());
     touched = true;
   }
   if (attributes.attachment_blob_id) {
-    if (auto r = tx.conn().exec(kAttach, *attributes.attachment_blob_id, tx.now_db(), message.id);
-        !r) {
+    if (auto r = tx.conn().exec(kAttach, *attributes.attachment_blob_id, tx.now_db(), message.id); !r) {
       return std::unexpected(r.error());
     }
     touched = true;

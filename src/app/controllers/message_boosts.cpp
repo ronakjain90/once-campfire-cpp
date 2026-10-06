@@ -1,6 +1,6 @@
-// Messages::BoostsController and Messages::Boosts::ByBotsController. Rails: app/controllers/messages/boosts_controller.rb,
-// app/controllers/messages/boosts/by_bots_controller.rb. Rust: crates/campfire/src/controllers/messages/boosts.rs and
-// messages/boosts/by_bots.rs.
+// Messages::BoostsController and Messages::Boosts::ByBotsController. Rails:
+// app/controllers/messages/boosts_controller.rb, app/controllers/messages/boosts/by_bots_controller.rb. Rust:
+// crates/campfire/src/controllers/messages/boosts.rs and messages/boosts/by_bots.rs.
 #include "app/broadcasts.hpp"
 #include "app/concerns.hpp"
 #include "app/controllers/common.hpp"
@@ -163,7 +163,8 @@ Task<Flow<net::Response>> boosts_destroy(Rq& rq) {
   if (!message) co_return std::unexpected(std::move(message.error()));
   auto boost = set_boost(rq, *message);
   if (!boost) co_return std::unexpected(std::move(boost.error()));
-  if (auto gone = co_await destroy_boost(rq, *message, *boost); !gone) co_return std::unexpected(std::move(gone.error()));
+  if (auto gone = co_await destroy_boost(rq, *message, *boost); !gone)
+    co_return std::unexpected(std::move(gone.error()));
   // No destroy template: `head :no_content`.
   co_return rq.head(204);
 }
@@ -224,7 +225,8 @@ Task<Flow<net::Response>> boost_bots_destroy(Rq& rq) {
     }
     co_return std::unexpected(std::move(boost.error()));
   }
-  if (auto gone = co_await destroy_boost(rq, *message, *boost); !gone) co_return std::unexpected(std::move(gone.error()));
+  if (auto gone = co_await destroy_boost(rq, *message, *boost); !gone)
+    co_return std::unexpected(std::move(gone.error()));
   co_return rq.head(204);
 }
 

@@ -44,7 +44,7 @@ class DbRecords final : public storage::Records {
 
 // The rows that `ActiveStorage::Blob#purge` removes in its transaction.
 struct PurgedBlob {
-  std::optional<storage::Blob> blob;       // nothing when the blob is gone or still attached
+  std::optional<storage::Blob> blob;        // nothing when the blob is gone or still attached
   std::vector<std::int64_t> dependent_ids;  // blobs of the variant images and the preview image: purge them next
 };
 // `blob.purge`: `destroy` is refused while an attachment points at the blob. It destroys the variant records (and the

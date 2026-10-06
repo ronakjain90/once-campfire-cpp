@@ -1,6 +1,6 @@
-// The place where model callbacks enqueue jobs. Rails: Room::PushMessageJob.perform_later, Bot::WebhookJob.perform_later
-// (app/models/room.rb, app/models/user/bot.rb). Rust: crates/db/src/events.rs (Event).
-// A9 gives the real queues. Until then the app uses the sink that only logs.
+// The place where model callbacks enqueue jobs. Rails: Room::PushMessageJob.perform_later,
+// Bot::WebhookJob.perform_later (app/models/room.rb, app/models/user/bot.rb). Rust: crates/db/src/events.rs (Event). A9
+// gives the real queues. Until then the app uses the sink that only logs.
 #pragma once
 
 #include <cstdint>

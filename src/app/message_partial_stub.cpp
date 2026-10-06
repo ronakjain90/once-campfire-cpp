@@ -1,7 +1,6 @@
 // STUB. Temporary implementation of the message partials of the rooms area (A2). It is not the Rails output.
 // Rails: app/views/messages/_message.html.erb. Replace this file with the partials of A2 when A2 merges.
 #include "app/message_partial.hpp"
-
 #include "views/helpers/tag.hpp"
 #include "views/helpers/turbo.hpp"
 

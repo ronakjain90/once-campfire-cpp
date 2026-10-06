@@ -1,5 +1,6 @@
 // End to end tests of the area A3: message create, edit, update and delete, boosts, the bot API, user autocomplete.
-// Rails: messages_controller, messages/boosts_controller, messages/by_bots_controller, autocompletable/users_controller.
+// Rails: messages_controller, messages/boosts_controller, messages/by_bots_controller,
+// autocompletable/users_controller.
 #include <doctest.h>
 
 #include "app/message_presenter.hpp"
@@ -28,7 +29,8 @@ std::string sign_in(Client& c, const std::string& email) {
 void seed_room(Fixture& f) {
   const std::string digest = req::bcrypt::hash_password(kPassword, req::bcrypt::kMinCost);
   f.write([&](db::Tx& tx) -> Status {
-    if (auto r = tx.conn().exec(kInsertUser, "Jason", "jason@example.com", digest, 0); !r) return std::unexpected(r.error());
+    if (auto r = tx.conn().exec(kInsertUser, "Jason", "jason@example.com", digest, 0); !r)
+      return std::unexpected(r.error());
     return tx.conn().exec_sql(
         "INSERT INTO users (name, role, status, bot_token, created_at, updated_at) VALUES "
         "('Bender', 2, 0, 'BenderToken', '2026-03-02 16:00:00', '2026-03-02 16:00:00');"
@@ -103,7 +105,8 @@ TEST_CASE("messages: create, show, edit, update and destroy") {
 
   r = c.request("PUT", "/rooms/1/messages/1", jason + kSameOrigin + kForm + kTurbo, "message%5Bbody%5D=x");
   CHECK(r.status == 403);
-  r = c.request("PUT", "/rooms/1/messages/1", david + kSameOrigin + kForm + kTurbo, "message%5Bbody%5D=%3Cp%3EEdited%3C%2Fp%3E");
+  r = c.request("PUT", "/rooms/1/messages/1", david + kSameOrigin + kForm + kTurbo,
+                "message%5Bbody%5D=%3Cp%3EEdited%3C%2Fp%3E");
   CHECK(r.status == 302);
   CHECK(r.header("location") == "http://test.example/rooms/1/messages/1");
   CHECK(scalar(f, "SELECT body FROM action_text_rich_texts WHERE record_type = 'Message'") == "<p>Edited</p>");
@@ -184,7 +187,8 @@ TEST_CASE("bot API: messages and boosts with the bot key") {
   CHECK(r.body.find("\"plain_text\":\"Build 1044 passed\"") != std::string::npos);
   CHECK(r.body.find("\"url\":\"http://test.example/rooms/1/messages/1\"") != std::string::npos);
 
-  r = c.request("PUT", base + "/messages/1", "Content-Type: application/json\r\n", "{\"message\":{\"body\":\"edited\"}}");
+  r = c.request("PUT", base + "/messages/1", "Content-Type: application/json\r\n",
+                "{\"message\":{\"body\":\"edited\"}}");
   CHECK(r.status == 200);
   r = c.request("POST", base + "/messages/1/boosts", "Content-Type: text/plain\r\n", "\xF0\x9F\xA4\x96");
   REQUIRE(r.status == 201);

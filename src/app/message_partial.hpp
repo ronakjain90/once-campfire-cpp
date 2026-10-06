@@ -1,6 +1,7 @@
 // The message display partials that the rooms area (A2) owns, as the message area (A3) calls them.
 // Rails: app/views/messages/_message.html.erb, _presentation.html.erb, boosts/_boosts.html.erb and
-// Messages::AttachmentPresentation (app/models/messages/attachment_presentation.rb). Rust: crates/views/src/messages.rs.
+// Messages::AttachmentPresentation (app/models/messages/attachment_presentation.rb). Rust:
+// crates/views/src/messages.rs.
 //
 // A3 writes the controllers and the broadcasts. A2 writes the partials. Until A2 merges, message_partial_stub.cpp gives
 // a temporary implementation of each function. When A2 merges, delete the stub and let the template functions of A2

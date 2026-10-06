@@ -80,9 +80,8 @@ Task<Flow<net::Response>> messages_show(Rq& rq) {
   MessagePresenter presenter(rq.db(), rq.arena(), rq.app, std::string(rq.info.host()));
   auto view = presenter.message(*message);
   if (!view) co_return db_failure(view.error());
-  co_return messages::content_page(rq, 200, true, [&](Out& out, const views::ViewContext& ctx) {
-    views::messages::message(out, ctx, *view);
-  });
+  co_return messages::content_page(
+      rq, 200, true, [&](Out& out, const views::ViewContext& ctx) { views::messages::message(out, ctx, *view); });
 }
 
 Task<Flow<net::Response>> messages_edit(Rq& rq) {

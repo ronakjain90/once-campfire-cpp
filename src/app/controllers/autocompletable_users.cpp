@@ -138,7 +138,8 @@ Task<Flow<net::Response>> users_index(Rq& rq) {
   const std::int64_t count = static_cast<std::int64_t>(users->size());
   const std::int64_t offset = (number - 1) * kPerPage;
   std::vector<models::User> records;
-  for (std::int64_t i = offset; i < std::min(count, offset + kPerPage); ++i) records.push_back((*users)[static_cast<std::size_t>(i)]);
+  for (std::int64_t i = offset; i < std::min(count, offset + kPerPage); ++i)
+    records.push_back((*users)[static_cast<std::size_t>(i)]);
   std::int64_t page_count = 0;
   for (std::int64_t residual = count; residual > 0; residual -= kPerPage) ++page_count;
   page_count = std::max<std::int64_t>(page_count, 1);
@@ -150,7 +151,8 @@ Task<Flow<net::Response>> users_index(Rq& rq) {
   if (json) {
     // `set_paginated_headers` (after_action), for JSON requests.
     rq.set_header("x-total-count", std::to_string(count));
-    if (number != page_count) rq.set_header("link", "<" + with_page(rq.info.url(), std::to_string(number + 1)) + ">; rel=\"next\"");
+    if (number != page_count)
+      rq.set_header("link", "<" + with_page(rq.info.url(), std::to_string(number + 1)) + ">; rel=\"next\"");
   }
 
   const std::string base_url = rq.url_for("");

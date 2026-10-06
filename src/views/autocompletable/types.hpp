@@ -1,5 +1,5 @@
-// What the autocomplete views read off a user. Rails: the locals of app/views/autocompletable/users/_prompt_item.html.erb.
-// Rust: crates/views/src/autocompletable.rs (MentionUser).
+// What the autocomplete views read off a user. Rails: the locals of
+// app/views/autocompletable/users/_prompt_item.html.erb. Rust: crates/views/src/autocompletable.rs (MentionUser).
 #pragma once
 
 #include <cstdint>

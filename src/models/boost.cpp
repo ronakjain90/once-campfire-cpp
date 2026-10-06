@@ -9,8 +9,8 @@ namespace {
 
 using db::schema::BoostRow;
 
-#define CF_BOOST_COLUMNS                                                                                  \
-  "\"boosts\".\"id\", \"boosts\".\"message_id\", \"boosts\".\"booster_id\", \"boosts\".\"content\", "      \
+#define CF_BOOST_COLUMNS                                                                              \
+  "\"boosts\".\"id\", \"boosts\".\"message_id\", \"boosts\".\"booster_id\", \"boosts\".\"content\", " \
   "\"boosts\".\"created_at\", \"boosts\".\"updated_at\""
 
 // The column order of the Rust statements. `BoostRow::read` reads `kColumns` order, so this struct reads its own.
@@ -21,9 +21,7 @@ struct BoostCols {
   std::string_view content;
   std::string_view created_at;
   std::string_view updated_at;
-  static BoostCols read(db::RowReader& r) {
-    return {r.i64(0), r.i64(1), r.i64(2), r.text(3), r.text(4), r.text(5)};
-  }
+  static BoostCols read(db::RowReader& r) { return {r.i64(0), r.i64(1), r.i64(2), r.text(3), r.text(4), r.text(5)}; }
 };
 
 const db::Query<BoostCols(std::int64_t, std::int64_t, std::int64_t)> kFindBy{
@@ -33,21 +31,28 @@ const db::Query<BoostCols(std::int64_t, std::int64_t, std::int64_t)> kFindBy{
 const db::Query<BoostCols(std::int64_t)> kOrdered{
     "SELECT " CF_BOOST_COLUMNS
     " FROM \"boosts\" WHERE \"boosts\".\"message_id\" = ? ORDER BY \"boosts\".\"created_at\" ASC"};
-const db::Query<std::int64_t(std::int64_t, std::string_view, std::string_view, std::int64_t, std::string_view)>
-    kInsert{
-        "INSERT INTO \"boosts\" (\"booster_id\", \"content\", \"created_at\", \"message_id\", \"updated_at\") VALUES "
-        "(?, ?, ?, ?, ?) RETURNING \"id\""};
+const db::Query<std::int64_t(std::int64_t, std::string_view, std::string_view, std::int64_t, std::string_view)> kInsert{
+    "INSERT INTO \"boosts\" (\"booster_id\", \"content\", \"created_at\", \"message_id\", \"updated_at\") VALUES "
+    "(?, ?, ?, ?, ?) RETURNING \"id\""};
 const db::Query<void(std::int64_t)> kDelete{"DELETE FROM \"boosts\" WHERE \"boosts\".\"id\" = ?"};
 
 Boost make(const BoostCols& row) {
-  return {row.id, row.message_id, row.booster_id, std::string(row.content), std::string(row.created_at),
+  return {row.id,
+          row.message_id,
+          row.booster_id,
+          std::string(row.content),
+          std::string(row.created_at),
           std::string(row.updated_at)};
 }
 
 }  // namespace
 
 Boost Boost::from_row(const BoostRow& row) {
-  return {row.id, row.message_id, row.booster_id, std::string(row.content), std::string(row.created_at),
+  return {row.id,
+          row.message_id,
+          row.booster_id,
+          std::string(row.content),
+          std::string(row.created_at),
           std::string(row.updated_at)};
 }
 

@@ -1,4 +1,5 @@
-// Rails: ActiveStorage::Blob, ActiveStorage::Attachment, ActiveStorage::VariantRecord. Rust: crates/storage/src/blob.rs.
+// Rails: ActiveStorage::Blob, ActiveStorage::Attachment, ActiveStorage::VariantRecord. Rust:
+// crates/storage/src/blob.rs.
 #include "models/storage_records.hpp"
 
 #include "core/time_format.hpp"
@@ -7,9 +8,9 @@ namespace campfire::models {
 
 namespace {
 
-#define CF_BLOB_COLS(p)                                                                                          \
-  p "id, " p "key, " p "filename, " p "content_type, " p "metadata, " p "service_name, " p "byte_size, " p "checksum, " \
-    p "created_at"
+#define CF_BLOB_COLS(p)                                                                                    \
+  p "id, " p "key, " p "filename, " p "content_type, " p "metadata, " p "service_name, " p "byte_size, " p \
+    "checksum, " p "created_at"
 
 struct BlobCols {
   int64_t id;
@@ -22,14 +23,14 @@ struct BlobCols {
   std::optional<std::string_view> checksum;
   std::string_view created_at;
   static BlobCols read(db::RowReader& r) {
-    return {r.i64(0),  r.text(1), r.text(2), r.text_opt(3), r.text_opt(4),
+    return {r.i64(0),  r.text(1), r.text(2),     r.text_opt(3), r.text_opt(4),
             r.text(5), r.i64(6),  r.text_opt(7), r.text(8)};
   }
 };
 
-const db::Query<BlobCols(std::string_view, int64_t, std::string_view)> kAttached{
-    "SELECT " CF_BLOB_COLS("b.") " FROM active_storage_blobs b JOIN active_storage_attachments a ON a.blob_id = b.id "
-    "WHERE a.record_type = ? AND a.record_id = ? AND a.name = ? ORDER BY a.id LIMIT 1"};
+const db::Query<BlobCols(std::string_view, int64_t, std::string_view)> kAttached{"SELECT " CF_BLOB_COLS(
+    "b.") " FROM active_storage_blobs b JOIN active_storage_attachments a ON a.blob_id = b.id "
+          "WHERE a.record_type = ? AND a.record_id = ? AND a.name = ? ORDER BY a.id LIMIT 1"};
 const db::Query<BlobCols(int64_t)> kBlobById{"SELECT " CF_BLOB_COLS("") " FROM active_storage_blobs WHERE id = ?"};
 const db::Query<int64_t(std::string_view, std::string_view, std::optional<std::string_view>, std::string_view,
                         std::string_view, int64_t, std::string_view, std::string_view)>
@@ -46,8 +47,7 @@ const db::Query<int64_t(int64_t, std::string_view)> kFindVariant{
 const db::Query<int64_t(int64_t, std::string_view)> kInsertVariant{
     "INSERT INTO active_storage_variant_records (blob_id, variation_digest) VALUES (?, ?) RETURNING id"};
 
-const db::Query<int64_t(int64_t)> kAnyAttachment{
-    "SELECT 1 FROM active_storage_attachments WHERE blob_id = ? LIMIT 1"};
+const db::Query<int64_t(int64_t)> kAnyAttachment{"SELECT 1 FROM active_storage_attachments WHERE blob_id = ? LIMIT 1"};
 const db::Query<int64_t(int64_t)> kVariantIds{"SELECT id FROM active_storage_variant_records WHERE blob_id = ?"};
 const db::Query<int64_t(std::string_view, int64_t, std::string_view)> kAttachmentBlobId{
     "SELECT blob_id FROM active_storage_attachments WHERE record_type = ? AND record_id = ? AND name = ? LIMIT 1"};
@@ -172,7 +172,8 @@ Result<PurgedBlob> purge_blob_rows(db::Tx& tx, int64_t blob_id) {
     if (auto r = tx.conn().exec(kDeleteVariant, variant_id); !r) return std::unexpected(r.error());
   }
   // has_one_attached :preview_image
-  if (auto s = destroy_attachment("ActiveStorage::Blob", blob_id, "preview_image"); !s) return std::unexpected(s.error());
+  if (auto s = destroy_attachment("ActiveStorage::Blob", blob_id, "preview_image"); !s)
+    return std::unexpected(s.error());
   if (auto r = tx.conn().exec(kDeleteBlob, blob_id); !r) return std::unexpected(r.error());
   out.blob = std::move(**blob);
   return out;

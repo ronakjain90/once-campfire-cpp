@@ -64,8 +64,8 @@ richtext::MentionUser mention_user(const App& app, const models::User& user) {
   out.id = user.id;
   out.name = user.name;
   out.title = user_title(user);
-  out.attachable_sgid =
-      compat::global_id::attachable_sgid(app.secrets, compat::global_id::GlobalId::make("User", std::to_string(user.id)));
+  out.attachable_sgid = compat::global_id::attachable_sgid(
+      app.secrets, compat::global_id::GlobalId::make("User", std::to_string(user.id)));
   out.user_path = campfire::routes::user(user.id);
   out.avatar_path = avatar_path(app, user);
   return out;
@@ -189,7 +189,7 @@ Result<std::optional<views::messages::AttachmentView>> MessagePresenter::attachm
       using compat::marshal::Value;
       const compat::Variation poster({{"format", Value::symbol("webp")},
                                       {"resize_to_limit", Value::array({Value::integer(kThumbnailMaxWidth),
-                                                                         Value::integer(kThumbnailMaxHeight)})}});
+                                                                        Value::integer(kThumbnailMaxHeight)})}});
       view.preview.url = storage::paths::representation_redirect_path(verifier, b, poster);
     } else {
       view.preview.kind = AttachmentPreview::Kind::Image;
@@ -304,9 +304,9 @@ Result<views::messages::MessageContent> MessagePresenter::content_of(const model
     views::messages::SoundView view;
     view.url = assets::asset_path(std::string(sound->name) + ".mp3").value_or("");
     if (sound->image) {
-      view.image = views::messages::SoundImage{
-          assets::asset_path("sounds/" + std::string(sound->image->file)).value_or(""), sound->image->width,
-          sound->image->height};
+      view.image =
+          views::messages::SoundImage{assets::asset_path("sounds/" + std::string(sound->image->file)).value_or(""),
+                                      sound->image->width, sound->image->height};
     }
     if (sound->text) view.text = std::string(*sound->text);
     return MessageContent(std::move(view));
@@ -376,10 +376,9 @@ Result<compat::json::Value> MessagePresenter::boost_json(const models::Boost& bo
       {"content", Value(boost.content)},
       {"created_at", Value(created ? format_iso8601_millis(*created) : std::string())},
       {"booster", user_json(*booster, base_url)},
-      {"message", Value(Value::Object{
-                      {"id", Value(boost.message_id)},
-                      {"url", Value(std::string(base_url) +
-                                    campfire::routes::room_message(message.room_id, message.id))}})}});
+      {"message", Value(Value::Object{{"id", Value(boost.message_id)},
+                                      {"url", Value(std::string(base_url) +
+                                                    campfire::routes::room_message(message.room_id, message.id))}})}});
 }
 
 }  // namespace campfire::app

@@ -1,5 +1,5 @@
-// Rails: Turbo::Streams::Broadcasts, app/models/message/broadcasts.rb. Rust: crates/campfire/src/channels/broadcasts.rs,
-// crates/cable/src/turbo.rs.
+// Rails: Turbo::Streams::Broadcasts, app/models/message/broadcasts.rb. Rust:
+// crates/campfire/src/channels/broadcasts.rs, crates/cable/src/turbo.rs.
 #include "app/broadcasts.hpp"
 
 #include "cable/hub.hpp"
@@ -96,8 +96,7 @@ void unread_room(const App& app, const models::RoomRef& room, std::span<const st
 }
 
 void message_remove(const App& app, const models::RoomRef& room, std::string_view client_message_id) {
-  to_room_messages(app, room,
-                   action_tag(Action::Remove, "message_" + std::string(client_message_id), std::nullopt));
+  to_room_messages(app, room, action_tag(Action::Remove, "message_" + std::string(client_message_id), std::nullopt));
 }
 
 void message_replace_presentation(const App& app, const models::RoomRef& room, std::string_view client_message_id,
@@ -111,9 +110,9 @@ void message_replace_presentation(const App& app, const models::RoomRef& room, s
 void boost_append(const App& app, const models::RoomRef& room, std::string_view client_message_id,
                   std::string_view boost_html) {
   const Attribute attributes[] = {kMaintainScroll};
-  to_room_messages(app, room,
-                   action_tag(Action::Append, "boosts_message_" + std::string(client_message_id), boost_html,
-                              attributes));
+  to_room_messages(
+      app, room,
+      action_tag(Action::Append, "boosts_message_" + std::string(client_message_id), boost_html, attributes));
 }
 
 void boost_remove(const App& app, const models::RoomRef& room, std::int64_t boost_id) {

@@ -107,8 +107,8 @@ Flow<void> set_pagination_headers(Rq& rq, const models::RoomRef& room, const std
   }
   if (!key.empty()) {
     const std::string bot_key(rq.param_str("bot_key").value_or(""));
-    const std::string url = rq.url_for(campfire::routes::room_bot_messages(room.id, bot_key)) + "?" +
-                            std::string(key) + "=" + std::to_string(id);
+    const std::string url = rq.url_for(campfire::routes::room_bot_messages(room.id, bot_key)) + "?" + std::string(key) +
+                            "=" + std::to_string(id);
     rq.set_header("link", "<" + url + ">; rel=\"next\"");
   }
   return {};
@@ -150,7 +150,8 @@ Task<Flow<net::Response>> bots_create(Rq& rq) {
   if (!before) co_return std::unexpected(std::move(before.error()));
   auto room = set_bot_room(rq);
   if (!room) co_return std::unexpected(std::move(room.error()));
-  if (auto present = ensure_body_or_attachment_present(rq); !present) co_return std::unexpected(std::move(present.error()));
+  if (auto present = ensure_body_or_attachment_present(rq); !present)
+    co_return std::unexpected(std::move(present.error()));
   // MessagesController#create
   auto message = co_await messages::create_message(rq, *room, bot_message_params(rq));
   if (!message) co_return std::unexpected(std::move(message.error()));

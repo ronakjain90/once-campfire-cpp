@@ -1,4 +1,6 @@
 // Tests of the message, boost and room reference models (the write side of messages).
+#include "models/message.hpp"
+
 #include <doctest.h>
 
 #include <fstream>
@@ -6,7 +8,6 @@
 
 #include "db/tests/test_util.hpp"
 #include "models/boost.hpp"
-#include "models/message.hpp"
 #include "models/room_ref.hpp"
 
 namespace campfire::models {
@@ -24,18 +25,18 @@ std::unique_ptr<db::Database> open_app_db(const TempDir& dir, db::DatabaseOption
     auto conn = db::Connection::open(path, db::Role::Writer);
     REQUIRE(conn.has_value());
     REQUIRE(conn->exec_sql(sql.str()).has_value());
-    REQUIRE(conn->exec_sql(
-                    "INSERT INTO users (id, name, role, status, created_at, updated_at) VALUES "
-                    "(1, 'David', 1, 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00'), "
-                    "(2, 'Jason', 0, 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00'), "
-                    "(3, 'Bender', 2, 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00');"
-                    "INSERT INTO rooms (id, name, type, creator_id, created_at, updated_at) VALUES "
-                    "(1, 'Designers', 'Rooms::Open', 1, '2026-03-01 00:00:00', '2026-03-01 00:00:00');"
-                    "INSERT INTO memberships (room_id, user_id, involvement, connections, created_at, updated_at) "
-                    "VALUES (1, 1, 'everything', 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00'), "
-                    "(1, 2, 'mentions', 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00'), "
-                    "(1, 3, 'invisible', 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00');")
-                .has_value());
+    REQUIRE(
+        conn->exec_sql("INSERT INTO users (id, name, role, status, created_at, updated_at) VALUES "
+                       "(1, 'David', 1, 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00'), "
+                       "(2, 'Jason', 0, 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00'), "
+                       "(3, 'Bender', 2, 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00');"
+                       "INSERT INTO rooms (id, name, type, creator_id, created_at, updated_at) VALUES "
+                       "(1, 'Designers', 'Rooms::Open', 1, '2026-03-01 00:00:00', '2026-03-01 00:00:00');"
+                       "INSERT INTO memberships (room_id, user_id, involvement, connections, created_at, updated_at) "
+                       "VALUES (1, 1, 'everything', 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00'), "
+                       "(1, 2, 'mentions', 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00'), "
+                       "(1, 3, 'invisible', 0, '2026-03-01 00:00:00', '2026-03-01 00:00:00');")
+            .has_value());
   }
   auto db = db::Database::open(path, std::move(options));
   REQUIRE(db.has_value());
@@ -83,8 +84,8 @@ TEST_CASE("messages: create, update, touch, destroy") {
   attributes.body = "<p>Hello</p>";
   attributes.plain_text = "Hello";
   auto created = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Result<Message> {
-                            return messages::create(tx, attributes, &jobs);
-                          }));
+    return messages::create(tx, attributes, &jobs);
+  }));
   REQUIRE(created.has_value());
   CHECK(created->client_message_id == "cm-1");
   CHECK(created->created_at == "2026-03-02 16:00:00");
@@ -106,13 +107,13 @@ TEST_CASE("messages: create, update, touch, destroy") {
   clock->travel(5);
   Message message = **found;
   auto same = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Status {
-                         return messages::update_body(tx, message, "<p>Hello</p>", "Hello");
-                       }));
+    return messages::update_body(tx, message, "<p>Hello</p>", "Hello");
+  }));
   REQUIRE(same.has_value());
   CHECK(text_of(reader, arena, "SELECT updated_at FROM messages") == "2026-03-02 16:00:00");
   auto updated = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Status {
-                            return messages::update_body(tx, message, "<p>Bye</p>", "Bye");
-                          }));
+    return messages::update_body(tx, message, "<p>Bye</p>", "Bye");
+  }));
   REQUIRE(updated.has_value());
   CHECK(text_of(reader, arena, "SELECT updated_at FROM messages") == "2026-03-02 16:00:05");
   CHECK(text_of(reader, arena, "SELECT updated_at FROM rooms") == "2026-03-02 16:00:05");
@@ -121,8 +122,8 @@ TEST_CASE("messages: create, update, touch, destroy") {
 
   clock->travel(1);
   auto boost = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Result<Boost> {
-                          return boosts::create(tx, message.id, 2, "👍", "Bye");
-                        }));
+    return boosts::create(tx, message.id, 2, "👍", "Bye");
+  }));
   REQUIRE(boost.has_value());
   CHECK(text_of(reader, arena, "SELECT updated_at FROM messages") == "2026-03-02 16:00:06");
   auto listed = boosts::for_message_ordered(reader, arena, message.id);
@@ -130,15 +131,15 @@ TEST_CASE("messages: create, update, touch, destroy") {
   CHECK((*listed)[0].content == "👍");
   CHECK_FALSE(boosts::find_by_message_and_booster(reader, arena, message.id, boost->id, 1)->has_value());
   REQUIRE(boosts::find_by_message_and_booster(reader, arena, message.id, boost->id, 2)->has_value());
-  auto unboosted = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Status {
-                              return boosts::destroy(tx, *boost, "Bye");
-                            }));
+  auto unboosted = run_task(
+      scheduler, database->write(scheduler, [&](db::Tx& tx) -> Status { return boosts::destroy(tx, *boost, "Bye"); }));
   REQUIRE(unboosted.has_value());
   CHECK(boosts::for_message_ordered(reader, arena, message.id)->empty());
 
-  auto destroyed = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Result<messages::ReplacedAttachment> {
-                              return messages::destroy(tx, message);
-                            }));
+  auto destroyed =
+      run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Result<messages::ReplacedAttachment> {
+        return messages::destroy(tx, message);
+      }));
   REQUIRE(destroyed.has_value());
   CHECK_FALSE(destroyed->purged_blob_id.has_value());
   CHECK(text_of(reader, arena, "SELECT COUNT(*) FROM messages") == "0");

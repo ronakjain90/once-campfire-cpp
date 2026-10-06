@@ -1,4 +1,5 @@
-// Rails: app/helpers/users_helper.rb (avatar_tag), app/helpers/messages_helper.rb. Rust: crates/views/src/helpers/users.rs.
+// Rails: app/helpers/users_helper.rb (avatar_tag), app/helpers/messages_helper.rb. Rust:
+// crates/views/src/helpers/users.rs.
 #include "views/messages/support.hpp"
 
 #include "routes/routes.hpp"

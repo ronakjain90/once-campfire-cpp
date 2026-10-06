@@ -1,4 +1,5 @@
-// Sessions::TransfersController. Rails: app/controllers/sessions/transfers_controller.rb. Rust: crates/campfire/src/controllers/sessions/transfers.rs.
+// Sessions::TransfersController. Rails: app/controllers/sessions/transfers_controller.rb. Rust:
+// crates/campfire/src/controllers/sessions/transfers.rs.
 #include "app/concerns.hpp"
 #include "app/dispatch.hpp"
 #include "app/render_page.hpp"

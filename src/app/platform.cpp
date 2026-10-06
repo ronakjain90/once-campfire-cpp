@@ -14,14 +14,16 @@ bool contains(std::string_view s, std::string_view needle) {
 }
 
 // `user_agent.browser.match?(/A|B/)`: raises for a nil browser.
-ua::Rb<bool> browser_matches(const ua::Rb<std::optional<std::string>>& browser, std::initializer_list<std::string_view> names) {
+ua::Rb<bool> browser_matches(const ua::Rb<std::optional<std::string>>& browser,
+                             std::initializer_list<std::string_view> names) {
   if (!browser || !*browser) return std::unexpected(ua::Raised{});
   return std::ranges::any_of(names, [&](std::string_view n) { return contains(**browser, n); });
 }
 
 }  // namespace
 
-ApplicationPlatform::ApplicationPlatform(std::string_view user_agent) : user_agent_(user_agent), agent_(ua::parse(user_agent_)) {}
+ApplicationPlatform::ApplicationPlatform(std::string_view user_agent)
+    : user_agent_(user_agent), agent_(ua::parse(user_agent_)) {}
 
 bool ApplicationPlatform::ios() const {
   return contains(user_agent_, "iPhone") || contains(user_agent_, "iPad");
@@ -43,8 +45,12 @@ ua::Rb<std::optional<std::string>> ApplicationPlatform::try_operating_system() c
   const auto platform = agent_.try_platform();
   if (!platform) return std::unexpected(ua::Raised{});
   const std::string name = platform->value_or("");
-  static constexpr std::array<std::pair<std::string_view, std::string_view>, 6> kNamed = {{
-      {"Android", "Android"}, {"iPad", "iPad"}, {"iPhone", "iPhone"}, {"Macintosh", "macOS"}, {"Windows", "Windows"}, {"CrOS", "ChromeOS"}}};
+  static constexpr std::array<std::pair<std::string_view, std::string_view>, 6> kNamed = {{{"Android", "Android"},
+                                                                                           {"iPad", "iPad"},
+                                                                                           {"iPhone", "iPhone"},
+                                                                                           {"Macintosh", "macOS"},
+                                                                                           {"Windows", "Windows"},
+                                                                                           {"CrOS", "ChromeOS"}}};
   for (const auto& [needle, os_name] : kNamed) {
     if (contains(name, needle)) return std::optional<std::string>(std::string(os_name));
   }
@@ -57,7 +63,9 @@ ua::Rb<std::optional<std::string>> ApplicationPlatform::try_operating_system() c
 views::Platform ApplicationPlatform::to_view() const {
   const auto browser = agent_.try_browser();
   const auto os = try_operating_system();
-  const auto is = [&](std::initializer_list<std::string_view> names) { return browser_matches(browser, names).value_or(false); };
+  const auto is = [&](std::initializer_list<std::string_view> names) {
+    return browser_matches(browser, names).value_or(false);
+  };
   views::Platform p;
   p.ios = ios();
   p.android = android();
@@ -79,7 +87,8 @@ bool ApplicationPlatform::browser_blocked() const {
   return try_browser_blocked().value_or(false);
 }
 
-// `ActionController::AllowBrowser::BrowserBlocker#blocked?` with `{ safari: 17.2, chrome: 120, firefox: 121, opera: 104, ie: false }`.
+// `ActionController::AllowBrowser::BrowserBlocker#blocked?` with `{ safari: 17.2, chrome: 120, firefox: 121, opera:
+// 104, ie: false }`.
 ua::Rb<bool> ApplicationPlatform::try_browser_blocked() const {
   if (!ua::is_present(user_agent_)) return false;
   const auto version = agent_.try_version();

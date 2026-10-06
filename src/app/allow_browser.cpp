@@ -1,5 +1,6 @@
-// AllowBrowser. Rails: app/controllers/concerns/allow_browser.rb (`allow_browser versions:, block:`), views/sessions/incompatible_browser.
-// Rust: crates/campfire/src/concerns.rs (allow_browser, render_incompatible_browser).
+// AllowBrowser. Rails: app/controllers/concerns/allow_browser.rb (`allow_browser versions:, block:`),
+// views/sessions/incompatible_browser. Rust: crates/campfire/src/concerns.rs (allow_browser,
+// render_incompatible_browser).
 #include "app/concerns.hpp"
 #include "app/platform.hpp"
 #include "app/render_page.hpp"

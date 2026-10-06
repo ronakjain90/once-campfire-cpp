@@ -1,4 +1,5 @@
-// WelcomeController#show. Rails: app/controllers/welcome_controller.rb, concerns/tracked_room_visit.rb. Rust: crates/campfire/src/controllers/welcome.rs.
+// WelcomeController#show. Rails: app/controllers/welcome_controller.rb, concerns/tracked_room_visit.rb. Rust:
+// crates/campfire/src/controllers/welcome.rs.
 #include "app/concerns.hpp"
 #include "app/dispatch.hpp"
 #include "app/render_page.hpp"
@@ -47,10 +48,9 @@ Task<Flow<net::Response>> welcome_show(Rq& rq) {
   spec.name = "welcome#show";
   spec.title = "No rooms yet";
   spec.body_class = "sidebar";
+  // The Rust wrapper layout prints the frame with no indent and no newline of its own: `</turbo-frame>    </aside>`.
   spec.sidebar = [](Out& out, const views::ViewContext&) {
-    out.append_raw("      ");
     views::helpers::sidebar_turbo_frame_tag(out, campfire::routes::user_sidebar());
-    out.append_raw("\n");
   };
   spec.content = [](Out& out, const views::ViewContext& ctx) { views::welcome::show(out, ctx); };
   co_return render_page(rq, 200, spec);

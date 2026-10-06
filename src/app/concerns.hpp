@@ -66,8 +66,8 @@ void set_version_headers(Rq& rq);
 // `User.active.authenticate_by(email_address:, password:)`: the lookup is inline, bcrypt runs on the job pool.
 [[nodiscard]] Task<Flow<std::optional<models::User>>> authenticate_by(Rq& rq, std::string email_address,
                                                                       std::string password);
-// `has_secure_password#password=`: the bcrypt digest of a password that is not empty, on the job pool. Nothing for a nil
-// or an empty password.
+// `has_secure_password#password=`: the bcrypt digest of a password that is not empty, on the job pool. Nothing for a
+// nil or an empty password.
 [[nodiscard]] Task<Flow<std::optional<std::string>>> password_digest(Rq& rq, std::optional<std::string> password);
 // `start_new_session_for(user)`: the session row through the writer, and the signed cookie.
 [[nodiscard]] Task<Flow<void>> start_new_session_for(Rq& rq, models::User user);

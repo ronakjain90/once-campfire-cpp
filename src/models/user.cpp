@@ -29,7 +29,8 @@ const db::Query<std::int64_t(std::optional<std::string_view>, std::optional<std:
                              std::int64_t, std::int64_t, std::string_view)>
     kInsert{
         "INSERT INTO \"users\" (\"bio\", \"bot_token\", \"created_at\", \"email_address\", \"name\", "
-        "\"password_digest\", \"role\", \"status\", \"updated_at\") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING \"id\""};
+        "\"password_digest\", \"role\", \"status\", \"updated_at\") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "
+        "\"id\""};
 
 // `Membership.insert_all(Rooms::Open.pluck(:id).collect { ... })`: one row for each open room. The times are the
 // time of the database, as the Rust port writes them.
@@ -88,9 +89,9 @@ Result<User> create(db::Tx& tx, const NewUser& attributes) {
     return s ? std::optional<std::string_view>(*s) : std::nullopt;
   };
   Arena arena(256);
-  auto id = tx.conn().first(kInsert, arena, std::nullopt, std::nullopt, now, view(attributes.email_address),
-                            attributes.name, view(attributes.password_digest), static_cast<std::int64_t>(attributes.role),
-                            kStatusActive, now);
+  auto id =
+      tx.conn().first(kInsert, arena, std::nullopt, std::nullopt, now, view(attributes.email_address), attributes.name,
+                      view(attributes.password_digest), static_cast<std::int64_t>(attributes.role), kStatusActive, now);
   if (!id) return std::unexpected(id.error());
   if (auto granted = tx.conn().exec(kGrantOpenRooms, **id); !granted) return std::unexpected(granted.error());
   User u;

@@ -1,5 +1,7 @@
 // Vectors of the useragent gem and of ApplicationPlatform (spec/vectors/campfire_user_agents.json).
 // Rust: the tests of crates/campfire/src/concerns/{user_agent,platform}.rs.
+#include "app/user_agent.hpp"
+
 #include <doctest.h>
 
 #include <cstdio>
@@ -7,7 +9,6 @@
 #include <sstream>
 
 #include "app/platform.hpp"
-#include "app/user_agent.hpp"
 #include "compat/json.hpp"
 
 namespace campfire::app {
@@ -94,7 +95,9 @@ TEST_CASE("user agent vectors: ApplicationPlatform and allow_browser") {
     const ua::Agent& agent = platform.agent();
     const auto browser = agent.try_browser();
     const auto os = platform.try_operating_system();
-    const auto flag = [&](std::string_view name, bool actual) { t.check(at(expected, name) == json::Value(actual), ua + " " + std::string(name)); };
+    const auto flag = [&](std::string_view name, bool actual) {
+      t.check(at(expected, name) == json::Value(actual), ua + " " + std::string(name));
+    };
     const auto raises_or = [&](std::string_view name, const ua::Rb<bool>& actual) {
       t.check(matches(at(expected, name), actual, [](bool b) { return json::Value(b); }), ua + " " + std::string(name));
     };
@@ -115,7 +118,10 @@ TEST_CASE("user agent vectors: ApplicationPlatform and allow_browser") {
     flag("apple_messages", platform.apple_messages());
     flag("mobile", platform.mobile());
     flag("desktop", platform.desktop());
-    t.check(matches(at(expected, "windows"), os, [](const std::optional<std::string>& o) { return json::Value(o == std::optional<std::string>("Windows")); }),
+    t.check(matches(at(expected, "windows"), os,
+                    [](const std::optional<std::string>& o) {
+                      return json::Value(o == std::optional<std::string>("Windows"));
+                    }),
             ua + " windows");
     t.check(matches(at(expected, "operating_system"), os, text), ua + " operating_system");
     t.check(matches(at(expected, "browser"), browser, text), ua + " browser");
@@ -130,8 +136,11 @@ TEST_CASE("user agent vectors: ApplicationPlatform and allow_browser") {
     view_flag("firefox", view.firefox);
     view_flag("safari", view.safari);
     view_flag("edge", view.edge);
-    t.check(view.browser == (at(expected, "browser").is_string() ? at(expected, "browser").as_string() : std::string{}), ua + " view browser");
-    t.check(view.operating_system == (at(expected, "operating_system").is_string() ? at(expected, "operating_system").as_string() : std::string{}),
+    t.check(view.browser == (at(expected, "browser").is_string() ? at(expected, "browser").as_string() : std::string{}),
+            ua + " view browser");
+    t.check(view.operating_system == (at(expected, "operating_system").is_string()
+                                          ? at(expected, "operating_system").as_string()
+                                          : std::string{}),
             ua + " view os");
     // `blocked`
     const json::Value& blocked = at(c, "blocked");
@@ -155,8 +164,9 @@ TEST_CASE("user agent vectors: versions and comparisons") {
     const ua::Version a(at(c, "a").as_string());
     const ua::Version b(at(c, "b").as_string());
     const int cmp = a.compare(b);
-    t.check(json::Value(cmp) == at(c, "cmp") && json::Value(a.less(b)) == at(c, "lt") && json::Value(a == b) == at(c, "eq"),
-            at(c, "a").as_string() + " <=> " + at(c, "b").as_string());
+    t.check(
+        json::Value(cmp) == at(c, "cmp") && json::Value(a.less(b)) == at(c, "lt") && json::Value(a == b) == at(c, "eq"),
+        at(c, "a").as_string() + " <=> " + at(c, "b").as_string());
   }
   std::printf("VECTORS campfire_user_agents.json versions+comparisons cases=%d pass=%d\n", t.total, t.pass);
   std::string detail;

@@ -10,8 +10,9 @@ struct IdRow {
   static IdRow read(db::RowReader& r) { return {r.i64(0)}; }
 };
 
-#define CF_ROOMS_FOR_USER \
-  " FROM \"rooms\" INNER JOIN \"memberships\" ON \"rooms\".\"id\" = \"memberships\".\"room_id\" WHERE \"memberships\".\"user_id\" = ?"
+#define CF_ROOMS_FOR_USER                                                                               \
+  " FROM \"rooms\" INNER JOIN \"memberships\" ON \"rooms\".\"id\" = \"memberships\".\"room_id\" WHERE " \
+  "\"memberships\".\"user_id\" = ?"
 
 const db::Query<std::int64_t(std::int64_t)> kAny{"SELECT 1 AS one" CF_ROOMS_FOR_USER " LIMIT 1"};
 const db::Query<IdRow(std::int64_t, std::int64_t)> kFind{"SELECT \"rooms\".\"id\"" CF_ROOMS_FOR_USER
@@ -27,7 +28,8 @@ Result<bool> any(db::Connection& conn, Arena& arena, std::int64_t user_id) {
   return row->has_value();
 }
 
-Result<std::optional<std::int64_t>> find(db::Connection& conn, Arena& arena, std::int64_t user_id, std::int64_t room_id) {
+Result<std::optional<std::int64_t>> find(db::Connection& conn, Arena& arena, std::int64_t user_id,
+                                         std::int64_t room_id) {
   auto row = conn.first(kFind, arena, user_id, room_id);
   if (!row) return std::unexpected(row.error());
   if (!*row) return std::optional<std::int64_t>{};

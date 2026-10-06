@@ -1,4 +1,5 @@
-// UsersController, the join actions. Rails: app/controllers/users_controller.rb (new, create). Rust: crates/campfire/src/controllers/users.rs.
+// UsersController, the join actions. Rails: app/controllers/users_controller.rb (new, create). Rust:
+// crates/campfire/src/controllers/users.rs.
 #include "app/concerns.hpp"
 #include "app/controllers/common.hpp"
 #include "app/dispatch.hpp"
@@ -71,8 +72,8 @@ Task<Flow<net::Response>> users_create(Rq& rq) {
   attributes.password_digest = std::move(*digest);
 
   // `User.create!(user_params)`
-  auto written = co_await rq.app.db->write(rq.ctx.scheduler(),
-                                           [&](db::Tx& tx) -> Result<models::User> { return models::users::create(tx, attributes); });
+  auto written = co_await rq.app.db->write(
+      rq.ctx.scheduler(), [&](db::Tx& tx) -> Result<models::User> { return models::users::create(tx, attributes); });
   if (!written) {
     if (!is_record_not_unique(written.error())) co_return fail_internal(written.error().message);
     // rescue ActiveRecord::RecordNotUnique: `redirect_to new_session_url(email_address: user_params[:email_address])`

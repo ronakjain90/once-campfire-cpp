@@ -1,4 +1,5 @@
-// UsersHelper and Users::SidebarHelper. Rails: app/helpers/users/sidebar_helper.rb. Rust: crates/views/src/helpers/users.rs.
+// UsersHelper and Users::SidebarHelper. Rails: app/helpers/users/sidebar_helper.rb. Rust:
+// crates/views/src/helpers/users.rs.
 #pragma once
 
 #include <optional>

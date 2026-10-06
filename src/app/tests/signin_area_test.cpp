@@ -27,8 +27,8 @@ const db::Query<void(std::string_view)> kInsertBan{
     "'2026-03-02 16:00:00')"};
 
 std::string sign_in(Client& c, const std::string& email) {
-  const Reply r = c.request("POST", "/session", kSameOrigin + kForm,
-                            "email_address=" + email + "&password=" + kPassword);
+  const Reply r =
+      c.request("POST", "/session", kSameOrigin + kForm, "email_address=" + email + "&password=" + kPassword);
   REQUIRE(r.status == 302);
   return cookie_pair(r, "session_token");
 }
@@ -82,8 +82,8 @@ TEST_CASE("first run: the form, the account, the first room and the redirects") 
   REQUIRE(r.status == 200);
   CHECK(r.body.find("<title>Set up Campfire</title>") != std::string::npos);
   CHECK(r.body.find("<body class=\"signup\"") != std::string::npos);
-  CHECK(r.body.find("<form class=\"center max-width\" enctype=\"multipart/form-data\" action=\"/first_run\" accept-charset=\"UTF-8\" method=\"post\">") !=
-        std::string::npos);
+  CHECK(r.body.find("<form class=\"center max-width\" enctype=\"multipart/form-data\" action=\"/first_run\" "
+                    "accept-charset=\"UTF-8\" method=\"post\">") != std::string::npos);
   CHECK(r.body.find("name=\"user[email_address]\"") != std::string::npos);
   for (const char* verb : {"GET /first_run/new", "GET /first_run/edit"}) {
     const std::string line = verb;
@@ -165,7 +165,8 @@ TEST_CASE("join: the form, the code, the new user and a duplicate address") {
   CHECK(r.header("location") == "http://test.example/");
   // The address is taken.
   Client d(f.port());
-  r = d.request("POST", "/join/abcd-efgh-ijkl", kSameOrigin + kForm, "user[name]=Again&user[email_address]=new%40example.com");
+  r = d.request("POST", "/join/abcd-efgh-ijkl", kSameOrigin + kForm,
+                "user[name]=Again&user[email_address]=new%40example.com");
   CHECK(r.status == 302);
   CHECK(r.header("location") == "http://test.example/session/new?email_address=new%40example.com");
   r = d.request("POST", "/join/abcd-efgh-ijkl", kSameOrigin + kForm, "user[name]=Again");
@@ -207,8 +208,9 @@ TEST_CASE("session transfer: the page, the sign in, a bad id and a deactivated u
 TEST_CASE("allow_browser: an old browser gets the upgrade page") {
   Fixture f;
   Client c(f.port());
-  Reply r = c.request("GET", "/session/new", "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                                             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36\r\n");
+  Reply r = c.request("GET", "/session/new",
+                      "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                      "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36\r\n");
   REQUIRE(r.status == 200);
   CHECK(r.body.find("<title>Unsupported browser</title>") != std::string::npos);
   CHECK(r.body.find("Upgrade to a supported web browser") != std::string::npos);
@@ -221,7 +223,8 @@ TEST_CASE("allow_browser: an old browser gets the upgrade page") {
   // A current browser, a bot and no header get the page.
   r = c.request("GET", "/session/new", kChrome124);
   CHECK(r.body.find("<title>Sign in</title>") != std::string::npos);
-  r = c.request("GET", "/session/new", "User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)\r\n");
+  r = c.request("GET", "/session/new",
+                "User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)\r\n");
   CHECK(r.body.find("<title>Sign in</title>") != std::string::npos);
   r = c.request("GET", "/session/new");
   CHECK(r.body.find("<title>Sign in</title>") != std::string::npos);

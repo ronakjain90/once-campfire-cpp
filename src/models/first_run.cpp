@@ -9,13 +9,15 @@ namespace {
 
 const db::Query<std::int64_t(std::string_view, std::int64_t, std::string_view, std::string_view, std::string_view)>
     kInsertRoom{
-        "INSERT INTO \"rooms\" (\"created_at\", \"creator_id\", \"name\", \"type\", \"updated_at\") VALUES (?, ?, ?, ?, ?) "
+        "INSERT INTO \"rooms\" (\"created_at\", \"creator_id\", \"name\", \"type\", \"updated_at\") VALUES (?, ?, ?, "
+        "?, ?) "
         "RETURNING \"id\""};
 
 // `memberships.grant_to(User.active)` for the new room: `Rooms::Open`'s `after_save_commit`.
 const db::Query<void(std::int64_t)> kGrantActiveUsers{
     "INSERT INTO \"memberships\" (\"created_at\",\"involvement\",\"room_id\",\"updated_at\",\"user_id\") "
-    "SELECT STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW'), 'mentions', ?, STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW'), \"users\".\"id\" "
+    "SELECT STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW'), 'mentions', ?, STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW'), "
+    "\"users\".\"id\" "
     "FROM \"users\" WHERE \"users\".\"status\" = 0 ON CONFLICT DO NOTHING"};
 
 }  // namespace

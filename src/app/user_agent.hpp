@@ -1,7 +1,7 @@
-// The useragent gem 0.16.11 (what Rails `allow_browser` and platform_agent read). Rust: crates/campfire/src/concerns/user_agent.rs.
-// `parse` splits the header into products. The first browser class of `UserAgent::Browsers::ALL`
-// that accepts them decides how `browser`, `version`, `platform`, `os`, `bot?` and `mobile?` answer.
-// Where the gem raises (a NoMethodError on nil), the `try_*` calls return `Raised`.
+// The useragent gem 0.16.11 (what Rails `allow_browser` and platform_agent read). Rust:
+// crates/campfire/src/concerns/user_agent.rs. `parse` splits the header into products. The first browser class of
+// `UserAgent::Browsers::ALL` that accepts them decides how `browser`, `version`, `platform`, `os`, `bot?` and `mobile?`
+// answer. Where the gem raises (a NoMethodError on nil), the `try_*` calls return `Raised`.
 #pragma once
 
 #include <compare>
@@ -33,7 +33,7 @@ class Version {
   explicit Version(std::string_view text);
 
   [[nodiscard]] bool is_nil() const noexcept { return blank_; }  // empty or only whitespace
-  [[nodiscard]] bool is_present() const;                          // `to_s.present?`
+  [[nodiscard]] bool is_present() const;                         // `to_s.present?`
   [[nodiscard]] const std::string& str() const noexcept { return text_; }
   [[nodiscard]] std::vector<Segment> to_a() const;
   // `<=>`: -1, 0 or 1.
@@ -54,8 +54,21 @@ struct Product {
 };
 
 enum class Kind : std::uint8_t {
-  Base, Edge, InternetExplorer, Opera, WechatBrowser, Vivaldi, Chrome, ITunes, PlayStation, PodcastAddict, Webkit, Gecko,
-  WindowsMediaPlayer, AppleCoreMedia, Libavformat
+  Base,
+  Edge,
+  InternetExplorer,
+  Opera,
+  WechatBrowser,
+  Vivaldi,
+  Chrome,
+  ITunes,
+  PlayStation,
+  PodcastAddict,
+  Webkit,
+  Gecko,
+  WindowsMediaPlayer,
+  AppleCoreMedia,
+  Libavformat
 };
 
 class Agent {

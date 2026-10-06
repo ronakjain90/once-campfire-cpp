@@ -74,12 +74,12 @@ Result<std::int64_t> create(db::Tx& tx, std::string_view name) {
   const std::string join_code = generate_join_code();
   Arena arena(256);
   // `has_json :settings, restrict_room_creation_to_administrators: false`: the defaults are written out.
-  auto id = tx.conn().first(kInsert, arena, now, join_code, name, "{\"restrict_room_creation_to_administrators\":false}", now);
+  auto id = tx.conn().first(kInsert, arena, now, join_code, name,
+                            "{\"restrict_room_creation_to_administrators\":false}", now);
   if (!id) return std::unexpected(id.error());
   tx.changed(db::schema::Table::Accounts, **id);
   return **id;
 }
-
 
 Result<std::optional<Account>> first(db::Connection& conn, Arena& arena) {
   auto row = conn.first(kFirst, arena);

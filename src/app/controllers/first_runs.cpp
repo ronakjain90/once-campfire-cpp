@@ -1,4 +1,5 @@
-// FirstRunsController. Rails: app/controllers/first_runs_controller.rb. Rust: crates/campfire/src/controllers/first_runs.rs.
+// FirstRunsController. Rails: app/controllers/first_runs_controller.rb. Rust:
+// crates/campfire/src/controllers/first_runs.rs.
 #include "app/concerns.hpp"
 #include "app/controllers/common.hpp"
 #include "app/dispatch.hpp"

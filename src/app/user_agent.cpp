@@ -350,7 +350,8 @@ std::optional<std::string_view> chrome_os_version(std::string_view os) {
     const std::size_t start = at + 1;
     std::size_t end = start + run(rest.substr(start), is_digit);
     if (end == start) continue;
-    while (end + 1 < rest.size() && rest[end] == '.' && is_digit(rest[end + 1])) end += 1 + run(rest.substr(end + 1), is_digit);
+    while (end + 1 < rest.size() && rest[end] == '.' && is_digit(rest[end + 1]))
+      end += 1 + run(rest.substr(end + 1), is_digit);
     return rest.substr(start, end - start);
   }
   return std::nullopt;
@@ -379,12 +380,12 @@ std::optional<std::string_view> webkit_build_version(std::string_view build) {
     std::string_view version;
   };
   static constexpr std::array<Entry, 28> kBuilds = {{
-      {"85.7", "1.0"},       {"85.8.5", "1.0.3"},   {"85.8.2", "1.0.3"},   {"124", "1.2"},       {"125.2", "1.2.2"},
-      {"125.4", "1.2.3"},    {"125.5.5", "1.2.4"},  {"125.5.6", "1.2.4"},  {"125.5.7", "1.2.4"}, {"312.1.1", "1.3"},
-      {"312.1", "1.3"},      {"312.5", "1.3.1"},    {"312.5.1", "1.3.1"},  {"312.5.2", "1.3.1"}, {"312.8", "1.3.2"},
-      {"312.8.1", "1.3.2"},  {"412", "2.0"},        {"412.6", "2.0"},      {"412.6.2", "2.0"},   {"412.7", "2.0.1"},
-      {"416.11", "2.0.2"},   {"416.12", "2.0.2"},   {"417.9", "2.0.3"},    {"418", "2.0.3"},     {"418.8", "2.0.4"},
-      {"418.9", "2.0.4"},    {"418.9.1", "2.0.4"},  {"419", "2.0.4"},
+      {"85.7", "1.0"},      {"85.8.5", "1.0.3"},  {"85.8.2", "1.0.3"},  {"124", "1.2"},       {"125.2", "1.2.2"},
+      {"125.4", "1.2.3"},   {"125.5.5", "1.2.4"}, {"125.5.6", "1.2.4"}, {"125.5.7", "1.2.4"}, {"312.1.1", "1.3"},
+      {"312.1", "1.3"},     {"312.5", "1.3.1"},   {"312.5.1", "1.3.1"}, {"312.5.2", "1.3.1"}, {"312.8", "1.3.2"},
+      {"312.8.1", "1.3.2"}, {"412", "2.0"},       {"412.6", "2.0"},     {"412.6.2", "2.0"},   {"412.7", "2.0.1"},
+      {"416.11", "2.0.2"},  {"416.12", "2.0.2"},  {"417.9", "2.0.3"},   {"418", "2.0.3"},     {"418.8", "2.0.4"},
+      {"418.9", "2.0.4"},   {"418.9.1", "2.0.4"}, {"419", "2.0.4"},
   }};
   for (const Entry& e : kBuilds) {
     if (e.build == build) return e.version;
@@ -467,20 +468,25 @@ Agent parse(std::string_view user_agent) {
       }
       case Kind::Opera: return (first != nullptr && first->name == "Opera") || (last != nullptr && last->name == "OPR");
       case Kind::WechatBrowser:
-        return std::ranges::any_of(products, [](const Product& p) { return contains_ignoring_case(p.name, "micromessenger"); });
+        return std::ranges::any_of(products,
+                                   [](const Product& p) { return contains_ignoring_case(p.name, "micromessenger"); });
       case Kind::Vivaldi: return any("Vivaldi");
       case Kind::Chrome: return any("Chrome") || any("CriOS");
       case Kind::ITunes: return any("iTunes");
       case Kind::PlayStation: {
         const std::string* c = first != nullptr ? comment_at(*first, 0) : nullptr;
-        return c != nullptr && (contains(*c, "PLAYSTATION 3") || contains(*c, "PlayStation Vita") || contains(*c, "PlayStation 4"));
+        return c != nullptr &&
+               (contains(*c, "PLAYSTATION 3") || contains(*c, "PlayStation Vita") || contains(*c, "PlayStation 4"));
       }
       case Kind::PodcastAddict:
-        return products.size() >= 3 && products[0].name == "Podcast" && products[1].name == "Addict" && products[2].name == "-";
+        return products.size() >= 3 && products[0].name == "Podcast" && products[1].name == "Addict" &&
+               products[2].name == "-";
       case Kind::Webkit:
         return std::ranges::any_of(products, [](const Product& p) {
           if (same_ignoring_case(p.name, "applewebkit")) return true;
-          return p.comment && std::ranges::any_of(*p.comment, [](const std::string& c) { return webkit_comment_version(c).has_value(); });
+          return p.comment && std::ranges::any_of(*p.comment, [](const std::string& c) {
+                   return webkit_comment_version(c).has_value();
+                 });
         });
       case Kind::Gecko: return first != nullptr && first->name == "Mozilla";
       case Kind::WindowsMediaPlayer: {
@@ -493,15 +499,17 @@ Agent parse(std::string_view user_agent) {
       case Kind::AppleCoreMedia: return any("AppleCoreMedia");
       case Kind::Libavformat: {
         const bool nsplayer_old = first != nullptr && first->version.str() == "4.1.0.3856";
-        return std::ranges::any_of(products, [&](const Product& p) { return p.name == "Lavf" || (p.name == "NSPlayer" && nsplayer_old); });
+        return std::ranges::any_of(
+            products, [&](const Product& p) { return p.name == "Lavf" || (p.name == "NSPlayer" && nsplayer_old); });
       }
     }
     return false;
   };
-  static constexpr std::array<Kind, 14> kAll = {Kind::Edge,      Kind::InternetExplorer, Kind::Opera,         Kind::WechatBrowser,
-                                                Kind::Vivaldi,   Kind::Chrome,           Kind::ITunes,        Kind::PlayStation,
-                                                Kind::PodcastAddict, Kind::Webkit,       Kind::Gecko,         Kind::WindowsMediaPlayer,
-                                                Kind::AppleCoreMedia, Kind::Libavformat};
+  static constexpr std::array<Kind, 14> kAll = {
+      Kind::Edge,           Kind::InternetExplorer, Kind::Opera,  Kind::WechatBrowser,
+      Kind::Vivaldi,        Kind::Chrome,           Kind::ITunes, Kind::PlayStation,
+      Kind::PodcastAddict,  Kind::Webkit,           Kind::Gecko,  Kind::WindowsMediaPlayer,
+      Kind::AppleCoreMedia, Kind::Libavformat};
   Kind kind = Kind::Base;
   for (Kind candidate : kAll) {
     if (extends(candidate)) {
@@ -567,7 +575,9 @@ bool Agent::is_bot() const {
   const Product* app = application();
   if (app == nullptr) return true;
   for (const Product& p : products_) {
-    if (p.comment && std::ranges::any_of(*p.comment, [](const std::string& c) { return contains_ignoring_case(c, "bot"); })) return true;
+    if (p.comment &&
+        std::ranges::any_of(*p.comment, [](const std::string& c) { return contains_ignoring_case(c, "bot"); }))
+      return true;
   }
   return detect_product("Chrome-Lighthouse") != nullptr || contains(app->name, "bot");
 }
@@ -661,7 +671,8 @@ std::optional<Version> Agent::playstation_version() const {
     const auto parts = ruby_split(*os, marker);
     return Version(parts.empty() ? std::string_view{} : std::string_view(parts.back()));
   };
-  if (playstation_browser() == OptString("Silk")) return last() != nullptr ? std::optional<Version>(last()->version) : std::nullopt;
+  if (playstation_browser() == OptString("Silk"))
+    return last() != nullptr ? std::optional<Version>(last()->version) : std::nullopt;
   const auto platform = playstation_platform();
   if (platform == OptString("PlayStation 3")) return after("PLAYSTATION 3 ");
   if (platform == OptString("PlayStation 4")) return after("PlayStation 4 ");
@@ -793,8 +804,12 @@ Rb<OptString> Agent::podcast_addict_os() const {
 Rb<OptString> Agent::try_platform() const {
   const auto* comment = application_comment();
   const std::string* first_comment = comment != nullptr && !comment->empty() ? &comment->front() : nullptr;
-  const auto any = [&](std::string_view needle) { return comment != nullptr && any_comment_contains(*comment, needle); };
-  const auto first_or_none = [&]() -> OptString { return first_comment != nullptr ? OptString(*first_comment) : std::nullopt; };
+  const auto any = [&](std::string_view needle) {
+    return comment != nullptr && any_comment_contains(*comment, needle);
+  };
+  const auto first_or_none = [&]() -> OptString {
+    return first_comment != nullptr ? OptString(*first_comment) : std::nullopt;
+  };
 
   switch (kind_) {
     case Kind::Base:
@@ -829,7 +844,8 @@ Rb<OptString> Agent::try_platform() const {
     }
     case Kind::Gecko:
       if (comment == nullptr) return OptString{};
-      if (first_comment != nullptr && (*first_comment == "compatible" || *first_comment == "Mobile")) return OptString{};
+      if (first_comment != nullptr && (*first_comment == "compatible" || *first_comment == "Mobile"))
+        return OptString{};
       if (first_comment != nullptr && first_comment->starts_with("Windows ")) return OptString("Windows");
       return first_or_none();
   }
@@ -882,7 +898,8 @@ OptString Agent::gecko_os() const {
   std::size_t index = 1;
   if (comment->size() > 1 && (*comment)[1] == "U") {
     index = 2;
-  } else if (first_comment != nullptr && (first_comment->starts_with("Windows ") || first_comment->starts_with("Android"))) {
+  } else if (first_comment != nullptr &&
+             (first_comment->starts_with("Windows ") || first_comment->starts_with("Android"))) {
     index = 0;
   } else if (first_comment != nullptr && *first_comment == "Mobile") {
     return std::nullopt;
@@ -1014,7 +1031,8 @@ Rb<bool> Agent::try_mobile() const {
   if (!os) return std::unexpected(Raised{});
   if (*os && contains(**os, "Android")) return true;
   const auto* comment = application_comment();
-  return comment != nullptr && std::ranges::any_of(*comment, [](const std::string& c) { return c.starts_with("IEMobile"); });
+  return comment != nullptr &&
+         std::ranges::any_of(*comment, [](const std::string& c) { return c.starts_with("IEMobile"); });
 }
 
 }  // namespace campfire::app::ua

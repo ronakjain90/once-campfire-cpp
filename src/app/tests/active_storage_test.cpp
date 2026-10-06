@@ -3,8 +3,6 @@
 // config/initializers/active_storage*.rb. Rust: crates/campfire/src/active_storage.rs.
 #include <doctest.h>
 
-#include <cstdlib>
-
 #include "app/controllers/accounts_common.hpp"
 #include "app/tests/fixture.hpp"
 #include "compat/base64.hpp"
@@ -13,16 +11,36 @@
 #include "storage/key.hpp"
 #include "storage/paths.hpp"
 
+#if defined(__has_feature)
+#if __has_feature(thread_sanitizer)
+// libvips works with its own threads, and glib passes work to them with queues whose locks (futexes in libglib, which
+// is not built with ThreadSanitizer) the tool cannot see. It reports races between the threads of libvips on the
+// buffers of the libraries below it. The call of Campfire waits for those threads, so the data is not shared with
+// Campfire. The suppressions name only these libraries and the calls that run them.
+extern "C" const char* __tsan_default_suppressions() {  // NOLINT(bugprone-reserved-identifier): the tool's name
+  return "race:campfire::storage::transform\n"
+         "race:campfire::storage::vips::\n"
+         "race:libvips.so\n"
+         "race:libglib-2.0.so\n"
+         "race:libgobject-2.0.so\n"
+         "race:libz.so\n"
+         "race:libspng.so\n"
+         "race:libpng16.so\n"
+         "race:libjpeg.so\n"
+         "race:libwebp.so\n"
+         "race:libwebpmux.so\n"
+         "race:libtiff.so\n"
+         "race:liblcms2.so\n"
+         "race:libhwy.so\n"
+         "race:libheif.so\n"
+         "race:libimagequant.so\n";
+}
+#endif
+#endif
+
 namespace campfire::app::testing {
 
 namespace {
-
-// libvips works with its own threads, whose locks (in glib) ThreadSanitizer cannot see: it reports a race in the
-// queues of glib. The tests of this binary run libvips on the calling thread.
-[[maybe_unused]] const bool kVipsOnOneThread = [] {
-  // `vips_init` reads this when it sets the number of threads.
-  return ::setenv("VIPS_CONCURRENCY", "1", 1) == 0;
-}();
 
 std::string cookie_pair(const Reply& reply, const std::string& name) {
   for (const auto& [k, v] : reply.headers) {

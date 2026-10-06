@@ -9,9 +9,10 @@ campfire_library(models
     message.cpp
     room_ref.cpp
     session.cpp
+    storage_records.cpp
     user.cpp
     user_rooms.cpp
-  PUBLIC_DEPS campfire_core campfire_db campfire_req
+  PUBLIC_DEPS campfire_core campfire_db campfire_req campfire_storage campfire_compat
   WERROR)
 
 campfire_test(models

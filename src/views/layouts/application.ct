@@ -1,0 +1,72 @@
+{#- reference/app/views/layouts/application.html.erb. Erubi drops a line that holds only a statement, so those lines use `{%- -%}`. csrf_meta_tags and csp_meta_tag are left out: no CSRF tags (Rust "Known differences"). -#}
+{% include views/layout.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const LayoutParts& page %}
+<!DOCTYPE html>
+<html>
+  <head>
+    {% call page_title_tag(page.page_title) %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content">
+    <meta name="view-transition" content="same-origin">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    {% call current_user_meta_tags(ctx) %}
+    {% call script_aware_action_cable_meta_tag(ctx) %}
+
+    {% call builder_tag("meta", attrs().name("vapid-public-key").attr_opt("content", ctx.vapid_public_key)) %}
+    {% call builder_tag("meta", attrs().name("turbo-prefetch").attr("content", "true")) %}
+
+    {% call builder_tag("link", attrs().attr("rel", "manifest").attr("href", routes::webmanifest() + ".json")) %}
+    {% call builder_tag("link", attrs().attr("rel", "icon").attr("href", ctx.account.logo_url).type("image/png")) %}
+    {% call builder_tag("link", attrs().attr("rel", "apple-touch-icon").attr("href", ctx.account.logo_url)) %}
+
+    {{= SafeHtml::trusted(ctx.stylesheet_tags) }}
+    {% call custom_styles_tag(ctx) %}
+
+    {{= SafeHtml::trusted(ctx.importmap_tags) }}
+
+    {% call region(page.head) %}
+  </head>
+
+  <body class="{{ body_classes(ctx, page.body_class) }}" data-controller="local-time lightbox">
+    <a href="#main-content" class="skip-navigation btn">Skip to main content</a>
+
+    <nav id="nav">
+      {% call region(page.nav) %}
+    </nav>
+
+{%- if ctx.flash_notice || ctx.flash_alert -%}
+      <div class="flash" data-controller="element-removal" data-action="animationend->element-removal#remove">
+        <div class="flash__inner shadow" style="{% if ctx.flash_alert %}--flash-background: var(--color-negative){% end %}">
+{%- if ctx.flash_alert -%}
+            {% call image_tag(ctx, "alert.svg", attrs().aria("hidden", true).size(24).cls("colorize--white")) %}</span>
+{%- else -%}
+            {% call image_tag(ctx, "check.svg", attrs().aria("hidden", true).size(24).cls("colorize--white")) %}</span>
+{%- end -%}
+        </div>
+        <span class="for-screen-reader" role="alert" aria-atomic="true">{{ ctx.flash_notice.value_or(ctx.flash_alert.value_or("")) }}</span>
+      </div>
+{%- end -%}
+
+    <main id="main-content">
+      {% call region(page.content) %}
+
+      <footer id="footer">
+        {% call region(page.footer) %}
+      </footer>
+    </main>
+
+    <aside id="sidebar" data-controller="toggle-class" data-toggle-class-toggle-class="open">
+      {% call region(page.sidebar) %}
+    </aside>
+
+    {% render layouts/lightbox(ctx) %}
+
+    <a href="https://once.com" id="app-logo" target="_blank" aria-label="Once software from 37signals home page">
+      {% call image_tag(ctx, "campfire-icon.png", attrs().alt("Campfire logo").attr("width", 256).attr("height", 216)) %}
+    </a>
+  </body>
+</html>

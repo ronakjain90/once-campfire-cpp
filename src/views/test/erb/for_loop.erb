@@ -1,0 +1,6 @@
+<ul>
+<% items.each do |item| %>
+  <li><%= ERB::Util.h(item) %></li>
+<% end %>
+</ul>
+<% items.each do |item| %><i><%= ERB::Util.h(item) %></i><% end %>

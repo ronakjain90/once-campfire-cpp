@@ -1,0 +1,6 @@
+{#- reference/app/views/layouts/action_text/contents/_content.html.erb -#}
+{% include views/layout.hpp %}
+{% params const Region& content %}
+<div class="lexxy-content">
+  {% call region(content) -%}
+</div>

@@ -1,0 +1,4 @@
+{#- reference/app/views/layouts/mailer.text.erb -#}
+{% include views/layout.hpp %}
+{% params const Region& content %}
+{% call region(content) %}

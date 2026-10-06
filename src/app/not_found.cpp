@@ -1,7 +1,8 @@
 // Unknown route. Rails: ActionDispatch::PublicExceptions (public/404.html); Rust: crates/kit/src/exceptions.rs.
+#include "app/not_found.hpp"
+
 #include "app/data.hpp"
 #include "app/rails.hpp"
-#include "app/not_found.hpp"
 
 namespace campfire::app {
 
@@ -39,6 +40,8 @@ campfire::Task<net::Response> not_found(net::Ctx& ctx) {
     response.body_view(data::f_404_html);
   }
   add_rails_tail(ctx, response);
+  // Rack::Deflater adds Vary to a body that it may compress (not to the empty body of HEAD).
+  if (!head) response.add("vary", "Accept-Encoding");
   co_return response;
 }
 

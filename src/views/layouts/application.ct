@@ -1,4 +1,4 @@
-{# reference/app/views/layouts/application.html.erb. Erubi drops a line that holds only a statement; ctc does the same. csrf_meta_tags and csp_meta_tag are left out: no CSRF tags (Rust "Known differences"). #}
+{# reference/app/views/layouts/application.html.erb, in the form of the Rust application_wrapper: a region prints its own indent and newline (an empty region prints nothing). Erubi drops a line that holds only a statement; ctc does the same. csrf_meta_tags and csp_meta_tag are left out: no CSRF tags (Rust "Known differences"). #}
 {% include views/layout.hpp %}
 {% include routes/routes.hpp %}
 {% params const ViewContext& ctx, const LayoutParts& page %}
@@ -28,15 +28,13 @@
 
     {{= SafeHtml::trusted(ctx.importmap_tags) }}
 
-    {% call region(page.head) %}
-  </head>
+{% call region(page.head) %}  </head>
 
   <body class="{{ body_classes(ctx, page.body_class) }}" data-controller="local-time lightbox">
     <a href="#main-content" class="skip-navigation btn">Skip to main content</a>
 
     <nav id="nav">
-      {% call region(page.nav) %}
-    </nav>
+{% call region(page.nav) %}    </nav>
 
 {% if ctx.flash_notice || ctx.flash_alert %}
       <div class="flash" data-controller="element-removal" data-action="animationend->element-removal#remove">
@@ -52,16 +50,13 @@
 {% end %}
 
     <main id="main-content">
-      {% call region(page.content) %}
-
+{% call region(page.content) %}
       <footer id="footer">
-        {% call region(page.footer) %}
-      </footer>
+{% call region(page.footer) %}      </footer>
     </main>
 
     <aside id="sidebar" data-controller="toggle-class" data-toggle-class-toggle-class="open">
-      {% call region(page.sidebar) %}
-    </aside>
+{% call region(page.sidebar) %}    </aside>
 
     {% render layouts/lightbox(ctx) %}
 

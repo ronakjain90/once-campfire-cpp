@@ -51,7 +51,7 @@ format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
 | T10 | merged (verified by Opus) | `task/T10` | 658/658 on all 6 corpus fields. Rules apply to the Rails expected value only. Style text compared in canonical form; the diff sweep checks exact bytes. |
 | T8b | merged (verified by Opus) | `task/T8b` | Erubi trim rule applied by `ctc.py`. Expected files made by Erubi in the Rails container. |
 | T11 | merged (verified by Opus) | `task/T11` | Rust recorded Cable sessions replay byte for byte (golden file equals the Rust one). Hub: 110M deliveries/s in memory. Fuzz coverage needs `-fsanitize=fuzzer-no-link` on the library: apply the same fix to the T5 parser target in H1. |
-| T12 | in progress (Sonnet) | `task/T12` | |
+| T12 | merged (verified by Opus) | `task/T12` | 15/15 media outputs byte-identical with libvips 8.16.1 and ffmpeg 7.1.5. The 4 video-frame vectors were made on x86; on arm64 our frames equal the Rust and Rails images' frames (checked by Opus). Media tests run in `bin/dev` now. |
 | T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
 
 ## Wave 3: the app (parallel, after wave 2)
@@ -61,7 +61,7 @@ its requests in the diff sweep pass.
 
 | ID | Area | Rails sources (`reference/app/`) |
 |---|---|---|
-| A0 | App framework: app state, session cache, concerns, responses, fragment and page caches, errors, and the sign-in flow as proof. Spec `plans/specs/A0.md`. Runs before A1 to A9. | `controllers/concerns/*`, `sessions_controller` |
+| A0 | merged (verified by Opus) | `task/A0` | Written by DeepSeek; layout region fix by Sonnet. Sign-in sweep 36/36 equal to Rust. /up 2.0x Rust at c=16, 3.3x at c=64. |
 | A1 | Sign-in, sessions, transfers, first run, join, welcome, bans, the authentication concerns, platform and user agent detection | `controllers/sessions*`, `first_runs`, `users#new/create`, `welcome`, `concerns/*` |
 | A2 | Rooms: show, index, open, closed and direct rooms, involvements, refreshes, settings, the sidebar, the room page cache | `controllers/rooms*`, `users/sidebars` |
 | A3 | Messages: create, edit, delete, pages, boosts, the bot API, attachments, broadcasts, unread state, mentions, user autocomplete | `controllers/messages*`, `autocompletable` |
@@ -69,7 +69,7 @@ its requests in the diff sweep pass.
 | A5 | Search | `controllers/searches` |
 | A6 | PWA, the service worker, link unfurl, `/up`, error pages, Active Storage endpoints | `pwa`, `unfurl_links`, Active Storage |
 | A7 | The 7 channels, `Turbo::StreamsChannel`, the room stream authorization patch | `channels/*` |
-| A8 | Front server: TLS, ACME, HTTP/2, the front cache, timeouts | Rust `crates/kit/src/front/` |
+| A8 | paused (DeepSeek work, unfinished) | `task/A8` | Last commit 810109b builds and tests pass. Uncommitted HTTP/2 work does not compile. Runtime image lacks `libnghttp2.so.14`. No acceptance check has passed yet. |
 | A9 | Jobs and integrations: Web Push delivery, webhooks, unfurl fetch, banned content removal | `jobs/*`, `models/*` integrations |
 
 ## Wave 4: parity
@@ -109,7 +109,7 @@ its requests in the diff sweep pass.
 | T8 | merged (verified by Opus) | `task/T8` | 1,134 Rails path cases, 81 named routes, 34 Rails helper goldens, 7 layout goldens pass. Follow-up T8b: Erubi trim rules. |
 | T9 | merged (verified by Opus) | `task/T9` | 314/314 digested names equal Rails; 321/321 bodies equal the live Rust app; importmap is a byte-equal substring of the Rust page. Thruster headers (vary, x-cache, compression choice) belong to A8. |
 | T11 | merged (verified by Opus) | `task/T11` | Rust recorded Cable sessions replay byte for byte (golden file equals the Rust one). Hub: 110M deliveries/s in memory. Fuzz coverage needs `-fsanitize=fuzzer-no-link` on the library: apply the same fix to the T5 parser target in H1. |
-| T12 | in progress (Sonnet) | `task/T12` | |
+| T12 | merged (verified by Opus) | `task/T12` | 15/15 media outputs byte-identical with libvips 8.16.1 and ffmpeg 7.1.5. The 4 video-frame vectors were made on x86; on arm64 our frames equal the Rust and Rails images' frames (checked by Opus). Media tests run in `bin/dev` now. |
 | T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
 | T10 | merged (verified by Opus) | `task/T10` | 658/658 on all 6 corpus fields. Rules apply to the Rails expected value only. Style text compared in canonical form; the diff sweep checks exact bytes. |
 | T8b | merged (verified by Opus) | `task/T8b` | Erubi trim rule applied by `ctc.py`. Expected files made by Erubi in the Rails container. |
@@ -125,5 +125,5 @@ A resumed agent sends its whole transcript again on each step. A long transcript
 limit fast. To restart a paused task, start a **new** agent with a short prompt: the task row, the
 agent brief, and "continue from the commits and files in the worktree". Do not resume an agent
 whose transcript is long.
-| A0 | in progress (Sonnet) | `task/A0` | |
-| A8 | in progress (Sonnet) | `task/A8` | |
+| A0 | merged (verified by Opus) | `task/A0` | Written by DeepSeek; layout region fix by Sonnet. Sign-in sweep 36/36 equal to Rust. /up 2.0x Rust at c=16, 3.3x at c=64. |
+| A8 | paused (DeepSeek work, unfinished) | `task/A8` | Last commit 810109b builds and tests pass. Uncommitted HTTP/2 work does not compile. Runtime image lacks `libnghttp2.so.14`. No acceptance check has passed yet. |

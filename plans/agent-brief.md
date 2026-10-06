@@ -51,6 +51,13 @@ Read this before you start. Then read `plans/architecture.md` and your task in `
      benchmarks) in the background. Poll its log with short commands.
    - Commit each time a piece compiles and its tests pass, so that a stop loses little work.
 
+## Rules learned from earlier tasks
+
+- **Layout regions.** The layout prints each region (head, nav, content, footer, sidebar) with no
+  indent and no newline of its own, as the Rust wrapper layout does. A page template or region
+  lambda prints its own indent and its own trailing newline. Compare each page with the Rust page
+  byte for byte through the diff sweep; do not normalize whitespace.
+
 ## Report
 
 Keep it under 100 lines plus raw outputs:

@@ -1,6 +1,7 @@
 // Headers of the front server. Rust: crates/kit/src/front/handler.rs, compression.rs (add_vary), conn.rs (Date).
 #include "net/front.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <string>
 #include <vector>
@@ -69,6 +70,35 @@ void suppress_bodiless_headers(Response& response) {
   }
 }
 
+namespace {
+
+// `http::HeaderMap::remove`: the last header takes the place of the removed one. The front uses it
+// where Rust does (`suppress_bodiless_headers`), so that e.g. a 304's "content-length" gives its
+// slot to the "vary" the compression appended after it.
+void swap_remove_header(Response& response, std::string_view name) {
+  auto& headers = response.headers;
+  for (std::size_t i = 0; i < headers.size(); ++i) {
+    if (!iequals(headers[i].name, name)) continue;
+    headers[i] = headers.back();
+    headers.pop_back();
+    return;
+  }
+}
+
+void front_suppress_bodiless_headers(Response& response) {
+  const int status = response.status;
+  if (status == 304) {
+    swap_remove_header(response, "content-type");
+    swap_remove_header(response, "content-length");
+    swap_remove_header(response, "transfer-encoding");
+  } else if ((status >= 100 && status < 200) || status == 204) {
+    swap_remove_header(response, "content-length");
+    swap_remove_header(response, "transfer-encoding");
+  }
+}
+
+}  // namespace
+
 void apply_front_headers(const Request& request, Response& response) {
   if (response.status >= 100 && response.status < 200) return;
   if (!should_cache_request(request)) {
@@ -78,19 +108,37 @@ void apply_front_headers(const Request& request, Response& response) {
     for (const Header& h : response.headers) {
       if (iequals(h.name, "vary")) existing.push_back(h.value);
     }
-    response.erase("vary");
+    // Rust: `headers.remove(VARY)` (http::HeaderMap) moves the last header into the slot of the first
+    // "vary", so "x-cache" lands there when the app set a "vary" before it.
+    {
+      auto& headers = response.headers;
+      const auto first =
+          std::find_if(headers.begin(), headers.end(), [](const Header& h) { return iequals(h.name, "vary"); });
+      if (first != headers.end()) {
+        headers.erase(std::remove_if(first + 1, headers.end(), [](const Header& h) { return iequals(h.name, "vary"); }),
+                      headers.end());
+      }
+    }
+    for (std::size_t i = 0; i < response.headers.size(); ++i) {
+      if (!iequals(response.headers[i].name, "vary")) continue;
+      response.headers[i] = response.headers.back();
+      response.headers.pop_back();
+      break;
+    }
     response.add("vary", "Accept-Encoding");
     for (const std::string_view value : existing) response.add("vary", value);
   } else {
-    // Miss: the front keeps a "vary" of the app, and adds one if there is none.
-    if (!response.has("vary")) response.add("vary", "Accept-Encoding");
+    // Miss: `CacheHandler` adds "x-cache" first, then `compression.apply` appends "Accept-Encoding"
+    // (unless the app already varies). The 304's "content-length" then gives its slot to it below.
     response.set("x-cache", "miss");
+    if (!response.has("vary")) response.add("vary", "Accept-Encoding");
   }
+  // The date goes on last, after the headers a bodiless status drops, as the Rust connection does.
+  front_suppress_bodiless_headers(response);
   if (!response.has("date")) {
     char buffer[32];
     response.add_copy("date", http_date_now(buffer));
   }
-  suppress_bodiless_headers(response);
 }
 
 }  // namespace campfire::net

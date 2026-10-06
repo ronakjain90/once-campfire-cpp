@@ -1,0 +1,16 @@
+{# reference/app/views/rooms/opens/_user.html.erb #}
+{% include views/rooms/helpers.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const OpenFormView& form, const UserSummary& user %}
+<li class="flex align-center gap margin-none" data-value="{{ lowercase(user.name) }}">
+  <figure class="avatar flex-item-no-shrink" style="--avatar-size: 4ch;">
+    <a title="{{ user.title }}" class="btn avatar" data-turbo-frame="_top" href="{{ routes::user(user.id) }}"><img aria-hidden="true" loading="lazy" src="{{ user.avatar_path }}" width="48" height="48" /></a>
+  </figure>
+
+  <div class="min-width">
+    <div class="overflow-ellipsis fill-shade"><strong>{{ user.name }}</strong></div>
+  </div>
+
+  <hr class="separator" aria-hidden="true">{% if form.can_administer %}
+    <img class="colorize--black flex-item-no-shrink" aria-hidden="true" src="{{ ctx.asset("check.svg") }}" width="20" height="20" />{% end %}
+</li>

@@ -1,0 +1,6 @@
+{# reference/app/views/users/sidebars/rooms/_shared.html.erb #}
+{% include views/users/sidebar.hpp %}
+{% params const SidebarRoom& room %}
+{% wrap link_to_room(room.id, attrs().id(dom_id(room.param_key, std::to_string(room.id), "list")).data("sorted_list_name", room.name).style("--column-gap: 0.5em").cls(room.class_names())) %}
+  <span class="overflow-ellipsis">{{ room.name }}</span>
+{% end %}

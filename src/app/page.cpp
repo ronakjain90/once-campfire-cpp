@@ -1,0 +1,113 @@
+// Pages in the layout and the page cache path. Rust: crates/campfire/src/controllers/presenters/view_context.rs.
+#include "app/page.hpp"
+
+#include <stdexcept>
+
+#include "assets/assets.hpp"
+#include "compat/signed_id.hpp"
+#include "core/time_format.hpp"
+#include "models/account.hpp"
+#include "routes/routes.hpp"
+#include "views/templates.gen.hpp"
+
+namespace campfire::app {
+
+namespace {
+
+std::string to_fs_number(const std::string& db_text) {
+  const auto t = parse_db(db_text);
+  return t ? format_to_fs_number(*t) : std::string{};
+}
+
+}  // namespace
+
+Flow<LayoutData> load_layout(Rq& rq) {
+  LayoutData data;
+  auto account = models::accounts::first(rq.db(), rq.arena());
+  if (!account) return fail_internal(account.error().message);
+  if (*account) {
+    const models::Account& a = **account;
+    data.account.name = a.name;
+    data.account.logo_url = campfire::routes::fresh_account_logo(to_fs_number(a.updated_at));
+    data.account.has_logo = a.has_logo;
+    data.custom_styles = a.custom_styles;
+  } else {
+    data.account.logo_url = campfire::routes::fresh_account_logo();
+  }
+  if (const models::User* user = rq.current_user()) {
+    views::CurrentUser current;
+    current.id = user->id;
+    current.name = user->name;
+    current.administrator = user->can_administer();
+    current.bot = user->is_bot();
+    const std::string token = compat::signed_id::generate(rq.app.secrets, "User", user->id, "avatar", std::nullopt);
+    current.avatar_url = campfire::routes::fresh_user_avatar(token, to_fs_number(user->updated_at));
+    data.current_user = std::move(current);
+  }
+  return data;
+}
+
+views::ViewContext make_view_context(Rq& rq, const LayoutData& data) {
+  views::ViewContext ctx;
+  ctx.current_user = data.current_user;
+  ctx.account = data.account;
+  if (const auto notice = rq.flash().notice()) ctx.flash_notice = std::string(*notice);
+  if (const auto alert = rq.flash().alert()) ctx.flash_alert = std::string(*alert);
+  ctx.vapid_public_key = rq.app.config.vapid_public_key;
+  ctx.asset_path = [](std::string_view source) {
+    auto path = assets::asset_path(source);
+    if (!path) throw std::runtime_error(path.error().message);  // Propshaft::MissingAssetError: a 500
+    return std::move(*path);
+  };
+  ctx.importmap_tags = std::string(assets::javascript_importmap_tags());
+  ctx.stylesheet_tags = rq.app.stylesheets.html;
+  ctx.custom_styles = data.custom_styles;
+  ctx.base_url = rq.info.base_url();
+  ctx.request_url = rq.info.url();
+  if (rq.request.has_header("referer")) ctx.referrer = std::string(rq.request.header("referer"));
+  ctx.last_room_visited_id = data.last_room_visited_id;
+  ctx.app_version = rq.app.config.app_version;
+  return ctx;
+}
+
+void render_in_layout(Rq& rq, const LayoutData& data, const views::LayoutParts& parts, Out& out) {
+  if (rq.is_turbo_frame_request()) {
+    views::layouts::turbo_rails::frame(out, parts);
+    return;
+  }
+  const views::ViewContext ctx = make_view_context(rq, data);
+  views::layouts::application(out, ctx, parts);
+}
+
+net::Response layout_response(Rq& rq, int status, Out&& body) {
+  if (!rq.is_turbo_frame_request()) {
+    rq.set_header("link", assets::append_preload_links(rq.staged_header("link"), rq.app.stylesheets.preload_links));
+  }
+  return rq.html(status, std::move(body));
+}
+
+net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps, const std::function<void(Out&)>& render) {
+  const auto make_body = [&] {
+    Out out(rq.ctx.resource());
+    render(out);
+    return out;
+  };
+  if (!rq.is_turbo_frame_request()) {
+    rq.set_header("link", assets::append_preload_links(rq.staged_header("link"), rq.app.stylesheets.preload_links));
+  }
+  if (!deps.cacheable()) return rq.html(status, make_body());
+  PageCache& cache = rq.app.pages;
+  const Hash128 key = deps.key();
+  if (auto hit = cache.get(key)) {
+    if (cache.audit_due()) {
+      const std::string fresh = make_body().to_string();
+      cache.audit_compare(key, *hit, fresh);
+    }
+    return rq.respond_page(std::move(hit), status);
+  }
+  std::string body = make_body().to_string();
+  auto entry = cache.put(key, std::move(body), "text/html; charset=utf-8");
+  return rq.respond_page(std::move(entry), status);
+}
+
+}  // namespace campfire::app

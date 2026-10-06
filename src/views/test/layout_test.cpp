@@ -94,14 +94,14 @@ Page cut(const std::string& page) {
   const std::size_t im_end = page.find(end_mark) + end_mark.size();
   p.importmap = page.substr(im, im_end - im);
   pos = im_end;
-  p.head = between(page, "\n\n    ", "\n  </head>", &pos);
+  p.head = between(page, "\n\n", "  </head>", &pos);
   pos = 0;
-  p.nav = between(page, "<nav id=\"nav\">\n      ", "\n    </nav>", &pos);
-  p.content = between(page, "<main id=\"main-content\">\n      ", "\n\n      <footer id=\"footer\">", &pos);
-  p.footer = between(page, "\n        ", "\n      </footer>", &pos);
+  p.nav = between(page, "<nav id=\"nav\">\n", "    </nav>", &pos);
+  p.content = between(page, "<main id=\"main-content\">\n", "\n      <footer id=\"footer\">", &pos);
+  p.footer = between(page, "\n", "      </footer>", &pos);
   p.sidebar = between(
-      page, "<aside id=\"sidebar\" data-controller=\"toggle-class\" data-toggle-class-toggle-class=\"open\">\n      ",
-      "\n    </aside>", &pos);
+      page, "<aside id=\"sidebar\" data-controller=\"toggle-class\" data-toggle-class-toggle-class=\"open\">\n",
+      "    </aside>", &pos);
   const std::size_t flash = page.find("<span class=\"for-screen-reader\" role=\"alert\"");
   if (flash != std::string::npos) {
     const std::string text = str_match(page.substr(flash), R"re(aria-atomic="true">([^<]*)</span>)re");

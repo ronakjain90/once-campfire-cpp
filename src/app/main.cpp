@@ -1,9 +1,12 @@
 // Process entry. Rails: bin/boot (Thruster + Puma); Rust: crates/campfire/src/main.rs.
+#include <algorithm>
 #include <csignal>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <string_view>
 
+#include "app/app.hpp"
 #include "app/not_found.hpp"
 #include "app/routes.hpp"
 #include "core/config.hpp"
@@ -27,8 +30,32 @@ int main(int argc, char** argv) {
 
   if (const char* level = std::getenv("RAILS_LOG_LEVEL")) Logger::instance().set_level_from(level);
   const FrontConfig front = FrontConfig::from_env();
-  net::App app{&app::routes(), &app::not_found};
-  net::Server server(net::ServerOptions::from_config(front), app);
+  auto config = Config::from_env();
+  if (!config) {
+    log_error("configuration: {}", config.error().message);
+    return 1;
+  }
+  auto clock = clock_from_env();
+  if (!clock) {
+    log_error("clock: {}", clock.error().message);
+    return 1;
+  }
+  app::AppOptions options;
+  options.job_threads = std::max<std::size_t>(config->job_concurrency, 2);
+  if (const char* mb = std::getenv("CAMPFIRE_PAGE_CACHE_MB")) {
+    options.page_cache_bytes = static_cast<std::size_t>(std::strtoull(mb, nullptr, 10)) << 20;
+  }
+  if (const char* every = std::getenv("CAMPFIRE_PAGE_AUDIT_EVERY")) {
+    options.audit_every = static_cast<unsigned>(std::strtoul(every, nullptr, 10));
+  }
+  auto state = app::App::create(std::move(*config), *clock, options);
+  if (!state) {
+    log_error("cannot start the app: {}", state.error().message);
+    return 1;
+  }
+  app::set_app(state->get());
+  net::App routes_app{&app::routes(), &app::not_found};
+  net::Server server(net::ServerOptions::from_config(front), routes_app);
   if (auto started = server.start(); !started) {
     log_error("cannot start the server: {}", started.error().message);
     return 1;

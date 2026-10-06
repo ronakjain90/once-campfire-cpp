@@ -1,0 +1,13 @@
+{# reference/app/views/accounts/_help_contact.html.erb #}
+{% include views/sessions/helpers.hpp %}
+{% params const ViewContext& ctx, const std::optional<HelpContact>& owner %}
+{% if owner %}
+  <div class="txt-align-center margin-block-double full-width">
+    {% wrap link_to("mailto:\"" + owner->name + "\" <" + owner->email_address + ">", attrs().cls("btn center").title("Email " + owner->name)) %}
+      {% call image_tag(ctx, "lifebuoy.svg", attrs().aria_hidden()) %}
+      <span>{{ owner->email_address }}</span>
+    {% end %}
+
+    <div class="txt-align-center center margin-block txt-subtle">Campfire&trade; version {% call version_badge(ctx) %}</div>
+  </div>
+{% end %}

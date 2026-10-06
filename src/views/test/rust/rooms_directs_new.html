@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Campfire</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content">
+    <meta name="view-transition" content="same-origin">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="current-user-id" content="127326141" /><meta name="current-user-name" content="David" />
+    <meta name="action-cable-url" content="/cable">
+
+    <meta name="vapid-public-key">
+    <meta name="turbo-prefetch" content="true">
+
+    <link rel="manifest" href="/webmanifest.json">
+    <link rel="icon" href="/account/logo?v=20260926130357" type="image/png">
+    <link rel="apple-touch-icon" href="/account/logo?v=20260926130357">
+
+    
+    
+
+    <script type="module">import "application"</script>
+
+  </head>
+
+  <body class="admin" data-controller="local-time lightbox">
+    <a href="#main-content" class="skip-navigation btn">Skip to main content</a>
+
+    <nav id="nav">
+    </nav>
+
+
+    <main id="main-content">
+
+<turbo-frame id="direct_rooms_control" target="_top">
+  <div class="directs directs--new flex flex-column gap">
+    <form class="flex gap flex-item-grow" data-controller="form" data-action="keydown.esc-&gt;form#cancel" action="/rooms/directs" accept-charset="UTF-8" method="post">
+      <a class="btn flex-item-no-shrink" data-turbo-frame="user_sidebar" data-form-target="cancel" href="/users/me/sidebar">
+        <img aria-hidden="true" src="/assets/arrow-left-abe40556.svg" />
+        <span class="for-screen-reader">Cancel changes</span>
+</a>
+      <section class="autocomplete__container unpad input input--actor">
+        <div class="autocomplete__input input flex flex-wrap position-relative flex-item-grow"
+            data-controller="autocomplete" data-autocomplete-url-value="/autocompletable/users">
+          <select name="user_ids[]" data-autocomplete-target="select" data-template-id="autocompletable-user" multiple="true" hidden required></select>
+
+          <template id="autocompletable-user">
+  <div class="autocomplete__pill max-width" data-value="" tabindex="0">
+    <img class="avatar flex-item-no-shrink" data-content="avatar" src="" />
+    <span class="autocomplete-field__selected-value-text overflow-ellipsis flex-item-grow" data-content="label"></span>
+
+    <button type="button" data-action="autocomplete#remove:prevent" data-value="" tabindex="-1" class="btn btn--plain txt-small translucent flex-item-no-shrink">
+      <img aria-hidden="true" class="colorize--black" src="/assets/remove-circle-384c618c.svg" />
+      <span class="for-screen-reader">Remove <span data-content="screenReaderLabel"></span></span>
+    </button>
+  </div>
+</template>
+
+
+          <input autocomplete="off" autocorrect="off" data-1p-ignore="true" class="autocomplete__input input flex flex-wrap position-relative" data-autocomplete-target="input" data-action="input-&gt;autocomplete#search keydown-&gt;autocomplete#didPressKey" type="text" name="rooms_direct[user_ids_input]" id="rooms_direct_user_ids_input" />
+        </div>
+      </section>
+
+      <button name="button" type="submit" class="btn btn--reversed flex-item-no-shrink">
+        <img aria-hidden="true" src="/assets/check-7897ff7e.svg" />
+        <span class="for-screen-reader">Start Ping</span>
+</button></form>
+    <span class="txt-small translucent pad-inline-half center">Type names to ping someone…</span>
+  </div>
+</turbo-frame>
+      <footer id="footer">
+      </footer>
+    </main>
+
+    <aside id="sidebar" data-controller="toggle-class" data-toggle-class-toggle-class="open">
+    </aside>
+
+    <dialog class="lightbox" aria-label="Image Viewer (Press escape to close)" data-lightbox-target="dialog" data-action="close->lightbox#reset">
+  <img src="" class="lightbox__image" data-lightbox-target="zoomedImage" />
+
+  <form method="dialog" class="lightbox__btn">
+    <button class="btn">
+      <img aria-hidden="true" src="/assets/remove-0e7a045d.svg" />
+      <span class="for-screen-reader">Close image viewer</span>
+    </button>
+  </form>
+
+  <a href="" class="lightbox__btn--download btn hide-in-ios-pwa" data-lightbox-target="download">
+    <img aria-hidden="true" src="/assets/download-04029899.svg" />
+    <span class="for-screen-reader">Download file</span>
+  </a>
+
+  <button class="lightbox__btn--share btn"
+      data-controller="web-share"
+      data-action="web-share#share"
+      data-web-share-files-value=""
+      data-lightbox-target="share">
+    <img aria-hidden="true" src="/assets/share-bf28da4f.svg" />
+    <span class="for-screen-reader">Share file</span>
+  </button>
+</dialog>
+
+
+    <a href="https://once.com" id="app-logo" target="_blank" aria-label="Once software from 37signals home page">
+      <img alt="Campfire logo" width="256" height="216" src="/assets/campfire-icon-3d9986c5.png" />
+    </a>
+  </body>
+</html>

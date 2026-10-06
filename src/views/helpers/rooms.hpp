@@ -7,6 +7,7 @@
 #include <string_view>
 
 #include "routes/routes.hpp"
+#include "views/context.hpp"
 #include "views/helpers/links.hpp"
 #include "views/helpers/tag.hpp"
 
@@ -23,6 +24,9 @@ void link_to_room(Out& out, std::int64_t room_id, const Attrs& options, Body&& b
   defaults.set("data-sorted-list-target", Value("item"));
   link_to(out, campfire::routes::room(room_id), options.with_default_data(defaults), std::forward<Body>(body));
 }
+
+// `button_to_delete_room(room)`.
+void button_to_delete_room(Out& out, const ViewContext& ctx, std::int64_t room_id, std::string_view display_name);
 
 // `rooms_directs_path(user_ids: [ user.id ])`.
 [[nodiscard]] std::string rooms_directs_with_user(std::int64_t user_id);

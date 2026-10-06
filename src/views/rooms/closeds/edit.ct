@@ -1,0 +1,11 @@
+{# reference/app/views/rooms/closeds/edit.html.erb in rooms/layouts/_edit.html.erb: the content of the page. #}
+{% include views/rooms/helpers.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const ClosedFormView& form %}
+
+<section class="panel txt-align-center" style="view-transition-name: edit-room-{{ form.room.id.value_or(0) }}">
+  {% render rooms/closeds/form(ctx, form, routes::edit_rooms_open(form.room.id.value_or(0))) %}
+</section>{% if form.can_administer %}
+  <section class="panel txt-align-center">
+    {% call button_to_delete_room(ctx, form.room.id.value_or(0), form.room.display_name()) %}
+  </section>{% end %}

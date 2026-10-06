@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New chat room</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content">
+    <meta name="view-transition" content="same-origin">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="current-user-id" content="127326141" /><meta name="current-user-name" content="David" />
+    <meta name="action-cable-url" content="/cable">
+
+    <meta name="vapid-public-key">
+    <meta name="turbo-prefetch" content="true">
+
+    <link rel="manifest" href="/webmanifest.json">
+    <link rel="icon" href="/account/logo?v=20260926130357" type="image/png">
+    <link rel="apple-touch-icon" href="/account/logo?v=20260926130357">
+
+    
+    
+
+    <script type="module">import "application"</script>
+
+  </head>
+
+  <body class="admin" data-controller="local-time lightbox">
+    <a href="#main-content" class="skip-navigation btn">Skip to main content</a>
+
+    <nav id="nav">
+
+  <div class="flex-item-justify-start">
+    <a class="btn" href="/rooms/654632876"><img aria-hidden="true" src="/assets/arrow-left-abe40556.svg" width="20" height="20" /><span class="for-screen-reader">Go Back</span></a>
+  </div>    </nav>
+
+
+    <main id="main-content">
+
+<section class="panel txt-align-center" style="view-transition-name: new-room">
+  <form action="/rooms/closeds" accept-charset="UTF-8" method="post">
+  <div class="flex align-center gap">
+      <details class="position-relative" data-controller="popup" data-action="keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside" data-popup-orientation-top-class="popup-orientation-top"><summary class="btn" tabindex="-1"><img aria-hidden="true" class="color-icon" src="/assets/globe-8c54d23b.svg" width="20" height="20" /><span class="for-screen-reader">Translate</span></summary><div class="language-list-menu shadow" data-popup-target="menu"><dl class="language-list"><dt>🇺🇸</dt><dd class="margin-none">Name the room</dd><dt>🇪🇸</dt><dd class="margin-none">Nombrar la sala</dd><dt>🇫🇷</dt><dd class="margin-none">Nommez la salle</dd><dt>🇮🇳</dt><dd class="margin-none">कमरे का नाम दें</dd><dt>🇩🇪</dt><dd class="margin-none">Geben Sie dem Raum einen Namen</dd><dt>🇧🇷</dt><dd class="margin-none">Dê um nome a essa sala</dd><dt>🇯🇵</dt><dd class="margin-none">ルームに名前を付ける</dd></dl></div></details>
+
+      <label class="flex-item-grow txt-large">
+        <input name="room[name]" id="room_name" class="input full-width" required="required" autofocus="autofocus" placeholder="Name the room" data-turbo-permanent="true" data-action="keydown.enter-&gt;form#submit:prevent" type="text" value="New room" />
+        <span class="for-screen-reader">Name this room</span>
+      </label>
+  </div>
+
+  <hr class="margin-block borderless">
+
+  <section class="room-access margin-block pad-inline fill-shade border-radius">
+    <menu class="flex flex-column gap margin-none pad overflow-y constrain-height" data-controller="filter" data-filter-active-class="filter--active" data-filter-selected-class="selected">
+      <li class="flex align-center gap margin-none">
+        <figure class="avatar flex-item-no-shrink" style="--avatar-border-radius: 0; --avatar-size: 4ch;">
+          <img aria-hidden="true" class="colorize--black" style="background-color: transparent" src="/assets/everyone-4ca1d460.svg" />
+          <span class="for-screen-reader">Everyone</span>
+        </figure>
+
+        <div class="min-width">
+          <div class="overflow-ellipsis fill-shade"><strong>Everyone</strong></div>
+        </div>
+
+        <hr class="separator" aria-hidden="true">
+
+        <a class="btn--faux flex-inline" tabindex="-1" data-turbo-action="replace" href="/rooms/opens/new">
+          <label for="room_type" class="switch">
+            <input type="checkbox" id="room_type" class="switch__input">
+            <span class="switch__btn round"></span>
+            <span class="for-screen-reader">Give everyone access to this room</span>
+          </label>
+</a>
+      </li>
+
+      <hr class="separator full-width" style="--border-style: solid">
+
+    <div data-filter-target="list" contents>
+      <li class="flex align-center gap margin-none" data-value="bender bot">
+  <figure class="avatar flex-item-no-shrink" style="--avatar-size: 4ch;">
+    <a title="Bender Bot" class="btn avatar" data-turbo-frame="_top" href="/users/394959859"><img aria-hidden="true" loading="lazy" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6Mzk0OTU5ODU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--a6aec0d65ccaf8e6396b1b7b99fbcf302c9e1596497d1f5c513b5adf2e39aacb/avatar?v=20260926130357" width="48" height="48" /></a>
+  </figure>
+
+  <div class="min-width">
+    <div class="overflow-ellipsis fill-shade"><strong>Bender Bot</strong></div>
+  </div>
+
+  <hr class="separator" aria-hidden="true">
+      <label class="switch flex-item-no-shrink">
+        <input type="checkbox" name="user_ids[]" value="394959859" class="switch__input" />
+        <span class="switch__btn round"></span>
+        <span class="for-screen-reader">Give Bender Bot access to this room</span>
+      </label>
+</li>
+      <li class="flex align-center gap margin-none" data-value="david">
+  <figure class="avatar flex-item-no-shrink" style="--avatar-size: 4ch;">
+    <a title="David" class="btn avatar" data-turbo-frame="_top" href="/users/127326141"><img aria-hidden="true" loading="lazy" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--6b3fa66b9de0be76d165e2a8bbe06dd914ead06af3e593aba5fc0b530f5a9290/avatar?v=20260926130357" width="48" height="48" /></a>
+  </figure>
+
+  <div class="min-width">
+    <div class="overflow-ellipsis fill-shade"><strong>David</strong></div>
+  </div>
+
+  <hr class="separator" aria-hidden="true">
+      <input type="hidden" name="user_ids[]" value="127326141" />
+      <img class="colorize--black flex-item-no-shrink" aria-hidden="true" src="/assets/check-7897ff7e.svg" width="20" height="20" />
+</li>
+      <li class="flex align-center gap margin-none" data-value="jason">
+  <figure class="avatar flex-item-no-shrink" style="--avatar-size: 4ch;">
+    <a title="Jason" class="btn avatar" data-turbo-frame="_top" href="/users/149087659"><img aria-hidden="true" loading="lazy" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--51b1b4b9f2c0206465c68b257437e475c049ed30fef60bd8667d91242a7533f0/avatar?v=20260926130357" width="48" height="48" /></a>
+  </figure>
+
+  <div class="min-width">
+    <div class="overflow-ellipsis fill-shade"><strong>Jason</strong></div>
+  </div>
+
+  <hr class="separator" aria-hidden="true">
+      <label class="switch flex-item-no-shrink">
+        <input type="checkbox" name="user_ids[]" value="149087659" class="switch__input" />
+        <span class="switch__btn round"></span>
+        <span class="for-screen-reader">Give Jason access to this room</span>
+      </label>
+</li>
+      <li class="flex align-center gap margin-none" data-value="jz">
+  <figure class="avatar flex-item-no-shrink" style="--avatar-size: 4ch;">
+    <a title="JZ – Designer" class="btn avatar" data-turbo-frame="_top" href="/users/773523953"><img aria-hidden="true" loading="lazy" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6NzczNTIzOTUzLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--19fbbbabcf4c7fac8032b8f691edaf1d2eb3c4c7ffc1a8522ca0bcdc6948acb1/avatar?v=20260926130357" width="48" height="48" /></a>
+  </figure>
+
+  <div class="min-width">
+    <div class="overflow-ellipsis fill-shade"><strong>JZ</strong></div>
+  </div>
+
+  <hr class="separator" aria-hidden="true">
+      <label class="switch flex-item-no-shrink">
+        <input type="checkbox" name="user_ids[]" value="773523953" class="switch__input" />
+        <span class="switch__btn round"></span>
+        <span class="for-screen-reader">Give JZ access to this room</span>
+      </label>
+</li>
+      <li class="flex align-center gap margin-none" data-value="kevin">
+  <figure class="avatar flex-item-no-shrink" style="--avatar-size: 4ch;">
+    <a title="Kevin – Programmer &amp; &quot;tester&quot; &lt;3" class="btn avatar" data-turbo-frame="_top" href="/users/712064548"><img aria-hidden="true" loading="lazy" src="/users/eyJfcmFpbHMiOnsiZGF0YSI6NzEyMDY0NTQ4LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--11e6783ff0c92903066b06a0573ae165b7b4c1aa7bba0cda11d83c66cfe83efa/avatar?v=20260926130359" width="48" height="48" /></a>
+  </figure>
+
+  <div class="min-width">
+    <div class="overflow-ellipsis fill-shade"><strong>Kevin</strong></div>
+  </div>
+
+  <hr class="separator" aria-hidden="true">
+      <label class="switch flex-item-no-shrink">
+        <input type="checkbox" name="user_ids[]" value="712064548" class="switch__input" />
+        <span class="switch__btn round"></span>
+        <span class="for-screen-reader">Give Kevin access to this room</span>
+      </label>
+</li>
+    </div>
+</menu>
+  </section>
+  <button name="button" type="submit" class="btn btn--reversed txt-large center"><img aria-hidden="true" src="/assets/check-7897ff7e.svg" width="20" height="20" /><span class="for-screen-reader">Save</span></button>
+</form>
+</section>
+      <footer id="footer">
+      </footer>
+    </main>
+
+    <aside id="sidebar" data-controller="toggle-class" data-toggle-class-toggle-class="open">
+    </aside>
+
+    <dialog class="lightbox" aria-label="Image Viewer (Press escape to close)" data-lightbox-target="dialog" data-action="close->lightbox#reset">
+  <img src="" class="lightbox__image" data-lightbox-target="zoomedImage" />
+
+  <form method="dialog" class="lightbox__btn">
+    <button class="btn">
+      <img aria-hidden="true" src="/assets/remove-0e7a045d.svg" />
+      <span class="for-screen-reader">Close image viewer</span>
+    </button>
+  </form>
+
+  <a href="" class="lightbox__btn--download btn hide-in-ios-pwa" data-lightbox-target="download">
+    <img aria-hidden="true" src="/assets/download-04029899.svg" />
+    <span class="for-screen-reader">Download file</span>
+  </a>
+
+  <button class="lightbox__btn--share btn"
+      data-controller="web-share"
+      data-action="web-share#share"
+      data-web-share-files-value=""
+      data-lightbox-target="share">
+    <img aria-hidden="true" src="/assets/share-bf28da4f.svg" />
+    <span class="for-screen-reader">Share file</span>
+  </button>
+</dialog>
+
+
+    <a href="https://once.com" id="app-logo" target="_blank" aria-label="Once software from 37signals home page">
+      <img alt="Campfire logo" width="256" height="216" src="/assets/campfire-icon-3d9986c5.png" />
+    </a>
+  </body>
+</html>

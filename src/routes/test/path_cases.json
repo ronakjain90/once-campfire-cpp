@@ -1,0 +1,7223 @@
+{
+  "cases": [
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "root",
+      "args": [],
+      "path": "/"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "new_first_run",
+      "args": [],
+      "path": "/first_run/new"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "edit_first_run",
+      "args": [],
+      "path": "/first_run/edit"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "first_run",
+      "args": [],
+      "path": "/first_run"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "1"
+      ],
+      "path": "/session/transfers/1"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "22"
+      ],
+      "path": "/session/transfers/22"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "a b"
+      ],
+      "path": "/session/transfers/a%20b"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/session/transfers/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/session/transfers/x%3Fy%23z"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/session/transfers/1-abc"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "%41"
+      ],
+      "path": "/session/transfers/%2541"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "a+b"
+      ],
+      "path": "/session/transfers/a+b"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "@:;="
+      ],
+      "path": "/session/transfers/@:;="
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/session/transfers/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "ab "
+      ],
+      "path": "/session/transfers/ab%E2%80%A8"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "😀"
+      ],
+      "path": "/session/transfers/%F0%9F%98%80"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "[x]"
+      ],
+      "path": "/session/transfers/%5Bx%5D"
+    },
+    {
+      "name": "session_transfer",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/session/transfers/a%22b%3Cc%3E"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "new_session",
+      "args": [],
+      "path": "/session/new"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "edit_session",
+      "args": [],
+      "path": "/session/edit"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "session",
+      "args": [],
+      "path": "/session"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "account_users",
+      "args": [],
+      "path": "/account/users"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "new_account_user",
+      "args": [],
+      "path": "/account/users/new"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "1"
+      ],
+      "path": "/account/users/1/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "22"
+      ],
+      "path": "/account/users/22/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "a b"
+      ],
+      "path": "/account/users/a%20b/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/account/users/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/account/users/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/account/users/1-abc/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "%41"
+      ],
+      "path": "/account/users/%2541/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "a+b"
+      ],
+      "path": "/account/users/a+b/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "@:;="
+      ],
+      "path": "/account/users/@:;=/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/account/users/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "ab "
+      ],
+      "path": "/account/users/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "😀"
+      ],
+      "path": "/account/users/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "[x]"
+      ],
+      "path": "/account/users/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_account_user",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/account/users/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "1"
+      ],
+      "path": "/account/users/1"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "22"
+      ],
+      "path": "/account/users/22"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "a b"
+      ],
+      "path": "/account/users/a%20b"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/account/users/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/account/users/x%3Fy%23z"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/account/users/1-abc"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "%41"
+      ],
+      "path": "/account/users/%2541"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "a+b"
+      ],
+      "path": "/account/users/a+b"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "@:;="
+      ],
+      "path": "/account/users/@:;="
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/account/users/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "ab "
+      ],
+      "path": "/account/users/ab%E2%80%A8"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "😀"
+      ],
+      "path": "/account/users/%F0%9F%98%80"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "[x]"
+      ],
+      "path": "/account/users/%5Bx%5D"
+    },
+    {
+      "name": "account_user",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/account/users/a%22b%3Cc%3E"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "1"
+      ],
+      "path": "/account/bots/1/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "22"
+      ],
+      "path": "/account/bots/22/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "a b"
+      ],
+      "path": "/account/bots/a%20b/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/account/bots/%C3%A9%2F%C3%BC/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/account/bots/x%3Fy%23z/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/account/bots/1-abc/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "%41"
+      ],
+      "path": "/account/bots/%2541/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "a+b"
+      ],
+      "path": "/account/bots/a+b/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "@:;="
+      ],
+      "path": "/account/bots/@:;=/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/account/bots/Aa-._~!$&'()*,/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "ab "
+      ],
+      "path": "/account/bots/ab%E2%80%A8/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "😀"
+      ],
+      "path": "/account/bots/%F0%9F%98%80/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "[x]"
+      ],
+      "path": "/account/bots/%5Bx%5D/key"
+    },
+    {
+      "name": "account_bot_key",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/account/bots/a%22b%3Cc%3E/key"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "account_bots",
+      "args": [],
+      "path": "/account/bots"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "new_account_bot",
+      "args": [],
+      "path": "/account/bots/new"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "1"
+      ],
+      "path": "/account/bots/1/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "22"
+      ],
+      "path": "/account/bots/22/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "a b"
+      ],
+      "path": "/account/bots/a%20b/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/account/bots/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/account/bots/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/account/bots/1-abc/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "%41"
+      ],
+      "path": "/account/bots/%2541/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "a+b"
+      ],
+      "path": "/account/bots/a+b/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "@:;="
+      ],
+      "path": "/account/bots/@:;=/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/account/bots/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "ab "
+      ],
+      "path": "/account/bots/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "😀"
+      ],
+      "path": "/account/bots/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "[x]"
+      ],
+      "path": "/account/bots/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_account_bot",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/account/bots/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "1"
+      ],
+      "path": "/account/bots/1"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "22"
+      ],
+      "path": "/account/bots/22"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "a b"
+      ],
+      "path": "/account/bots/a%20b"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/account/bots/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/account/bots/x%3Fy%23z"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/account/bots/1-abc"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "%41"
+      ],
+      "path": "/account/bots/%2541"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "a+b"
+      ],
+      "path": "/account/bots/a+b"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "@:;="
+      ],
+      "path": "/account/bots/@:;="
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/account/bots/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "ab "
+      ],
+      "path": "/account/bots/ab%E2%80%A8"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "😀"
+      ],
+      "path": "/account/bots/%F0%9F%98%80"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "[x]"
+      ],
+      "path": "/account/bots/%5Bx%5D"
+    },
+    {
+      "name": "account_bot",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/account/bots/a%22b%3Cc%3E"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_join_code",
+      "args": [],
+      "path": "/account/join_code"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "account_logo",
+      "args": [],
+      "path": "/account/logo"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "edit_account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles/edit"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "account_custom_styles",
+      "args": [],
+      "path": "/account/custom_styles"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "new_account",
+      "args": [],
+      "path": "/account/new"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "edit_account",
+      "args": [],
+      "path": "/account/edit"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "account",
+      "args": [],
+      "path": "/account"
+    },
+    {
+      "name": "join",
+      "args": [
+        "1"
+      ],
+      "path": "/join/1"
+    },
+    {
+      "name": "join",
+      "args": [
+        "22"
+      ],
+      "path": "/join/22"
+    },
+    {
+      "name": "join",
+      "args": [
+        "a b"
+      ],
+      "path": "/join/a%20b"
+    },
+    {
+      "name": "join",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/join/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "join",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/join/x%3Fy%23z"
+    },
+    {
+      "name": "join",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/join/1-abc"
+    },
+    {
+      "name": "join",
+      "args": [
+        "%41"
+      ],
+      "path": "/join/%2541"
+    },
+    {
+      "name": "join",
+      "args": [
+        "a+b"
+      ],
+      "path": "/join/a+b"
+    },
+    {
+      "name": "join",
+      "args": [
+        "@:;="
+      ],
+      "path": "/join/@:;="
+    },
+    {
+      "name": "join",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/join/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "join",
+      "args": [
+        "ab "
+      ],
+      "path": "/join/ab%E2%80%A8"
+    },
+    {
+      "name": "join",
+      "args": [
+        "😀"
+      ],
+      "path": "/join/%F0%9F%98%80"
+    },
+    {
+      "name": "join",
+      "args": [
+        "[x]"
+      ],
+      "path": "/join/%5Bx%5D"
+    },
+    {
+      "name": "join",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/join/a%22b%3Cc%3E"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "1"
+      ],
+      "path": "/qr_code/1"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "22"
+      ],
+      "path": "/qr_code/22"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "a b"
+      ],
+      "path": "/qr_code/a%20b"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/qr_code/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/qr_code/x%3Fy%23z"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/qr_code/1-abc"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "%41"
+      ],
+      "path": "/qr_code/%2541"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "a+b"
+      ],
+      "path": "/qr_code/a+b"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "@:;="
+      ],
+      "path": "/qr_code/@:;="
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/qr_code/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "ab "
+      ],
+      "path": "/qr_code/ab%E2%80%A8"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "😀"
+      ],
+      "path": "/qr_code/%F0%9F%98%80"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "[x]"
+      ],
+      "path": "/qr_code/%5Bx%5D"
+    },
+    {
+      "name": "qr_code",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/qr_code/a%22b%3Cc%3E"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "1"
+      ],
+      "path": "/users/1/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "22"
+      ],
+      "path": "/users/22/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "a b"
+      ],
+      "path": "/users/a%20b/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/users/x%3Fy%23z/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/users/1-abc/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "%41"
+      ],
+      "path": "/users/%2541/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "a+b"
+      ],
+      "path": "/users/a+b/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "@:;="
+      ],
+      "path": "/users/@:;=/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "ab "
+      ],
+      "path": "/users/ab%E2%80%A8/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "😀"
+      ],
+      "path": "/users/%F0%9F%98%80/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "[x]"
+      ],
+      "path": "/users/%5Bx%5D/avatar"
+    },
+    {
+      "name": "user_avatar",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/users/a%22b%3Cc%3E/avatar"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "1"
+      ],
+      "path": "/users/1/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "22"
+      ],
+      "path": "/users/22/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "a b"
+      ],
+      "path": "/users/a%20b/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/users/x%3Fy%23z/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/users/1-abc/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "%41"
+      ],
+      "path": "/users/%2541/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "a+b"
+      ],
+      "path": "/users/a+b/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "@:;="
+      ],
+      "path": "/users/@:;=/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "ab "
+      ],
+      "path": "/users/ab%E2%80%A8/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "😀"
+      ],
+      "path": "/users/%F0%9F%98%80/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "[x]"
+      ],
+      "path": "/users/%5Bx%5D/ban"
+    },
+    {
+      "name": "user_ban",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/users/a%22b%3Cc%3E/ban"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "1"
+      ],
+      "path": "/users/1/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "22"
+      ],
+      "path": "/users/22/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "a b"
+      ],
+      "path": "/users/a%20b/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/users/x%3Fy%23z/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/users/1-abc/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "%41"
+      ],
+      "path": "/users/%2541/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "a+b"
+      ],
+      "path": "/users/a+b/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "@:;="
+      ],
+      "path": "/users/@:;=/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "ab "
+      ],
+      "path": "/users/ab%E2%80%A8/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "😀"
+      ],
+      "path": "/users/%F0%9F%98%80/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "[x]"
+      ],
+      "path": "/users/%5Bx%5D/sidebar"
+    },
+    {
+      "name": "user_sidebar",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/users/a%22b%3Cc%3E/sidebar"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "1"
+      ],
+      "path": "/users/1/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "22"
+      ],
+      "path": "/users/22/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "a b"
+      ],
+      "path": "/users/a%20b/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/users/x%3Fy%23z/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/users/1-abc/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "%41"
+      ],
+      "path": "/users/%2541/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "a+b"
+      ],
+      "path": "/users/a+b/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "@:;="
+      ],
+      "path": "/users/@:;=/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "ab "
+      ],
+      "path": "/users/ab%E2%80%A8/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "😀"
+      ],
+      "path": "/users/%F0%9F%98%80/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "[x]"
+      ],
+      "path": "/users/%5Bx%5D/profile/new"
+    },
+    {
+      "name": "new_user_profile",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/users/a%22b%3Cc%3E/profile/new"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "1"
+      ],
+      "path": "/users/1/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "22"
+      ],
+      "path": "/users/22/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "a b"
+      ],
+      "path": "/users/a%20b/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/users/x%3Fy%23z/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/users/1-abc/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "%41"
+      ],
+      "path": "/users/%2541/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "a+b"
+      ],
+      "path": "/users/a+b/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "@:;="
+      ],
+      "path": "/users/@:;=/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "ab "
+      ],
+      "path": "/users/ab%E2%80%A8/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "😀"
+      ],
+      "path": "/users/%F0%9F%98%80/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "[x]"
+      ],
+      "path": "/users/%5Bx%5D/profile/edit"
+    },
+    {
+      "name": "edit_user_profile",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/users/a%22b%3Cc%3E/profile/edit"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "1"
+      ],
+      "path": "/users/1/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "22"
+      ],
+      "path": "/users/22/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "a b"
+      ],
+      "path": "/users/a%20b/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/users/x%3Fy%23z/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/users/1-abc/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "%41"
+      ],
+      "path": "/users/%2541/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "a+b"
+      ],
+      "path": "/users/a+b/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "@:;="
+      ],
+      "path": "/users/@:;=/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "ab "
+      ],
+      "path": "/users/ab%E2%80%A8/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "😀"
+      ],
+      "path": "/users/%F0%9F%98%80/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "[x]"
+      ],
+      "path": "/users/%5Bx%5D/profile"
+    },
+    {
+      "name": "user_profile",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/users/a%22b%3Cc%3E/profile"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "1",
+        "é/ü"
+      ],
+      "path": "/users/1/push_subscriptions/%C3%A9%2F%C3%BC/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "22",
+        "x?y#z"
+      ],
+      "path": "/users/22/push_subscriptions/x%3Fy%23z/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "a b",
+        "1-abc"
+      ],
+      "path": "/users/a%20b/push_subscriptions/1-abc/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "é/ü",
+        "%41"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/push_subscriptions/%2541/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/users/x%3Fy%23z/push_subscriptions/a+b/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/users/1-abc/push_subscriptions/@:;=/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/%2541/push_subscriptions/Aa-._~!$&'()*,/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "a+b",
+        "ab "
+      ],
+      "path": "/users/a+b/push_subscriptions/ab%E2%80%A8/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "@:;=",
+        "😀"
+      ],
+      "path": "/users/@:;=/push_subscriptions/%F0%9F%98%80/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/push_subscriptions/%5Bx%5D/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/users/ab%E2%80%A8/push_subscriptions/a%22b%3Cc%3E/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "😀",
+        "1"
+      ],
+      "path": "/users/%F0%9F%98%80/push_subscriptions/1/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "[x]",
+        "22"
+      ],
+      "path": "/users/%5Bx%5D/push_subscriptions/22/test_notifications"
+    },
+    {
+      "name": "user_push_subscription_test_notifications",
+      "args": [
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/users/a%22b%3Cc%3E/push_subscriptions/a%20b/test_notifications"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "1"
+      ],
+      "path": "/users/1/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "22"
+      ],
+      "path": "/users/22/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "a b"
+      ],
+      "path": "/users/a%20b/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/users/x%3Fy%23z/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/users/1-abc/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "%41"
+      ],
+      "path": "/users/%2541/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "a+b"
+      ],
+      "path": "/users/a+b/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "@:;="
+      ],
+      "path": "/users/@:;=/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "ab "
+      ],
+      "path": "/users/ab%E2%80%A8/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "😀"
+      ],
+      "path": "/users/%F0%9F%98%80/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "[x]"
+      ],
+      "path": "/users/%5Bx%5D/push_subscriptions"
+    },
+    {
+      "name": "user_push_subscriptions",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/users/a%22b%3Cc%3E/push_subscriptions"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "1"
+      ],
+      "path": "/users/1/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "22"
+      ],
+      "path": "/users/22/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "a b"
+      ],
+      "path": "/users/a%20b/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/users/x%3Fy%23z/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/users/1-abc/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "%41"
+      ],
+      "path": "/users/%2541/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "a+b"
+      ],
+      "path": "/users/a+b/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "@:;="
+      ],
+      "path": "/users/@:;=/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "ab "
+      ],
+      "path": "/users/ab%E2%80%A8/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "😀"
+      ],
+      "path": "/users/%F0%9F%98%80/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "[x]"
+      ],
+      "path": "/users/%5Bx%5D/push_subscriptions/new"
+    },
+    {
+      "name": "new_user_push_subscription",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/users/a%22b%3Cc%3E/push_subscriptions/new"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "1",
+        "é/ü"
+      ],
+      "path": "/users/1/push_subscriptions/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "22",
+        "x?y#z"
+      ],
+      "path": "/users/22/push_subscriptions/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "a b",
+        "1-abc"
+      ],
+      "path": "/users/a%20b/push_subscriptions/1-abc/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "é/ü",
+        "%41"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/push_subscriptions/%2541/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/users/x%3Fy%23z/push_subscriptions/a+b/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/users/1-abc/push_subscriptions/@:;=/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/%2541/push_subscriptions/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "a+b",
+        "ab "
+      ],
+      "path": "/users/a+b/push_subscriptions/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "@:;=",
+        "😀"
+      ],
+      "path": "/users/@:;=/push_subscriptions/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/push_subscriptions/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/users/ab%E2%80%A8/push_subscriptions/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "😀",
+        "1"
+      ],
+      "path": "/users/%F0%9F%98%80/push_subscriptions/1/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "[x]",
+        "22"
+      ],
+      "path": "/users/%5Bx%5D/push_subscriptions/22/edit"
+    },
+    {
+      "name": "edit_user_push_subscription",
+      "args": [
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/users/a%22b%3Cc%3E/push_subscriptions/a%20b/edit"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "1",
+        "é/ü"
+      ],
+      "path": "/users/1/push_subscriptions/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "22",
+        "x?y#z"
+      ],
+      "path": "/users/22/push_subscriptions/x%3Fy%23z"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "a b",
+        "1-abc"
+      ],
+      "path": "/users/a%20b/push_subscriptions/1-abc"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "é/ü",
+        "%41"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC/push_subscriptions/%2541"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/users/x%3Fy%23z/push_subscriptions/a+b"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/users/1-abc/push_subscriptions/@:;="
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/%2541/push_subscriptions/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "a+b",
+        "ab "
+      ],
+      "path": "/users/a+b/push_subscriptions/ab%E2%80%A8"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "@:;=",
+        "😀"
+      ],
+      "path": "/users/@:;=/push_subscriptions/%F0%9F%98%80"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/users/Aa-._~!$&'()*,/push_subscriptions/%5Bx%5D"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/users/ab%E2%80%A8/push_subscriptions/a%22b%3Cc%3E"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "😀",
+        "1"
+      ],
+      "path": "/users/%F0%9F%98%80/push_subscriptions/1"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "[x]",
+        "22"
+      ],
+      "path": "/users/%5Bx%5D/push_subscriptions/22"
+    },
+    {
+      "name": "user_push_subscription",
+      "args": [
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/users/a%22b%3Cc%3E/push_subscriptions/a%20b"
+    },
+    {
+      "name": "user",
+      "args": [
+        "1"
+      ],
+      "path": "/users/1"
+    },
+    {
+      "name": "user",
+      "args": [
+        "22"
+      ],
+      "path": "/users/22"
+    },
+    {
+      "name": "user",
+      "args": [
+        "a b"
+      ],
+      "path": "/users/a%20b"
+    },
+    {
+      "name": "user",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/users/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "user",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/users/x%3Fy%23z"
+    },
+    {
+      "name": "user",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/users/1-abc"
+    },
+    {
+      "name": "user",
+      "args": [
+        "%41"
+      ],
+      "path": "/users/%2541"
+    },
+    {
+      "name": "user",
+      "args": [
+        "a+b"
+      ],
+      "path": "/users/a+b"
+    },
+    {
+      "name": "user",
+      "args": [
+        "@:;="
+      ],
+      "path": "/users/@:;="
+    },
+    {
+      "name": "user",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/users/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "user",
+      "args": [
+        "ab "
+      ],
+      "path": "/users/ab%E2%80%A8"
+    },
+    {
+      "name": "user",
+      "args": [
+        "😀"
+      ],
+      "path": "/users/%F0%9F%98%80"
+    },
+    {
+      "name": "user",
+      "args": [
+        "[x]"
+      ],
+      "path": "/users/%5Bx%5D"
+    },
+    {
+      "name": "user",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/users/a%22b%3Cc%3E"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "autocompletable_users",
+      "args": [],
+      "path": "/autocompletable/users"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/1/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/22/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/a%20b/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/x%3Fy%23z/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/1-abc/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/%2541/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/a+b/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/@:;=/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/ab%E2%80%A8/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/%F0%9F%98%80/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/%5Bx%5D/messages"
+    },
+    {
+      "name": "room_messages",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/messages"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/1/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/22/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/a%20b/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/x%3Fy%23z/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/1-abc/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/%2541/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/a+b/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/@:;=/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/ab%E2%80%A8/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/%F0%9F%98%80/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/%5Bx%5D/messages/new"
+    },
+    {
+      "name": "new_room_message",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/messages/new"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "1",
+        "é/ü"
+      ],
+      "path": "/rooms/1/messages/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "22",
+        "x?y#z"
+      ],
+      "path": "/rooms/22/messages/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "a b",
+        "1-abc"
+      ],
+      "path": "/rooms/a%20b/messages/1-abc/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "é/ü",
+        "%41"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/messages/%2541/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/rooms/x%3Fy%23z/messages/a+b/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/rooms/1-abc/messages/@:;=/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/%2541/messages/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "a+b",
+        "ab "
+      ],
+      "path": "/rooms/a+b/messages/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "@:;=",
+        "😀"
+      ],
+      "path": "/rooms/@:;=/messages/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/messages/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/rooms/ab%E2%80%A8/messages/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "😀",
+        "1"
+      ],
+      "path": "/rooms/%F0%9F%98%80/messages/1/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "[x]",
+        "22"
+      ],
+      "path": "/rooms/%5Bx%5D/messages/22/edit"
+    },
+    {
+      "name": "edit_room_message",
+      "args": [
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/messages/a%20b/edit"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "1",
+        "é/ü"
+      ],
+      "path": "/rooms/1/messages/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "22",
+        "x?y#z"
+      ],
+      "path": "/rooms/22/messages/x%3Fy%23z"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "a b",
+        "1-abc"
+      ],
+      "path": "/rooms/a%20b/messages/1-abc"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "é/ü",
+        "%41"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/messages/%2541"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/rooms/x%3Fy%23z/messages/a+b"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/rooms/1-abc/messages/@:;="
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/%2541/messages/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "a+b",
+        "ab "
+      ],
+      "path": "/rooms/a+b/messages/ab%E2%80%A8"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "@:;=",
+        "😀"
+      ],
+      "path": "/rooms/@:;=/messages/%F0%9F%98%80"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/messages/%5Bx%5D"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/rooms/ab%E2%80%A8/messages/a%22b%3Cc%3E"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "😀",
+        "1"
+      ],
+      "path": "/rooms/%F0%9F%98%80/messages/1"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "[x]",
+        "22"
+      ],
+      "path": "/rooms/%5Bx%5D/messages/22"
+    },
+    {
+      "name": "room_message",
+      "args": [
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/messages/a%20b"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "1",
+        "é/ü",
+        "%41"
+      ],
+      "path": "/rooms/1/%C3%A9%2F%C3%BC/messages/%2541/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "22",
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/rooms/22/x%3Fy%23z/messages/a+b/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "a b",
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/rooms/a%20b/1-abc/messages/@:;=/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "é/ü",
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/%2541/messages/Aa-._~!$&'()*,/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "x?y#z",
+        "a+b",
+        "ab "
+      ],
+      "path": "/rooms/x%3Fy%23z/a+b/messages/ab%E2%80%A8/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "1-abc",
+        "@:;=",
+        "😀"
+      ],
+      "path": "/rooms/1-abc/@:;=/messages/%F0%9F%98%80/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/rooms/%2541/Aa-._~!$&'()*,/messages/%5Bx%5D/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "a+b",
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/rooms/a+b/ab%E2%80%A8/messages/a%22b%3Cc%3E/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "@:;=",
+        "😀",
+        "1"
+      ],
+      "path": "/rooms/@:;=/%F0%9F%98%80/messages/1/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]",
+        "22"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/%5Bx%5D/messages/22/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "ab ",
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/rooms/ab%E2%80%A8/a%22b%3Cc%3E/messages/a%20b/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "😀",
+        "1",
+        "é/ü"
+      ],
+      "path": "/rooms/%F0%9F%98%80/1/messages/%C3%A9%2F%C3%BC/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "[x]",
+        "22",
+        "x?y#z"
+      ],
+      "path": "/rooms/%5Bx%5D/22/messages/x%3Fy%23z/boosts"
+    },
+    {
+      "name": "room_bot_message_boosts",
+      "args": [
+        "a\"b<c>",
+        "a b",
+        "1-abc"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/a%20b/messages/1-abc/boosts"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "1",
+        "é/ü",
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/1/%C3%A9%2F%C3%BC/messages/%2541/boosts/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "22",
+        "x?y#z",
+        "a+b",
+        "ab "
+      ],
+      "path": "/rooms/22/x%3Fy%23z/messages/a+b/boosts/ab%E2%80%A8"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "a b",
+        "1-abc",
+        "@:;=",
+        "😀"
+      ],
+      "path": "/rooms/a%20b/1-abc/messages/@:;=/boosts/%F0%9F%98%80"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "é/ü",
+        "%41",
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/%2541/messages/Aa-._~!$&'()*,/boosts/%5Bx%5D"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "x?y#z",
+        "a+b",
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/rooms/x%3Fy%23z/a+b/messages/ab%E2%80%A8/boosts/a%22b%3Cc%3E"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "1-abc",
+        "@:;=",
+        "😀",
+        "1"
+      ],
+      "path": "/rooms/1-abc/@:;=/messages/%F0%9F%98%80/boosts/1"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,",
+        "[x]",
+        "22"
+      ],
+      "path": "/rooms/%2541/Aa-._~!$&'()*,/messages/%5Bx%5D/boosts/22"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "a+b",
+        "ab ",
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/rooms/a+b/ab%E2%80%A8/messages/a%22b%3Cc%3E/boosts/a%20b"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "@:;=",
+        "😀",
+        "1",
+        "é/ü"
+      ],
+      "path": "/rooms/@:;=/%F0%9F%98%80/messages/1/boosts/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]",
+        "22",
+        "x?y#z"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/%5Bx%5D/messages/22/boosts/x%3Fy%23z"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "ab ",
+        "a\"b<c>",
+        "a b",
+        "1-abc"
+      ],
+      "path": "/rooms/ab%E2%80%A8/a%22b%3Cc%3E/messages/a%20b/boosts/1-abc"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "😀",
+        "1",
+        "é/ü",
+        "%41"
+      ],
+      "path": "/rooms/%F0%9F%98%80/1/messages/%C3%A9%2F%C3%BC/boosts/%2541"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "[x]",
+        "22",
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/rooms/%5Bx%5D/22/messages/x%3Fy%23z/boosts/a+b"
+    },
+    {
+      "name": "room_bot_message_boost",
+      "args": [
+        "a\"b<c>",
+        "a b",
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/a%20b/messages/1-abc/boosts/@:;="
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "1",
+        "é/ü"
+      ],
+      "path": "/rooms/1/%C3%A9%2F%C3%BC/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "22",
+        "x?y#z"
+      ],
+      "path": "/rooms/22/x%3Fy%23z/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "a b",
+        "1-abc"
+      ],
+      "path": "/rooms/a%20b/1-abc/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "é/ü",
+        "%41"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/%2541/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/rooms/x%3Fy%23z/a+b/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/rooms/1-abc/@:;=/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/%2541/Aa-._~!$&'()*,/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "a+b",
+        "ab "
+      ],
+      "path": "/rooms/a+b/ab%E2%80%A8/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "@:;=",
+        "😀"
+      ],
+      "path": "/rooms/@:;=/%F0%9F%98%80/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/%5Bx%5D/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/rooms/ab%E2%80%A8/a%22b%3Cc%3E/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "😀",
+        "1"
+      ],
+      "path": "/rooms/%F0%9F%98%80/1/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "[x]",
+        "22"
+      ],
+      "path": "/rooms/%5Bx%5D/22/messages"
+    },
+    {
+      "name": "room_bot_messages",
+      "args": [
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/a%20b/messages"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "1",
+        "é/ü",
+        "%41"
+      ],
+      "path": "/rooms/1/%C3%A9%2F%C3%BC/messages/%2541"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "22",
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/rooms/22/x%3Fy%23z/messages/a+b"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "a b",
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/rooms/a%20b/1-abc/messages/@:;="
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "é/ü",
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/%2541/messages/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "x?y#z",
+        "a+b",
+        "ab "
+      ],
+      "path": "/rooms/x%3Fy%23z/a+b/messages/ab%E2%80%A8"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "1-abc",
+        "@:;=",
+        "😀"
+      ],
+      "path": "/rooms/1-abc/@:;=/messages/%F0%9F%98%80"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/rooms/%2541/Aa-._~!$&'()*,/messages/%5Bx%5D"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "a+b",
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/rooms/a+b/ab%E2%80%A8/messages/a%22b%3Cc%3E"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "@:;=",
+        "😀",
+        "1"
+      ],
+      "path": "/rooms/@:;=/%F0%9F%98%80/messages/1"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]",
+        "22"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/%5Bx%5D/messages/22"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "ab ",
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/rooms/ab%E2%80%A8/a%22b%3Cc%3E/messages/a%20b"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "😀",
+        "1",
+        "é/ü"
+      ],
+      "path": "/rooms/%F0%9F%98%80/1/messages/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "[x]",
+        "22",
+        "x?y#z"
+      ],
+      "path": "/rooms/%5Bx%5D/22/messages/x%3Fy%23z"
+    },
+    {
+      "name": "room_bot_message",
+      "args": [
+        "a\"b<c>",
+        "a b",
+        "1-abc"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/a%20b/messages/1-abc"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/1/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/22/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/a%20b/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/x%3Fy%23z/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/1-abc/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/%2541/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/a+b/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/@:;=/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/ab%E2%80%A8/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/%F0%9F%98%80/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/%5Bx%5D/refresh"
+    },
+    {
+      "name": "room_refresh",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/refresh"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/1/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/22/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/a%20b/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/x%3Fy%23z/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/1-abc/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/%2541/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/a+b/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/@:;=/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/ab%E2%80%A8/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/%F0%9F%98%80/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/%5Bx%5D/settings"
+    },
+    {
+      "name": "room_settings",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/settings"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/1/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/22/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/a%20b/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/x%3Fy%23z/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/1-abc/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/%2541/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/a+b/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/@:;=/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/ab%E2%80%A8/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/%F0%9F%98%80/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/%5Bx%5D/involvement"
+    },
+    {
+      "name": "room_involvement",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/involvement"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "1",
+        "é/ü"
+      ],
+      "path": "/rooms/1/@%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "22",
+        "x?y#z"
+      ],
+      "path": "/rooms/22/@x%3Fy%23z"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "a b",
+        "1-abc"
+      ],
+      "path": "/rooms/a%20b/@1-abc"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "é/ü",
+        "%41"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/@%2541"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/rooms/x%3Fy%23z/@a+b"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/rooms/1-abc/@@:;="
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/%2541/@Aa-._~!$&'()*,"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "a+b",
+        "ab "
+      ],
+      "path": "/rooms/a+b/@ab%E2%80%A8"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "@:;=",
+        "😀"
+      ],
+      "path": "/rooms/@:;=/@%F0%9F%98%80"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/@%5Bx%5D"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/rooms/ab%E2%80%A8/@a%22b%3Cc%3E"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "😀",
+        "1"
+      ],
+      "path": "/rooms/%F0%9F%98%80/@1"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "[x]",
+        "22"
+      ],
+      "path": "/rooms/%5Bx%5D/@22"
+    },
+    {
+      "name": "room_at_message",
+      "args": [
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/@a%20b"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "rooms",
+      "args": [],
+      "path": "/rooms"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "new_room",
+      "args": [],
+      "path": "/rooms/new"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/1/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/22/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/a%20b/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/1-abc/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/%2541/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/a+b/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/@:;=/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_room",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "room",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/1"
+    },
+    {
+      "name": "room",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/22"
+    },
+    {
+      "name": "room",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/a%20b"
+    },
+    {
+      "name": "room",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "room",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/x%3Fy%23z"
+    },
+    {
+      "name": "room",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/1-abc"
+    },
+    {
+      "name": "room",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/%2541"
+    },
+    {
+      "name": "room",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/a+b"
+    },
+    {
+      "name": "room",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/@:;="
+    },
+    {
+      "name": "room",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "room",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/ab%E2%80%A8"
+    },
+    {
+      "name": "room",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/%F0%9F%98%80"
+    },
+    {
+      "name": "room",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/%5Bx%5D"
+    },
+    {
+      "name": "room",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/a%22b%3Cc%3E"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "rooms_opens",
+      "args": [],
+      "path": "/rooms/opens"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "new_rooms_open",
+      "args": [],
+      "path": "/rooms/opens/new"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/opens/1/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/opens/22/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/opens/a%20b/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/opens/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/opens/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/opens/1-abc/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/opens/%2541/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/opens/a+b/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/opens/@:;=/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/opens/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/opens/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/opens/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/opens/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_rooms_open",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/opens/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/opens/1"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/opens/22"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/opens/a%20b"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/opens/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/opens/x%3Fy%23z"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/opens/1-abc"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/opens/%2541"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/opens/a+b"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/opens/@:;="
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/opens/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/opens/ab%E2%80%A8"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/opens/%F0%9F%98%80"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/opens/%5Bx%5D"
+    },
+    {
+      "name": "rooms_open",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/opens/a%22b%3Cc%3E"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "rooms_closeds",
+      "args": [],
+      "path": "/rooms/closeds"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "new_rooms_closed",
+      "args": [],
+      "path": "/rooms/closeds/new"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/closeds/1/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/closeds/22/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/closeds/a%20b/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/closeds/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/closeds/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/closeds/1-abc/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/closeds/%2541/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/closeds/a+b/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/closeds/@:;=/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/closeds/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/closeds/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/closeds/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/closeds/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_rooms_closed",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/closeds/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/closeds/1"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/closeds/22"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/closeds/a%20b"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/closeds/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/closeds/x%3Fy%23z"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/closeds/1-abc"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/closeds/%2541"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/closeds/a+b"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/closeds/@:;="
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/closeds/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/closeds/ab%E2%80%A8"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/closeds/%F0%9F%98%80"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/closeds/%5Bx%5D"
+    },
+    {
+      "name": "rooms_closed",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/closeds/a%22b%3Cc%3E"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "rooms_directs",
+      "args": [],
+      "path": "/rooms/directs"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "new_rooms_direct",
+      "args": [],
+      "path": "/rooms/directs/new"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/directs/1/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/directs/22/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/directs/a%20b/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/directs/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/directs/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/directs/1-abc/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/directs/%2541/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/directs/a+b/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/directs/@:;=/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/directs/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/directs/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/directs/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/directs/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_rooms_direct",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/directs/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "1"
+      ],
+      "path": "/rooms/directs/1"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "22"
+      ],
+      "path": "/rooms/directs/22"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "a b"
+      ],
+      "path": "/rooms/directs/a%20b"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/rooms/directs/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/rooms/directs/x%3Fy%23z"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/rooms/directs/1-abc"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "%41"
+      ],
+      "path": "/rooms/directs/%2541"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "a+b"
+      ],
+      "path": "/rooms/directs/a+b"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "@:;="
+      ],
+      "path": "/rooms/directs/@:;="
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/rooms/directs/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "ab "
+      ],
+      "path": "/rooms/directs/ab%E2%80%A8"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "😀"
+      ],
+      "path": "/rooms/directs/%F0%9F%98%80"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "[x]"
+      ],
+      "path": "/rooms/directs/%5Bx%5D"
+    },
+    {
+      "name": "rooms_direct",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/rooms/directs/a%22b%3Cc%3E"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "1"
+      ],
+      "path": "/messages/1/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "22"
+      ],
+      "path": "/messages/22/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "a b"
+      ],
+      "path": "/messages/a%20b/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/messages/%C3%A9%2F%C3%BC/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/messages/x%3Fy%23z/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/messages/1-abc/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "%41"
+      ],
+      "path": "/messages/%2541/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "a+b"
+      ],
+      "path": "/messages/a+b/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "@:;="
+      ],
+      "path": "/messages/@:;=/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/messages/Aa-._~!$&'()*,/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "ab "
+      ],
+      "path": "/messages/ab%E2%80%A8/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "😀"
+      ],
+      "path": "/messages/%F0%9F%98%80/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "[x]"
+      ],
+      "path": "/messages/%5Bx%5D/boosts"
+    },
+    {
+      "name": "message_boosts",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/messages/a%22b%3Cc%3E/boosts"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "1"
+      ],
+      "path": "/messages/1/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "22"
+      ],
+      "path": "/messages/22/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "a b"
+      ],
+      "path": "/messages/a%20b/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/messages/%C3%A9%2F%C3%BC/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/messages/x%3Fy%23z/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/messages/1-abc/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "%41"
+      ],
+      "path": "/messages/%2541/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "a+b"
+      ],
+      "path": "/messages/a+b/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "@:;="
+      ],
+      "path": "/messages/@:;=/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/messages/Aa-._~!$&'()*,/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "ab "
+      ],
+      "path": "/messages/ab%E2%80%A8/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "😀"
+      ],
+      "path": "/messages/%F0%9F%98%80/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "[x]"
+      ],
+      "path": "/messages/%5Bx%5D/boosts/new"
+    },
+    {
+      "name": "new_message_boost",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/messages/a%22b%3Cc%3E/boosts/new"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "1",
+        "é/ü"
+      ],
+      "path": "/messages/1/boosts/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "22",
+        "x?y#z"
+      ],
+      "path": "/messages/22/boosts/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "a b",
+        "1-abc"
+      ],
+      "path": "/messages/a%20b/boosts/1-abc/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "é/ü",
+        "%41"
+      ],
+      "path": "/messages/%C3%A9%2F%C3%BC/boosts/%2541/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/messages/x%3Fy%23z/boosts/a+b/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/messages/1-abc/boosts/@:;=/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/messages/%2541/boosts/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "a+b",
+        "ab "
+      ],
+      "path": "/messages/a+b/boosts/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "@:;=",
+        "😀"
+      ],
+      "path": "/messages/@:;=/boosts/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/messages/Aa-._~!$&'()*,/boosts/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/messages/ab%E2%80%A8/boosts/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "😀",
+        "1"
+      ],
+      "path": "/messages/%F0%9F%98%80/boosts/1/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "[x]",
+        "22"
+      ],
+      "path": "/messages/%5Bx%5D/boosts/22/edit"
+    },
+    {
+      "name": "edit_message_boost",
+      "args": [
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/messages/a%22b%3Cc%3E/boosts/a%20b/edit"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "1",
+        "é/ü"
+      ],
+      "path": "/messages/1/boosts/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "22",
+        "x?y#z"
+      ],
+      "path": "/messages/22/boosts/x%3Fy%23z"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "a b",
+        "1-abc"
+      ],
+      "path": "/messages/a%20b/boosts/1-abc"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "é/ü",
+        "%41"
+      ],
+      "path": "/messages/%C3%A9%2F%C3%BC/boosts/%2541"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "x?y#z",
+        "a+b"
+      ],
+      "path": "/messages/x%3Fy%23z/boosts/a+b"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "1-abc",
+        "@:;="
+      ],
+      "path": "/messages/1-abc/boosts/@:;="
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "%41",
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/messages/%2541/boosts/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "a+b",
+        "ab "
+      ],
+      "path": "/messages/a+b/boosts/ab%E2%80%A8"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "@:;=",
+        "😀"
+      ],
+      "path": "/messages/@:;=/boosts/%F0%9F%98%80"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "Aa-._~!$&'()*,",
+        "[x]"
+      ],
+      "path": "/messages/Aa-._~!$&'()*,/boosts/%5Bx%5D"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "ab ",
+        "a\"b<c>"
+      ],
+      "path": "/messages/ab%E2%80%A8/boosts/a%22b%3Cc%3E"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "😀",
+        "1"
+      ],
+      "path": "/messages/%F0%9F%98%80/boosts/1"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "[x]",
+        "22"
+      ],
+      "path": "/messages/%5Bx%5D/boosts/22"
+    },
+    {
+      "name": "message_boost",
+      "args": [
+        "a\"b<c>",
+        "a b"
+      ],
+      "path": "/messages/a%22b%3Cc%3E/boosts/a%20b"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "messages",
+      "args": [],
+      "path": "/messages"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "new_message",
+      "args": [],
+      "path": "/messages/new"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "1"
+      ],
+      "path": "/messages/1/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "22"
+      ],
+      "path": "/messages/22/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "a b"
+      ],
+      "path": "/messages/a%20b/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/messages/%C3%A9%2F%C3%BC/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/messages/x%3Fy%23z/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/messages/1-abc/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "%41"
+      ],
+      "path": "/messages/%2541/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "a+b"
+      ],
+      "path": "/messages/a+b/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "@:;="
+      ],
+      "path": "/messages/@:;=/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/messages/Aa-._~!$&'()*,/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "ab "
+      ],
+      "path": "/messages/ab%E2%80%A8/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "😀"
+      ],
+      "path": "/messages/%F0%9F%98%80/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "[x]"
+      ],
+      "path": "/messages/%5Bx%5D/edit"
+    },
+    {
+      "name": "edit_message",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/messages/a%22b%3Cc%3E/edit"
+    },
+    {
+      "name": "message",
+      "args": [
+        "1"
+      ],
+      "path": "/messages/1"
+    },
+    {
+      "name": "message",
+      "args": [
+        "22"
+      ],
+      "path": "/messages/22"
+    },
+    {
+      "name": "message",
+      "args": [
+        "a b"
+      ],
+      "path": "/messages/a%20b"
+    },
+    {
+      "name": "message",
+      "args": [
+        "é/ü"
+      ],
+      "path": "/messages/%C3%A9%2F%C3%BC"
+    },
+    {
+      "name": "message",
+      "args": [
+        "x?y#z"
+      ],
+      "path": "/messages/x%3Fy%23z"
+    },
+    {
+      "name": "message",
+      "args": [
+        "1-abc"
+      ],
+      "path": "/messages/1-abc"
+    },
+    {
+      "name": "message",
+      "args": [
+        "%41"
+      ],
+      "path": "/messages/%2541"
+    },
+    {
+      "name": "message",
+      "args": [
+        "a+b"
+      ],
+      "path": "/messages/a+b"
+    },
+    {
+      "name": "message",
+      "args": [
+        "@:;="
+      ],
+      "path": "/messages/@:;="
+    },
+    {
+      "name": "message",
+      "args": [
+        "Aa-._~!$&'()*,"
+      ],
+      "path": "/messages/Aa-._~!$&'()*,"
+    },
+    {
+      "name": "message",
+      "args": [
+        "ab "
+      ],
+      "path": "/messages/ab%E2%80%A8"
+    },
+    {
+      "name": "message",
+      "args": [
+        "😀"
+      ],
+      "path": "/messages/%F0%9F%98%80"
+    },
+    {
+      "name": "message",
+      "args": [
+        "[x]"
+      ],
+      "path": "/messages/%5Bx%5D"
+    },
+    {
+      "name": "message",
+      "args": [
+        "a\"b<c>"
+      ],
+      "path": "/messages/a%22b%3Cc%3E"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "clear_searches",
+      "args": [],
+      "path": "/searches/clear"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "searches",
+      "args": [],
+      "path": "/searches"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "unfurl_link",
+      "args": [],
+      "path": "/unfurl_link"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "webmanifest",
+      "args": [],
+      "path": "/webmanifest"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "service_worker",
+      "args": [],
+      "path": "/service-worker"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    },
+    {
+      "name": "rails_health_check",
+      "args": [],
+      "path": "/up"
+    }
+  ],
+  "logo": [
+    {
+      "v": null,
+      "size": null,
+      "path": "/account/logo"
+    },
+    {
+      "v": "20260101120000",
+      "size": null,
+      "path": "/account/logo?v=20260101120000"
+    },
+    {
+      "v": null,
+      "size": "128x128",
+      "path": "/account/logo?size=128x128"
+    },
+    {
+      "v": "20260101120000",
+      "size": "64",
+      "path": "/account/logo?size=64&v=20260101120000"
+    }
+  ],
+  "avatars": [
+    {
+      "token": "tok-en==",
+      "v": "20260101120000",
+      "path": "/users/tok-en==/avatar?v=20260101120000"
+    },
+    {
+      "token": "a b",
+      "v": "20260101120000",
+      "path": "/users/a%20b/avatar?v=20260101120000"
+    }
+  ],
+  "directs": {
+    "rooms_directs_with_users": "/rooms/directs?user_ids%5B%5D=5&user_ids%5B%5D=6&user_ids%5B%5D=70"
+  }
+}

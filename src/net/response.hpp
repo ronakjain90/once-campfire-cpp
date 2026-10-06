@@ -30,6 +30,9 @@ class Response {
   std::pmr::vector<Header> headers;
   // Send the body with chunked transfer coding (the Rust app does this for gzip bodies).
   bool chunked = false;
+  // The body already has chunk framing (sizes, CRLF, the last chunk). Implies a chunked reply. Use it
+  // to keep the exact chunk boundaries of the Rust port.
+  bool framed = false;
 
   [[nodiscard]] std::pmr::memory_resource* resource() const noexcept { return resource_; }
 

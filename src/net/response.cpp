@@ -138,7 +138,7 @@ Wire::Wire(std::pmr::memory_resource* resource, const Response& response, const 
   } else if (options.keep_alive_header) {
     head_.append_raw("connection: keep-alive\r\n");
   }
-  const bool chunked = response.chunked && !bodiless_status;
+  const bool chunked = (response.chunked || response.framed) && !bodiless_status;
   if (chunked) {
     head_.append_raw("transfer-encoding: chunked\r\n");
   } else if (!bodiless_status && !response.has("content-length")) {
@@ -148,7 +148,7 @@ Wire::Wire(std::pmr::memory_resource* resource, const Response& response, const 
     head_.append_raw("\r\n");
   }
   head_.append_raw("\r\n");
-  if (chunked && send_body_) {
+  if (chunked && send_body_ && !response.framed) {
     if (body_size_ != 0) {
       char hex[24];
       char* end = hex + sizeof hex;

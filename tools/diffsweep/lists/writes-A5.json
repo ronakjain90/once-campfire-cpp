@@ -1,0 +1,7 @@
+{
+ "area": "A5",
+ "source": "writes",
+ "scenarios": [
+  {"name": "search", "seed": "default", "mutates": true, "steps": [{"op": "login", "actor": "david"}, {"name": "form", "actor": "david", "method": "GET", "path": "/searches"}, {"name": "search", "actor": "david", "method": "POST", "path": "/searches", "form": {"q": "pizza"}}, {"name": "results", "actor": "david", "method": "GET", "path": "/searches?q=pizza"}, {"name": "results many", "actor": "david", "method": "GET", "path": "/searches?q=wifi"}, {"name": "no results", "actor": "david", "method": "GET", "path": "/searches?q=zzzznothing"}, {"name": "symbols", "actor": "david", "method": "GET", "path": "/searches?q=a%26b%22c"}, {"name": "clear", "actor": "david", "method": "DELETE", "path": "/searches/clear"}, {"name": "after clear", "actor": "david", "method": "GET", "path": "/searches"}]}
+ ]
+}

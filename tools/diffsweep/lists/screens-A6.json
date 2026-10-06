@@ -1,0 +1,7 @@
+{
+ "area": "A6",
+ "source": "screens",
+ "scenarios": [
+  {"name": "screens default anon", "seed": "default", "steps": [{"path": "/404.html", "name": "errors/404/static"}, {"path": "/422.html", "name": "errors/422/static"}, {"path": "/500.html", "name": "errors/500/static"}, {"path": "/502.html", "name": "errors/502/static"}, {"path": "/webmanifest.json", "name": "pwa/manifest", "revisit": true}, {"path": "/service-worker.js", "name": "pwa/service_worker", "revisit": true}]}
+ ]
+}

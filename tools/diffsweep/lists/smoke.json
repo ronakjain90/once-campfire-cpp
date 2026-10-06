@@ -1,0 +1,4 @@
+{"area":"A6","seed":"default","scenarios":[{"name":"smoke","steps":[
+ {"path":"/up"},{"path":"/session/new"},
+ {"op":"login","actor":"david"},
+ {"actor":"david","path":"/rooms/{{rooms.watercooler}}"}]}]}

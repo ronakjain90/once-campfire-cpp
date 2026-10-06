@@ -1,0 +1,7 @@
+{
+ "area": "A9",
+ "source": "writes",
+ "scenarios": [
+  {"name": "webhook and push on message", "seed": "default", "mutates": true, "steps": [{"op": "login", "actor": "kevin"}, {"name": "post message 'ping the bot'", "actor": "kevin", "method": "POST", "path": "/rooms/{{rooms.bender_and_kevin}}/messages", "headers": {"Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"}, "multipart": {"fields": {"message[body]": "<p>ping the bot</p>", "message[client_message_id]": "cm-pingthe"}}}, {"name": "post message 'push me'", "actor": "kevin", "method": "POST", "path": "/rooms/{{rooms.designers}}/messages", "headers": {"Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"}, "multipart": {"fields": {"message[body]": "<p>push me</p>", "message[client_message_id]": "cm-pushme"}}}, {"name": "room", "actor": "kevin", "method": "GET", "path": "/rooms/{{rooms.bender_and_kevin}}"}, {"name": "unreads", "actor": "kevin", "method": "GET", "path": "/users/me/sidebar", "headers": {"Turbo-Frame": "user_sidebar"}}, {"op": "login", "actor": "david"}, {"name": "test push", "actor": "david", "method": "POST", "path": "/users/me/push_subscriptions/{{push_subscriptions.david_chrome}}/test_notifications"}, {"name": "banned content removal: ban", "actor": "david", "method": "POST", "path": "/users/{{users.rita}}/ban"}, {"name": "room after ban", "actor": "david", "method": "GET", "path": "/rooms/{{rooms.designers}}"}]}
+ ]
+}

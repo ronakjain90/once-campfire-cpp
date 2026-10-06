@@ -1,0 +1,9 @@
+{
+ "area": "A3",
+ "source": "screens",
+ "scenarios": [
+  {"name": "screens default anon", "seed": "default", "steps": [{"path": "/rooms/{{rooms.watercooler}}/{{bot_keys.bender}}/messages", "name": "bot_api/messages/index", "revisit": true}, {"path": "/rooms/{{rooms.watercooler}}/{{bot_keys.bender}}/messages?before={{messages.busy_060}}", "name": "bot_api/messages/index/before", "revisit": true}]},
+  {"name": "screens default david", "seed": "default", "steps": [{"op": "login", "actor": "david"}, {"path": "/rooms/{{rooms.watercooler}}/messages?before={{messages.busy_060}}", "name": "messages/index/fragment", "actor": "david", "revisit": true}, {"path": "/rooms/{{rooms.designers}}/messages/{{messages.plain}}", "name": "messages/show/fragment", "actor": "david", "revisit": true}, {"path": "/autocompletable/users?room_id={{rooms.designers}}&filter=a", "name": "autocompletable/users/fragment", "actor": "david", "revisit": true}, {"path": "/autocompletable/users.json?query=j", "name": "autocompletable/users/json", "actor": "david", "revisit": true}]},
+  {"name": "screens default anon requests", "seed": "default", "steps": [{"path": "/rooms/{{rooms.watercooler}}/{{bot_keys.bender}}/messages/{{messages.bot_in_watercooler}}", "name": "bot_api/messages/update", "method": "PUT", "body": "{\"message\":{\"body\":\"Build 1043 passed (edited)\"}}", "csrf": false, "headers": {"Content-Type": "application/json"}}, {"path": "/rooms/{{rooms.watercooler}}/{{bot_keys.bender}}/messages/{{messages.thirteenth}}/boosts", "name": "bot_api/boosts/create", "method": "POST", "body": "\ud83e\udd16", "csrf": false, "headers": {"Content-Type": "text/plain"}}], "mutates": true}
+ ]
+}

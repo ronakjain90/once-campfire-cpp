@@ -1,0 +1,9 @@
+{
+ "area": "A1",
+ "source": "screens",
+ "scenarios": [
+  {"name": "screens default anon", "seed": "default", "steps": [{"path": "/session/new", "name": "auth/sign_in"}, {"path": "/session/new", "name": "auth/sign_in/banned_ip", "headers": {"X-Forwarded-For": "{{ips.banned}}"}}, {"path": "/join/{{join_codes.signal}}", "name": "auth/join"}, {"path": "/join/not-a-code", "name": "auth/join/invalid_code"}, {"path": "/session/transfers/{{transfers.david}}", "name": "auth/transfer/valid"}, {"path": "/session/transfers/{{transfers.david_expired}}", "name": "auth/transfer/expired"}, {"path": "/session/new", "name": "auth/incompatible_browser", "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36"}, {"path": "/session/new", "name": "auth/incompatible_browser/apple_messages", "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/601.2.4 (KHTML, like Gecko) Version/9.0.1 Safari/601.2.4 facebookexternalhit/1.1 Facebot Twitterbot/1.0"}]},
+  {"name": "screens default loner", "seed": "default", "steps": [{"op": "login", "actor": "loner"}, {"path": "/", "name": "welcome/no_rooms", "actor": "loner"}]},
+  {"name": "screens first_run anon", "seed": "first_run", "steps": [{"path": "/first_run", "name": "auth/first_run"}]}
+ ]
+}

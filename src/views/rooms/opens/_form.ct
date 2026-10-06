@@ -1,0 +1,31 @@
+{# reference/app/views/rooms/opens/_form.html.erb #}
+{% include views/rooms/helpers.hpp %}
+{% params const ViewContext& ctx, const OpenFormView& form, std::string_view type_change_path %}
+{% wrap room_form(ctx, form.room, form.can_administer, RoomKind::Open) %}{% wrap user_filter_menu_tag() %}
+    <li class="flex align-center gap margin-none">
+      <figure class="avatar flex-item-no-shrink" style="--avatar-border-radius: 0; --avatar-size: 4ch;">
+        <img aria-hidden="true" class="colorize--black" style="background-color: transparent" src="{{ ctx.asset("everyone.svg") }}" />
+        <span class="for-screen-reader">Everyone</span>
+      </figure>
+
+      <div class="min-width">
+        <div class="overflow-ellipsis fill-shade"><strong>Everyone</strong></div>
+      </div>
+
+      <hr class="separator" aria-hidden="true">{% if form.can_administer %}
+        <a class="btn--faux flex-inline" tabindex="-1" data-turbo-action="replace" href="{{ type_change_path }}">
+          <label for="room_type" class="switch">
+            <input type="checkbox" id="room_type" class="switch__input" checked="checked">
+            <span class="switch__btn round"></span>
+            <span class="for-screen-reader">Give only some access to this room</span>
+          </label>
+</a>{% end %}
+    </li>
+
+    <hr class="separator full-width" style="--border-style: solid">{% if form.users.size() > 20 %}
+    {% call user_filter_search_tag() %}{% end %}
+
+    <div data-filter-target="list" contents>{% for user : form.users %}
+      {% render rooms/opens/user(ctx, form, user) %}{% end %}
+    </div>
+{% end %}{% end %}

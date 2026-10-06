@@ -3,6 +3,9 @@
 
 #include <cctype>
 
+#include "routes/routes.hpp"
+#include "views/helpers/links.hpp"
+
 namespace campfire::views::helpers {
 
 namespace {
@@ -57,6 +60,25 @@ std::string initials(std::string_view name) {
     previous_word = is_word_byte(c);
   }
   return out;
+}
+
+void avatar_tag(Out& out, const ViewContext& ctx, std::int64_t user_id, std::string_view title,
+                std::string_view avatar_path, Attrs options) {
+  link_to(out, campfire::routes::user(user_id), attrs().title(title).cls("btn avatar").data("turbo_frame", "_top"),
+          [&](Out& o) { image_tag(o, ctx, avatar_path, attrs().aria_hidden().size(48).merge(std::move(options))); });
+}
+
+void user_filter_search_tag(Out& out) {
+  builder_tag(out, "input",
+              attrs()
+                  .type("search")
+                  .id("search")
+                  .attr("autocorrect", "off")
+                  .autocomplete("off")
+                  .attr("data-1p-ignore", "true")
+                  .cls("input input--transparent full-width")
+                  .placeholder("Filter…")
+                  .data("action", "input->filter#filter"));
 }
 
 Attrs sidebar_turbo_frame_options(std::optional<std::string_view> src) {

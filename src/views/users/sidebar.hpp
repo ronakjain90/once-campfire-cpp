@@ -15,6 +15,8 @@ namespace campfire::views {
 struct UserSummary {
   std::int64_t id = 0;
   std::string name;
+  // `User#title`: the name and the bio joined by " – ".
+  std::string title;
   // `fresh_user_avatar_path(user)`.
   std::string avatar_path;
 

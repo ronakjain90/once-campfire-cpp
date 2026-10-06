@@ -2,11 +2,14 @@
 // ActiveSupport String and Array). Rust: crates/views/src/helpers/users.rs, helpers/application.rs.
 #pragma once
 
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
 
+#include "views/context.hpp"
+#include "views/helpers/assets.hpp"
 #include "views/helpers/tag.hpp"
 #include "views/helpers/turbo.hpp"
 
@@ -20,6 +23,22 @@ namespace campfire::views::helpers {
 [[nodiscard]] std::string first_character(std::string_view text);
 // `User#initials`: the first letter or digit of each word.
 [[nodiscard]] std::string initials(std::string_view name);
+
+// `avatar_tag(user, **options)`: the image in a link to the user. The options go to the image.
+void avatar_tag(Out& out, const ViewContext& ctx, std::int64_t user_id, std::string_view title,
+                std::string_view avatar_path, Attrs options = {});
+// `user_filter_menu_tag { content }`.
+template <BodyFn Body>
+void user_filter_menu_tag(Out& out, Body&& body) {
+  const Attrs options = attrs()
+                            .cls("flex flex-column gap margin-none pad overflow-y constrain-height")
+                            .data("controller", "filter")
+                            .data("filter_active_class", "filter--active")
+                            .data("filter_selected_class", "selected");
+  content_tag(out, "menu", options, std::forward<Body>(body));
+}
+// `user_filter_search_tag`.
+void user_filter_search_tag(Out& out);
 
 // The attributes of `sidebar_turbo_frame_tag(src:)`: the data attributes, then `id`, `src` and `target`.
 [[nodiscard]] Attrs sidebar_turbo_frame_options(std::optional<std::string_view> src);

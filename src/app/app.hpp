@@ -5,6 +5,7 @@
 
 #include <atomic>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -62,6 +63,9 @@ struct App {
   // The Action Cable hub that broadcasts go to. Set once at boot by the cable setup, before the workers start. With
   // no hub a broadcast does nothing.
   std::atomic<cable::Hub*> hub{nullptr};
+  // `ActionCable.server.broadcast(stream, html)` for the Turbo Stream broadcasts of the controllers. The cable
+  // (A7) sets it. Without it a broadcast goes nowhere.
+  std::function<void(std::string_view stream, std::string_view html)> turbo_broadcast;
 
   App(Config c, SharedClock k, std::size_t job_threads, PageCache::Options page_options);
   App(const App&) = delete;

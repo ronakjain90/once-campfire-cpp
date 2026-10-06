@@ -6,7 +6,9 @@ campfire_library(models
     ban.cpp
     boost.cpp
     first_run.cpp
+    membership.cpp
     message.cpp
+    room.cpp
     room_ref.cpp
     session.cpp
     sound.cpp

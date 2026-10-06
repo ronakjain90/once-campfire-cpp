@@ -21,6 +21,8 @@ campfire::Task<net::Response> not_found(net::Ctx& ctx) {
   const net::Request& request = ctx.request();
   net::Response response = ctx.response(404);
   const bool head = request.method == net::Method::Head;
+  // The "content-length: 0" of a HEAD answer keeps Rack::Deflater from touching it.
+  if (!head && refuses_every_encoding(request)) co_return not_acceptable(ctx);
   if (wants_json(request)) {
     constexpr std::string_view kBody = R"({"status":404,"error":"Not Found"})";
     response.add("content-type", "application/json; charset=UTF-8");
@@ -40,6 +42,7 @@ campfire::Task<net::Response> not_found(net::Ctx& ctx) {
     response.body_view(data::f_404_html);
   }
   add_rails_tail(ctx, response);
+  add_hsts(request, response);
   // Rack::Deflater adds Vary to a body that it may compress (not to the empty body of HEAD).
   if (!head) response.add("vary", "Accept-Encoding");
   co_return response;

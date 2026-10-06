@@ -1,9 +1,11 @@
-// The broadcasts of the message area. Rails: Turbo::Streams::Broadcasts (broadcast_*_to), app/models/message/
+// The Turbo Stream broadcasts of the room area (A2) and of the message area (A3). Rails: Turbo::Streams::Broadcasts (broadcast_*_to), app/models/message/
 // broadcasts.rb, app/controllers/messages/boosts_controller.rb. Rust: crates/campfire/src/channels/broadcasts.rs and
 // crates/cable/src/turbo.rs. The frame bytes are the bytes of the Rust port.
 //
-// Each function renders nothing: the caller gives the HTML. A broadcast goes to the hub of the app. With no hub it does
-// nothing.
+// Rails of the room area: `broadcast_*_to` of the room controllers. Rust: crates/campfire/src/channels/broadcasts.rs.
+//
+// Each function renders nothing: the caller gives the HTML. A broadcast goes to the hub of the app. With no hub, it
+// goes to the `turbo_broadcast` function of the app (a frame as a string). With neither, it does nothing.
 #pragma once
 
 #include <cstdint>
@@ -13,6 +15,7 @@
 #include <string_view>
 
 #include "app/app.hpp"
+#include "models/room.hpp"
 #include "models/room_ref.hpp"
 
 namespace campfire::app::broadcasts {
@@ -36,6 +39,12 @@ struct Attribute {
 
 // `dom_id(room, prefix)` for the STI class of the room.
 [[nodiscard]] std::string room_dom_id(const models::RoomRef& room, std::string_view prefix);
+[[nodiscard]] std::string room_dom_id(const models::Room& room, std::string_view prefix);
+
+// The stream name of the streamables: the parts joined with ":", blank ones dropped.
+[[nodiscard]] std::string stream_name(std::span<const std::string_view> streamables);
+// `[ user, :rooms ]` as the streamables of a user: the GlobalID param and "rooms".
+[[nodiscard]] std::string user_rooms_stream(std::int64_t user_id);
 
 // `broadcast_stream_to`: sends the tag on the stream of the room messages.
 std::size_t to_room_messages(const App& app, const models::RoomRef& room, std::string_view tag);
@@ -54,5 +63,24 @@ void boost_append(const App& app, const models::RoomRef& room, std::string_view 
                   std::string_view boost_html);
 // `@boost.broadcast_remove_to room, :messages`: the target is `dom_id(boost)`.
 void boost_remove(const App& app, const models::RoomRef& room, std::int64_t boost_id);
+
+
+// The room controllers.
+// `broadcast_remove_to :rooms, target: [ @room, :list ]` (RoomsController#destroy).
+void room_remove(const App& app, const models::Room& room);
+// `broadcast_prepend_to :rooms, target: :shared_rooms` (Rooms::OpensController#create).
+void open_room_create(const App& app, std::string_view shared_html);
+// `broadcast_replace_to :rooms, target: [ @room, :list ]` (Rooms::OpensController#update).
+void open_room_update(const App& app, const models::Room& room, std::string_view shared_html);
+// `broadcast_prepend_to user, :rooms, target: :shared_rooms` for each member (Rooms::ClosedsController#create).
+void closed_room_create(const App& app, std::span<const std::int64_t> member_ids, std::string_view shared_html);
+// `broadcast_replace_to user, :rooms, target: [ @room, :list ]` for each member (Rooms::ClosedsController#update).
+void closed_room_update(const App& app, const models::Room& room, std::span<const std::int64_t> member_ids,
+                        std::string_view shared_html);
+// `membership.broadcast_prepend_to membership.user, :rooms, target: :direct_rooms` (Rooms::DirectsController#create).
+void direct_room_create(const App& app, std::int64_t user_id, std::string_view direct_html);
+// `broadcast_visibility_changes` of Rooms::InvolvementsController, for a shared room.
+void involvement_remove(const App& app, const models::Room& room, std::int64_t user_id);
+void involvement_prepend(const App& app, std::int64_t user_id, std::string_view shared_html);
 
 }  // namespace campfire::app::broadcasts

@@ -4,10 +4,12 @@
 #include <stdexcept>
 
 #include "app/platform.hpp"
+#include "app/controllers/rooms.hpp"
 #include "assets/assets.hpp"
 #include "compat/signed_id.hpp"
 #include "core/time_format.hpp"
 #include "models/account.hpp"
+#include "models/room.hpp"
 #include "routes/routes.hpp"
 #include "views/templates.gen.hpp"
 
@@ -21,6 +23,11 @@ std::string to_fs_number(const std::string& db_text) {
 }
 
 }  // namespace
+
+std::string user_avatar_path(const Rq& rq, const models::User& user) {
+  const std::string token = compat::signed_id::generate(rq.app.secrets, "User", user.id, "avatar", std::nullopt);
+  return campfire::routes::fresh_user_avatar(token, to_fs_number(user.updated_at));
+}
 
 Flow<LayoutData> load_layout(Rq& rq) {
   LayoutData data;
@@ -41,9 +48,23 @@ Flow<LayoutData> load_layout(Rq& rq) {
     current.name = user->name;
     current.administrator = user->can_administer();
     current.bot = user->is_bot();
-    const std::string token = compat::signed_id::generate(rq.app.secrets, "User", user->id, "avatar", std::nullopt);
-    current.avatar_url = campfire::routes::fresh_user_avatar(token, to_fs_number(user->updated_at));
+    current.avatar_url = user_avatar_path(rq, *user);
     data.current_user = std::move(current);
+    // `last_room_visited`: `Current.user.rooms.find_by(id: cookies[:last_room]) || Current.user.rooms.original`
+    std::optional<models::Room> visited;
+    if (const auto cookie = rq.cookies().get("last_room")) {
+      if (const auto id = controllers::cast_id(*cookie)) {
+        auto found = models::rooms::find_for_user(rq.db(), rq.arena(), user->id, models::RoomScope::All, *id);
+        if (!found) return fail_internal(found.error().message);
+        visited = std::move(*found);
+      }
+    }
+    if (!visited) {
+      auto original = models::rooms::original_of_user(rq.db(), rq.arena(), user->id);
+      if (!original) return fail_internal(original.error().message);
+      visited = std::move(*original);
+    }
+    if (visited) data.last_room_visited_id = visited->id;
   }
   return data;
 }
@@ -80,6 +101,21 @@ void render_in_layout(Rq& rq, const LayoutData& data, const views::LayoutParts& 
   }
   const views::ViewContext ctx = make_view_context(rq, data);
   views::layouts::application(out, ctx, parts);
+}
+
+void add_page_facets(Rq& rq, db::DependencyScope& deps, std::string_view page) {
+  deps.facet("page", page);
+  deps.facet("base_url", rq.info.base_url());
+  deps.facet("frame", static_cast<std::uint64_t>(rq.is_turbo_frame_request()));
+  if (const models::User* user = rq.current_user()) {
+    deps.facet("user", static_cast<std::uint64_t>(user->id));
+    deps.facet("user_updated_at", user->updated_at);
+    deps.facet("user_role", static_cast<std::uint64_t>(user->role));
+  }
+  const auto notice = rq.flash().notice();
+  const auto alert = rq.flash().alert();
+  deps.facet("notice", notice.value_or(""));
+  deps.facet("alert", alert.value_or(""));
 }
 
 net::Response layout_response(Rq& rq, int status, Out&& body) {

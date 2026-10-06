@@ -8,6 +8,7 @@
 #include <memory_resource>
 #include <optional>
 #include <span>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -33,6 +34,9 @@ class Response {
   // The body already has chunk framing (sizes, CRLF, the last chunk). Implies a chunked reply. Use it
   // to keep the exact chunk boundaries of the Rust port.
   bool framed = false;
+  // The length of the body is not known and not sent (a HEAD response to a request whose body is
+  // compressed on the fly: hyper writes neither "content-length" nor "transfer-encoding").
+  bool unsized = false;
 
   [[nodiscard]] std::pmr::memory_resource* resource() const noexcept { return resource_; }
 
@@ -54,6 +58,13 @@ class Response {
   [[nodiscard]] bool has_body() const noexcept { return body_size() != 0; }
   // Appends the body iovecs, from byte `skip` on. Returns the number written.
   std::size_t body_iovecs(std::span<iovec> out, std::size_t skip) const noexcept;
+  // The body as one view, or nothing if the body is a chain of buffers (A8: the front cache reads it).
+  [[nodiscard]] std::optional<std::string_view> body_contiguous() const noexcept {
+    if (out_) return std::nullopt;
+    return view_;
+  }
+  // Appends the whole body to `out`.
+  void body_append_to(std::string& out) const;
 
  private:
   friend class Wire;
@@ -68,8 +79,8 @@ class Response {
 [[nodiscard]] std::string_view reason_phrase(int status) noexcept;
 
 struct WireOptions {
-  bool head_only = false;  // answer to HEAD: send the headers and no body
-  bool close = false;      // add "connection: close"
+  bool head_only = false;          // answer to HEAD: send the headers and no body
+  bool close = false;              // add "connection: close"
   bool keep_alive_header = false;  // HTTP/1.0 keep-alive: add "connection: keep-alive"
   int http_minor = 1;              // the status line has the version of the request, as hyper does
 };

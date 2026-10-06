@@ -11,6 +11,7 @@
 
 #include "core/log.hpp"
 #include "net/front.hpp"
+#include "net/front/static_files.hpp"
 #include "net/worker.hpp"
 
 namespace campfire::net {
@@ -36,6 +37,8 @@ void Worker::pump(Conn& c) {
   while (!c.closed) {
     bool progress = false;
     switch (c.state) {
+      case ConnState::Handshake: progress = step_handshake(c); break;
+      case ConnState::Http2: progress = h2_step(c); break;
       case ConnState::Head: progress = step_head(c); break;
       case ConnState::Body: progress = step_body(c); break;
       case ConnState::Handling:
@@ -58,35 +61,44 @@ void Worker::begin_wait(Conn& c) {
   // Over HTTP/1, the header timer of hyper runs while the connection waits: the shorter of the
   // idle timeout and the read timeout (Rust README, "Front server").
   std::int64_t period = options_.idle_timeout_ms;
-  if (options_.read_timeout_ms > 0 && (period <= 0 || options_.read_timeout_ms < period)) period = options_.read_timeout_ms;
+  if (options_.read_timeout_ms > 0 && (period <= 0 || options_.read_timeout_ms < period))
+    period = options_.read_timeout_ms;
   arm(c, period, now_ms_, kTimerHead);
 }
 
 bool Worker::fill(Conn& c) {
   c.rbuf.reserve(c.rbuf.size() + kReadStep);
   const std::size_t room = c.rbuf.room();
-  while (true) {
-    const ssize_t n = ::read(c.fd, c.rbuf.tail(), room);
-    if (n > 0) {
-      c.rbuf.commit(static_cast<std::size_t>(n));
-      if (static_cast<std::size_t>(n) < room) c.readable = false;
+  std::size_t got = 0;
+  const Io result = io_read(c, c.rbuf.tail(), room, got);
+  if (result != Io::Ok) {
+    if (got != 0) {
+      c.rbuf.commit(got);
       return true;
     }
-    if (n == 0) {
-      close_conn(c);
-      return false;
-    }
-    if (errno == EINTR) continue;
-    if (errno == EAGAIN || errno == EWOULDBLOCK) {
-      c.readable = false;
+    if (result == Io::WouldBlock) {
+      c.readable = false;  // the socket has no more bytes: wait for the next event
       return false;
     }
     close_conn(c);
     return false;
   }
+  c.rbuf.commit(got);
+  if (got < room && !c.ssl) c.readable = false;  // TLS: a record is not all the bytes
+  return true;
 }
 
 bool Worker::step_head(Conn& c) {
+  if (c.h2c) {
+    // `Protocol::Auto`: the first bytes decide between HTTP/1.1 and HTTP/2 (the preface).
+    const std::size_t compared = std::min(c.rbuf.size(), kH2Preface.size());
+    if (std::string_view(c.rbuf.data(), compared) == kH2Preface.substr(0, compared)) {
+      if (c.rbuf.size() < kH2Preface.size()) return c.readable && fill(c);
+      h2_start(c);
+      return true;
+    }
+    c.h2c = false;
+  }
   if (c.rbuf.empty()) {
     if (!c.readable || !fill(c)) return false;
   }
@@ -95,12 +107,8 @@ bool Worker::step_head(Conn& c) {
   const HeadResult result =
       parse_head(std::string_view(c.rbuf.data(), c.rbuf.size()), c.scanned, *c.arena, options_.parser, c.head);
   switch (result.status) {
-    case HeadStatus::NeedMore:
-      c.scanned = c.rbuf.size();
-      return c.readable && fill(c);
-    case HeadStatus::Error:
-      reply_error(c, result.error_status);
-      return true;
+    case HeadStatus::NeedMore: c.scanned = c.rbuf.size(); return c.readable && fill(c);
+    case HeadStatus::Error: reply_error(c, result.error_status); return true;
     case HeadStatus::Ok: break;
   }
   c.request_start_ms = now_ms_;
@@ -165,7 +173,7 @@ bool Worker::step_body(Conn& c) {
 void Worker::send_continue(Conn& c) {
   c.continue_sent = true;
   static constexpr std::string_view kText = "HTTP/1.1 100 Continue\r\n\r\n";
-  [[maybe_unused]] const ssize_t n = ::send(c.fd, kText.data(), kText.size(), MSG_NOSIGNAL);
+  send_text(c, kText);
 }
 
 Task<void> Worker::serve(Conn& c) {
@@ -213,6 +221,33 @@ void Worker::dispatch(Conn& c) {
   }
   c.state = ConnState::Handling;
   arm(c, options_.write_timeout_ms, c.request_start_ms, kTimerWrite);
+  if (c.redirect_mode) {
+    // With TLS on, the HTTP port runs `httpRedirectHandler`, not the front pipeline
+    // (Rust: front.rs `serve_plain(http, redirect, ...)`).
+    Response response = front::http_port_response(options_.tls->certs(), request, c.arena->resource());
+    c.close_after = true;
+    if (!response.has("date")) {
+      char buffer[32];
+      response.add_copy("date", http_date_now(buffer));
+    }
+    c.response.emplace(std::move(response));
+    return;
+  }
+  if (c.via_front && options_.front) {
+    options_.front->begin(c.front_state, request);
+    if (c.front_state.status == front::CacheStatus::Hit) {
+      c.response.emplace(options_.front->hit_response(c.front_state, request, c.arena->resource()));
+      return;
+    }
+    options_.front->proxied(request, *c.arena, c.tls);
+  }
+  if (options_.serve_static) {
+    if (std::optional<Response> served = front::serve_static(*c.ctx)) {
+      if (options_.after_static) options_.after_static(*c.ctx, *served);
+      c.response.emplace(std::move(*served));
+      return;
+    }
+  }
   c.handler_active = true;
   c.in_start = true;
   c.task = serve(c);
@@ -223,8 +258,8 @@ void Worker::dispatch(Conn& c) {
 void Worker::begin_write(Conn& c) {
   Response& response = *c.response;
   const Request& request = c.head.request;
-  if (c.via_front && options_.front_headers) {
-    apply_front_headers(request, response);
+  if (c.via_front && options_.front) {
+    options_.front->finish(c.front_state, request, response);
   } else {
     suppress_bodiless_headers(response);
   }
@@ -244,23 +279,44 @@ bool Worker::step_write(Conn& c) {
     if (!c.writable) return false;
     iovec iov[kMaxIov];
     const std::size_t count = wire.fill_iovecs(iov, c.written);
-    msghdr message{};
-    message.msg_iov = iov;
-    message.msg_iovlen = count;
     std::size_t offered = 0;
     for (std::size_t i = 0; i < count; ++i) offered += iov[i].iov_len;
-    const ssize_t n = ::sendmsg(c.fd, &message, MSG_NOSIGNAL);
-    if (n < 0) {
-      if (errno == EINTR) continue;
-      if (errno == EAGAIN || errno == EWOULDBLOCK) {
+    // Plain sockets take the iovecs in one call. TLS has no scatter write: OpenSSL 3.5 has
+    // SSL_write_ex, but one SSL_write per iovec is simpler and the response has few of them.
+    std::size_t wrote = 0;
+    Io result = Io::Closed;
+    if (c.ssl) {
+      std::size_t at = 0;
+      for (std::size_t i = 0; i < count; ++i) {
+        result = io_write(c, static_cast<const char*>(iov[i].iov_base), iov[i].iov_len, wrote);
+        at += wrote;
+        if (result != Io::Ok || wrote < iov[i].iov_len) break;
+      }
+      wrote = at;
+    } else {
+      msghdr message{};
+      message.msg_iov = iov;
+      message.msg_iovlen = count;
+      const ssize_t n = ::sendmsg(c.fd, &message, MSG_NOSIGNAL);
+      if (n >= 0) {
+        wrote = static_cast<std::size_t>(n);
+        result = Io::Ok;
+      } else if (errno == EINTR) {
+        continue;
+      } else if (errno == EAGAIN || errno == EWOULDBLOCK) {
         c.writable = false;
         return false;
       }
-      close_conn(c);
-      return false;
     }
-    c.written += static_cast<std::size_t>(n);
-    if (static_cast<std::size_t>(n) < offered) c.writable = false;
+    if (result != Io::Ok) {
+      if (wrote == 0) {
+        close_conn(c);
+        return false;
+      }
+      result = Io::Ok;  // a short write: the rest goes on the next event
+    }
+    c.written += wrote;
+    if (wrote < offered) c.writable = false;
   }
   request_done(c);
   return true;
@@ -277,7 +333,7 @@ void Worker::request_done(Conn& c) {
       return;
     }
     // Unread bytes are on the way: a close now could reset the connection and lose the reply.
-    ::shutdown(c.fd, SHUT_WR);
+    shutdown_write(c);
     c.rbuf.release();
     c.state = ConnState::Linger;
     arm(c, static_cast<std::int64_t>(kLingerMs), now_ms_, kTimerLinger);
@@ -317,10 +373,10 @@ void Worker::reply_error(Conn& c, int status) {
     text += "\r\n";
   }
   text += "connection: close\r\ncontent-length: 0\r\n\r\n";
-  [[maybe_unused]] const ssize_t n = ::send(c.fd, text.data(), text.size(), MSG_NOSIGNAL);
+  send_text(c, text);
   release_request(c);
   c.rbuf.release();
-  ::shutdown(c.fd, SHUT_WR);
+  shutdown_write(c);
   c.state = ConnState::Linger;
   arm(c, static_cast<std::int64_t>(kLingerMs), now_ms_, kTimerLinger);
 }
@@ -328,19 +384,12 @@ void Worker::reply_error(Conn& c, int status) {
 bool Worker::step_linger(Conn& c) {
   char scratch[kReadStep];
   while (c.readable) {
-    const ssize_t n = ::read(c.fd, scratch, sizeof scratch);
-    if (n > 0) continue;
-    if (n == 0) {
+    std::size_t got = 0;
+    if (io_read(c, scratch, sizeof scratch, got) != Io::Ok) {
+      if (got != 0) continue;
       close_conn(c);
       return false;
     }
-    if (errno == EINTR) continue;
-    if (errno == EAGAIN || errno == EWOULDBLOCK) {
-      c.readable = false;
-      return false;
-    }
-    close_conn(c);
-    return false;
   }
   return false;
 }
@@ -367,6 +416,21 @@ void Worker::on_timer(TimerNode& node) {
     case kTimerWrite:
     case kTimerLinger:
     default: close_conn(c); break;
+    case kTimerHandshake:
+      // The handshake waits for a certificate that ACME still has to get (Rust bounds the whole
+      // handshake with HTTP_READ_TIMEOUT). Try again, until that timeout is over.
+      if (c.state != ConnState::Handshake ||
+          (options_.read_timeout_ms > 0 &&
+           now_ms_ - c.accepted_ms >= static_cast<std::uint64_t>(options_.read_timeout_ms))) {
+        close_conn(c);
+      } else {
+        pump(c);
+      }
+      break;
+    case kTimerH2:
+      // The HTTP/2 idle timeout: no stream open for that long ends the session.
+      if (c.state == ConnState::Http2) h2_on_timer(c);
+      break;
   }
 }
 
@@ -383,7 +447,9 @@ void Worker::close_conn(Conn& c) {
   discard(c);
 }
 
-void Worker::abort_conn(Conn& c) { close_conn(c); }
+void Worker::abort_conn(Conn& c) {
+  close_conn(c);
+}
 
 void Worker::discard(Conn& c) {
   c.discarded = true;

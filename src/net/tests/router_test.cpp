@@ -29,7 +29,8 @@ TEST_CASE("router matches literals, order and trailing slash") {
   CHECK(find(Method::Get, "/rooms/opens").route->name == "test::rooms_opens");  // before :id
   CHECK_FALSE(find(Method::Delete, "/rooms"));
   CHECK_FALSE(find(Method::Get, "/nope"));
-  CHECK_FALSE(find(Method::Get, "/rooms//messages"));
+  // Journey squeezes repeated slashes: "//rooms//opens" is "/rooms/opens".
+  CHECK(find(Method::Get, "//rooms//opens").route->name == "test::rooms_opens");
   CHECK_FALSE(find(Method::Other, "/"));
   CHECK_FALSE(find(Method::Get, "rooms"));
 }

@@ -63,13 +63,13 @@ its requests in the diff sweep pass.
 |---|---|---|
 | A0 | merged (verified by Opus) | `task/A0` | Written by DeepSeek; layout region fix by Sonnet. Sign-in sweep 36/36 equal to Rust. /up 2.0x Rust at c=16, 3.3x at c=64. |
 | A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
-| A2 | in progress (Claude cloud session, started by the user) | | Local agent stopped. Verify the cloud branch when it is done. |
+| A2 | partly merged (Claude cloud session) | `origin/main` | Sidebar, room forms, direct rooms, involvements. Sweep: 53/150 equal; room page, messages page and refresh are missing (404). Rest is A2b. |
 | A3 | Messages: create, edit, delete, pages, boosts, the bot API, attachments, broadcasts, unread state, mentions, user autocomplete | `controllers/messages*`, `autocompletable` |
 | A4 | Accounts, users, profiles, avatars, bots and keys, join codes, logo, custom styles, push subscriptions, QR codes | `controllers/accounts*`, `users/*`, `qr_code` |
 | A5 | Search | `controllers/searches` |
 | A6 | PWA, the service worker, link unfurl, `/up`, error pages, Active Storage endpoints | `pwa`, `unfurl_links`, Active Storage |
 | A7 | The 7 channels, `Turbo::StreamsChannel`, the room stream authorization patch | `channels/*` |
-| A8 | paused (DeepSeek work, unfinished) | `task/A8` | Last commit 810109b builds and tests pass. Uncommitted HTTP/2 work does not compile. Runtime image lacks `libnghttp2.so.14`. No acceptance check has passed yet. |
+| A8 | merged (verified by Opus) | `task/A8` | DeepSeek + Sonnet. Pebble TLS-ALPN-01 passes. A8 sweep: all 16 differences are /rooms pages (A2). Open: HTTP/2 position of `content-length: 0` on empty bodies; /up Accept and 304 rules (A0 gaps). |
 | A9 | Jobs and integrations: Web Push delivery, webhooks, unfurl fetch, banned content removal | `jobs/*`, `models/*` integrations |
 
 ## Wave 4: parity
@@ -126,7 +126,9 @@ limit fast. To restart a paused task, start a **new** agent with a short prompt:
 agent brief, and "continue from the commits and files in the worktree". Do not resume an agent
 whose transcript is long.
 | A0 | merged (verified by Opus) | `task/A0` | Written by DeepSeek; layout region fix by Sonnet. Sign-in sweep 36/36 equal to Rust. /up 2.0x Rust at c=16, 3.3x at c=64. |
-| A8 | paused (DeepSeek work, unfinished) | `task/A8` | Last commit 810109b builds and tests pass. Uncommitted HTTP/2 work does not compile. Runtime image lacks `libnghttp2.so.14`. No acceptance check has passed yet. |
+| A8 | merged (verified by Opus) | `task/A8` | DeepSeek + Sonnet. Pebble TLS-ALPN-01 passes. A8 sweep: all 16 differences are /rooms pages (A2). Open: HTTP/2 position of `content-length: 0` on empty bodies; /up Accept and 304 rules (A0 gaps). |
 | A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
-| A2 | in progress (Claude cloud session, started by the user) | | Local agent stopped. Verify the cloud branch when it is done. |
+| A2 | partly merged (Claude cloud session) | `origin/main` | Sidebar, room forms, direct rooms, involvements. Sweep: 53/150 equal; room page, messages page and refresh are missing (404). Rest is A2b. |
 | A3 | in progress (Sonnet) | `task/A3` | Message partial is a stub until A2 (cloud) merges. |
+| A4 | in progress (Sonnet) | `task/A4` | |
+| A2b | queued (next free slot) | | Room page, messages page, refresh, message partials. Spec `plans/specs/A2b.md`. |

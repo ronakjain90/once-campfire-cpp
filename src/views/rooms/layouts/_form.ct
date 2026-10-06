@@ -1,0 +1,25 @@
+{# reference/app/views/rooms/layouts/_form.html.erb: the form around the fields of an open or a closed room. #}
+{% include views/rooms/helpers.hpp %}
+{% include views/sessions/helpers.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const FormRoom& room, bool can_administer, RoomKind kind, std::string_view content %}
+<form action="{{ room.action(kind) }}" accept-charset="UTF-8" method="post">{% if room.id %}<input type="hidden" name="_method" value="patch" />{% end %}
+  <div class="flex align-center gap">{% if can_administer %}
+      {% call translation_button(ctx, "room_name") %}
+
+      <label class="flex-item-grow txt-large">
+        <input name="room[name]" id="room_name" class="input full-width" required="required" autofocus="autofocus" placeholder="Name the room" data-turbo-permanent="true" data-action="keydown.enter-&gt;form#submit:prevent" type="text"{% if room.name %} value="{{ *room.name }}"{% end %} />
+        <span class="for-screen-reader">Name this room</span>
+      </label>{% else %}
+      <h1 class="flex-item-grow txt-x-large">
+        {{ room.display_name() }}
+      </h1>{% end %}
+  </div>
+
+  <hr class="margin-block borderless">
+
+  <section class="room-access margin-block pad-inline fill-shade border-radius">
+    {{= SafeHtml::trusted(content) }}
+  </section>{% if can_administer %}
+  <button name="button" type="submit" class="btn btn--reversed txt-large center"><img aria-hidden="true" src="{{ ctx.asset("check.svg") }}" width="20" height="20" /><span class="for-screen-reader">Save</span></button>{% end %}
+</form>

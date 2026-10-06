@@ -6,6 +6,7 @@
 namespace campfire::routes::health {
 
 campfire::Task<net::Response> show(net::Ctx& ctx) {
+  if (app::refuses_every_encoding(ctx.request())) co_return app::not_acceptable(ctx);
   net::Response response = ctx.response(200);
   const bool gzip = ctx.request().method != net::Method::Head && app::wants_gzip(ctx.request());
   response.add("content-type", "text/html; charset=utf-8");
@@ -25,6 +26,7 @@ campfire::Task<net::Response> show(net::Ctx& ctx) {
     response.body_view(app::data::f_up_html);
   }
   app::add_rails_tail(ctx, response);
+  app::add_hsts(ctx.request(), response);
   response.add("vary", "Accept-Encoding");  // Rack::Deflater, after the tail
   co_return response;
 }

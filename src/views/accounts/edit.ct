@@ -52,7 +52,7 @@
         <div class="flex-item-grow flex align-center gap txt-align-start">
           {% call image_tag(ctx, "crown.svg", attrs().cls("colorize--black").aria_hidden().size(18)) %} Must be admin to create new rooms
         </div>
-        {% call settings_fields.hidden_field("restrict_room_creation_to_administrators", std::nullopt, attrs().value(view.restrict_room_creation_to_administrators ? "false" : "true")) %}
+          {% call settings_fields.hidden_field("restrict_room_creation_to_administrators", std::nullopt, attrs().value(view.restrict_room_creation_to_administrators ? "false" : "true")) %}
 
         <label class="switch">
           <input type="checkbox"

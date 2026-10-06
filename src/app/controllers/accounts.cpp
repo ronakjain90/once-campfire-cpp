@@ -52,7 +52,8 @@ Task<Flow<net::Response>> accounts_edit(Rq& rq) {
   if (!page.is_last()) view.next_page = std::to_string(page.next_param());
 
   // `form_with model: @account, method: :patch ...`: four forms, the first two with the logo field.
-  const std::string action = campfire::routes::account();
+  // `form_with model: @account`: the singular route takes the record as its format, `/account.1`.
+  const std::string action = campfire::routes::account() + "." + std::to_string(view.account_id);
   const views::helpers::FormWith logo_form =
       views::helpers::form_with_url(action).model("account").method("patch").cls("txt--medium").data("controller", "form");
   const views::helpers::FormWith image_form =

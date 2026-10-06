@@ -43,15 +43,15 @@ format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
 
 | ID | Task | Depends on |
 |---|---|---|
-| T5 | in progress (Sonnet) | `task/T5` | 7 commits. |
+| T5 | merged (verified by Opus) | `task/T5` | /up and 404 byte-equal to Rust. /up c=16: 189k req/s (Rust 66k, measured by hand). Fuzz coverage of the parser is low (33 edges): fix in H1. |
 | T6 | merged (verified by Opus) | `task/T6` | 2,755 Rails params vectors (same file as the Rust repo), `csrf` and `passwords` groups pass. 4 fuzz targets clean. Invalid bcrypt digest returns false (Rails answers 500). |
 | T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
 | T8 | merged (verified by Opus) | `task/T8` | 1,134 Rails path cases, 81 named routes, 34 Rails helper goldens, 7 layout goldens pass. Follow-up T8b: Erubi trim rules. |
 | T9 | merged (verified by Opus) | `task/T9` | 314/314 digested names equal Rails; 321/321 bodies equal the live Rust app; importmap is a byte-equal substring of the Rust page. Thruster headers (vary, x-cache, compression choice) belong to A8. |
-| T10 | in progress (Sonnet) | `task/T10` | |
+| T10 | merged (verified by Opus) | `task/T10` | 658/658 on all 6 corpus fields. Rules apply to the Rails expected value only. Style text compared in canonical form; the diff sweep checks exact bytes. |
 | T8b | merged (verified by Opus) | `task/T8b` | Erubi trim rule applied by `ctc.py`. Expected files made by Erubi in the Rails container. |
 | T11 | in progress (Sonnet) | `task/T11` | |
-| T12 | queued | `task/T12` | 3 commits. Stopped at the 3-agent limit. |
+| T12 | in progress (Sonnet) | `task/T12` | |
 | T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
 
 ## Wave 3: the app (parallel, after wave 2)
@@ -102,15 +102,15 @@ its requests in the diff sweep pass.
 | T2 | merged (verified by Opus) | `task/T2` | All vector groups pass in release and ASan. `passwords` (bcrypt) and `csrf` groups moved to T6. Needs T1's doctest wiring. |
 | T3 | merged (verified by Opus) | `task/T3` | 316 of 658 corpus cases in scope, all pass. Expected values equal the Rails-made corpus in the Rust repo. Fuzz 5 min clean. |
 | T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |
-| T5 | in progress (Sonnet) | `task/T5` | 7 commits. |
+| T5 | merged (verified by Opus) | `task/T5` | /up and 404 byte-equal to Rust. /up c=16: 189k req/s (Rust 66k, measured by hand). Fuzz coverage of the parser is low (33 edges): fix in H1. |
 | T6 | merged (verified by Opus) | `task/T6` | 2,755 Rails params vectors (same file as the Rust repo), `csrf` and `passwords` groups pass. 4 fuzz targets clean. Invalid bcrypt digest returns false (Rails answers 500). |
 | T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
 | T8 | merged (verified by Opus) | `task/T8` | 1,134 Rails path cases, 81 named routes, 34 Rails helper goldens, 7 layout goldens pass. Follow-up T8b: Erubi trim rules. |
 | T9 | merged (verified by Opus) | `task/T9` | 314/314 digested names equal Rails; 321/321 bodies equal the live Rust app; importmap is a byte-equal substring of the Rust page. Thruster headers (vary, x-cache, compression choice) belong to A8. |
 | T11 | in progress (Sonnet) | `task/T11` | |
-| T12 | queued | `task/T12` | 3 commits. Stopped at the 3-agent limit. |
+| T12 | in progress (Sonnet) | `task/T12` | |
 | T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
-| T10 | in progress (Sonnet) | `task/T10` | |
+| T10 | merged (verified by Opus) | `task/T10` | 658/658 on all 6 corpus fields. Rules apply to the Rails expected value only. Style text compared in canonical form; the diff sweep checks exact bytes. |
 | T8b | merged (verified by Opus) | `task/T8b` | Erubi trim rule applied by `ctc.py`. Expected files made by Erubi in the Rails container. |
 
 ## Parallel limit

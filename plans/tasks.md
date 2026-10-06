@@ -99,14 +99,21 @@ its requests in the diff sweep pass.
 |---|---|---|---|
 | T1 | merged (verified by Opus) | `task/T1` | `test_core` and `test_compat` pass in release, asan and tsan. `bin/dev` needs `seccomp=unconfined` for TSan. |
 | T2 | merged (verified by Opus) | `task/T2` | All vector groups pass in release and ASan. `passwords` (bcrypt) and `csrf` groups moved to T6. Needs T1's doctest wiring. |
-| T3 | in progress (Sonnet) | `task/T3` | |
+| T3 | paused (usage limit, 2026-10-06 02:45) | `task/T3` | 3 commits. Library compiles. Fuzz run was starting. |
 | T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |
-| T5 | in progress (Sonnet) | `task/T5` | |
-| T6 | in progress (Sonnet) | `task/T6` | |
-| T7 | in progress (Sonnet) | `task/T7` | |
-| T8 | in progress (Sonnet) | `task/T8` | |
-| T9 | in progress (Sonnet) | `task/T9` | |
-| T11 | in progress (Sonnet) | `task/T11` | |
-| T12 | in progress (Sonnet) | `task/T12` | |
-| T13 | in progress (Sonnet) | `task/T13` | |
+| T5 | paused (usage limit, 2026-10-06 02:45) | `task/T5` | 3 commits. Response builder in progress. |
+| T6 | paused (usage limit, 2026-10-06 02:45) | `task/T6` | No commits. `param.hpp`/`param.cpp` written, not built. |
+| T7 | paused (usage limit, 2026-10-06 02:45) | `task/T7` | 3 commits. Dependency scope written. Typed statements next. |
+| T8 | paused (usage limit, 2026-10-06 02:45) | `task/T8` | No commits yet. |
+| T9 | paused (usage limit, 2026-10-06 02:45) | `task/T9` | 1 commit. Load path code in progress. |
+| T11 | paused (usage limit, 2026-10-06 02:45) | `task/T11` | 1 commit, uncommitted work. |
+| T12 | paused (usage limit, 2026-10-06 02:45) | `task/T12` | 1 commit. libvips wrapper in progress. |
+| T13 | paused (usage limit, 2026-10-06 02:45) | `task/T13` | 1 commit. Main script and launcher in progress. |
 | T10 | waits for T3 | | |
+
+## Restart rule
+
+A resumed agent sends its whole transcript again on each step. A long transcript uses the usage
+limit fast. To restart a paused task, start a **new** agent with a short prompt: the task row, the
+agent brief, and "continue from the commits and files in the worktree". Do not resume an agent
+whose transcript is long.

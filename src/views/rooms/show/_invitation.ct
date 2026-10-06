@@ -1,0 +1,21 @@
+{# reference/app/views/rooms/show/_invitation.html.erb, shown when the room is the original room and has no second page #}
+{% include views/sessions/helpers.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, std::string_view join_code %}
+  <div id="system_welcome" class="message message--formatted txt-align-center center">
+    <div class="message__body center">
+      <div class="message__body-content position-relative">
+        {% call account_logo_tag(ctx, "center margin-block-end txt-large") %}
+        <div class="flex align-center gap">
+          <div class="system-welcome--translation">
+            {% call translation_button(ctx, "invite_message") %}
+          </div>
+          <p>
+            <strong>Welcome to Campfire</strong><br>
+            To invite people to chat, share the join link below.
+          </p>
+        </div>
+        {% render rooms/show/invite(ctx, ctx.url(routes::join(join_code))) %}
+      </div>
+    </div>
+  </div>

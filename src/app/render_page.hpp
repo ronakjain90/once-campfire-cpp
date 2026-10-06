@@ -35,6 +35,11 @@ struct PageSpec {
 // `status` is the status of the response.
 [[nodiscard]] Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec);
 
+// The same, for a handler that has read its data in the scope `deps` already (`rq.track()` was called before the reads).
+// `layout` is the result of `load_layout`, which ran in the same scope.
+[[nodiscard]] Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec, db::DependencyScope& deps,
+                                              const LayoutData& layout);
+
 // The facets of everything that the layouts print and that is not from tracked SQL: the host, the Turbo-Frame flag,
 // the flash and the current user.
 void add_layout_facets(Rq& rq, db::DependencyScope& deps, const LayoutData& data);

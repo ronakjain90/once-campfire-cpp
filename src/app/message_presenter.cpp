@@ -241,17 +241,22 @@ Result<views::messages::BoostView> MessagePresenter::boost(const models::Boost& 
 }
 
 Result<views::messages::MessageView> MessagePresenter::message(const models::Message& message) {
-  auto room = models::room_refs::find(*conn_, *arena_, message.room_id);
-  if (!room) return std::unexpected(room.error());
-  if (!*room) return fail(Errc::NotFound, "Couldn't find Room with 'id'=" + std::to_string(message.room_id));
-  auto room_name = room_display_name(**room);
-  if (!room_name) return std::unexpected(room_name.error());
+  // The room of a page is the same for each message: read it and its display name once.
+  auto cached_name = room_names_.find(message.room_id);
+  if (cached_name == room_names_.end()) {
+    auto room = models::room_refs::find(*conn_, *arena_, message.room_id);
+    if (!room) return std::unexpected(room.error());
+    if (!*room) return fail(Errc::NotFound, "Couldn't find Room with 'id'=" + std::to_string(message.room_id));
+    auto room_name = room_display_name(**room);
+    if (!room_name) return std::unexpected(room_name.error());
+    cached_name = room_names_.emplace(message.room_id, std::move(*room_name)).first;
+  }
 
   MessageView view;
   view.id = message.id;
   view.client_message_id = message.client_message_id;
   view.room_id = message.room_id;
-  view.room_name = std::move(*room_name);
+  view.room_name = cached_name->second;
   view.created_at = message.created_at;
   view.updated_at = message.updated_at;
 

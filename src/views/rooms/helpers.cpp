@@ -3,6 +3,7 @@
 
 #include <array>
 
+#include "compat/base64.hpp"
 #include "routes/query.hpp"
 #include "routes/routes.hpp"
 #include "views/helpers/assets.hpp"
@@ -66,6 +67,38 @@ std::string lowercase(std::string_view text) {
     if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
   }
   return out;
+}
+
+std::string zoom_qr_path(std::string_view url) {
+  return campfire::routes::qr_code(compat::base64::urlsafe_encode_padded(url));
+}
+
+Attrs zoom_qr_options(std::string_view url) {
+  return attrs()
+      .cls("btn")
+      .data("lightbox_target", "image")
+      .data("action", "lightbox#open")
+      .data("lightbox_url_value", zoom_qr_path(url));
+}
+
+Attrs copy_to_clipboard_options(std::string_view url) {
+  return attrs()
+      .cls("btn")
+      .data("controller", "copy-to-clipboard")
+      .data("action", "copy-to-clipboard#copy")
+      .data("copy_to_clipboard_success_class", "btn--success")
+      .data("copy_to_clipboard_content_value", url);
+}
+
+Attrs web_share_session_options(std::string_view url, std::string_view title, std::string_view text) {
+  return attrs()
+      .cls("btn")
+      .hidden()
+      .data("controller", "web-share")
+      .data("action", "web-share#share")
+      .data("web_share_url_value", url)
+      .data("web_share_text_value", text)
+      .data("web_share_title_value", title);
 }
 
 }  // namespace campfire::views::helpers

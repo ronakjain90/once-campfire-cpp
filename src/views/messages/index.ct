@@ -1,0 +1,7 @@
+{# reference/app/views/messages/index.html.erb: `render partial: "messages/message", collection: @messages, cached: true` #}
+{% include views/messages/types.hpp %}
+{% params const ViewContext& ctx, const std::vector<MessageItem>& messages %}
+{% for item : messages %}
+{{= SafeHtml::literal("\n") -}}
+{% call render_message_item(ctx, item) -%}
+{% end %}

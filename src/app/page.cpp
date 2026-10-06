@@ -125,13 +125,14 @@ net::Response layout_response(Rq& rq, int status, Out&& body) {
   return rq.html(status, std::move(body));
 }
 
-net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps, const std::function<void(Out&)>& render) {
+net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps, const std::function<void(Out&)>& render,
+                          bool preload_link) {
   const auto make_body = [&] {
     Out out(rq.ctx.resource());
     render(out);
     return out;
   };
-  if (!rq.is_turbo_frame_request()) {
+  if (preload_link && !rq.is_turbo_frame_request()) {
     rq.set_header("link", assets::append_preload_links(rq.staged_header("link"), rq.app.stylesheets.preload_links));
   }
   if (!deps.cacheable()) return rq.html(status, make_body());

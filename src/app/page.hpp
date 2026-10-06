@@ -52,7 +52,8 @@ void add_page_facets(Rq& rq, db::DependencyScope& deps, std::string_view page);
 // The page cache path of architecture 6.1. `render` writes the page to `out`. The key is the hash of
 // `deps`. A hit sends the cached entry. On 1 hit in 16 in the sanitizer builds, the page is rendered
 // again and compared (a difference is fatal). A scope marked uncacheable renders each time.
+// `preload_link` adds the `Link` header of `stylesheet_link_tag`: false for a response without a layout.
 [[nodiscard]] net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps,
-                                        const std::function<void(Out&)>& render);
+                                        const std::function<void(Out&)>& render, bool preload_link = true);
 
 }  // namespace campfire::app

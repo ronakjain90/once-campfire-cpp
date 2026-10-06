@@ -49,6 +49,8 @@ namespace rooms {
 [[nodiscard]] Result<std::optional<Room>> find_by_id(db::Connection& conn, Arena& arena, std::int64_t room_id);
 // `Current.user.rooms.last`: the room with the highest id.
 [[nodiscard]] Result<std::optional<Room>> last_of_user(db::Connection& conn, Arena& arena, std::int64_t user_id);
+// `Room.original`: the oldest room of the account.
+[[nodiscard]] Result<std::optional<Room>> original(db::Connection& conn, Arena& arena);
 // `Current.user.rooms.original`: the oldest room.
 [[nodiscard]] Result<std::optional<Room>> original_of_user(db::Connection& conn, Arena& arena, std::int64_t user_id);
 // `scope.find_by(id:)` on the rooms of a user.

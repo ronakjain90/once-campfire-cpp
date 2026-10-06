@@ -6,6 +6,7 @@
 #include "core/time_format.hpp"
 #include "routes/routes.hpp"
 #include "views/messages/support.hpp"
+#include "views/templates.gen.hpp"
 
 namespace campfire::views::messages {
 
@@ -171,6 +172,14 @@ void message_presentation(Out& out, const ViewContext& ctx, const MessageView& m
     sound_presentation(out, *sound);
   } else if (const auto* text = std::get_if<TextContent>(&message.content)) {
     out.append(SafeHtml::trusted(text->html));
+  }
+}
+
+void render_message_item(Out& out, const ViewContext& ctx, const MessageItem& item) {
+  if (item.view) {
+    message(out, ctx, *item.view);
+  } else {
+    out.append(SafeHtml::trusted(item.html));
   }
 }
 

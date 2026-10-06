@@ -45,6 +45,7 @@ campfire_library(app
     controllers/session_transfers.cpp
     controllers/directs.cpp
     controllers/involvements.cpp
+    controllers/room_pages.cpp
     controllers/rooms.cpp
     controllers/sessions.cpp
     controllers/users.cpp

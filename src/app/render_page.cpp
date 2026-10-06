@@ -29,6 +29,12 @@ Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec) {
   db::DependencyScope& deps = rq.track();
   auto layout = load_layout(rq);
   if (!layout) return std::unexpected(std::move(layout.error()));
+  return render_page(rq, status, spec, deps, *layout);
+}
+
+Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec, db::DependencyScope& deps,
+                                const LayoutData& layout_data) {
+  const LayoutData* layout = &layout_data;
   deps.facet("page", spec.name);
   deps.facet("title", spec.title);
   deps.facet("body_class", spec.body_class.value_or(""));

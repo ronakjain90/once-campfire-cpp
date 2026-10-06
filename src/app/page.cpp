@@ -125,29 +125,47 @@ net::Response layout_response(Rq& rq, int status, Out&& body) {
   return rq.html(status, std::move(body));
 }
 
-net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps, const std::function<void(Out&)>& render,
-                          bool preload_link) {
-  const auto make_body = [&] {
+Flow<net::Response> cached_page_checked(Rq& rq, int status, db::DependencyScope& deps,
+                                        const std::function<Flow<void>(Out&)>& render, bool preload_link) {
+  const auto make_body = [&]() -> Flow<Out> {
     Out out(rq.ctx.resource());
-    render(out);
+    if (auto done = render(out); !done) return std::unexpected(std::move(done.error()));
     return out;
   };
   if (preload_link && !rq.is_turbo_frame_request()) {
     rq.set_header("link", assets::append_preload_links(rq.staged_header("link"), rq.app.stylesheets.preload_links));
   }
-  if (!deps.cacheable()) return rq.html(status, make_body());
+  if (!deps.cacheable()) {
+    auto body = make_body();
+    if (!body) return std::unexpected(std::move(body.error()));
+    return rq.html(status, std::move(*body));
+  }
   PageCache& cache = rq.app.pages;
   const Hash128 key = deps.key();
   if (auto hit = cache.get(key)) {
     if (cache.audit_due()) {
-      const std::string fresh = make_body().to_string();
-      cache.audit_compare(key, *hit, fresh);
+      auto fresh = make_body();
+      if (!fresh) return std::unexpected(std::move(fresh.error()));
+      cache.audit_compare(key, *hit, fresh->to_string());
     }
     return rq.respond_page(std::move(hit), status);
   }
-  std::string body = make_body().to_string();
-  auto entry = cache.put(key, std::move(body), "text/html; charset=utf-8");
+  auto body = make_body();
+  if (!body) return std::unexpected(std::move(body.error()));
+  auto entry = cache.put(key, body->to_string(), "text/html; charset=utf-8");
   return rq.respond_page(std::move(entry), status);
+}
+
+net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps, const std::function<void(Out&)>& render,
+                          bool preload_link) {
+  auto response = cached_page_checked(
+      rq, status, deps,
+      [&](Out& out) -> Flow<void> {
+        render(out);
+        return {};
+      },
+      preload_link);
+  return std::move(*response);  // `render` cannot fail
 }
 
 }  // namespace campfire::app

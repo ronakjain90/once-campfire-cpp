@@ -27,6 +27,8 @@ struct PageSpec {
   PagePart content;
   PagePart footer;
   PagePart sidebar;
+  // Reads the data that only a render needs (it runs on a page cache miss, before the parts). A failure is the result.
+  std::function<Flow<void>()> prepare;
   // Called with the scope and the layout data, after the facets of the layout. Add the facets of the page here.
   std::function<void(db::DependencyScope&, const LayoutData&)> facets;
 };

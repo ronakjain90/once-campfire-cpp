@@ -42,7 +42,10 @@ Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec, db::De
   add_layout_facets(rq, deps, *layout);
   if (spec.facets) spec.facets(deps, *layout);
   const LayoutData& data = *layout;
-  const auto render = [&](Out& out) {
+  const auto render = [&](Out& out) -> Flow<void> {
+    if (spec.prepare) {
+      if (auto prepared = spec.prepare(); !prepared) return prepared;
+    }
     const views::ViewContext ctx = make_view_context(rq, data);
     const auto bind = [&](const PagePart& part) -> views::Region {
       if (!part) return {};
@@ -61,8 +64,9 @@ Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec, db::De
     } else {
       views::layouts::application(out, ctx, parts);
     }
+    return {};
   };
-  return cached_page(rq, status, deps, render);
+  return cached_page_checked(rq, status, deps, render);
 }
 
 }  // namespace campfire::app

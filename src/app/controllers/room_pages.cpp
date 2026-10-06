@@ -161,9 +161,6 @@ Task<Flow<net::Response>> rooms_show(Rq& rq) {
   show.room.display_name = std::move(*name);
   if (const auto updated = parse_db(room->updated_at)) show.loaded_at = std::to_string(epoch_ms(*updated));
   show.user = user_view(rq.app, *rq.current_user());
-  auto items = message_items(rq, page);
-  if (!items) co_return std::unexpected(std::move(items.error()));
-  show.items = std::move(*items);
   // `@room == Room.original && !@room.messages.paged?`
   auto original = models::rooms::original(rq.db(), rq.arena());
   if (!original) co_return fail_internal(original.error().message);
@@ -193,6 +190,14 @@ Task<Flow<net::Response>> rooms_show(Rq& rq) {
   };
   spec.content = [&](Out& out, const views::ViewContext& ctx) { views::rooms::show::content(out, ctx, show); };
   spec.footer = [&](Out& out, const views::ViewContext& ctx) { views::rooms::show::composer(out, ctx, show.room); };
+  // The message fragments are read on a miss only: the page key has the rows of the page, and a message version stands
+  // for what its fragment prints.
+  spec.prepare = [&]() -> Flow<void> {
+    auto items = message_items(rq, page);
+    if (!items) return std::unexpected(std::move(items.error()));
+    show.items = std::move(*items);
+    return {};
+  };
   spec.facets = [&](db::DependencyScope& scope, const LayoutData&) {
     add_platform_facets(scope, ApplicationPlatform(rq.user_agent()).to_view());
   };
@@ -292,12 +297,17 @@ Task<Flow<net::Response>> messages_index(Rq& rq) {
 
   const req::Format offered[] = {&req::mime::HTML};
   if (auto format = rq.respond_to(offered); !format) co_return std::unexpected(std::move(format.error()));
-  auto items = message_items(rq, *page);
-  if (!items) co_return std::unexpected(std::move(items.error()));
   deps.facet("page", "messages#index");
   const views::ViewContext ctx = partial_context(rq);
-  co_return cached_page(
-      rq, 200, deps, [&](Out& out) { views::messages::index(out, ctx, *items); }, false);
+  co_return cached_page_checked(
+      rq, 200, deps,
+      [&](Out& out) -> Flow<void> {
+        auto items = message_items(rq, *page);
+        if (!items) return std::unexpected(std::move(items.error()));
+        views::messages::index(out, ctx, *items);
+        return {};
+      },
+      false);
 }
 
 // `RoomScoped`, `set_last_updated_at`: what changed in the room since the client loaded it.

@@ -55,5 +55,10 @@ void add_page_facets(Rq& rq, db::DependencyScope& deps, std::string_view page);
 // `preload_link` adds the `Link` header of `stylesheet_link_tag`: false for a response without a layout.
 [[nodiscard]] net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps,
                                         const std::function<void(Out&)>& render, bool preload_link = true);
+// The same, for a `render` that reads data and can fail (it runs on a miss only). A failure goes to the caller and the
+// page is not stored.
+[[nodiscard]] Flow<net::Response> cached_page_checked(Rq& rq, int status, db::DependencyScope& deps,
+                                                      const std::function<Flow<void>(Out&)>& render,
+                                                      bool preload_link = true);
 
 }  // namespace campfire::app

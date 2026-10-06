@@ -116,7 +116,7 @@ its requests in the diff sweep pass.
 
 ## Parallel limit
 
-Run **at most 3 worker agents at the same time**, all on Sonnet. More agents use the usage limit
+Run **at most 2 worker agents at the same time**, all on Sonnet. More agents use the usage limit
 faster and stop all work together. Start the next queued task only when a running one finishes.
 
 ## Restart rule
@@ -127,3 +127,4 @@ agent brief, and "continue from the commits and files in the worktree". Do not r
 whose transcript is long.
 | A0 | merged (verified by Opus) | `task/A0` | Written by DeepSeek; layout region fix by Sonnet. Sign-in sweep 36/36 equal to Rust. /up 2.0x Rust at c=16, 3.3x at c=64. |
 | A8 | paused (DeepSeek work, unfinished) | `task/A8` | Last commit 810109b builds and tests pass. Uncommitted HTTP/2 work does not compile. Runtime image lacks `libnghttp2.so.14`. No acceptance check has passed yet. |
+| A1 | in progress (Sonnet) | `task/A1` | |

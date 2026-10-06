@@ -36,6 +36,7 @@ std::string segment(const std::string& path, size_t index) {
 }  // namespace
 
 TEST_CASE("storage marcel identification") {
+  REQUIRE_FIXTURES();
   Group g("storage.json", "marcel");
   for (const auto& s : items(at(vectors(), "marcel"))) {
     std::string data;

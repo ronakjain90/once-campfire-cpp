@@ -1,9 +1,12 @@
 // Test helpers for the storage tests: the app secrets, the fixture files and a clock.
 #pragma once
 
+#include <cstdio>
 #include <fstream>
 #include <sstream>
 #include <string>
+
+#include "doctest.h"
 
 #include "compat/secrets.hpp"
 #include "compat/test/vectors.hpp"
@@ -22,6 +25,11 @@ inline campfire::compat::Timestamp now() { return *campfire::compat::parse_iso86
 inline const campfire::compat::json::Value& vectors() { return testing_support::load_vectors("storage.json"); }
 
 inline std::string fixture_path(const std::string& name) { return std::string(CAMPFIRE_FIXTURES_DIR) + "/" + name; }
+
+// True when the media fixtures exist. bin/dev mounts only the worktree, so the fixtures of the
+// Rust repo are not there: the tests that need them print a line and stop. Run the tests with
+// the workspace mounted (agent brief) to run them.
+inline bool have_fixtures() { return std::ifstream(fixture_path("moon.jpg")).good(); }
 
 inline std::string read_file(const std::string& path) {
   std::ifstream in(path, std::ios::binary);
@@ -76,3 +84,11 @@ inline campfire::compat::Variation variation_of(const json::Value& v) {
 }
 
 }  // namespace storage_test
+
+#define REQUIRE_FIXTURES()                                                              \
+  do {                                                                                  \
+    if (!storage_test::have_fixtures()) {                                               \
+      std::printf("SKIPPED %s:%d: fixtures not mounted\n", __FILE__, __LINE__); \
+      return;                                                                           \
+    }                                                                                   \
+  } while (0)

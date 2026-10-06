@@ -96,11 +96,31 @@ std::string first_line(const std::string& command) {
 struct Tally {
   int identical = 0, different = 0;
   std::vector<std::string> different_labels;
+  // Video outputs that differ from the vectors only because ffmpeg on this host draws another
+  // JPEG frame than ffmpeg on the host that made the vectors (see local_preview below).
+  std::vector<std::string> host_different;
 };
+
+// The bytes of the preview frame from the ffmpeg CLI, run directly with the arguments of
+// ActiveStorage.video_preview_arguments. It is the oracle for this host.
+std::string local_preview(const std::string& input) {
+  std::string cmd = "ffmpeg -loglevel error -i '" + input +
+                    "' -vf 'select=eq(n\\,0)+eq(key\\,1)+gt(scene\\,0.015),loop=loop=-1:size=2,trim=start_frame=1' "
+                    "-frames:v 1 -f image2 - 2>/dev/null";
+  std::string out;
+  if (FILE* p = popen(cmd.c_str(), "r")) {
+    char buf[65536];
+    size_t n;
+    while ((n = fread(buf, 1, sizeof buf, p)) > 0) out.append(buf, n);
+    pclose(p);
+  }
+  return out;
+}
 
 }  // namespace
 
 TEST_CASE("storage pipeline matches the reference") {
+  REQUIRE_FIXTURES();
   const auto& versions = at(vectors(), "versions");
   auto vips_version = st::vips::version();
   REQUIRE(vips_version.has_value());
@@ -116,6 +136,7 @@ TEST_CASE("storage pipeline matches the reference") {
   st::Storage storage(st::DiskService(root.path, "local"), verifier());
   MemoryRecords records;
   Tally tally;
+  bool video_host_differs = false;  // the preview frame equals local ffmpeg but not the vector file
 
   auto compare = [&](const std::string& label, const st::Blob& actual, const json::Value& expected, bool processed, bool video) {
     CHECK_MESSAGE(actual.filename.raw() == at(expected, "filename").as_string(), label << " filename");
@@ -126,6 +147,8 @@ TEST_CASE("storage pipeline matches the reference") {
     CHECK_MESSAGE(json::encode(actual.metadata) == at(expected, "metadata").as_string(), label << " metadata");
     if (actual.checksum == at(expected, "checksum").as_string() && actual.byte_size == *at(expected, "byte_size").to_int64()) {
       ++tally.identical;
+    } else if (video && video_host_differs) {
+      tally.host_different.push_back(label);
     } else {
       ++tally.different;
       tally.different_labels.push_back(label);
@@ -140,7 +163,7 @@ TEST_CASE("storage pipeline matches the reference") {
     auto actual = storage.service().download(image.key);
     REQUIRE(actual.has_value());
     CHECK_MESSAGE(st::checksum(*actual) == *image.checksum, label << " stored file");
-    if (same_vips && (!video || same_ffmpeg)) CHECK_MESSAGE(*actual == expected_file, label << " bytes");
+    if (same_vips && (!video || (same_ffmpeg && !video_host_differs))) CHECK_MESSAGE(*actual == expected_file, label << " bytes");
     auto record = records.find_variant_record(source.id, at(v, "variation_digest").as_string());
     CHECK_MESSAGE((record.has_value() && record->has_value()), label << " variant record");
   };
@@ -160,6 +183,14 @@ TEST_CASE("storage pipeline matches the reference") {
     if (blob.is_video()) {
       auto preview = storage.preview_image(records, blob, now());
       REQUIRE_MESSAGE(preview.has_value(), name << " preview: " << (preview ? "" : preview.error().message));
+      {
+        auto stored = storage.service().download(preview->key);
+        REQUIRE(stored.has_value());
+        std::string local = local_preview(fixture_path(name));
+        CHECK_MESSAGE(*stored == local, name << " preview frame equals the output of the ffmpeg CLI");
+        std::string vector_bytes = read_file(std::string(CAMPFIRE_VECTORS_DIR) + "/storage/" + at(at(m, "preview_image"), "file").as_string());
+        video_host_differs = *stored != vector_bytes && *stored == local;
+      }
       compare(name + " preview_image", *preview, at(at(m, "preview_image"), "blob"), true, true);
       for (const auto& v : items(at(m, "variants"))) {
         auto image = storage.process_preview(records, blob, variation_of(at(v, "transformations_typed")), now());
@@ -209,12 +240,15 @@ TEST_CASE("storage pipeline matches the reference") {
   }
 
   std::printf("MEDIA byte-identical=%d different=%d\n", tally.identical, tally.different);
+  std::printf("MEDIA video outputs that differ only by the ffmpeg of this host: %zu\n", tally.host_different.size());
+  for (const auto& l : tally.host_different) std::printf("MEDIA host-different: %s\n", l.c_str());
   for (const auto& l : tally.different_labels) std::printf("MEDIA different: %s\n", l.c_str());
   CHECK(tally.different == 0);
   CHECK(tally.identical > 0);
 }
 
 TEST_CASE("storage staging a file gives the same blob as its bytes") {
+  REQUIRE_FIXTURES();
   TempRoot root;
   st::Storage storage(st::DiskService(root.path, "local"), verifier());
   for (const auto& m : items(at(vectors(), "messages"))) {

@@ -2,4 +2,10 @@
 // Generated template code does `using namespace campfire::views::helpers`.
 #pragma once
 
-namespace campfire::views::helpers {}  // namespace campfire::views::helpers
+#include "views/context.hpp"
+#include "views/helpers/application.hpp"
+#include "views/helpers/assets.hpp"
+#include "views/helpers/forms.hpp"
+#include "views/helpers/links.hpp"
+#include "views/helpers/tag.hpp"
+#include "views/helpers/turbo.hpp"

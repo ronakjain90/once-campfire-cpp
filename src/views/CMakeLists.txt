@@ -33,6 +33,12 @@ campfire_views_templates(CAMPFIRE_VIEWS_GENERATED "${CMAKE_CURRENT_SOURCE_DIR}" 
 campfire_library(views
   SOURCES
     fragment_cache.cpp
+    helpers/application.cpp
+    helpers/assets.cpp
+    helpers/forms.cpp
+    helpers/links.cpp
+    helpers/tag.cpp
+    helpers/turbo.cpp
     ${CAMPFIRE_VIEWS_GENERATED}
   PUBLIC_DEPS campfire_core campfire_compat campfire_routes
   WERROR)
@@ -48,6 +54,7 @@ campfire_views_templates(CAMPFIRE_VIEWS_TEST_GENERATED "${CMAKE_CURRENT_SOURCE_D
 campfire_test(views
   SOURCES
     test/ctc_test.cpp
+    test/helpers_test.cpp
     ${CAMPFIRE_VIEWS_TEST_GENERATED}
   WERROR)
 target_include_directories(test_views PRIVATE "${CT_TEST_GEN_DIR}")

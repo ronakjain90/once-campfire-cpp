@@ -130,3 +130,4 @@ whose transcript is long.
 | A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
 | A2 | in progress (Claude cloud session, started by the user) | | Local agent stopped. Verify the cloud branch when it is done. |
 | A3 | in progress (Sonnet) | `task/A3` | Message partial is a stub until A2 (cloud) merges. |
+| A4 | in progress (Sonnet) | `task/A4` | |

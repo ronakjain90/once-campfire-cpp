@@ -34,3 +34,12 @@ campfire_test(net
     tests/server_test.cpp
     "${net_test_routes_cpp}"
   WERROR)
+
+# libFuzzer target of the request parser: cmake -DCAMPFIRE_FUZZ=ON (use the asan preset).
+option(CAMPFIRE_FUZZ "Build the fuzz targets" OFF)
+if(CAMPFIRE_FUZZ)
+  add_executable(fuzz_http_parser fuzz/parser_fuzz.cpp)
+  target_link_libraries(fuzz_http_parser PRIVATE campfire_net campfire_options)
+  target_compile_options(fuzz_http_parser PRIVATE -fsanitize=fuzzer)
+  target_link_options(fuzz_http_parser PRIVATE -fsanitize=fuzzer)
+endif()

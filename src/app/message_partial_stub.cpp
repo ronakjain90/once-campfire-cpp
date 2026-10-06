@@ -27,9 +27,19 @@ void presentation(Out& out, const ViewContext&, const MessageView& message) {
   out.append_raw("</div>\n");
 }
 
-void boosts(Out& out, const ViewContext&, const MessageView& message) {
+void attachment_presentation(Out& out, const ViewContext&, const AttachmentView& attachment) {
+  out.append_raw("<div data-stub=\"true\">");
+  html_escape(out, attachment.filename);
+  out.append_raw("</div>");
+}
+
+}  // namespace campfire::views::messages
+
+namespace campfire::views::messages::boosts {
+
+void boosts(Out& out, const ViewContext&, const MessageView& view) {
   out.append_raw("<turbo-frame id=\"");
-  html_escape(out, message.dom_id("boosting"));
+  html_escape(out, view.dom_id("boosting"));
   out.append_raw("\" data-stub=\"true\"></turbo-frame>");
 }
 
@@ -41,10 +51,4 @@ void boost(Out& out, const ViewContext&, const BoostView& boost) {
   out.append_raw("</div>\n");
 }
 
-void attachment_presentation(Out& out, const ViewContext&, const AttachmentView& attachment) {
-  out.append_raw("<div data-stub=\"true\">");
-  html_escape(out, attachment.filename);
-  out.append_raw("</div>");
-}
-
-}  // namespace campfire::views::messages
+}  // namespace campfire::views::messages::boosts

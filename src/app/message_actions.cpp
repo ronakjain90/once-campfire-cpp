@@ -14,6 +14,8 @@
 #include "models/job_sink.hpp"
 #include "models/storage_records.hpp"
 #include "richtext/content.hpp"
+#include "views/layout.hpp"
+#include "views/templates.gen.hpp"
 #include "richtext/richtext.hpp"
 #include "richtext/text_util.hpp"
 #include "storage/storage.hpp"
@@ -115,6 +117,22 @@ Flow<void> ensure_can_administer(Rq& rq, const models::Message& message) {
     return halt(concerns::head_in_before_action(rq, 403));
   }
   return {};
+}
+
+Flow<net::Response> content_page(Rq& rq, int status, bool always_application,
+                                 const std::function<void(Out&, const views::ViewContext&)>& content) {
+  auto layout = load_layout(rq);
+  if (!layout) return std::unexpected(std::move(layout.error()));
+  const views::ViewContext ctx = make_view_context(rq, *layout);
+  views::LayoutParts parts;
+  parts.content = [&](Out& o) { content(o, ctx); };
+  Out out(rq.ctx.resource());
+  if (rq.is_turbo_frame_request() && !always_application) {
+    views::layouts::turbo_rails::frame(out, parts);
+    return rq.html(status, std::move(out));
+  }
+  views::layouts::application(out, ctx, parts);
+  return layout_response(rq, status, std::move(out));
 }
 
 Flow<views::ViewContext> detached_context(Rq& rq) {
@@ -402,7 +420,7 @@ Task<Flow<void>> destroy_message(Rq& rq, const models::RoomRef& room, const mode
   co_return Flow<void>{};
 }
 
-Flow<void> broadcast_create(Rq& rq, const models::RoomRef& room, const models::Message& message) {
+Flow<std::string> broadcast_create(Rq& rq, const models::RoomRef& room, const models::Message& message) {
   auto ctx = detached_context(rq);
   if (!ctx) return std::unexpected(std::move(ctx.error()));
   MessagePresenter presenter(rq.db(), rq.arena(), rq.app, std::string(rq.info.host()));
@@ -413,7 +431,7 @@ Flow<void> broadcast_create(Rq& rq, const models::RoomRef& room, const models::M
   auto members = models::room_refs::member_user_ids(rq.db(), rq.arena(), room.id);
   if (!members) return db_failure(members.error());
   broadcasts::unread_room(rq.app, room, *members);
-  return {};
+  return html;
 }
 
 Flow<void> broadcast_replace(Rq& rq, const models::RoomRef& room, const models::Message& message) {

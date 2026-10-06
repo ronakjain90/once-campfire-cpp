@@ -3,6 +3,7 @@
 // crates/campfire/src/controllers/messages.rs.
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
@@ -56,12 +57,19 @@ struct MessageParams {
 // `@message.destroy`, then `@message.broadcast_remove`.
 [[nodiscard]] Task<Flow<void>> destroy_message(Rq& rq, const models::RoomRef& room, const models::Message& message);
 
-// `@message.broadcast_create`: the message partial appended to the room, then the unread pings.
-[[nodiscard]] Flow<void> broadcast_create(Rq& rq, const models::RoomRef& room, const models::Message& message);
+// `@message.broadcast_create`: the message partial appended to the room, then the unread pings. Gives the HTML of the
+// partial: the response of `create` shows the same fragment.
+[[nodiscard]] Flow<std::string> broadcast_create(Rq& rq, const models::RoomRef& room, const models::Message& message);
 // `broadcast_replace_to @room, :messages, target: [ @message, :presentation ], ...`
 [[nodiscard]] Flow<void> broadcast_replace(Rq& rq, const models::RoomRef& room, const models::Message& message);
 // `deliver_webhooks_to_bots`: every active bot of a direct room, else every mentioned active bot, but not the creator.
 [[nodiscard]] Flow<void> deliver_webhooks_to_bots(Rq& rq, const models::RoomRef& room, const models::Message& message);
+
+// A content-only template in a layout. Rails wraps it in the application layout, or in turbo-rails' frame layout when
+// the request has a `Turbo-Frame` header. `always_application` is for a controller that declares its own `layout`
+// (`MessagesController`: `layout false, only: :index`), which replaces that choice.
+[[nodiscard]] Flow<net::Response> content_page(Rq& rq, int status, bool always_application,
+                                               const std::function<void(Out&, const views::ViewContext&)>& content);
 
 // The view context of `ApplicationController.render` outside a request: no user, no flash, no CSRF tokens. The base URL
 // has the protocol and the host of the request, but no port.

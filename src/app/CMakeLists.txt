@@ -36,8 +36,12 @@ campfire_library(app
     compress.cpp
     concerns.cpp
     controllers/action_not_found.cpp
+    controllers/autocompletable_users.cpp
     controllers/common.cpp
     controllers/first_runs.cpp
+    controllers/message_boosts.cpp
+    controllers/message_bots.cpp
+    controllers/messages.cpp
     controllers/session_transfers.cpp
     controllers/sessions.cpp
     controllers/users.cpp

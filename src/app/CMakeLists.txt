@@ -42,12 +42,14 @@ campfire_library(app
     not_found.cpp
     page.cpp
     page_cache.cpp
+    platform.cpp
     proxy.cpp
     rails.cpp
     rate_limit.cpp
     rq.cpp
     rq_response.cpp
     session_cache.cpp
+    user_agent.cpp
     worker_state.cpp
     "${campfire_routes_cpp}"
     "${campfire_data_cpp}"
@@ -61,7 +63,9 @@ campfire_test(app
     tests/app_test.cpp
     tests/cache_test.cpp
     tests/finish_test.cpp
+    tests/user_agent_test.cpp
   WERROR)
+target_compile_definitions(test_app PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")
 
 campfire_executable(campfire SOURCES main.cpp DEPS campfire_app)
 set_target_properties(campfire PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")

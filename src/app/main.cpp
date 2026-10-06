@@ -8,6 +8,7 @@
 
 #include "app/app.hpp"
 #include "app/not_found.hpp"
+#include "app/rails.hpp"
 #include "app/routes.hpp"
 #include "core/config.hpp"
 #include "core/log.hpp"
@@ -55,13 +56,20 @@ int main(int argc, char** argv) {
   }
   app::set_app(state->get());
   net::App routes_app{&app::routes(), &app::not_found};
-  net::Server server(net::ServerOptions::from_config(front), routes_app);
+  net::ServerOptions server_options = net::ServerOptions::from_config(front);
+  server_options.after_static = [](net::Ctx& ctx, net::Response& response) { app::add_hsts(ctx.request(), response); };
+  net::Server server(server_options, routes_app);
   if (auto started = server.start(); !started) {
     log_error("cannot start the server: {}", started.error().message);
     return 1;
   }
-  log_info("Server started http=:{} target={}:{} workers={}", server.http_port(), front.target_bind,
-           server.target_port(), server.worker_count());
+  if (server.https_port() != 0) {
+    log_info("Server started http=:{} https=:{} target={}:{} workers={}", server.http_port(), server.https_port(),
+             front.target_bind, server.target_port(), server.worker_count());
+  } else {
+    log_info("Server started http=:{} target={}:{} workers={}", server.http_port(), front.target_bind,
+             server.target_port(), server.worker_count());
+  }
   int signal_number = 0;
   sigwait(&signals, &signal_number);
   log_info("Stopping the server");

@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <string>
 
+#include "app/app.hpp"
+#include "app/proxy.hpp"
 #include "net/front/static_files.hpp"
 
 namespace campfire::app {
@@ -52,6 +54,25 @@ void add_rails_tail(net::Ctx& ctx, net::Response& response) {
   response.add("x-runtime", {runtime, static_cast<std::size_t>(n)});
 }
 
+void add_hsts(const net::Request& request, net::Response& response) {
+  const ProxyConfig& proxy = app().proxy;
+  if (!proxy.force_ssl || !RequestInfo(request, proxy).ssl()) return;
+  for (net::Header& h : response.headers) {
+    if (net::iequals(h.name, "strict-transport-security")) {
+      h.value = proxy.hsts;
+      return;
+    }
+  }
+  // A "vary" at the end is the one that Rack::Deflater appended: the HSTS header is before it.
+  if (!response.headers.empty() && net::iequals(response.headers.back().name, "vary")) {
+    const net::Header vary = response.headers.back();
+    response.headers.back() = {"strict-transport-security", proxy.hsts};
+    response.headers.push_back(vary);
+    return;
+  }
+  response.add("strict-transport-security", proxy.hsts);
+}
+
 bool wants_gzip(const net::Request& request) noexcept {
   return net::front::choose_deflater_encoding(request.header("accept-encoding")) == net::front::DeflaterChoice::Gzip;
 }
@@ -62,8 +83,8 @@ bool refuses_every_encoding(const net::Request& request) {
 
 net::Response not_acceptable(net::Ctx& ctx) {
   const net::Request& request = ctx.request();
-  const std::string message = "An acceptable encoding for the requested resource " + std::string(request.target) +
-                              " could not be found.";
+  const std::string message =
+      "An acceptable encoding for the requested resource " + std::string(request.target) + " could not be found.";
   net::Response response = ctx.response(406);
   response.add("content-type", "text/plain");
   response.add_copy("content-length", std::to_string(message.size()));

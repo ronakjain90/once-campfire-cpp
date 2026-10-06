@@ -89,10 +89,7 @@ H2Session::H2Session(Worker& worker, Conn& conn) : worker_(worker), conn_(&conn)
         return static_cast<H2Session*>(data)->on_stream_close(id);
       });
   nghttp2_session_callbacks_set_on_invalid_frame_recv_callback(
-      callbacks_,
-      [](nghttp2_session*, const nghttp2_frame*, int, void*) -> int {
-        return 0;
-      });
+      callbacks_, [](nghttp2_session*, const nghttp2_frame*, int, void*) -> int { return 0; });
 
   const nghttp2_settings_entry settings[] = {
       {NGHTTP2_SETTINGS_MAX_CONCURRENT_STREAMS, kMaxConcurrentStreams},
@@ -345,14 +342,14 @@ void H2Session::answer(H2Stream& stream, Response&& response) {
   if (stream.answered) return;
   stream.answered = true;
   stream.handler_active = false;
-  if (!response.has("date")) {
-    char buffer[32];
-    response.add_copy("date", http_date_now(buffer));
-  }
   if (conn_->via_front && worker_.options().front) {
-    worker_.options().front->finish(stream.front_state, stream.request, response);
+    worker_.options().front->finish(stream.front_state, stream.request, response);  // adds the date last
   } else {
     suppress_bodiless_headers(response);
+    if (!response.has("date")) {
+      char buffer[32];
+      response.add_copy("date", http_date_now(buffer));
+    }
   }
   if (session_ == nullptr) return;
   const std::size_t body_size = bodiless(response) ? 0 : response.body_size();
@@ -365,12 +362,19 @@ void H2Session::answer(H2Stream& stream, Response&& response) {
   std::vector<std::string_view> values;
   names.reserve(response.headers.size() + 1);
   values.reserve(response.headers.size() + 1);
+  // hyper keeps the "content-length" of the app where it is, and appends one for a body of known size.
+  bool has_length = false;
   for (const Header& h : response.headers) {
-    if (forbidden_field(h.name) || iequals(h.name, "content-length")) continue;
+    if (forbidden_field(h.name)) continue;
     names.push_back(lower(h.name));
-    values.push_back(h.value);
+    // The length of a GET answer is the size of the body that goes out (nghttp2 checks it).
+    const bool is_length = iequals(h.name, "content-length");
+    values.push_back(is_length && !no_body ? std::string_view(length) : h.value);
+    if (is_length) has_length = true;
   }
-  if (!no_body) {
+  // A body with a known size (even an empty one) gets a length, except for HEAD.
+  const bool streamed = response.chunked || response.framed;
+  if (!has_length && !streamed && stream.request.method != Method::Head && !bodiless(response)) {
     names.emplace_back("content-length");
     values.emplace_back(length);
   }
@@ -539,6 +543,7 @@ void Worker::h2_begin_request(Conn& c, H2Stream& stream) {
   }
   if (options_.serve_static) {
     if (std::optional<Response> served = front::serve_static(*stream.ctx)) {
+      if (options_.after_static) options_.after_static(*stream.ctx, *served);
       stream.response.emplace(std::move(*served));
       stream.handler_active = false;
       return;

@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 
 namespace campfire::net::front {
 
@@ -98,9 +99,24 @@ std::string gzip_encode(std::string_view body, std::string_view comment, std::ui
 }
 
 std::string zstd_encode(std::string_view body, std::string_view jitter) {
+  // Rust: `zstd::stream::write::Encoder`. It writes with ZSTD_e_continue and ends with ZSTD_e_end, so
+  // the size of the input is not known at the start. A one-shot call would choose other
+  // parameters (and give other bytes).
+  struct Deleter {
+    void operator()(ZSTD_CCtx* c) const noexcept { ZSTD_freeCCtx(c); }
+  };
+  const std::unique_ptr<ZSTD_CCtx, Deleter> context(ZSTD_createCCtx());
+  ZSTD_CCtx_setParameter(context.get(), ZSTD_c_compressionLevel, kZstdLevel);
   std::string out(ZSTD_compressBound(body.size()), '\0');
-  const std::size_t n = ZSTD_compress(out.data(), out.size(), body.data(), body.size(), kZstdLevel);
-  out.resize(ZSTD_isError(n) != 0U ? 0 : n);
+  ZSTD_inBuffer input{body.data(), body.size(), 0};
+  ZSTD_outBuffer output{out.data(), out.size(), 0};
+  if (ZSTD_isError(ZSTD_compressStream2(context.get(), &output, &input, ZSTD_e_continue)) != 0U) return {};
+  std::size_t remaining = 1;
+  while (remaining != 0) {
+    remaining = ZSTD_compressStream2(context.get(), &output, &input, ZSTD_e_end);
+    if (ZSTD_isError(remaining) != 0U) return {};
+  }
+  out.resize(output.pos);
   if (!jitter.empty()) {
     // The jitter goes in a skippable frame after the data (RFC 8878, 3.1.2).
     put_u32_le(out, 0x184D2A50U);

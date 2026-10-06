@@ -243,6 +243,7 @@ void Worker::dispatch(Conn& c) {
   }
   if (options_.serve_static) {
     if (std::optional<Response> served = front::serve_static(*c.ctx)) {
+      if (options_.after_static) options_.after_static(*c.ctx, *served);
       c.response.emplace(std::move(*served));
       return;
     }

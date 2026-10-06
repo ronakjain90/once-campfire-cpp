@@ -2,6 +2,8 @@
 // (`acme_tls_alpn_certificate_cached_and_reused`). The tests need Pebble: set PEBBLE_MINICA to the
 // PEM file of the Pebble CA (test/certs/pebble.minica.pem), and make "campfire.test" resolve to
 // 127.0.0.1 for Pebble. Without PEBBLE_MINICA the test returns at once.
+#include "net/front/acme.hpp"
+
 #include <arpa/inet.h>
 #include <doctest.h>
 #include <netinet/in.h>
@@ -18,7 +20,6 @@
 #include <string>
 #include <thread>
 
-#include "net/front/acme.hpp"
 #include "net/front/tls.hpp"
 #include "net/server.hpp"
 
@@ -37,13 +38,17 @@ Task<Response> test_handler(Ctx& ctx) {
   co_return response;
 }
 
-const char* pebble_root() { return std::getenv("PEBBLE_MINICA"); }
+const char* pebble_root() {
+  return std::getenv("PEBBLE_MINICA");
+}
 
 // Pebble validates HTTP-01 on this port. A test for HTTP-01 against Pebble is not possible: Pebble
 // sends "Host: campfire.test:5002", autocert (so Thruster and this server) checks the Host header
 // against TLS_DOMAIN with its port, and answers 403. HTTP-01 has unit tests in front_test.cpp.
 constexpr std::uint16_t kHttpPortForPebble = 5002;
-std::uint16_t http_port() { return kHttpPortForPebble; }
+std::uint16_t http_port() {
+  return kHttpPortForPebble;
+}
 
 front::AcmeOptions acme_options(const std::filesystem::path& storage, const std::string& root,
                                 std::vector<front::ChallengeType> types) {

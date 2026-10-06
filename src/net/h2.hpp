@@ -46,7 +46,7 @@ struct H2Stream {
   std::vector<std::pair<std::string, std::string>> fields;
   std::string method_text;
   std::string target;
-  std::string body;       // the DATA frames of the request
+  std::string body;  // the DATA frames of the request
   std::size_t send_at = 0;
   std::string send_body;  // the body of the response, while nghttp2 sends it
 

@@ -26,6 +26,7 @@ campfire::Task<net::Response> show(net::Ctx& ctx) {
     response.body_view(app::data::f_up_html);
   }
   app::add_rails_tail(ctx, response);
+  app::add_hsts(ctx.request(), response);
   response.add("vary", "Accept-Encoding");  // Rack::Deflater, after the tail
   co_return response;
 }

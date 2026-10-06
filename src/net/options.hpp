@@ -44,6 +44,9 @@ struct ServerOptions {
   std::shared_ptr<front::TlsServer> tls;
   // ActionDispatch::Static: answer from the asset table before the routes (A8, front/static_files.cpp).
   bool serve_static = false;
+  // Runs on each response that the asset table gave (the app adds what its middleware adds to all
+  // responses, e.g. HSTS). Null: nothing.
+  void (*after_static)(Ctx&, Response&) = nullptr;
 
   [[nodiscard]] static ServerOptions from_config(const FrontConfig& config);
 };

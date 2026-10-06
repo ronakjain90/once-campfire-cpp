@@ -281,7 +281,7 @@ class H2Client {
   nghttp2_session* session_ = nullptr;
   nghttp2_session_callbacks* callbacks_ = nullptr;
   std::string alpn_;
-  ClientState state_;               // the `user_data` of `session_`
+  ClientState state_;                                       // the `user_data` of `session_`
   std::deque<std::pair<std::string, std::size_t>> bodies_;  // the DATA of the requests: `std::deque` keeps the pointers
 };
 

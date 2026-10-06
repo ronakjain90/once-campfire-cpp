@@ -1,0 +1,67 @@
+{# reference/app/views/users/sidebars/show.html.erb: the content of the page. The frame layout comes from the controller. #}
+{% include routes/routes.hpp %}
+{% include views/users/sidebar.hpp %}
+{% params const ViewContext& ctx, const SidebarShow& sidebar %}
+{% wrap sidebar_turbo_frame_tag(std::nullopt) %}
+  {% call turbo_stream_from(sidebar.rooms_stream) %}
+  {% call turbo_stream_from(sidebar.user_rooms_stream) %}
+
+  <div class="sidebar__container overflow-y overflow-hide-scrollbar"
+      data-controller="badge-dot"
+      data-badge-dot-unread-class="unread"
+      data-action="rooms-list:unread@window->badge-dot#update rooms-list:read@window->badge-dot#update turbo:submit-start->turbo-frame#unpermanize">
+    <turbo-frame id="direct_rooms_control" target="_top">
+      <div class="directs gap overflow-x overflow-hide-scrollbar">
+        {% wrap link_to(routes::new_rooms_direct(), attrs().cls("direct direct__new").data("turbo_frame", "_self")) %}
+          <span class="avatar avatar--icon">
+            {% call image_tag(ctx, "messages-add.svg", attrs().size(20).aria_hidden().cls("colorize--black")) %}
+          </span>
+
+          <span class="direct__author flex max-width min-width border-radius pad-inline-half">
+            <span class="for-screen-reader">New</span>
+            <span class="txt-small overflow-clip">Ping</span>
+          </span>
+        {% end %}
+
+        <div id="direct_rooms" contents data-controller="sorted-list" data-action="rooms-list:unread@window->sorted-list#updateItem">
+          {% for membership : sidebar.direct_memberships %}{% render users/sidebars/rooms/direct(ctx, membership) %}{% end %}
+        </div>
+
+        <div contents>
+          {% for user : sidebar.direct_placeholder_users %}{% render users/sidebars/rooms/direct_placeholder(ctx, user) %}{% end %}
+        </div>
+      </div>
+    </turbo-frame>
+
+    <div class="rooms position-relative flex flex-column gap">
+      <div id="shared_rooms" contents data-controller="sorted-list">
+        {% for room : sidebar.other_memberships %}
+          {% render users/sidebars/rooms/shared(room) %}
+        {% end %}
+      </div>
+
+      {% if sidebar.can_create_rooms %}
+        {% wrap link_to(routes::new_rooms_open(), attrs().cls("rooms__new-btn btn room align-center gap txt-reversed").aria("label", "New Chat Room")) %}
+          {% call image_tag(ctx, "add.svg", attrs().size(20).aria_hidden().style("view-transition-name: new-room")) %}
+        {% end %}
+      {% end %}
+    </div>
+
+    <button class="btn sidebar__toggle" data-action="toggle-class#toggle">
+      {% call image_tag(ctx, "menu.svg", attrs().size(20).aria_hidden()) %}
+      <span class="for-screen-reader">Open menu</span>
+    </button>
+  </div>
+
+  <div class="flex align-end sidebar__tools gap justify-end">
+    {% wrap link_to(routes::user_profile(), attrs().cls("btn avatar flex-item-no-shrink sidebar__tool")) %}
+      {% call image_tag(ctx, sidebar.current_user.avatar_path, attrs().size(48).aria_hidden().style("view-transition-name: avatar-" + std::to_string(sidebar.current_user.id))) %}
+      <span class="for-screen-reader">My Settings</span>
+    {% end %}
+
+    {% wrap link_to(routes::edit_account(), attrs().cls("btn align-center gap txt-reversed sidebar__tool")) %}
+      {% call image_tag(ctx, "settings.svg", attrs().size(20).aria_hidden().style("view-transition-name: account-settings")) %}
+      <span class="for-screen-reader">Account Settings</span>
+    {% end %}
+  </div>
+{% end %}

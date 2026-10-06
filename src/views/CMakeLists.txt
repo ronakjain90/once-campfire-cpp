@@ -37,6 +37,7 @@ campfire_library(views
     helpers/assets.cpp
     helpers/forms.cpp
     helpers/links.cpp
+    helpers/rooms.cpp
     helpers/tag.cpp
     helpers/turbo.cpp
     helpers/users.cpp
@@ -58,6 +59,7 @@ campfire_test(views
     test/ctc_test.cpp
     test/helpers_test.cpp
     test/layout_test.cpp
+    test/sidebar_test.cpp
     ${CAMPFIRE_VIEWS_TEST_GENERATED}
   WERROR)
 target_include_directories(test_views PRIVATE "${CT_TEST_GEN_DIR}")

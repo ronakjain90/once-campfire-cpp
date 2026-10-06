@@ -13,6 +13,7 @@
 #include "app/flow.hpp"
 #include "app/rq.hpp"
 #include "core/task.hpp"
+#include "net/thread_pool.hpp"
 #include "models/attachments.hpp"
 #include "req/param.hpp"
 #include "storage/storage.hpp"
@@ -58,5 +59,14 @@ struct Applied {
 [[nodiscard]] Task<Flow<std::optional<storage::Blob>>> processed_variant(Rq& rq, models::attachments::Record record,
                                                                          std::string_view name,
                                                                          const storage::Variation& transformations);
+
+// `blob.representation(transformations).processed`: the blob of the variant (or of the preview) image. The first
+// request makes the file on the media pool. A blob that is neither variable nor previewable is an error.
+[[nodiscard]] Task<Flow<storage::Blob>> processed_representation(Rq& rq, const storage::Blob& blob,
+                                                                  const storage::Variation& transformations);
+
+// The pool of the media work (libvips, ffmpeg): at most 4 threads, so that uploads do not queue behind more of it
+// than the machine can run. Rust: `process_media`.
+[[nodiscard]] net::ThreadPool& media_pool();
 
 }  // namespace campfire::app::active_storage

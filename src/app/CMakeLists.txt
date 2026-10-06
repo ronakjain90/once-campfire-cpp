@@ -52,6 +52,7 @@ campfire_library(app
     controllers/message_bots.cpp
     controllers/messages.cpp
     controllers/pwa.cpp
+    controllers/active_storage.cpp
     controllers/qr_codes.cpp
     controllers/session_transfers.cpp
     controllers/directs.cpp
@@ -68,6 +69,7 @@ campfire_library(app
     controllers/sidebars.cpp
     controllers/welcome.cpp
     dispatch.cpp
+    file_server.cpp
     errors.cpp
     finish.cpp
     fragment_cache.cpp

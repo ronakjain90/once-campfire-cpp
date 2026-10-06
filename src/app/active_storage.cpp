@@ -2,10 +2,13 @@
 // controllers/presenters/attachments.rs, crates/campfire/src/active_storage.rs.
 #include "app/active_storage.hpp"
 
+#include <algorithm>
 #include <chrono>
+#include <thread>
 
 #include "core/log.hpp"
 #include "models/account_admin.hpp"
+#include "storage/media_pool.hpp"
 
 namespace campfire::app::active_storage {
 
@@ -117,24 +120,18 @@ Task<void> after_write(Rq& rq, models::attachments::Record record, Assignment& a
   if (!applied.purge.empty()) co_await purge(rq, std::move(applied.purge));
 }
 
-Task<Flow<std::optional<storage::Blob>>> processed_variant(Rq& rq, models::attachments::Record record,
-                                                           std::string_view name,
-                                                           const storage::Variation& transformations) {
+namespace {
+
+// `VariantWithRecord#processed` for a variation that `variation_for` gave: the existing variant, or one transformed
+// off the writer and then recorded.
+Task<Flow<storage::Blob>> processed_variant_of(Rq& rq, const storage::Blob& blob, const storage::Variation& wanted) {
   const storage::Storage& storage = *rq.app.storage;
   models::attachments::AttachmentRecords reader(rq.db());
-  auto attached = reader.attached(record.type, record.id, name);
-  if (!attached) co_return fail_internal(attached.error().message);
-  if (!*attached || !(*attached)->is_variable()) co_return std::optional<storage::Blob>{};
-  const storage::Blob blob = std::move(**attached);
-  auto variation = storage.variation_for(blob, transformations);
-  if (!variation) co_return fail_internal(variation.error().message);
-  auto existing = storage.existing_variant(reader, blob, *variation);
+  auto existing = storage.existing_variant(reader, blob, wanted);
   if (!existing) co_return fail_internal(existing.error().message);
-  if (*existing) co_return std::move(*existing);
-  // `VariantWithRecord#process`: the file work off the writer, then the rows.
-  const storage::Variation& wanted = *variation;
-  auto image = co_await rq.ctx.offload(rq.app.jobs,
-                                       [&storage, blob, wanted] { return storage.transform_variant(blob, wanted); });
+  if (*existing) co_return std::move(**existing);
+  auto image = co_await rq.ctx.offload(media_pool(),
+                                       [&storage, &blob, &wanted] { return storage.transform_variant(blob, wanted); });
   if (!image) co_return fail_internal(image.error().message);
   std::optional<storage::Blob> recorded;
   auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
@@ -151,13 +148,88 @@ Task<Flow<std::optional<storage::Blob>>> processed_variant(Rq& rq, models::attac
   if (!written) co_return fail_internal(written.error().message);
   if (recorded) {
     image->keep();
-    co_return std::move(recorded);
+    co_return std::move(*recorded);
   }
-  // Another request recorded the variant first.
+  // Another request recorded the variant first: ours is dropped, and its file with it.
   auto winner = storage.existing_variant(reader, blob, wanted);
   if (!winner) co_return fail_internal(winner.error().message);
   if (!*winner) co_return fail_internal("variant record is gone");
-  co_return std::move(*winner);
+  co_return std::move(**winner);
+}
+
+// `blob.preview_image`: the existing image, or one drawn with ffmpeg off the writer.
+Task<Flow<storage::Blob>> preview_image_of(Rq& rq, const storage::Blob& blob) {
+  const storage::Storage& storage = *rq.app.storage;
+  models::attachments::AttachmentRecords reader(rq.db());
+  auto existing = storage.existing_preview_image(reader, blob);
+  if (!existing) co_return fail_internal(existing.error().message);
+  if (*existing) co_return std::move(**existing);
+  auto image = co_await rq.ctx.offload(media_pool(), [&storage, &blob] { return storage.draw_preview_image(blob); });
+  if (!image) co_return fail_internal(image.error().message);
+  std::optional<storage::Blob> recorded;
+  auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
+    models::attachments::AttachmentRecords records(tx.conn());
+    auto saved = storage.record_preview_image(records, blob, *image, compat_now(tx.now()));
+    if (!saved) return std::unexpected(saved.error());
+    recorded = std::move(*saved);
+    if (recorded) {
+      tx.changed(db::schema::Table::ActiveStorageBlobs, recorded->id);
+      tx.changed(db::schema::Table::ActiveStorageAttachments, blob.id);
+    }
+    return {};
+  });
+  if (!written) co_return fail_internal(written.error().message);
+  if (recorded) {
+    image->keep();
+    co_return std::move(*recorded);
+  }
+  auto winner = storage.existing_preview_image(reader, blob);
+  if (!winner) co_return fail_internal(winner.error().message);
+  if (!*winner) co_return fail_internal("preview image is gone");
+  co_return std::move(**winner);
+}
+
+}  // namespace
+
+net::ThreadPool& media_pool() {
+  static net::ThreadPool pool(std::clamp<std::size_t>(std::thread::hardware_concurrency(), 2, storage::kMaxMediaThreads));
+  return pool;
+}
+
+Task<Flow<std::optional<storage::Blob>>> processed_variant(Rq& rq, models::attachments::Record record,
+                                                           std::string_view name,
+                                                           const storage::Variation& transformations) {
+  const storage::Storage& storage = *rq.app.storage;
+  models::attachments::AttachmentRecords reader(rq.db());
+  auto attached = reader.attached(record.type, record.id, name);
+  if (!attached) co_return fail_internal(attached.error().message);
+  if (!*attached || !(*attached)->is_variable()) co_return std::optional<storage::Blob>{};
+  const storage::Blob blob = std::move(**attached);
+  auto variation = storage.variation_for(blob, transformations);
+  if (!variation) co_return fail_internal(variation.error().message);
+  auto processed = co_await processed_variant_of(rq, blob, *variation);
+  if (!processed) co_return std::unexpected(std::move(processed.error()));
+  co_return std::optional<storage::Blob>(std::move(*processed));
+}
+
+Task<Flow<storage::Blob>> processed_representation(Rq& rq, const storage::Blob& blob,
+                                                   const storage::Variation& transformations) {
+  const storage::Storage& storage = *rq.app.storage;
+  if (blob.is_previewable()) {
+    // `blob.preview(transformations).processed`: the image itself for empty transformations.
+    auto image = co_await preview_image_of(rq, blob);
+    if (!image) co_return std::unexpected(std::move(image.error()));
+    if (transformations.transformations().empty()) co_return std::move(*image);
+    auto variation = storage.variation_for(*image, transformations);
+    if (!variation) co_return fail_internal(variation.error().message);
+    co_return co_await processed_variant_of(rq, *image, *variation);
+  }
+  if (blob.is_variable()) {
+    auto variation = storage.variation_for(blob, transformations);
+    if (!variation) co_return fail_internal(variation.error().message);
+    co_return co_await processed_variant_of(rq, blob, *variation);
+  }
+  co_return fail_internal("ActiveStorage::UnrepresentableError: " + std::string(blob.type()));
 }
 
 }  // namespace campfire::app::active_storage

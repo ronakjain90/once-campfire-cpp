@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+etag: W/"7e6c9877b2dec7dfadc43e742246d94d"
+cache-control: max-age=0, private, must-revalidate
+content-length: 73
+x-request-id: 03591ac5-7f20-43c3-bd6a-638e8074a602
+x-runtime: 0.000043
+vary: Accept-Encoding
+x-cache: miss
+date: Mon, 05 Oct 2026 16:31:10 GMT
+connection: close
+
+<!DOCTYPE html><html><body style="background-color: green"></body></html>

@@ -10,8 +10,7 @@
 # are byte-identical. Only the base image differs: debian:trixie plus build-essential, in place of
 # rust:trixie (same Debian release and the same gcc).
 #
-# PLACEHOLDER: until src/ exists, the cpp-build stage builds docker/placeholder/main.cpp, a small
-# server that answers GET /up. See the marked spot in that stage.
+# The cpp-build stage runs `cmake --preset release` (binary /build/release/campfire).
 
 ARG DEBIAN_RELEASE=trixie
 ARG LIBVIPS_VERSION=8.16.1-1+deb13u1
@@ -112,14 +111,8 @@ RUN test "$(pkg-config --modversion vips)" = "8.16.1" && \
 WORKDIR /src
 COPY . .
 RUN mkdir -p /out && \
-    if [ -f CMakeLists.txt ]; then \
-      # REAL BUILD goes here once src/ exists. Install the binary as /out/campfire.
-      cmake --preset release && cmake --build --preset release && \
-      install -D -m 755 build/release/campfire /out/campfire; \
-    else \
-      # PLACEHOLDER: no top-level CMakeLists.txt yet.
-      clang++ -std=c++23 -O2 -o /out/campfire docker/placeholder/main.cpp; \
-    fi
+    cmake --preset release && cmake --build --preset release --target campfire && \
+    install -D -m 755 /build/release/campfire /out/campfire
 
 
 FROM docker.io/library/debian:${DEBIAN_RELEASE}-slim
@@ -127,7 +120,7 @@ FROM docker.io/library/debian:${DEBIAN_RELEASE}-slim
 # The Debian libraries libvips and ffmpeg were built against (same list as the Rust image).
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-      ca-certificates libglib2.0-0t64 libexpat1 libjpeg62-turbo libspng0 libpng16-16t64 \
+      ca-certificates libjemalloc2 libglib2.0-0t64 libexpat1 libjpeg62-turbo libspng0 libpng16-16t64 \
       libwebp7 libwebpmux3 libwebpdemux2 libtiff6 libheif1 libheif-plugin-libde265 \
       libheif-plugin-dav1d libexif12 liblcms2-2 libcgif0 libimagequant0 libhwy1t64 libdav1d7 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
@@ -150,7 +143,7 @@ WORKDIR /rails
 
 COPY --from=cpp-build /out/campfire /usr/local/bin/campfire
 
-# bin/boot: starts the server. The placeholder ignores the "server" argument.
+# bin/boot: starts the server.
 COPY --chmod=755 <<'EOF2' /rails/bin/boot
 #!/bin/sh
 exec /usr/local/bin/campfire server
@@ -160,7 +153,7 @@ EOF2
 RUN mkdir -p /rails/storage/db /rails/storage/files /rails/storage/backups && \
     chown -R 1000:1000 /rails
 
-# ONCE backup/restore hooks. pre-backup calls `campfire backup` (not in the placeholder).
+# ONCE backup/restore hooks. pre-backup calls `campfire backup` (not built yet).
 # post-restore is the reference's script (docker/hooks/post-restore).
 COPY --chmod=755 <<'EOF2' /hooks/pre-backup
 #!/bin/bash

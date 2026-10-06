@@ -37,6 +37,7 @@ campfire_library(app
     controllers/common.cpp
     controllers/first_runs.cpp
     controllers/session_transfers.cpp
+    controllers/rooms.cpp
     controllers/sessions.cpp
     controllers/users.cpp
     controllers/welcome.cpp
@@ -72,6 +73,7 @@ campfire_test(app
     tests/finish_test.cpp
     tests/signin_area_test.cpp
     tests/user_agent_test.cpp
+    tests/rooms_test.cpp
   WERROR)
 target_compile_definitions(test_app PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")
 

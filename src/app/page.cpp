@@ -4,10 +4,12 @@
 #include <stdexcept>
 
 #include "app/platform.hpp"
+#include "app/controllers/rooms.hpp"
 #include "assets/assets.hpp"
 #include "compat/signed_id.hpp"
 #include "core/time_format.hpp"
 #include "models/account.hpp"
+#include "models/room.hpp"
 #include "routes/routes.hpp"
 #include "views/templates.gen.hpp"
 
@@ -44,6 +46,21 @@ Flow<LayoutData> load_layout(Rq& rq) {
     const std::string token = compat::signed_id::generate(rq.app.secrets, "User", user->id, "avatar", std::nullopt);
     current.avatar_url = campfire::routes::fresh_user_avatar(token, to_fs_number(user->updated_at));
     data.current_user = std::move(current);
+    // `last_room_visited`: `Current.user.rooms.find_by(id: cookies[:last_room]) || Current.user.rooms.original`
+    std::optional<models::Room> visited;
+    if (const auto cookie = rq.cookies().get("last_room")) {
+      if (const auto id = controllers::cast_id(*cookie)) {
+        auto found = models::rooms::find_for_user(rq.db(), rq.arena(), user->id, models::RoomScope::All, *id);
+        if (!found) return fail_internal(found.error().message);
+        visited = std::move(*found);
+      }
+    }
+    if (!visited) {
+      auto original = models::rooms::original_of_user(rq.db(), rq.arena(), user->id);
+      if (!original) return fail_internal(original.error().message);
+      visited = std::move(*original);
+    }
+    if (visited) data.last_room_visited_id = visited->id;
   }
   return data;
 }

@@ -30,3 +30,9 @@ campfire_test(req
   WERROR)
 target_compile_definitions(test_req PRIVATE CAMPFIRE_VECTORS_DIR="${CAMPFIRE_VECTORS_DIR}")
 target_compile_definitions(test_req PRIVATE CAMPFIRE_PARAMS_VECTORS="${CMAKE_CURRENT_SOURCE_DIR}/tests/data/params_vectors.json")
+
+# Fuzz targets (architecture section 14): built only with -DCAMPFIRE_FUZZ=ON.
+option(CAMPFIRE_FUZZ "Build the libFuzzer targets" OFF)
+if(CAMPFIRE_FUZZ)
+  add_subdirectory(fuzz)
+endif()

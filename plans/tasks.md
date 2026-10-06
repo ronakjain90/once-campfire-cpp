@@ -52,7 +52,7 @@ format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
 | T8b | in progress (Sonnet) | `task/T8b` | Erubi trim rules in `ctc.py` |
 | T11 | **Cable core.** WebSocket framing, `permessage-deflate`, the Action Cable protocol, the hub. Unit tests with the Rust reference frames. | T1 |
 | T12 | **Storage.** Blobs, the disk service, signed URLs, the Marshal variant digest, libvips variants, ffmpeg analysis and posters (`vectors/storage.json`, `vectors/storage/`). | T1, T2, T4 |
-| T13 | **Diff sweep.** `tools/diffsweep`: runs both images on one seed with a frozen clock, sends a list of requests (sign-in, pages, writes, Cable sessions), compares the results. Request lists from `parity/screens.yml` and `reference-tools/http_shape/sweep.py`. | T4 |
+| T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
 
 ## Wave 3: the app (parallel, after wave 2)
 
@@ -107,9 +107,9 @@ its requests in the diff sweep pass.
 | T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
 | T8 | merged (verified by Opus) | `task/T8` | 1,134 Rails path cases, 81 named routes, 34 Rails helper goldens, 7 layout goldens pass. Follow-up T8b: Erubi trim rules. |
 | T9 | in progress (fresh Sonnet agent, 10:10) | `task/T9` | |
-| T11 | paused (usage limit, 2026-10-06 02:45) | `task/T11` | 1 commit, uncommitted work. |
+| T11 | in progress (fresh Sonnet agent, 10:45) | `task/T11` | |
 | T12 | in progress (fresh Sonnet agent, 10:30) | `task/T12` | |
-| T13 | in progress (fresh Sonnet agent, 09:50) | `task/T13` | |
+| T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
 | T10 | in progress (Sonnet) | `task/T10` | |
 | T8b | in progress (Sonnet) | `task/T8b` | Erubi trim rules in `ctc.py` |
 

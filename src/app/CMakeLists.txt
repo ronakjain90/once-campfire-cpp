@@ -51,6 +51,7 @@ campfire_library(app
     controllers/message_boosts.cpp
     controllers/message_bots.cpp
     controllers/messages.cpp
+    controllers/pwa.cpp
     controllers/qr_codes.cpp
     controllers/session_transfers.cpp
     controllers/directs.cpp

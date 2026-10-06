@@ -3,7 +3,10 @@ find_package(ZLIB REQUIRED)
 
 campfire_library(cable
   SOURCES
+    channel.cpp
+    connection.cpp
     frame.cpp
+    hub.cpp
     protocol.cpp
     websocket.cpp
   PUBLIC_DEPS campfire_core campfire_compat

@@ -59,6 +59,10 @@ std::string message(std::string_view encoded_identifier, std::string_view encode
   return out;
 }
 
+std::string remote_disconnect_payload(bool reconnect) {
+  return std::string(R"({"type":"disconnect","reconnect":)") + (reconnect ? "true" : "false") + "}";
+}
+
 std::string internal_channel(std::string_view id) { return "action_cable/" + std::string(id); }
 
 namespace {

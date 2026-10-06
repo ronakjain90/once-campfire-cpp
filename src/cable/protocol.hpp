@@ -32,6 +32,9 @@ enum class DisconnectReason : std::uint8_t { Unauthorized, InvalidRequest, Serve
 // Both arguments are already JSON encoded.
 [[nodiscard]] std::string message(std::string_view encoded_identifier, std::string_view encoded_message);
 
+// The payload that RemoteConnections#disconnect broadcasts to the internal channel.
+[[nodiscard]] std::string remote_disconnect_payload(bool reconnect);
+
 // ActionCable::Connection::InternalChannel: "action_cable/<connection identifier>".
 [[nodiscard]] std::string internal_channel(std::string_view connection_identifier);
 

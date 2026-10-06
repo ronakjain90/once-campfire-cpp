@@ -132,3 +132,4 @@ whose transcript is long.
 | A3 | merged (verified by Opus) | `task/A3` | Sweep 63/91 equal; the rest wait for A2b's partial or other areas. DB rows equal to Rust. Broadcasts unified with A2's. |
 | A4 | merged (verified by Opus) | `task/A4` | 131/140 equal; rest: rooms/webmanifest routes, and gzip content-length of compressed cache hits (decision pending). Avatar 1.7x Rust at c=16, 2.8x at c=64. |
 | A2b | in progress (Sonnet) | `task/A2b` | |
+| A6 | in progress (Sonnet) | `task/A6` | |

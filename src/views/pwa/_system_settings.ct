@@ -51,3 +51,4 @@
       </ol>
 {% else %}      <p>Ensure notifications are allowed for {{ capitalize(ctx.platform.browser) }} in your system settings.</p>
 {% end %}</details>
+

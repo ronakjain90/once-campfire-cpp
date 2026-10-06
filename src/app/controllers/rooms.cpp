@@ -57,9 +57,12 @@ Flow<models::Room> set_room(Rq& rq, models::RoomScope scope) {
   return halt(std::move(*redirect));
 }
 
+// Rails sets the cookie on every room page. The Rust port sets it only when the value changes: so does this code.
 void remember_last_room_visited(Rq& rq, const models::Room& room) {
+  const std::string value = std::to_string(room.id);
+  if (const auto current = rq.cookies().get("last_room"); current && *current == value) return;
   req::Cookie cookie;
-  cookie.value = std::to_string(room.id);
+  cookie.value = value;
   cookie.permanent = true;
   rq.cookies().set("last_room", std::move(cookie));
 }

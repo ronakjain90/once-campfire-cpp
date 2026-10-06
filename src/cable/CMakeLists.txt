@@ -16,6 +16,7 @@ campfire_library(cable
 campfire_test(cable
   SOURCES
     tests/golden_test.cpp
+    tests/hub_test.cpp
     tests/protocol_test.cpp
     tests/websocket_edge_test.cpp
     tests/websocket_test.cpp

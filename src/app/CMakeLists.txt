@@ -56,7 +56,6 @@ campfire_library(app
     fragment_cache.cpp
     health.cpp
     message_actions.cpp
-    message_partial_stub.cpp
     message_presenter.cpp
     not_found.cpp
     page.cpp

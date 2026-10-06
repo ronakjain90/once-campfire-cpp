@@ -1,0 +1,6 @@
+{# reference/app/views/messages/_presentation.html.erb #}
+{% include views/messages/support.hpp %}
+{% params const ViewContext& ctx, const MessageView& message %}
+<div id="{{ message.dom_id("presentation") }}" dir="auto" data-reply-target="body" data-messages-target="body">
+  {% call message_presentation(ctx, message) %}
+</div>

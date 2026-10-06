@@ -100,6 +100,7 @@ struct MessageView {
   std::vector<BoostView> boosts;  // `message.boosts.ordered`
 
   [[nodiscard]] const AttachmentView* attachment() const { return std::get_if<AttachmentView>(&content); }
+  [[nodiscard]] bool is_unrenderable() const { return std::holds_alternative<UnrenderableContent>(content); }
   // `dom_id(message, prefix)`
   [[nodiscard]] std::string dom_id(std::string_view prefix = {}) const {
     std::string result;

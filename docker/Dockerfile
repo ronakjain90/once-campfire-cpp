@@ -117,10 +117,11 @@ RUN mkdir -p /out && \
 
 FROM docker.io/library/debian:${DEBIAN_RELEASE}-slim
 
-# The Debian libraries libvips and ffmpeg were built against (same list as the Rust image).
+# The Debian libraries libvips and ffmpeg were built against (same list as the Rust image), and the
+# libraries of the server: OpenSSL, nghttp2 (HTTP/2), libdeflate (gzip) and zstd.
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-      ca-certificates libjemalloc2 libglib2.0-0t64 libexpat1 libjpeg62-turbo libspng0 libpng16-16t64 \
+      ca-certificates libssl3t64 libnghttp2-14 libdeflate0 libzstd1 libjemalloc2 libglib2.0-0t64 libexpat1 libjpeg62-turbo libspng0 libpng16-16t64 \
       libwebp7 libwebpmux3 libwebpdemux2 libtiff6 libheif1 libheif-plugin-libde265 \
       libheif-plugin-dav1d libexif12 liblcms2-2 libcgif0 libimagequant0 libhwy1t64 libdav1d7 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives

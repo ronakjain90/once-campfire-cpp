@@ -43,7 +43,7 @@ Result<std::optional<Match>> Regex::search(std::string_view subject, std::size_t
   const PCRE2_SIZE* ovector = pcre2_get_ovector_pointer(data.get());
   const std::uint32_t count = pcre2_get_ovector_count(data.get());
   Match match;
-  for (std::uint32_t i = 0; i < count; ++i) {
+  for (std::size_t i = 0; i < count; ++i) {
     if (ovector[2 * i] == PCRE2_UNSET) {
       match.groups.emplace_back(std::string_view::npos, std::string_view::npos);
     } else {

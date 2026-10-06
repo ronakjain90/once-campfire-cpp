@@ -191,6 +191,7 @@ void all_files(const fs::path& dir, std::vector<fs::path>& files) {
 // Propshaft::LoadPath#dedup
 std::vector<fs::path> dedup(const std::vector<fs::path>& paths) {
   std::vector<const fs::path*> sorted;
+  sorted.reserve(paths.size());
   for (const auto& p : paths) {
     sorted.push_back(&p);
   }

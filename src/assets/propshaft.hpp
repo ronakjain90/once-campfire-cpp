@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <filesystem>
 #include <optional>
 #include <string>
@@ -22,7 +23,7 @@ struct SourceAsset {
 
 class Regex;
 
-enum class Kind { Css, Js, Other };
+enum class Kind : std::uint8_t { Css, Js, Other };
 
 class LoadPath {
  public:

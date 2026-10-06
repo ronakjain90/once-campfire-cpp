@@ -334,8 +334,8 @@ int main(int argc, char** argv) {
     const std::string& logical = lp.assets()[i].logical_path;
     std::string digested = lp.digested_path(i);
     auto compiled = must(lp.compiled_content(i));
-    files.push_back(
-        File{std::string(kPrefix) + "/" + digested, compiled ? std::move(*compiled) : lp.assets()[i].content});
+    std::string body = compiled ? *compiled : lp.assets()[i].content;
+    files.push_back(File{std::string(kPrefix) + "/" + digested, std::move(body)});
     // Propshaft::Processor#write_manifest, in the order of the load path.
     manifest_json +=
         (i == 0 ? "" : ",") + json(logical) + ":{\"digested_path\":" + json(digested) + ",\"integrity\":null}";

@@ -210,7 +210,11 @@ TEST_CASE("public files are served like ActionDispatch::Static") {
       }
       return v->as_string();
     };
-    const std::string label = method + " " + path + " " + json::generate(env);
+    std::string label = method;
+    label += " ";
+    label += path;
+    label += " ";
+    label += json::generate(env);
     const int expected_status = static_cast<int>(*c.find("status")->to_int64());
     const json::Value& expected_headers = *c.find("headers");
 

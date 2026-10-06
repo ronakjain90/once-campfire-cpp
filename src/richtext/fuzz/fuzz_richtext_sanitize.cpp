@@ -49,8 +49,8 @@ void check_node(const Node* node, const SafeList& list, std::string_view extra_a
 
 // What a browser must never get from the pipeline, whichever list a step used.
 void check_safe(const Node* node) {
-  static constexpr std::string_view kDangerous[] = {"script", "style",  "iframe", "object", "embed", "svg",
-                                                    "math",   "form",   "input",  "base",   "meta",  "link"};
+  static constexpr std::string_view kDangerous[] = {"script", "style", "iframe", "object", "embed", "svg",
+                                                    "math",   "form",  "input",  "base",   "meta",  "link"};
   for (const Node* child = node->first_child; child != nullptr; child = child->next) {
     if (child->type == NodeType::Comment || child->type == NodeType::CData) {
       std::abort();

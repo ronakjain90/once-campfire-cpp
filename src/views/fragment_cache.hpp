@@ -1,6 +1,7 @@
 // Fragment cache hook for the `{% cache key %}` block. Rails: ActionView cache helper.
 #pragma once
 
+#include <cstddef>
 #include <string_view>
 
 #include "core/out.hpp"
@@ -31,5 +32,19 @@ FragmentCache& null_fragment_cache() noexcept;
 // `cache` must outlive its use. Pass nullptr to go back to the null cache.
 FragmentCache& fragment_cache() noexcept;
 void set_fragment_cache(FragmentCache* cache) noexcept;
+
+// Where a page puts the fragments of the fragment cache: the Rust port hashes the ETag of a room page from its parts
+// (crates/kit/src/deflater/splice.rs). A page that wants the parts sets a recorder. The templates that write a cached
+// fragment call `record` with its offset and its size in the body of the page.
+class FragmentRecorder {
+ public:
+  FragmentRecorder() = default;
+  FragmentRecorder(const FragmentRecorder&) = delete;
+  FragmentRecorder& operator=(const FragmentRecorder&) = delete;
+  virtual ~FragmentRecorder() = default;
+  virtual void record(std::size_t offset, std::size_t size) = 0;
+};
+[[nodiscard]] FragmentRecorder* fragment_recorder() noexcept;
+void set_fragment_recorder(FragmentRecorder* recorder) noexcept;
 
 }  // namespace campfire::views

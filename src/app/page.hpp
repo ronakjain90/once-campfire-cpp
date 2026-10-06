@@ -57,8 +57,9 @@ void add_page_facets(Rq& rq, db::DependencyScope& deps, std::string_view page);
                                         const std::function<void(Out&)>& render, bool preload_link = true);
 // The same, for a `render` that reads data and can fail (it runs on a miss only). A failure goes to the caller and the
 // page is not stored.
+// `parts_etag` makes the ETag of the page from its cached fragments, as the Rust port does for a room page.
 [[nodiscard]] Flow<net::Response> cached_page_checked(Rq& rq, int status, db::DependencyScope& deps,
                                                       const std::function<Flow<void>(Out&)>& render,
-                                                      bool preload_link = true);
+                                                      bool preload_link = true, bool parts_etag = false);
 
 }  // namespace campfire::app

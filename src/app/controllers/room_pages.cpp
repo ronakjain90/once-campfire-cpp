@@ -183,6 +183,7 @@ Task<Flow<net::Response>> rooms_show(Rq& rq) {
   spec.name = "rooms#show";
   spec.title = title;
   spec.body_class = "sidebar";
+  spec.parts_etag = true;
   spec.head = [&](Out& out, const views::ViewContext& ctx) { views::rooms::show::head(out, ctx, show.room); };
   spec.nav = [&](Out& out, const views::ViewContext& ctx) { views::rooms::show::nav(out, ctx, show.room); };
   spec.sidebar = [](Out& out, const views::ViewContext&) {

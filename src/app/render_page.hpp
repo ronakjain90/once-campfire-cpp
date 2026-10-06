@@ -29,6 +29,8 @@ struct PageSpec {
   PagePart sidebar;
   // Reads the data that only a render needs (it runs on a page cache miss, before the parts). A failure is the result.
   std::function<Flow<void>()> prepare;
+  // The ETag of the page comes from its cached fragments (a room page), as in the Rust port.
+  bool parts_etag = false;
   // Called with the scope and the layout data, after the facets of the layout. Add the facets of the page here.
   std::function<void(db::DependencyScope&, const LayoutData&)> facets;
 };

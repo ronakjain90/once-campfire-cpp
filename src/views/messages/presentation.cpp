@@ -5,6 +5,7 @@
 #include "compat/ruby.hpp"
 #include "core/time_format.hpp"
 #include "routes/routes.hpp"
+#include "views/fragment_cache.hpp"
 #include "views/messages/support.hpp"
 #include "views/templates.gen.hpp"
 
@@ -176,11 +177,13 @@ void message_presentation(Out& out, const ViewContext& ctx, const MessageView& m
 }
 
 void render_message_item(Out& out, const ViewContext& ctx, const MessageItem& item) {
+  const std::size_t start = out.size();
   if (item.view) {
     message(out, ctx, *item.view);
   } else {
     out.append(SafeHtml::trusted(item.html));
   }
+  if (FragmentRecorder* recorder = fragment_recorder()) recorder->record(start, out.size() - start);
 }
 
 std::string message_fragment_key(std::int64_t id, std::string_view updated_at) {

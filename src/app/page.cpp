@@ -125,11 +125,28 @@ net::Response layout_response(Rq& rq, int status, Out&& body) {
   return rq.html(status, std::move(body));
 }
 
+namespace {
+
+// Notes where the templates put the cached fragments in the body of a page.
+class SpanRecorder final : public views::FragmentRecorder {
+ public:
+  void record(std::size_t offset, std::size_t size) override { spans.push_back({offset, size}); }
+  std::vector<FragmentSpan> spans;
+};
+
+}  // namespace
+
 Flow<net::Response> cached_page_checked(Rq& rq, int status, db::DependencyScope& deps,
-                                        const std::function<Flow<void>(Out&)>& render, bool preload_link) {
+                                        const std::function<Flow<void>(Out&)>& render, bool preload_link,
+                                        bool parts_etag_wanted) {
+  SpanRecorder recorder;
   const auto make_body = [&]() -> Flow<Out> {
     Out out(rq.ctx.resource());
-    if (auto done = render(out); !done) return std::unexpected(std::move(done.error()));
+    recorder.spans.clear();
+    if (parts_etag_wanted) views::set_fragment_recorder(&recorder);
+    auto done = render(out);
+    views::set_fragment_recorder(nullptr);
+    if (!done) return std::unexpected(std::move(done.error()));
     return out;
   };
   if (preload_link && !rq.is_turbo_frame_request()) {
@@ -152,7 +169,10 @@ Flow<net::Response> cached_page_checked(Rq& rq, int status, db::DependencyScope&
   }
   auto body = make_body();
   if (!body) return std::unexpected(std::move(body.error()));
-  auto entry = cache.put(key, body->to_string(), "text/html; charset=utf-8");
+  std::string text = body->to_string();
+  std::string etag;
+  if (parts_etag_wanted) etag = parts_etag(text, recorder.spans);
+  auto entry = cache.put(key, std::move(text), "text/html; charset=utf-8", std::move(etag));
   return rq.respond_page(std::move(entry), status);
 }
 

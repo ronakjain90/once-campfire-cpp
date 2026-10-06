@@ -66,7 +66,7 @@ Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec, db::De
     }
     return {};
   };
-  return cached_page_checked(rq, status, deps, render);
+  return cached_page_checked(rq, status, deps, render, true, spec.parts_etag);
 }
 
 }  // namespace campfire::app

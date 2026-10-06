@@ -11,6 +11,7 @@ class NullFragmentCache final : public FragmentCache {
 };
 
 thread_local FragmentCache* g_current = nullptr;
+thread_local FragmentRecorder* g_recorder = nullptr;
 
 }  // namespace
 
@@ -25,6 +26,14 @@ FragmentCache& fragment_cache() noexcept {
 
 void set_fragment_cache(FragmentCache* cache) noexcept {
   g_current = cache;
+}
+
+FragmentRecorder* fragment_recorder() noexcept {
+  return g_recorder;
+}
+
+void set_fragment_recorder(FragmentRecorder* recorder) noexcept {
+  g_recorder = recorder;
 }
 
 }  // namespace campfire::views

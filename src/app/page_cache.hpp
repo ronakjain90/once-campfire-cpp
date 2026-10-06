@@ -11,6 +11,7 @@
 #include <list>
 #include <memory>
 #include <mutex>
+#include <span>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -47,6 +48,15 @@ class Sha256Etag {
   std::unique_ptr<Impl> impl_;
 };
 
+// A cached fragment in the body of a page: its offset and its size.
+struct FragmentSpan {
+  std::size_t offset = 0;
+  std::size_t size = 0;
+};
+// The ETag of a page from its parts, as the Rust port makes it (crates/kit/src/deflater/splice.rs, `PageParts::etag`):
+// a SHA-256 over the digests of the fragments and of the text between them. A page with no fragment of 1 KB or more
+// gets `body_etag`. `fragments` are in order, with no overlap.
+[[nodiscard]] std::string parts_etag(std::string_view body, std::span<const FragmentSpan> fragments);
 // The same format from a page key. A page whose Rust ETag hashes page parts uses this one.
 [[nodiscard]] std::string key_etag(const Hash128& key);
 

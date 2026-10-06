@@ -46,9 +46,10 @@ format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
 | T5 | **Server.** `src/net/`: event loop, HTTP/1.1, the router generator, `Ctx`, the response builder, timers, worker threads, the cross-worker queues. | T1 |
 | T6 | merged (verified by Opus) | `task/T6` | 2,755 Rails params vectors (same file as the Rust repo), `csrf` and `passwords` groups pass. 4 fuzz targets clean. Invalid bcrypt digest returns false (Rails answers 500). |
 | T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
-| T8 | **Templates.** `tools/ctc.py`, `src/views/` foundation: tag helpers with Rails attribute order, URL helpers (`vectors/campfire_routes.json`), form builders, `time_tag`, `turbo_frame_tag`, the layout and the shared partials. | T1, T2 |
+| T8 | merged (verified by Opus) | `task/T8` | 1,134 Rails path cases, 81 named routes, 34 Rails helper goldens, 7 layout goldens pass. Follow-up T8b: Erubi trim rules. |
 | T9 | **Assets.** `src/assets/`: Propshaft digests, importmap, the overrides, precompressed bodies, and the vendored frontend files. | T1 |
 | T10 | in progress (Sonnet) | `task/T10` | |
+| T8b | in progress (Sonnet) | `task/T8b` | Erubi trim rules in `ctc.py` |
 | T11 | **Cable core.** WebSocket framing, `permessage-deflate`, the Action Cable protocol, the hub. Unit tests with the Rust reference frames. | T1 |
 | T12 | **Storage.** Blobs, the disk service, signed URLs, the Marshal variant digest, libvips variants, ffmpeg analysis and posters (`vectors/storage.json`, `vectors/storage/`). | T1, T2, T4 |
 | T13 | **Diff sweep.** `tools/diffsweep`: runs both images on one seed with a frozen clock, sends a list of requests (sign-in, pages, writes, Cable sessions), compares the results. Request lists from `parity/screens.yml` and `reference-tools/http_shape/sweep.py`. | T4 |
@@ -104,12 +105,13 @@ its requests in the diff sweep pass.
 | T5 | in progress (fresh Sonnet agent, 09:35) | `task/T5` | 3 commits. Response builder in progress. |
 | T6 | merged (verified by Opus) | `task/T6` | 2,755 Rails params vectors (same file as the Rust repo), `csrf` and `passwords` groups pass. 4 fuzz targets clean. Invalid bcrypt digest returns false (Rails answers 500). |
 | T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
-| T8 | in progress (fresh Sonnet agent, 09:35) | `task/T8` | No commits yet. |
+| T8 | merged (verified by Opus) | `task/T8` | 1,134 Rails path cases, 81 named routes, 34 Rails helper goldens, 7 layout goldens pass. Follow-up T8b: Erubi trim rules. |
 | T9 | in progress (fresh Sonnet agent, 10:10) | `task/T9` | |
 | T11 | paused (usage limit, 2026-10-06 02:45) | `task/T11` | 1 commit, uncommitted work. |
-| T12 | paused (usage limit, 2026-10-06 02:45) | `task/T12` | 1 commit. libvips wrapper in progress. |
+| T12 | in progress (fresh Sonnet agent, 10:30) | `task/T12` | |
 | T13 | in progress (fresh Sonnet agent, 09:50) | `task/T13` | |
 | T10 | in progress (Sonnet) | `task/T10` | |
+| T8b | in progress (Sonnet) | `task/T8b` | Erubi trim rules in `ctc.py` |
 
 ## Restart rule
 

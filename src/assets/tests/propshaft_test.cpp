@@ -1,11 +1,12 @@
 // Unit tests of the Propshaft code (Rails: propshaft 1.2.1; Rust: crates/assets/build/propshaft.rs).
+#include "assets/propshaft.hpp"
+
 #include <doctest.h>
 
 #include <filesystem>
 #include <fstream>
 
 #include "assets/importmap.hpp"
-#include "assets/propshaft.hpp"
 #include "assets/regex.hpp"
 
 namespace fs = std::filesystem;
@@ -18,7 +19,10 @@ struct Dir {
   Dir() : path(fs::temp_directory_path() / ("cfassets-" + std::to_string(reinterpret_cast<std::uintptr_t>(this)))) {
     fs::create_directories(path);
   }
-  ~Dir() { std::error_code ec; fs::remove_all(path, ec); }
+  ~Dir() {
+    std::error_code ec;
+    fs::remove_all(path, ec);
+  }
   Dir(const Dir&) = delete;
   Dir& operator=(const Dir&) = delete;
   void write(const std::string& name, const std::string& content) const {
@@ -39,7 +43,8 @@ TEST_CASE("extname follows File.extname") {
 TEST_CASE("a CSS url() is rewritten to the digested path") {
   Dir dir;
   dir.write("images/a.png", "png");
-  dir.write("app.css", "body { background: url(images/a.png?x=1) }\n.b { background: url(\"data:image/png;base64,AA\") }\n");
+  dir.write("app.css",
+            "body { background: url(images/a.png?x=1) }\n.b { background: url(\"data:image/png;base64,AA\") }\n");
   auto lp = build::LoadPath::create({dir.path}, "1.0", "/assets");
   REQUIRE(lp.has_value());
   const auto css = lp->find("app.css");
@@ -48,8 +53,8 @@ TEST_CASE("a CSS url() is rewritten to the digested path") {
   REQUIRE(compiled.has_value());
   REQUIRE(compiled->has_value());
   const std::string image = lp->digested_path(*lp->find("images/a.png"));
-  CHECK(compiled->value() ==
-        "body { background: url(\"/assets/" + image + "?x=1\") }\n.b { background: url(\"data:image/png;base64,AA\") }\n");
+  CHECK(compiled->value() == "body { background: url(\"/assets/" + image +
+                                 "?x=1\") }\n.b { background: url(\"data:image/png;base64,AA\") }\n");
   // The digest of the stylesheet covers the files that it references.
   const std::string before = lp->digested_path(*css);
   dir.write("images/a.png", "other");

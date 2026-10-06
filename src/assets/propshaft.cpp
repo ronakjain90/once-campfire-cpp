@@ -156,8 +156,8 @@ std::string resolve_path(std::string_view directory, std::string_view filename) 
 
 bool is_word(std::string_view s) {
   return !s.empty() && std::all_of(s.begin(), s.end(), [](char c) {
-           return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-         });
+    return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+  });
 }
 
 // The start of the extension that `sub(/\.(\w+(\.map)?)$/)` replaces.
@@ -259,7 +259,8 @@ Result<LoadPath> LoadPath::create(const std::vector<fs::path>& dirs, std::string
     }
     std::vector<fs::path> files;
     all_files(dir, files);
-    std::sort(files.begin(), files.end(), [](const fs::path& a, const fs::path& b) { return sort_key(a) < sort_key(b); });
+    std::sort(files.begin(), files.end(),
+              [](const fs::path& a, const fs::path& b) { return sort_key(a) < sort_key(b); });
     for (const auto& file : files) {
       if (file.filename().string().starts_with('.')) {
         continue;
@@ -363,18 +364,16 @@ Result<std::optional<std::string>> LoadPath::compiled_content(std::size_t index)
     url_prefix.pop_back();
   }
 
-  auto urls = (is_css ? patterns().css : patterns().js)
-                  .gsub(asset.content, [&](const Match& m) {
-                    const std::string url = asset.content.substr(m.groups[1].first, m.groups[1].second - m.groups[1].first);
-                    std::string fingerprint;
-                    if (m.has(2)) {
-                      fingerprint = asset.content.substr(m.groups[2].first, m.groups[2].second - m.groups[2].first);
-                    }
-                    const auto found = find(resolve_path(directory, url));
-                    std::string r = found ? "\"" + url_prefix + "/" + digested_path(*found) + fingerprint + "\""
-                                          : "\"" + url + "\"";
-                    return is_css ? "url(" + r + ")" : r;
-                  });
+  auto urls = (is_css ? patterns().css : patterns().js).gsub(asset.content, [&](const Match& m) {
+    const std::string url = asset.content.substr(m.groups[1].first, m.groups[1].second - m.groups[1].first);
+    std::string fingerprint;
+    if (m.has(2)) {
+      fingerprint = asset.content.substr(m.groups[2].first, m.groups[2].second - m.groups[2].first);
+    }
+    const auto found = find(resolve_path(directory, url));
+    std::string r = found ? "\"" + url_prefix + "/" + digested_path(*found) + fingerprint + "\"" : "\"" + url + "\"";
+    return is_css ? "url(" + r + ")" : r;
+  });
   if (!urls) {
     return std::unexpected(urls.error());
   }
@@ -385,7 +384,9 @@ Result<std::optional<std::string>> LoadPath::compiled_content(std::size_t index)
   }
   const std::string& input = *urls;
   auto mapped = patterns().source_mapping.gsub(input, [&](const Match& m) {
-    const auto text = [&](std::size_t i) { return input.substr(m.groups[i].first, m.groups[i].second - m.groups[i].first); };
+    const auto text = [&](std::size_t i) {
+      return input.substr(m.groups[i].first, m.groups[i].second - m.groups[i].first);
+    };
     const std::string start = text(1);
     const std::string end = m.has(3) ? text(3) : std::string();
     auto stripped = prefix_regex->gsub(text(2), [](const Match&) { return std::string(); });

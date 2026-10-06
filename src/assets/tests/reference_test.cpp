@@ -143,9 +143,9 @@ TEST_CASE("the manifest JSON equals the reference") {
   for (auto* list : {&members, &expected}) {
     for (auto& [logical, value] : *list) {
       if (over.contains(logical)) {
-        value.as_object().erase(
-            std::remove_if(value.as_object().begin(), value.as_object().end(), [](const auto& m) { return m.first == "integrity"; }),
-            value.as_object().end());
+        value.as_object().erase(std::remove_if(value.as_object().begin(), value.as_object().end(),
+                                               [](const auto& m) { return m.first == "integrity"; }),
+                                value.as_object().end());
       }
     }
   }
@@ -177,7 +177,8 @@ TEST_CASE("compiled bodies equal the reference precompile byte for byte") {
 }
 
 TEST_CASE("the stylesheet tags and the link header equal the reference") {
-  const auto tags = assets::stylesheet_link_tag_all(std::vector<std::pair<std::string_view, std::string_view>>{{"data-turbo-track", "reload"}});
+  const auto tags = assets::stylesheet_link_tag_all(
+      std::vector<std::pair<std::string_view, std::string_view>>{{"data-turbo-track", "reload"}});
   REQUIRE(tags.has_value());
   CHECK(tags->html == fixture("stylesheet_link_tag_all.html"));
   CHECK(assets::append_preload_links("", tags->preload_links) == fixture("link_header.txt"));
@@ -215,7 +216,8 @@ TEST_CASE("public files are served like ActionDispatch::Static") {
 
     // The probe of the reference answers 404 with x-cascade: pass. Here the request falls through.
     if (expected_status == 404 && expected_headers.find("x-cascade") != nullptr) {
-      CHECK_MESSAGE(!assets::serve({.method = method, .path = path, .range = env_string("HTTP_RANGE")}).has_value(), label);
+      CHECK_MESSAGE(!assets::serve({.method = method, .path = path, .range = env_string("HTTP_RANGE")}).has_value(),
+                    label);
       continue;
     }
     const auto response = assets::serve({.method = method, .path = path, .range = env_string("HTTP_RANGE")});
@@ -279,7 +281,8 @@ TEST_CASE("several ranges give a multipart body") {
 }
 
 TEST_CASE("the helpers resolve logical paths") {
-  CHECK(assets::asset_path("bot.svg?v=1#x").value() == "/assets/" + std::string(*assets::digested_path("bot.svg")) + "?v=1#x");
+  CHECK(assets::asset_path("bot.svg?v=1#x").value() ==
+        "/assets/" + std::string(*assets::digested_path("bot.svg")) + "?v=1#x");
   CHECK(assets::asset_path("https://example.com/a.png").value() == "https://example.com/a.png");
   CHECK(assets::asset_path("//cdn.example.com/a.png").value() == "//cdn.example.com/a.png");
   CHECK(assets::asset_path("data:image/png;base64,xx").value() == "data:image/png;base64,xx");

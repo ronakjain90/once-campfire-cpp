@@ -23,7 +23,8 @@ Error missing_asset(std::string_view source) {
 
 std::string lower(std::string_view s) {
   std::string out(s);
-  std::transform(out.begin(), out.end(), out.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+  std::transform(out.begin(), out.end(), out.begin(),
+                 [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
   return out;
 }
 
@@ -123,11 +124,21 @@ std::optional<std::string_view> digested_path(std::string_view logical_path) noe
   return it->digested;
 }
 
-Result<std::string> asset_path(std::string_view source) { return compute(source, {}); }
-Result<std::string> image_path(std::string_view source) { return compute(source, {}); }
-Result<std::string> audio_path(std::string_view source) { return compute(source, {}); }
-Result<std::string> javascript_path(std::string_view source) { return compute(source, ".js"); }
-Result<std::string> stylesheet_path(std::string_view source) { return compute(source, ".css"); }
+Result<std::string> asset_path(std::string_view source) {
+  return compute(source, {});
+}
+Result<std::string> image_path(std::string_view source) {
+  return compute(source, {});
+}
+Result<std::string> audio_path(std::string_view source) {
+  return compute(source, {});
+}
+Result<std::string> javascript_path(std::string_view source) {
+  return compute(source, ".js");
+}
+Result<std::string> stylesheet_path(std::string_view source) {
+  return compute(source, ".css");
+}
 
 Result<std::string> asset_url(std::string_view base_url, std::string_view source) {
   auto path = asset_path(source);
@@ -145,12 +156,22 @@ Result<std::string> asset_url(std::string_view base_url, std::string_view source
   return std::string(base_url) + "/" + std::string(rest);
 }
 
-Result<std::string> image_url(std::string_view base_url, std::string_view source) { return asset_url(base_url, source); }
+Result<std::string> image_url(std::string_view base_url, std::string_view source) {
+  return asset_url(base_url, source);
+}
 
-std::span<const ManifestRecord> manifest() noexcept { return generated_data().manifest; }
-std::string_view manifest_json() noexcept { return view(generated_data().manifest_json); }
-std::span<const std::string_view> all_stylesheet_paths() noexcept { return generated_data().stylesheets; }
-std::string_view javascript_importmap_tags() noexcept { return view(generated_data().importmap_tags); }
+std::span<const ManifestRecord> manifest() noexcept {
+  return generated_data().manifest;
+}
+std::string_view manifest_json() noexcept {
+  return view(generated_data().manifest_json);
+}
+std::span<const std::string_view> all_stylesheet_paths() noexcept {
+  return generated_data().stylesheets;
+}
+std::string_view javascript_importmap_tags() noexcept {
+  return view(generated_data().importmap_tags);
+}
 
 Result<StylesheetTags> stylesheet_link_tag_all(std::span<const std::pair<std::string_view, std::string_view>> options) {
   return stylesheet_link_tag(all_stylesheet_paths(), options);
@@ -203,9 +224,9 @@ const std::string& built_at_http_date() {
     std::tm tm{};
     gmtime_r(&t, &tm);
     std::array<char, 40> buf{};
-    std::snprintf(buf.data(), buf.size(), "%s, %02d %s %d %02d:%02d:%02d GMT", kDays.at(static_cast<std::size_t>(tm.tm_wday)),
-                  tm.tm_mday, kMonths.at(static_cast<std::size_t>(tm.tm_mon)), tm.tm_year + 1900, tm.tm_hour, tm.tm_min,
-                  tm.tm_sec);
+    std::snprintf(buf.data(), buf.size(), "%s, %02d %s %d %02d:%02d:%02d GMT",
+                  kDays.at(static_cast<std::size_t>(tm.tm_wday)), tm.tm_mday,
+                  kMonths.at(static_cast<std::size_t>(tm.tm_mon)), tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
     return std::string(buf.data());
   }();
   return value;

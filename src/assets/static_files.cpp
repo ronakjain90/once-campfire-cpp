@@ -85,8 +85,9 @@ std::optional<std::string> clean_path(std::string_view path_info) {
 
 std::optional<std::string_view> StaticResponse::header(std::string_view name) const {
   for (const auto& [n, v] : headers) {
-    if (n.size() == name.size() &&
-        std::equal(n.begin(), n.end(), name.begin(), [](char a, char b) { return std::tolower(static_cast<unsigned char>(a)) == std::tolower(static_cast<unsigned char>(b)); })) {
+    if (n.size() == name.size() && std::equal(n.begin(), n.end(), name.begin(), [](char a, char b) {
+          return std::tolower(static_cast<unsigned char>(a)) == std::tolower(static_cast<unsigned char>(b));
+        })) {
       return v;
     }
   }
@@ -142,7 +143,8 @@ std::optional<StaticResponse> serve(const StaticRequest& request) {
   response.file = found->file;
   response.borrowed_ = file;
   const std::size_t size = file.size();
-  response.headers = {{"last-modified", last_modified}, {"content-type", ""}, {"Cache-Control", std::string(kCacheControl)}};
+  response.headers = {
+      {"last-modified", last_modified}, {"content-type", ""}, {"Cache-Control", std::string(kCacheControl)}};
 
   const auto ranges = compat::byte_ranges(request.range, size);
   if (!ranges) {
@@ -158,16 +160,17 @@ std::optional<StaticResponse> serve(const StaticRequest& request) {
     response.owned_ = std::string(message);
   } else if (ranges->size() == 1) {
     const auto [first, last] = (*ranges)[0];
-    response.headers.emplace_back("content-range",
-                                  "bytes " + std::to_string(first) + "-" + std::to_string(last) + "/" + std::to_string(size));
+    response.headers.emplace_back(
+        "content-range", "bytes " + std::to_string(first) + "-" + std::to_string(last) + "/" + std::to_string(size));
     response.status = 206;
     response.borrowed_ = file.substr(first, last - first + 1);
     response.file.reset();
   } else {
     std::string multipart;
     for (const auto& r : *ranges) {
-      multipart += "\r\n--" + std::string(kBoundary) + "\r\ncontent-type: " + found->content_type + "\r\ncontent-range: bytes " +
-                   std::to_string(r.first) + "-" + std::to_string(r.last) + "/" + std::to_string(size) + "\r\n\r\n";
+      multipart += "\r\n--" + std::string(kBoundary) + "\r\ncontent-type: " + found->content_type +
+                   "\r\ncontent-range: bytes " + std::to_string(r.first) + "-" + std::to_string(r.last) + "/" +
+                   std::to_string(size) + "\r\n\r\n";
       multipart.append(file.substr(r.first, r.last - r.first + 1));
     }
     multipart += "\r\n--" + std::string(kBoundary) + "--\r\n";

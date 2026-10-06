@@ -53,7 +53,8 @@ Result<std::optional<Match>> Regex::search(std::string_view subject, std::size_t
   return std::optional<Match>(std::move(match));
 }
 
-Result<std::string> Regex::gsub(std::string_view subject, const std::function<std::string(const Match&)>& replace) const {
+Result<std::string> Regex::gsub(std::string_view subject,
+                                const std::function<std::string(const Match&)>& replace) const {
   std::string out;
   out.reserve(subject.size());
   std::size_t last = 0;

@@ -28,12 +28,12 @@ struct ManifestRecord {
 
 struct GeneratedData {
   const char* blob = nullptr;
-  std::span<const FileRecord> files;               // sorted by URL path
-  std::span<const ManifestRecord> manifest;        // sorted by logical path
-  std::span<const std::string_view> stylesheets;   // logical paths, sorted
-  BlobRef manifest_json;                           // /assets/.manifest.json
-  BlobRef importmap_tags;                          // javascript_importmap_tags
-  std::int64_t built_at = 0;                       // seconds since the epoch
+  std::span<const FileRecord> files;              // sorted by URL path
+  std::span<const ManifestRecord> manifest;       // sorted by logical path
+  std::span<const std::string_view> stylesheets;  // logical paths, sorted
+  BlobRef manifest_json;                          // /assets/.manifest.json
+  BlobRef importmap_tags;                         // javascript_importmap_tags
+  std::int64_t built_at = 0;                      // seconds since the epoch
 };
 
 // Defined in the generated file assets_data.cpp.

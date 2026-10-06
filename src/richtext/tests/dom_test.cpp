@@ -1,12 +1,13 @@
 // Tests of the DOM and the serializer. Rust: crates/richtext/src/dom.rs (tests), tests/hardening.rs
+#include "richtext/dom.hpp"
+
 #include <chrono>
 #include <string>
 
 #include "doctest.h"
-#include "richtext/dom.hpp"
 
-using campfire::richtext::ParseError;
 using campfire::richtext::parse_fragment;
+using campfire::richtext::ParseError;
 using campfire::richtext::to_html;
 
 namespace {
@@ -91,8 +92,8 @@ TEST_CASE("counts open elements as Gumbo does") {
   CHECK(parse_error(repeat("<b>", 401) + repeat("</b>", 401)) == ParseError::TreeTooDeep);
   // The adoption agency moves blocks back up, and what counts is how deep they were.
   CHECK_FALSE(parse_error(repeat("<b>" + repeat("<span>", 300) + repeat("<div>", 10) + "</b>", 3)));
-  CHECK(parse_error("<b>" + repeat("<span>", 390) + repeat("<div>", 10) + "</b>" +
-                    repeat("<div>", 300)) == ParseError::TreeTooDeep);
+  CHECK(parse_error("<b>" + repeat("<span>", 390) + repeat("<div>", 10) + "</b>" + repeat("<div>", 300)) ==
+        ParseError::TreeTooDeep);
   // Text pending in a table reopens the <b>s past the limit when the input ends. Gumbo does not
   // check after that.
   std::string bs;

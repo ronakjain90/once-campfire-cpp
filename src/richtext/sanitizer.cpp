@@ -1,4 +1,5 @@
-// Rails: rails-html-sanitizer 1.7.1 lib/rails/html/scrubbers.rb (PermitScrubber), loofah 2.25.2 lib/loofah/html5/scrub.rb. Rust: crates/richtext/src/sanitizer.rs
+// Rails: rails-html-sanitizer 1.7.1 lib/rails/html/scrubbers.rb (PermitScrubber), loofah 2.25.2
+// lib/loofah/html5/scrub.rb. Rust: crates/richtext/src/sanitizer.rs
 #include "richtext/sanitizer.hpp"
 
 #include <array>
@@ -79,11 +80,15 @@ bool starts_with(std::string_view text, std::string_view prefix) {
   return text.substr(0, prefix.size()) == prefix;
 }
 
-bool is_ascii_digit(char c) { return c >= '0' && c <= '9'; }
+bool is_ascii_digit(char c) {
+  return c >= '0' && c <= '9';
+}
 bool is_ascii_hex(char c) {
   return is_ascii_digit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }
-bool is_ascii_lower(char c) { return c >= 'a' && c <= 'z'; }
+bool is_ascii_lower(char c) {
+  return c >= 'a' && c <= 'z';
+}
 
 std::string_view trim_unicode_space(std::string_view text) {
   std::size_t begin = 0;
@@ -326,8 +331,8 @@ bool protocol_before_separator(std::string_view s, std::string_view& protocol) {
     return false;
   }
   std::size_t end = 1;
-  while (end < s.size() && (is_ascii_lower(s[end]) || is_ascii_digit(s[end]) || s[end] == '+' ||
-                            s[end] == '-' || s[end] == '.')) {
+  while (end < s.size() &&
+         (is_ascii_lower(s[end]) || is_ascii_digit(s[end]) || s[end] == '+' || s[end] == '-' || s[end] == '.')) {
     ++end;
   }
   if (separator_length(s.substr(end)) == 0) {
@@ -394,8 +399,12 @@ char32_t fold(char32_t c) {
   return c;
 }
 
-bool is_letter(char32_t c) { return c >= 'a' && c <= 'z'; }
-bool is_digit(char32_t c) { return c >= '0' && c <= '9'; }
+bool is_letter(char32_t c) {
+  return c >= 'a' && c <= 'z';
+}
+bool is_digit(char32_t c) {
+  return c >= '0' && c <= '9';
+}
 
 // \A(?:[a-z]+|#[0-9a-f]{3,8}|var\(\s*--[a-z0-9_-]+\s*\)|(?:rgb|rgba|hsl|hsla)\([0-9a-z.,%\s/+-]*\))\z
 bool is_plain_color(std::string_view value) {
@@ -421,8 +430,7 @@ bool is_plain_color(std::string_view value) {
     return true;
   }
   if (cps[0] == '#') {
-    return n >= 4 && n <= 9 &&
-           all(1, n, [](char32_t c) { return is_digit(c) || (c >= 'a' && c <= 'f'); });
+    return n >= 4 && n <= 9 && all(1, n, [](char32_t c) { return is_digit(c) || (c >= 'a' && c <= 'f'); });
   }
   const auto is_space = [](char32_t c) { return c < 0x110000 && is_unicode_space(c); };
   const auto matches = [&](std::size_t at, std::u32string_view literal) {
@@ -455,8 +463,8 @@ bool is_plain_color(std::string_view value) {
         return false;
       }
       return all(fn.size(), n - 1, [&](char32_t c) {
-        return is_digit(c) || is_letter(c) || c == '.' || c == ',' || c == '%' || c == '/' ||
-               c == '+' || c == '-' || is_space(c);
+        return is_digit(c) || is_letter(c) || c == '.' || c == ',' || c == '%' || c == '/' || c == '+' || c == '-' ||
+               is_space(c);
       });
     }
   }
@@ -478,13 +486,11 @@ void scrub_style(Dom& dom, Node* node) {
   std::size_t pos = 0;
   while (pos <= style.size()) {
     std::size_t semi = style.find(';', pos);
-    std::string_view piece =
-        style.substr(pos, semi == std::string_view::npos ? std::string_view::npos : semi - pos);
+    std::string_view piece = style.substr(pos, semi == std::string_view::npos ? std::string_view::npos : semi - pos);
     if (!trim_unicode_space(piece).empty()) {
       std::size_t colon = piece.find(':');
       std::string_view property = colon == std::string_view::npos ? piece : piece.substr(0, colon);
-      std::string_view value =
-          colon == std::string_view::npos ? std::string_view() : piece.substr(colon + 1);
+      std::string_view value = colon == std::string_view::npos ? std::string_view() : piece.substr(colon + 1);
       std::string lowered(trim_unicode_space(property));
       for (char& c : lowered) {
         if (c >= 'A' && c <= 'Z') {
@@ -526,8 +532,7 @@ void scrub_style(Dom& dom, Node* node) {
 
 // Loofah::HTML5::SafeList::ATTR_VAL_IS_URI
 bool is_uri_attribute(const Attr& attr) {
-  static const NameSet kUri{"action", "cite", "href",       "longdesc", "poster",
-                            "preload", "src",  "xlink:href", "xml:base"};
+  static const NameSet kUri{"action", "cite", "href", "longdesc", "poster", "preload", "src", "xlink:href", "xml:base"};
   if (attr.ns == AttrNs::None) {
     return kUri.contains(attr.name);
   }
@@ -595,13 +600,9 @@ void scrub_node(Dom& dom, Node* node, const SafeList& list) {
   switch (node->type) {
     case NodeType::Text:
     case NodeType::CData:  // Only in foreign content, which goes with its root element.
-    case NodeType::Fragment:
-      return;
-    case NodeType::Comment:
-      dom.detach(node);
-      return;
-    case NodeType::Element:
-      break;
+    case NodeType::Fragment: return;
+    case NodeType::Comment: dom.detach(node); return;
+    case NodeType::Element: break;
   }
   if (!list.tags.contains(node->name)) {
     // An HTML element is unwrapped. A foreign (SVG, MathML) element goes with its contents.
@@ -626,27 +627,25 @@ void scrub_bottom_up(Dom& dom, Node* node, const SafeList& list) {
   scrub_node(dom, node, list);
 }
 
-constexpr auto kDefaultTags = std::to_array<std::string_view>({
-    "a",   "abbr", "acronym", "address", "b",   "big", "blockquote", "br",  "cite", "code",
-    "dd",  "del",  "dfn",     "div",     "dl",  "dt",  "em",         "h1",  "h2",   "h3",
-    "h4",  "h5",   "h6",      "hr",      "i",   "img", "ins",        "kbd", "li",   "mark",
-    "ol",  "p",    "pre",     "samp",    "small", "span", "strong",  "sub", "sup",  "time",
-    "tt",  "ul",   "var"});
+constexpr auto kDefaultTags = std::to_array<std::string_view>(
+    {"a",    "abbr",  "acronym", "address", "b",   "big", "blockquote", "br",   "cite", "code", "dd",
+     "del",  "dfn",   "div",     "dl",      "dt",  "em",  "h1",         "h2",   "h3",   "h4",   "h5",
+     "h6",   "hr",    "i",       "img",     "ins", "kbd", "li",         "mark", "ol",   "p",    "pre",
+     "samp", "small", "span",    "strong",  "sub", "sup", "time",       "tt",   "ul",   "var"});
 
 // DEFAULT_ALLOWED_ATTRIBUTES without `name`, which lets a message shadow the page's DOM globals
 // (<img name="body"> shadows document.body). The Rust port drops it on purpose.
-constexpr auto kDefaultAttributes = std::to_array<std::string_view>({
-    "abbr", "alt", "cite", "class", "datetime", "height", "href", "lang", "src", "title", "width",
-    "xml:lang"});
+constexpr auto kDefaultAttributes = std::to_array<std::string_view>(
+    {"abbr", "alt", "cite", "class", "datetime", "height", "href", "lang", "src", "title", "width", "xml:lang"});
 
 // ContentFilters::EDITOR_FORMATTING_TAGS and _ATTRIBUTES
-constexpr auto kEditorTags = std::to_array<std::string_view>({"s",     "u",  "mark", "table", "thead",
-                                                          "tbody", "tfoot", "tr", "th",    "td"});
+constexpr auto kEditorTags =
+    std::to_array<std::string_view>({"s", "u", "mark", "table", "thead", "tbody", "tfoot", "tr", "th", "td"});
 
 // ActionText::Attachment::ATTRIBUTES
-constexpr auto kAttachmentAttributes = std::to_array<std::string_view>({
-    "sgid",     "content-type", "url",          "href",    "filename", "filesize",
-    "width",    "height",       "previewable",  "presentation", "caption", "content"});
+constexpr auto kAttachmentAttributes =
+    std::to_array<std::string_view>({"sgid", "content-type", "url", "href", "filename", "filesize", "width", "height",
+                                     "previewable", "presentation", "caption", "content"});
 
 NameSet make_set(std::initializer_list<std::span<const std::string_view>> parts,
                  std::initializer_list<std::string_view> extra = {}) {
@@ -668,8 +667,7 @@ NameSet make_set(std::initializer_list<std::span<const std::string_view>> parts,
 
 bool is_unicode_space(char32_t c) noexcept {
   return (c >= 0x09 && c <= 0x0D) || c == 0x20 || c == 0x85 || c == 0xA0 || c == 0x1680 ||
-         (c >= 0x2000 && c <= 0x200A) || c == 0x2028 || c == 0x2029 || c == 0x202F ||
-         c == 0x205F || c == 0x3000;
+         (c >= 0x2000 && c <= 0x200A) || c == 0x2028 || c == 0x2029 || c == 0x202F || c == 0x205F || c == 0x3000;
 }
 
 std::string cgi_unescape_html(std::string_view s) {
@@ -687,8 +685,7 @@ std::string cgi_unescape_html(std::string_view s) {
       std::string_view name;
       char value;
     };
-    static constexpr Named kNamed[] = {
-        {"&apos;", '\''}, {"&amp;", '&'}, {"&quot;", '"'}, {"&gt;", '>'}, {"&lt;", '<'}};
+    static constexpr Named kNamed[] = {{"&apos;", '\''}, {"&amp;", '&'}, {"&quot;", '"'}, {"&gt;", '>'}, {"&lt;", '<'}};
     bool done = false;
     for (const Named& named : kNamed) {
       if (starts_with(rest, named.name)) {
@@ -725,8 +722,8 @@ std::string cgi_unescape_html(std::string_view s) {
 }
 
 bool allowed_uri(std::string_view uri) {
-  std::string s = remove_control_characters(
-      decode_numeric_character_references(cgi_unescape_html(remove_control_characters(uri))));
+  std::string s =
+      remove_control_characters(decode_numeric_character_references(cgi_unescape_html(remove_control_characters(uri))));
   s = remove_whitespace_references(s);
   s = replace_colon_references(s);
   s = downcase(s);
@@ -734,10 +731,9 @@ bool allowed_uri(std::string_view uri) {
   if (!protocol_before_separator(s, protocol)) {
     return true;
   }
-  static const NameSet kProtocols{
-      "afs",  "aim",  "callto", "data",   "ed2k",  "fax",    "ftp",  "gopher", "http",
-      "https", "irc", "line",   "mailto", "modem", "news",   "nntp", "rsync",  "rtsp",
-      "sftp", "sms",  "ssh",    "tag",    "tel",   "telnet", "urn",  "webcal", "xmpp"};
+  static const NameSet kProtocols{"afs",   "aim", "callto", "data",   "ed2k",  "fax",    "ftp",  "gopher", "http",
+                                  "https", "irc", "line",   "mailto", "modem", "news",   "nntp", "rsync",  "rtsp",
+                                  "sftp",  "sms", "ssh",    "tag",    "tel",   "telnet", "urn",  "webcal", "xmpp"};
   if (!kProtocols.contains(protocol)) {
     return false;
   }
@@ -756,9 +752,8 @@ const SafeList& SafeList::defaults() {
 
 const SafeList& SafeList::action_text() {
   static const SafeList list{
-      make_set({kDefaultTags, kEditorTags},
-               {"action-text-attachment", "figure", "figcaption", "video", "audio", "source",
-                "embed", "table", "tbody", "tr", "th", "td"}),
+      make_set({kDefaultTags, kEditorTags}, {"action-text-attachment", "figure", "figcaption", "video", "audio",
+                                             "source", "embed", "table", "tbody", "tr", "th", "td"}),
       make_set({kDefaultAttributes, kAttachmentAttributes},
                {"controls", "poster", "data-language", "style", "value", "start"})};
   return list;
@@ -773,9 +768,8 @@ const NameSet& sanitize_tags_allowed_tags() {
         filtered.add({name});
       }
     }
-    filtered.add(
-        {"s", "u", "mark", "table", "thead", "tbody", "tfoot", "tr", "th", "td",
-         "action-text-attachment", "figure", "figcaption"});
+    filtered.add({"s", "u", "mark", "table", "thead", "tbody", "tfoot", "tr", "th", "td", "action-text-attachment",
+                  "figure", "figcaption"});
     return filtered;
   }();
   return tags;
@@ -787,8 +781,7 @@ const SafeList& SafeList::content_filter() {
 }
 
 const SafeList& SafeList::auto_link() {
-  static const SafeList list{make_set({kDefaultTags, kEditorTags}),
-                             make_set({kDefaultAttributes}, {"data-language"})};
+  static const SafeList list{make_set({kDefaultTags, kEditorTags}), make_set({kDefaultAttributes}, {"data-language"})};
   return list;
 }
 

@@ -60,8 +60,7 @@ void scrub(Dom& dom, const SafeList& list);
 
 // SafeListSanitizer#sanitize(html, tags:, attributes:). An empty input gives an empty output
 // without a parse.
-[[nodiscard]] std::expected<std::string, ParseError> sanitize(std::string_view html,
-                                                              const SafeList& list);
+[[nodiscard]] std::expected<std::string, ParseError> sanitize(std::string_view html, const SafeList& list);
 
 // Loofah::HTML5::Scrub.allowed_uri?
 [[nodiscard]] bool allowed_uri(std::string_view uri);

@@ -6,9 +6,7 @@
 namespace campfire::richtext {
 
 std::string_view ruby_strip(std::string_view text) noexcept {
-  const auto is_space = [](char c) {
-    return c == '\0' || c == ' ' || (c >= '\t' && c <= '\r');
-  };
+  const auto is_space = [](char c) { return c == '\0' || c == ' ' || (c >= '\t' && c <= '\r'); };
   while (!text.empty() && is_space(text.front())) {
     text.remove_prefix(1);
   }
@@ -34,7 +32,9 @@ void remove_disallowed(Dom& dom, Node* parent, const NameSet& allowed) {
 
 }  // namespace
 
-void sanitize_tags(Dom& dom) { remove_disallowed(dom, dom.root(), sanitize_tags_allowed_tags()); }
+void sanitize_tags(Dom& dom) {
+  remove_disallowed(dom, dom.root(), sanitize_tags_allowed_tags());
+}
 
 std::expected<std::string, ParseError> filter_message_html(std::string_view body) {
   auto dom = parse_fragment(ruby_strip(body));

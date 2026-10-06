@@ -1,4 +1,5 @@
-// Gumbo to DOM conversion and HTML5 serialization. Rails: nokogiri ext/nokogiri/gumbo.c (build_tree), ext/nokogiri/xml_node.c (html_standard_serialize). Rust: crates/richtext/src/dom.rs
+// Gumbo to DOM conversion and HTML5 serialization. Rails: nokogiri ext/nokogiri/gumbo.c (build_tree),
+// ext/nokogiri/xml_node.c (html_standard_serialize). Rust: crates/richtext/src/dom.rs
 #include "richtext/dom.hpp"
 
 #include <algorithm>
@@ -12,10 +13,8 @@ namespace campfire::richtext {
 
 std::string_view to_string(ParseError error) noexcept {
   switch (error) {
-    case ParseError::TreeTooDeep:
-      return "Document tree depth limit exceeded";
-    case ParseError::TooManyAttributes:
-      return "Attributes per element limit exceeded";
+    case ParseError::TreeTooDeep: return "Document tree depth limit exceeded";
+    case ParseError::TooManyAttributes: return "Attributes per element limit exceeded";
   }
   return "";
 }
@@ -66,14 +65,10 @@ std::string_view Arena::copy(std::string_view text) {
 
 std::string Attr::qualified_name() const {
   switch (ns) {
-    case AttrNs::XLink:
-      return "xlink:" + std::string(name);
-    case AttrNs::Xml:
-      return "xml:" + std::string(name);
-    case AttrNs::XmlNs:
-      return name == "xmlns" ? std::string(name) : "xmlns:" + std::string(name);
-    case AttrNs::None:
-      break;
+    case AttrNs::XLink: return "xlink:" + std::string(name);
+    case AttrNs::Xml: return "xml:" + std::string(name);
+    case AttrNs::XmlNs: return name == "xmlns" ? std::string(name) : "xmlns:" + std::string(name);
+    case AttrNs::None: break;
   }
   return std::string(name);
 }
@@ -190,8 +185,7 @@ void Dom::set_attr(Node* node, std::string_view name, std::string_view value) {
     node->attrs = grown;
     node->attr_capacity = capacity;
   }
-  std::construct_at(node->attrs + node->attr_count,
-                    Attr{arena_.copy(name), arena_.copy(value), AttrNs::None});
+  std::construct_at(node->attrs + node->attr_count, Attr{arena_.copy(name), arena_.copy(value), AttrNs::None});
   ++node->attr_count;
 }
 
@@ -224,26 +218,21 @@ void add_text(Dom& dom, Node* parent, std::string_view text) {
 }
 
 void convert(Dom& dom, Node* parent, const GumboNode* gumbo) {
-  const GumboVector& children = gumbo->type == GUMBO_NODE_DOCUMENT ? gumbo->v.document.children
-                                                                   : gumbo->v.element.children;
+  const GumboVector& children =
+      gumbo->type == GUMBO_NODE_DOCUMENT ? gumbo->v.document.children : gumbo->v.element.children;
   for (unsigned i = 0; i < children.length; ++i) {
     const auto* child = static_cast<const GumboNode*>(children.data[i]);
     switch (child->type) {
-      case GUMBO_NODE_DOCUMENT:
-        break;
+      case GUMBO_NODE_DOCUMENT: break;
       case GUMBO_NODE_TEXT:
-      case GUMBO_NODE_WHITESPACE:
-        add_text(dom, parent, child->v.text.text);
-        break;
+      case GUMBO_NODE_WHITESPACE: add_text(dom, parent, child->v.text.text); break;
       case GUMBO_NODE_CDATA: {
         Node* node = dom.create_text(child->v.text.text);
         node->type = NodeType::CData;
         dom.append_child(parent, node);
         break;
       }
-      case GUMBO_NODE_COMMENT:
-        dom.append_child(parent, dom.create_comment(child->v.text.text));
-        break;
+      case GUMBO_NODE_COMMENT: dom.append_child(parent, dom.create_comment(child->v.text.text)); break;
       case GUMBO_NODE_TEMPLATE:  // Nokogiri keeps template contents as ordinary children
       case GUMBO_NODE_ELEMENT: {
         const GumboElement& element = child->v.element;
@@ -255,27 +244,20 @@ void convert(Dom& dom, Node* parent, const GumboNode* gumbo) {
         }
         Node* node = dom.create_element(element.name, ns);
         if (element.attributes.length > 0) {
-          node->attrs = static_cast<Attr*>(
-              dom.arena().allocate(sizeof(Attr) * element.attributes.length, alignof(Attr)));
+          node->attrs =
+              static_cast<Attr*>(dom.arena().allocate(sizeof(Attr) * element.attributes.length, alignof(Attr)));
           node->attr_capacity = element.attributes.length;
           for (unsigned a = 0; a < element.attributes.length; ++a) {
             const auto* attr = static_cast<const GumboAttribute*>(element.attributes.data[a]);
             AttrNs attr_ns = AttrNs::None;
             switch (attr->attr_namespace) {
-              case GUMBO_ATTR_NAMESPACE_XLINK:
-                attr_ns = AttrNs::XLink;
-                break;
-              case GUMBO_ATTR_NAMESPACE_XML:
-                attr_ns = AttrNs::Xml;
-                break;
-              case GUMBO_ATTR_NAMESPACE_XMLNS:
-                attr_ns = AttrNs::XmlNs;
-                break;
-              case GUMBO_ATTR_NAMESPACE_NONE:
-                break;
+              case GUMBO_ATTR_NAMESPACE_XLINK: attr_ns = AttrNs::XLink; break;
+              case GUMBO_ATTR_NAMESPACE_XML: attr_ns = AttrNs::Xml; break;
+              case GUMBO_ATTR_NAMESPACE_XMLNS: attr_ns = AttrNs::XmlNs; break;
+              case GUMBO_ATTR_NAMESPACE_NONE: break;
             }
-            std::construct_at(node->attrs + a, Attr{dom.arena().copy(attr->name),
-                                                    dom.arena().copy(attr->value), attr_ns});
+            std::construct_at(node->attrs + a,
+                              Attr{dom.arena().copy(attr->name), dom.arena().copy(attr->value), attr_ns});
           }
           node->attr_count = element.attributes.length;
         }
@@ -303,16 +285,12 @@ std::expected<Dom, ParseError> parse_fragment(std::string_view html) {
   options.fragment_context_has_form_ancestor = false;
   options.parse_noscript_content_as_text = false;
 
-  std::unique_ptr<GumboOutput, GumboOutputDeleter> output(
-      gumbo_parse_with_options(&options, html.data(), html.size()));
+  std::unique_ptr<GumboOutput, GumboOutputDeleter> output(gumbo_parse_with_options(&options, html.data(), html.size()));
   switch (output->status) {
-    case GUMBO_STATUS_OK:
-      break;
-    case GUMBO_STATUS_TOO_MANY_ATTRIBUTES:
-      return std::unexpected(ParseError::TooManyAttributes);
+    case GUMBO_STATUS_OK: break;
+    case GUMBO_STATUS_TOO_MANY_ATTRIBUTES: return std::unexpected(ParseError::TooManyAttributes);
     case GUMBO_STATUS_TREE_TOO_DEEP:
-    case GUMBO_STATUS_OUT_OF_MEMORY:
-      return std::unexpected(ParseError::TreeTooDeep);
+    case GUMBO_STATUS_OUT_OF_MEMORY: return std::unexpected(ParseError::TreeTooDeep);
   }
   Dom dom;
   convert(dom, dom.root(), output->root);
@@ -324,14 +302,14 @@ std::expected<Dom, ParseError> parse_fragment(std::string_view html) {
 namespace {
 
 bool is_void_element(std::string_view name) {
-  static constexpr std::string_view kVoid[] = {
-      "area", "base", "basefont", "bgsound", "br",    "col",   "embed",  "frame", "hr",
-      "img",  "input", "keygen",  "link",    "meta",  "param", "source", "track", "wbr"};
+  static constexpr std::string_view kVoid[] = {"area",  "base",  "basefont", "bgsound", "br",    "col",
+                                               "embed", "frame", "hr",       "img",     "input", "keygen",
+                                               "link",  "meta",  "param",    "source",  "track", "wbr"};
   return std::find(std::begin(kVoid), std::end(kVoid), name) != std::end(kVoid);
 }
 
 bool is_unescaped_text_element(std::string_view name) {
-  static constexpr std::string_view kRaw[] = {"style",  "script",    "xmp",       "iframe",
+  static constexpr std::string_view kRaw[] = {"style",   "script",   "xmp",       "iframe",
                                               "noembed", "noframes", "plaintext", "noscript"};
   return std::find(std::begin(kRaw), std::end(kRaw), name) != std::end(kRaw);
 }
@@ -374,19 +352,14 @@ void serialize_node(const Node* node, std::string& out) {
       for (const Attr& attr : node->attributes()) {
         out.push_back(' ');
         switch (attr.ns) {
-          case AttrNs::XLink:
-            out.append("xlink:");
-            break;
-          case AttrNs::Xml:
-            out.append("xml:");
-            break;
+          case AttrNs::XLink: out.append("xlink:"); break;
+          case AttrNs::Xml: out.append("xml:"); break;
           case AttrNs::XmlNs:
             if (attr.name != "xmlns") {
               out.append("xmlns:");
             }
             break;
-          case AttrNs::None:
-            break;
+          case AttrNs::None: break;
         }
         out.append(attr.name);
         out.append("=\"");
@@ -406,8 +379,8 @@ void serialize_node(const Node* node, std::string& out) {
       return;
     }
     case NodeType::Text:
-      if (node->parent != nullptr && node->parent->type == NodeType::Element &&
-          node->parent->ns == Ns::Html && is_unescaped_text_element(node->parent->name)) {
+      if (node->parent != nullptr && node->parent->type == NodeType::Element && node->parent->ns == Ns::Html &&
+          is_unescaped_text_element(node->parent->name)) {
         out.append(node->text);
       } else {
         escape(node->text, false, out);
@@ -433,7 +406,9 @@ void serialize_node(const Node* node, std::string& out) {
 
 }  // namespace
 
-void serialize(const Node* node, std::string& out) { serialize_node(node, out); }
+void serialize(const Node* node, std::string& out) {
+  serialize_node(node, out);
+}
 
 std::string to_html(const Node* node) {
   std::string out;

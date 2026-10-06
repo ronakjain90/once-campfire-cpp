@@ -1,4 +1,5 @@
-// ContentFilters::SanitizeTags and SanitizeAttributes for bodies without attachments. Rails: app/helpers/content_filters/*.rb. Rust: crates/richtext/src/filters.rs
+// ContentFilters::SanitizeTags and SanitizeAttributes for bodies without attachments. Rails:
+// app/helpers/content_filters/*.rb. Rust: crates/richtext/src/filters.rs
 #pragma once
 
 #include <expected>

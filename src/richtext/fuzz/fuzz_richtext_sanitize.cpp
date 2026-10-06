@@ -46,8 +46,8 @@ void check_node(const Node* node, const SafeList& list) {
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::string_view html(reinterpret_cast<const char*>(data), size);
-  for (const SafeList* list : {&SafeList::defaults(), &SafeList::action_text(),
-                               &SafeList::content_filter(), &SafeList::auto_link()}) {
+  for (const SafeList* list :
+       {&SafeList::defaults(), &SafeList::action_text(), &SafeList::content_filter(), &SafeList::auto_link()}) {
     auto out = sanitize(html, *list);
     if (!out) {
       continue;

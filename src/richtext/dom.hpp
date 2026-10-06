@@ -42,8 +42,7 @@ class Arena {
   template <class T, class... Args>
   [[nodiscard]] T* make(Args&&... args) {
     static_assert(std::is_trivially_destructible_v<T>);
-    return std::construct_at(static_cast<T*>(allocate(sizeof(T), alignof(T))),
-                             std::forward<Args>(args)...);
+    return std::construct_at(static_cast<T*>(allocate(sizeof(T), alignof(T))), std::forward<Args>(args)...);
   }
 
   [[nodiscard]] std::string_view copy(std::string_view text);
@@ -96,9 +95,7 @@ struct Node {
 
   [[nodiscard]] bool is_element() const noexcept { return type == NodeType::Element; }
   [[nodiscard]] bool is_text() const noexcept { return type == NodeType::Text; }
-  [[nodiscard]] bool is_html_element() const noexcept {
-    return type == NodeType::Element && ns == Ns::Html;
-  }
+  [[nodiscard]] bool is_html_element() const noexcept { return type == NodeType::Element && ns == Ns::Html; }
   [[nodiscard]] std::span<Attr> attributes() noexcept { return {attrs, attr_count}; }
   [[nodiscard]] std::span<const Attr> attributes() const noexcept { return {attrs, attr_count}; }
   // Nokogiri's `node[name]`, by qualified name. Null when the attribute is absent.

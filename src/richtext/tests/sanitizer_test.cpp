@@ -1,9 +1,10 @@
 // Tests of the sanitizer. Rust: crates/richtext/src/sanitizer.rs (tests), tests/reference_tests.rs, tests/hardening.rs
+#include "richtext/sanitizer.hpp"
+
 #include <string>
 
 #include "doctest.h"
 #include "richtext/filters.hpp"
-#include "richtext/sanitizer.hpp"
 
 using namespace campfire::richtext;
 
@@ -42,8 +43,7 @@ TEST_CASE("re-escapes URL attributes as each attribute is scrubbed") {
   list.tags.add({"img", "a"});
   list.attributes.add({"src", "href", "name", "title", "alt"});
   // The blank src is removed, and the escaping it still triggers lets the href through.
-  CHECK(clean("<img src=\" \" href=\" javascript:alert(1)\">", list) ==
-        "<img href=\"%20javascript:alert(1)\">");
+  CHECK(clean("<img src=\" \" href=\" javascript:alert(1)\">", list) == "<img href=\"%20javascript:alert(1)\">");
   CHECK(clean("<img href=\" javascript:alert(1)\">", list) == "<img>");
   CHECK(clean("<a href=\"a b\" name=\"c d\" title=\"x y\">t</a>", list) ==
         "<a href=\"a%20b\" name=\"c%20d\" title=\"x y\">t</a>");
@@ -59,13 +59,12 @@ TEST_CASE("keeps only Lexxy's highlight colors in style") {
         "<span style=\"color: #f00;\">x</span>");
   const std::string rgb = "<span style=\"COLOR: rgb(1 2 3 / 50%)\">x</span>";
   CHECK(clean(rgb, list) == rgb);
-  for (std::string_view hostile : {"background-color: url(https://evil.test/beacon)",
-                                   "color: expression(alert(1))",
-                                   "background-color: red; background-image: url(x)",
-                                   "color: \\72 ed", "color: red /* */", "width: 100000px", ""}) {
+  for (std::string_view hostile : {"background-color: url(https://evil.test/beacon)", "color: expression(alert(1))",
+                                   "background-color: red; background-image: url(x)", "color: \\72 ed",
+                                   "color: red /* */", "width: 100000px", ""}) {
     std::string html = clean("<span style=\"" + std::string(hostile) + "\">x</span>", list);
-    const bool safe = !contains(html, "url") && !contains(html, "expression") &&
-                      !contains(html, "\\") && !contains(html, "width");
+    const bool safe =
+        !contains(html, "url") && !contains(html, "expression") && !contains(html, "\\") && !contains(html, "width");
     CHECK_MESSAGE(safe, std::string(hostile), ": ", html);
   }
   CHECK(clean("<span style=\"position: fixed\">x</span>", list) == "<span>x</span>");
@@ -84,8 +83,8 @@ TEST_CASE("checks URIs like Loofah") {
   CHECK(allowed_uri("data:image/png;base64,xx"));
   CHECK_FALSE(allowed_uri("data:text/html,xx"));
   // CGI.unescapeHTML turns the zero-padded `&` into `&#106;`, which Loofah then decodes.
-  CHECK(clean("<a href=\"&amp;#0000000000038;#106;avascript:alert(1)\">x</a>",
-              SafeList::content_filter()) == "<a>x</a>");
+  CHECK(clean("<a href=\"&amp;#0000000000038;#106;avascript:alert(1)\">x</a>", SafeList::content_filter()) ==
+        "<a>x</a>");
 }
 
 TEST_CASE("unescapes HTML like CGI") {
@@ -123,8 +122,7 @@ TEST_CASE("unescapes HTML like CGI") {
 
 // Rust: tests/reference_tests.rs and tests/hardening.rs, the cases that need no attachments.
 TEST_CASE("message contains a forbidden tag") {
-  CHECK(filtered("Hello <img src=\"https://ssecurityrise.com/tests/billionlaughs-cache.svg\">World") ==
-        "Hello World");
+  CHECK(filtered("Hello <img src=\"https://ssecurityrise.com/tests/billionlaughs-cache.svg\">World") == "Hello World");
 }
 
 TEST_CASE("message with a link using an unsafe URI scheme") {
@@ -134,8 +132,8 @@ TEST_CASE("message with a link using an unsafe URI scheme") {
 }
 
 TEST_CASE("message with an event handler attribute on an allowed tag") {
-  std::string result = filtered(
-      "<div><a href=\"/x\" onmouseover=\"alert(1)\">x</a> <span onclick=\"alert(2)\">y</span></div>");
+  std::string result =
+      filtered("<div><a href=\"/x\" onmouseover=\"alert(1)\">x</a> <span onclick=\"alert(2)\">y</span></div>");
   CHECK_FALSE(contains(result, "onmouseover"));
   CHECK_FALSE(contains(result, "onclick"));
   CHECK(contains(result, "<a href=\"/x\">x</a>"));
@@ -167,9 +165,9 @@ TEST_CASE("message keeps strikethrough, underline, mark and code block formattin
 TEST_CASE("sanitize attributes neutralizes unsafe input and preserves benign content") {
   std::string result = filtered(
       "<div><a href=\"javascript:alert(1)\" onclick=\"x()\">link</a> <a href=\"data:text/html,pwned\">data</a> "
-      "<span class=\"cf-twitter-avatar\" onmouseover=\"y()\">avatar</span> <img src=\"https://evil.example/x.svg\"> Hey</div>");
-  for (std::string_view forbidden :
-       {"javascript:", "data:text/html", "onclick", "onmouseover", "evil.example"}) {
+      "<span class=\"cf-twitter-avatar\" onmouseover=\"y()\">avatar</span> <img src=\"https://evil.example/x.svg\"> "
+      "Hey</div>");
+  for (std::string_view forbidden : {"javascript:", "data:text/html", "onclick", "onmouseover", "evil.example"}) {
     CHECK_MESSAGE(!contains(result, forbidden), forbidden, " in ", result);
   }
   CHECK(contains(result, "<span class=\"cf-twitter-avatar\">avatar</span>"));
@@ -178,14 +176,18 @@ TEST_CASE("sanitize attributes neutralizes unsafe input and preserves benign con
 
 TEST_CASE("message with formatting saved under Trix renders unchanged") {
   const std::string body =
-      "<div>Hello <strong>bold</strong> <em>it</em> <del>gone</del> <a href=\"https://example.com/\">link</a><br>second line</div>"
-      "<h1>Heading</h1><blockquote>quoted</blockquote><pre>line 1\nline 2</pre><ul><li>one</li></ul><ol><li>first</li></ol>";
+      "<div>Hello <strong>bold</strong> <em>it</em> <del>gone</del> <a "
+      "href=\"https://example.com/\">link</a><br>second line</div>"
+      "<h1>Heading</h1><blockquote>quoted</blockquote><pre>line 1\nline "
+      "2</pre><ul><li>one</li></ul><ol><li>first</li></ol>";
   CHECK(filtered(body) == body);
 }
 
 TEST_CASE("message with a table keeps the table") {
   const std::string body =
-      "<figure class=\"lexxy-content__table-wrapper\"><table><tbody><tr><th><p>Name</p></th></tr><tr><td><p>Jason</p></td></tr></tbody></table></figure>";
+      "<figure "
+      "class=\"lexxy-content__table-wrapper\"><table><tbody><tr><th><p>Name</p></th></tr><tr><td><p>Jason</p></td></"
+      "tr></tbody></table></figure>";
   CHECK(filtered(body) == body);
 }
 

@@ -228,8 +228,8 @@ TEST_CASE("the filtered output matches Rails for the corpus cases without attach
       // "color: red;" (Rails keeps "color:red;" and an empty style=""). Both are compared with
       // the style attribute removed. The style rules have their own tests.
       const bool has_name = c.filtered.find(" name=\"") != std::string::npos;
-      const bool has_style = c.filtered.find(" style=\"") != std::string::npos ||
-                             result->find(" style=\"") != std::string::npos;
+      const bool has_style =
+          c.filtered.find(" style=\"") != std::string::npos || result->find(" style=\"") != std::string::npos;
       if (has_name) {
         ++name_cases;
       }
@@ -255,8 +255,9 @@ TEST_CASE("the filtered output matches Rails for the corpus cases without attach
       CHECK(ok);
     }
   }
-  std::printf("corpus: %zu cases, %zu in scope, %zu passing (%zu with the name difference, %zu with the style difference)\n",
-              cases.size(), scoped, passed, name_cases, style_cases);
+  std::printf(
+      "corpus: %zu cases, %zu in scope, %zu passing (%zu with the name difference, %zu with the style difference)\n",
+      cases.size(), scoped, passed, name_cases, style_cases);
   CHECK(cases.size() == 658);
   CHECK(passed == scoped);
 }

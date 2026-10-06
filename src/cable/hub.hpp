@@ -65,7 +65,7 @@ class Hub {
   void unsubscribe(unsigned worker, std::string_view stream, GroupId group, Sink* sink);
 
   // Sends the payload (encoded JSON) to every subscriber. Returns the number of subscribers.
-  std::size_t broadcast(std::string_view stream, std::string_view payload_json);
+  std::size_t broadcast_encoded(std::string_view stream, std::string_view payload_json);
   // ActiveSupport::JSON.encode of the value, then broadcast.
   std::size_t broadcast(std::string_view stream, const compat::json::Value& message);
 

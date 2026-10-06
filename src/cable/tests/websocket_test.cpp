@@ -1,5 +1,6 @@
 // Tests of cable/websocket.hpp. Rust: crates/cable/src/socket.rs tests.
 #include "cable/websocket.hpp"
+#include "cable/tests/support.hpp"
 
 #include <doctest.h>
 
@@ -8,20 +9,7 @@
 
 using namespace campfire::cable::ws;
 
-namespace {
-std::string client_frame(std::uint8_t opcode, bool fin, bool rsv1, std::string_view payload) {
-  const std::uint8_t mask[4] = {0x12, 0x34, 0x56, 0x78};
-  std::string p(payload);
-  apply_mask(reinterpret_cast<std::uint8_t*>(p.data()), p.size(), mask);
-  std::uint8_t head[10];
-  std::size_t n = encode_header(head, static_cast<Opcode>(opcode), rsv1, payload.size());
-  head[0] = static_cast<std::uint8_t>((head[0] & 0x7f) | (fin ? 0x80 : 0));
-  head[1] |= 0x80;
-  std::string out(reinterpret_cast<char*>(head), n);
-  out.append(reinterpret_cast<const char*>(mask), 4);
-  return out + p;
-}
-}  // namespace
+using campfire::cable::testing::client_frame;
 
 TEST_CASE("handshake accept header matches RFC 6455") {
   std::span<const std::string_view> none;

@@ -78,7 +78,7 @@ void Hub::push(unsigned worker, Delivery delivery) {
   if (was_empty && wake_) wake_(worker);
 }
 
-std::size_t Hub::broadcast(std::string_view stream, std::string_view payload_json) {
+std::size_t Hub::broadcast_encoded(std::string_view stream, std::string_view payload_json) {
   struct Target {
     GroupId id;
     EncodedIdentifier identifier;
@@ -110,7 +110,7 @@ std::size_t Hub::broadcast(std::string_view stream, std::string_view payload_jso
 }
 
 std::size_t Hub::broadcast(std::string_view stream, const compat::json::Value& message) {
-  return broadcast(stream, std::string_view(compat::json::encode(message)));
+  return broadcast_encoded(stream, compat::json::encode(message));
 }
 
 std::size_t Hub::drain(unsigned worker) {

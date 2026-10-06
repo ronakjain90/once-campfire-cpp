@@ -83,7 +83,10 @@ class Connection final : private Sink, private Peer {
 
   // Sink and Peer
   void deliver(const FramePtr& frame) override { pending_.push_back(frame); }
-  void on_beat(const FramePtr& ping) override { pending_.push_back(ping); }
+  void on_beat(const FramePtr& ping) override {
+    pending_.push_back(ping);
+    flush();
+  }
   void on_restart() override;
 
   void on_internal(std::string_view payload);

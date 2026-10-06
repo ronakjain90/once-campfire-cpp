@@ -102,8 +102,8 @@ std::size_t Hub::broadcast_encoded(std::string_view stream, std::string_view pay
     }
   }
   for (auto& t : targets) {
-    FramePtr frame = t.identifier ? Frame::make(protocol::message(*t.identifier, payload_json))
-                                  : Frame::make(std::string(payload_json));
+    FramePtr frame =
+        t.identifier ? Frame::make(protocol::message(*t.identifier, payload_json)) : Frame::make(payload_json);
     for (unsigned w : t.workers) push(w, Delivery{t.id, frame});
   }
   return receivers;
@@ -162,8 +162,12 @@ std::size_t Hub::drain(unsigned worker) {
   }
 }
 
-void Hub::attach(unsigned worker, Peer* peer) { locals_[worker]->peers.insert(peer); }
-void Hub::detach(unsigned worker, Peer* peer) { locals_[worker]->peers.erase(peer); }
+void Hub::attach(unsigned worker, Peer* peer) {
+  locals_[worker]->peers.insert(peer);
+}
+void Hub::detach(unsigned worker, Peer* peer) {
+  locals_[worker]->peers.erase(peer);
+}
 
 void Hub::beat(unsigned worker, std::int64_t unix_seconds) {
   auto& peers = locals_[worker]->peers;

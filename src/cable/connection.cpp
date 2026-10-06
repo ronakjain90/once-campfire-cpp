@@ -26,7 +26,9 @@ Connection::Connection(Hub& hub, unsigned worker, Transport& transport, const Ch
       parser_(ws::ParserOptions{.deflate = deflate}),
       internal_(*this) {}
 
-Connection::~Connection() { on_closed(); }
+Connection::~Connection() {
+  on_closed();
+}
 
 void Connection::open(std::shared_ptr<const void> user, std::string_view connection_identifier,
                       const std::function<bool()>& recheck) {
@@ -140,7 +142,8 @@ void Connection::disconnect(std::optional<protocol::DisconnectReason> reason, st
   flush();
   if (closing_ || closed_) return;
   FramePtr frame = Frame::make(protocol::disconnect(reason, reconnect_json));
-  ws::Bytes buffers[2] = {frame->wire(deflate_), std::make_shared<const std::string>(ws::encode_close(ws::kCloseNormal))};
+  ws::Bytes buffers[2] = {frame->wire(deflate_),
+                          std::make_shared<const std::string>(ws::encode_close(ws::kCloseNormal))};
   transport_.send(buffers);
   closing_ = true;
   transport_.close(kCloseGrace);
@@ -217,7 +220,8 @@ void Connection::add(const json::Value& data) {
     return;
   }
   const json::Value* channel = params->find("channel");
-  std::string_view requested = (channel != nullptr && channel->is_string()) ? std::string_view(channel->as_string()) : "";
+  std::string_view requested =
+      (channel != nullptr && channel->is_string()) ? std::string_view(channel->as_string()) : "";
   auto found = channels_.find(requested);
   if (found.factory == nullptr) {
     log_error("Subscription class not found: {}", requested);

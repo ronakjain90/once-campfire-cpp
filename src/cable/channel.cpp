@@ -9,7 +9,9 @@
 
 namespace campfire::cable {
 
-std::string Subscription::channel_name() const { return protocol::channel_name(class_name_); }
+std::string Subscription::channel_name() const {
+  return protocol::channel_name(class_name_);
+}
 
 std::string Subscription::broadcasting_for(std::span<const std::string_view> parts) const {
   return protocol::broadcasting_for(class_name_, parts);
@@ -21,7 +23,9 @@ void Subscription::stream_from(std::string_view broadcasting) {
   streams_.push_back(Stream{std::string(broadcasting), group});
 }
 
-void Subscription::stream_for(std::span<const std::string_view> parts) { stream_from(broadcasting_for(parts)); }
+void Subscription::stream_for(std::span<const std::string_view> parts) {
+  stream_from(broadcasting_for(parts));
+}
 
 void Subscription::stop_stream_from(std::string_view broadcasting) {
   for (std::size_t i = 0; i < streams_.size();) {
@@ -43,7 +47,9 @@ void Subscription::transmit_encoded(std::string_view json) {
   connection_->queue(protocol::message(*encoded_identifier_, json));
 }
 
-void Subscription::transmit(const compat::json::Value& message) { transmit_encoded(compat::json::encode(message)); }
+void Subscription::transmit(const compat::json::Value& message) {
+  transmit_encoded(compat::json::encode(message));
+}
 
 void ChannelRegistry::add(std::string class_name, ChannelFactory factory) {
   map_.insert_or_assign(std::move(class_name), std::move(factory));

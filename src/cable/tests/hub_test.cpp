@@ -1,4 +1,6 @@
 // Hub tests, with many workers and threads (run them under tsan). Rust: crates/cable/src/pubsub.rs tests.
+#include "cable/hub.hpp"
+
 #include <doctest.h>
 
 #include <atomic>
@@ -9,7 +11,6 @@
 #include <mutex>
 #include <thread>
 
-#include "cable/hub.hpp"
 #include "cable/protocol.hpp"
 #include "cable/tests/support.hpp"
 
@@ -214,12 +215,14 @@ TEST_CASE("many workers, many subscribers, many broadcasters") {
     workers.run(w, [&, w] {
       for (int i = 0; i < kSinksPerWorker; ++i) {
         sinks[w].push_back(std::make_unique<Seq>());
-        groups[w].push_back(hub.subscribe(w, "stream", std::make_shared<const std::string>(R"("x")"), sinks[w].back().get()));
+        groups[w].push_back(
+            hub.subscribe(w, "stream", std::make_shared<const std::string>(R"("x")"), sinks[w].back().get()));
       }
     });
   }
   std::string pad(300, 'p');
   std::vector<std::thread> senders;
+  senders.reserve(kBroadcasters);
   for (int b = 0; b < kBroadcasters; ++b) {
     senders.emplace_back([&, b] {
       for (int n = 0; n < kMessages; ++n) {
@@ -250,6 +253,7 @@ TEST_CASE("subscribe and unsubscribe while others broadcast") {
   std::atomic<bool> stop{false};
   std::atomic<long> sent{0};
   std::vector<std::thread> senders;
+  senders.reserve(2);
   for (int b = 0; b < 2; ++b) {
     senders.emplace_back([&] {
       while (!stop) {
@@ -259,6 +263,7 @@ TEST_CASE("subscribe and unsubscribe while others broadcast") {
   }
   std::atomic<long> received{0};
   std::vector<std::thread> churners;
+  churners.reserve(kWorkers);
   for (unsigned w = 0; w < kWorkers; ++w) {
     churners.emplace_back([&, w] {
       for (int round = 0; round < 300; ++round) {

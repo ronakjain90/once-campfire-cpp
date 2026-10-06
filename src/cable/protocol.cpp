@@ -8,7 +8,9 @@
 namespace campfire::cable::protocol {
 
 namespace {
-std::string enc(std::string_view s) { return compat::json::encode(compat::json::Value(s)); }
+std::string enc(std::string_view s) {
+  return compat::json::encode(compat::json::Value(s));
+}
 }  // namespace
 
 std::string_view to_string(DisconnectReason reason) {
@@ -21,7 +23,9 @@ std::string_view to_string(DisconnectReason reason) {
   return "";
 }
 
-std::string welcome() { return R"({"type":"welcome"})"; }
+std::string welcome() {
+  return R"({"type":"welcome"})";
+}
 
 std::string ping(std::int64_t unix_seconds) {
   return std::string(R"({"type":"ping","message":)") + std::to_string(unix_seconds) + "}";
@@ -63,7 +67,9 @@ std::string remote_disconnect_payload(bool reconnect) {
   return std::string(R"({"type":"disconnect","reconnect":)") + (reconnect ? "true" : "false") + "}";
 }
 
-std::string internal_channel(std::string_view id) { return "action_cable/" + std::string(id); }
+std::string internal_channel(std::string_view id) {
+  return "action_cable/" + std::string(id);
+}
 
 namespace {
 // ActiveSupport::Inflector.underscore without acronyms (Campfire defines none).
@@ -80,8 +86,10 @@ std::string underscore(std::string_view word) {
     bool upper = std::isupper(static_cast<unsigned char>(c)) != 0;
     if (upper && i > 0) {
       char prev = in[i - 1];
-      bool prev_lower_digit = std::islower(static_cast<unsigned char>(prev)) != 0 || std::isdigit(static_cast<unsigned char>(prev)) != 0;
-      bool prev_upper_digit = std::isupper(static_cast<unsigned char>(prev)) != 0 || std::isdigit(static_cast<unsigned char>(prev)) != 0;
+      bool prev_lower_digit =
+          std::islower(static_cast<unsigned char>(prev)) != 0 || std::isdigit(static_cast<unsigned char>(prev)) != 0;
+      bool prev_upper_digit =
+          std::isupper(static_cast<unsigned char>(prev)) != 0 || std::isdigit(static_cast<unsigned char>(prev)) != 0;
       bool next_lower = i + 1 < in.size() && std::islower(static_cast<unsigned char>(in[i + 1])) != 0;
       if (prev_lower_digit || (prev_upper_digit && next_lower)) out += '_';
     }

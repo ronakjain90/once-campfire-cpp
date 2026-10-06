@@ -141,20 +141,20 @@ TEST_CASE("a message is not ready before its last byte") {
 }
 
 TEST_CASE("protocol errors give the close code of websocket-driver") {
-  CHECK(error_of(encode_frame(Opcode::Text, false, "x")) == 1003);  // not masked
-  CHECK(error_of(bytes({0x91, 0x80, 0, 0, 0, 0})) == 1002);          // RSV3
-  CHECK(error_of(bytes({0xa1, 0x80, 0, 0, 0, 0})) == 1002);          // RSV2
-  CHECK(error_of(client_frame(1, true, true, "x")) == 1002);         // RSV1 without deflate
-  CHECK(error_of(bytes({0x83, 0x80, 0, 0, 0, 0})) == 1002);          // reserved opcode 3
-  CHECK(error_of(bytes({0x8b, 0x80, 0, 0, 0, 0})) == 1002);          // reserved opcode 0xb
-  CHECK(error_of(client_frame(9, false, false, "")) == 1002);        // fragmented control
-  CHECK(error_of(client_frame(9, true, false, std::string(126, 'x'))) == 1002);  // long control
-  CHECK(error_of(client_frame(0, true, false, "x")) == 1002);        // continuation of nothing
-  CHECK(error_of(client_frame(8, true, false, "x")) == 1002);        // close with 1 byte
-  CHECK(error_of(client_frame(8, true, false, bytes({0x03, 0xed}))) == 1002);  // 1005 on the wire
-  CHECK(error_of(client_frame(8, true, false, bytes({0x03, 0xf7}))) == 1002);  // 1015
+  CHECK(error_of(encode_frame(Opcode::Text, false, "x")) == 1003);                   // not masked
+  CHECK(error_of(bytes({0x91, 0x80, 0, 0, 0, 0})) == 1002);                          // RSV3
+  CHECK(error_of(bytes({0xa1, 0x80, 0, 0, 0, 0})) == 1002);                          // RSV2
+  CHECK(error_of(client_frame(1, true, true, "x")) == 1002);                         // RSV1 without deflate
+  CHECK(error_of(bytes({0x83, 0x80, 0, 0, 0, 0})) == 1002);                          // reserved opcode 3
+  CHECK(error_of(bytes({0x8b, 0x80, 0, 0, 0, 0})) == 1002);                          // reserved opcode 0xb
+  CHECK(error_of(client_frame(9, false, false, "")) == 1002);                        // fragmented control
+  CHECK(error_of(client_frame(9, true, false, std::string(126, 'x'))) == 1002);      // long control
+  CHECK(error_of(client_frame(0, true, false, "x")) == 1002);                        // continuation of nothing
+  CHECK(error_of(client_frame(8, true, false, "x")) == 1002);                        // close with 1 byte
+  CHECK(error_of(client_frame(8, true, false, bytes({0x03, 0xed}))) == 1002);        // 1005 on the wire
+  CHECK(error_of(client_frame(8, true, false, bytes({0x03, 0xf7}))) == 1002);        // 1015
   CHECK(error_of(client_frame(8, true, false, bytes({0x03, 0xe8, 0xff}))) == 1002);  // reason not UTF-8
-  CHECK(error_of(client_frame(1, true, false, bytes({0xc0, 0xaf}))) == 1007);   // overlong
+  CHECK(error_of(client_frame(1, true, false, bytes({0xc0, 0xaf}))) == 1007);        // overlong
   CHECK(error_of(client_frame(1, true, false, bytes({0xed, 0xa0, 0x80}))) == 1007);  // surrogate
 }
 
@@ -236,7 +236,8 @@ TEST_CASE("masking is its own inverse for every length and offset") {
     for (auto& c : a) c = static_cast<char>(rng());
     std::string b = a;
     apply_mask(reinterpret_cast<std::uint8_t*>(b.data()), b.size(), mask);
-    for (std::size_t i = 0; i < n; ++i) CHECK(static_cast<std::uint8_t>(b[i]) == (static_cast<std::uint8_t>(a[i]) ^ mask[i % 4]));
+    for (std::size_t i = 0; i < n; ++i)
+      CHECK(static_cast<std::uint8_t>(b[i]) == (static_cast<std::uint8_t>(a[i]) ^ mask[i % 4]));
     apply_mask(reinterpret_cast<std::uint8_t*>(b.data()), b.size(), mask);
     CHECK(a == b);
   }
@@ -282,7 +283,8 @@ TEST_CASE("a compressed message in fragments, and with an empty block") {
   std::string text(2000, 'q');
   std::string z = zlib_deflate(text);
   FrameParser p(o);
-  p.feed(client_frame(1, false, true, z.substr(0, z.size() / 2)) + client_frame(0, true, false, z.substr(z.size() / 2)));
+  p.feed(client_frame(1, false, true, z.substr(0, z.size() / 2)) +
+         client_frame(0, true, false, z.substr(z.size() / 2)));
   auto m = p.next();
   REQUIRE((m && *m));
   CHECK((*m)->data == text);

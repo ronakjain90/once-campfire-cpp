@@ -19,7 +19,7 @@ namespace {
 
 constexpr unsigned kWorkers = 4;
 constexpr int kSubscribers = 10000;
-constexpr std::size_t kPayload = 10 * 1024;
+constexpr std::size_t kPayload = std::size_t{10} * 1024;
 
 struct CountingSink final : Sink {
   explicit CountingSink(bool d) : deflate(d) {}
@@ -61,6 +61,7 @@ int main(int argc, char** argv) {
   }
 
   std::vector<std::thread> threads;
+  threads.reserve(kWorkers);
   for (unsigned w = 0; w < kWorkers; ++w) {
     threads.emplace_back([&, w] {
       while (true) {

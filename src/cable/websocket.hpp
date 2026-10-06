@@ -29,7 +29,7 @@ enum class Opcode : std::uint8_t { Continuation = 0x0, Text = 0x1, Binary = 0x2,
 // Close codes that websocket-driver uses for a client error (WebSocket::Driver::Hybi::ERRORS).
 inline constexpr std::uint16_t kCloseNormal = 1000;
 inline constexpr std::uint16_t kCloseProtocolError = 1002;
-inline constexpr std::uint16_t kCloseUnacceptable = 1003;  // an unmasked frame
+inline constexpr std::uint16_t kCloseUnacceptable = 1003;   // an unmasked frame
 inline constexpr std::uint16_t kCloseEncodingError = 1007;  // a text message that is not UTF-8
 inline constexpr std::uint16_t kCloseTooLarge = 1009;
 
@@ -39,8 +39,8 @@ inline constexpr std::uint16_t kCloseTooLarge = 1009;
 // header is absent. The caller already checked the method, "Connection: upgrade" and
 // "Upgrade: websocket" (see is_upgrade_request).
 struct HandshakeRequest {
-  std::string_view version;                     // Sec-WebSocket-Version
-  std::string_view key;                         // Sec-WebSocket-Key
+  std::string_view version;                      // Sec-WebSocket-Version
+  std::string_view key;                          // Sec-WebSocket-Key
   std::span<const std::string_view> extensions;  // each Sec-WebSocket-Extensions header value
   std::span<const std::string_view> protocols;   // each Sec-WebSocket-Protocol header value
 };
@@ -89,7 +89,7 @@ std::size_t encode_header(std::uint8_t out[10], Opcode opcode, bool compressed, 
 [[nodiscard]] std::string deflate_message(std::string_view input);
 // The reverse. The error is a close code: 1002 for invalid data, 1009 if the result is too large.
 [[nodiscard]] std::expected<std::string, std::uint16_t> inflate_message(std::string_view input,
-                                                                         std::size_t max_size = kMaxMessage);
+                                                                        std::size_t max_size = kMaxMessage);
 
 // Masks or unmasks in place (RFC 6455 section 5.3).
 void apply_mask(std::uint8_t* data, std::size_t size, const std::uint8_t mask[4]);
@@ -99,13 +99,13 @@ void apply_mask(std::uint8_t* data, std::size_t size, const std::uint8_t mask[4]
 struct Message {
   enum class Type : std::uint8_t { Text, Binary, Ping, Pong, Close };
   Type type = Type::Text;
-  std::string data;                        // text or binary payload, ping or pong payload
+  std::string data;                         // text or binary payload, ping or pong payload
   std::optional<std::uint16_t> close_code;  // Close only
 };
 
 struct ParserOptions {
-  bool deflate = false;            // RSV1 is valid when permessage-deflate is on
-  bool require_mask = true;        // true for a server (client frames must be masked)
+  bool deflate = false;      // RSV1 is valid when permessage-deflate is on
+  bool require_mask = true;  // true for a server (client frames must be masked)
   std::size_t max_message = kMaxMessage;
 };
 

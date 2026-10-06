@@ -15,7 +15,7 @@ namespace campfire::cable {
 // A frame is immutable after make(), so any thread can read it.
 class Frame {
  public:
-  [[nodiscard]] static std::shared_ptr<const Frame> make(std::string text);
+  [[nodiscard]] static std::shared_ptr<const Frame> make(std::string_view text);
 
   // The payload (JSON text).
   [[nodiscard]] std::string_view text() const { return std::string_view(*plain_).substr(header_size_); }

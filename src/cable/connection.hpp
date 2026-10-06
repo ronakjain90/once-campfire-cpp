@@ -8,8 +8,8 @@
 
 #include <chrono>
 #include <functional>
-#include <optional>
 #include <memory>
+#include <optional>
 #include <span>
 #include <string>
 #include <string_view>
@@ -40,7 +40,7 @@ inline constexpr std::chrono::milliseconds kCloseGrace{5000};
 class Connection final : private Sink, private Peer {
  public:
   Connection(Hub& hub, unsigned worker, Transport& transport, const ChannelRegistry& channels, bool deflate);
-  ~Connection();
+  ~Connection() override;
   Connection(const Connection&) = delete;
   Connection& operator=(const Connection&) = delete;
 
@@ -105,7 +105,7 @@ class Connection final : private Sink, private Peer {
   // Sends the disconnect frame and the close frame, then waits for the client.
   void disconnect(std::optional<protocol::DisconnectReason> reason, std::string_view reconnect_json);
   void write_raw(const std::string& bytes);
-  void queue(std::string text) { pending_.push_back(Frame::make(std::move(text))); }
+  void queue(std::string_view text) { pending_.push_back(Frame::make(text)); }
 
   Hub& hub_;
   unsigned worker_;

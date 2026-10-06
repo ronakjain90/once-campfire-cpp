@@ -269,8 +269,10 @@ std::expected<std::string, std::uint16_t> inflate_message(std::string_view input
     }
     if (s.total_out > max_size) return std::unexpected(kCloseTooLarge);
     if (rc == Z_STREAM_END || (s.avail_in == 0 && s.avail_out > 0)) break;
-    if (s.avail_out == 0) out.resize(std::min<std::size_t>(out.size() * 2, max_size + 1));
-    else if (rc == Z_BUF_ERROR) break;
+    if (s.avail_out == 0)
+      out.resize(std::min<std::size_t>(out.size() * 2, max_size + 1));
+    else if (rc == Z_BUF_ERROR)
+      break;
   }
   out.resize(s.total_out);
   return out;
@@ -282,7 +284,9 @@ void FrameParser::feed(std::span<const std::uint8_t> bytes) {
   buf_.append(reinterpret_cast<const char*>(bytes.data()), bytes.size());
 }
 
-void FrameParser::feed(std::string_view bytes) { buf_.append(bytes); }
+void FrameParser::feed(std::string_view bytes) {
+  buf_.append(bytes);
+}
 
 std::unexpected<std::uint16_t> FrameParser::fail(std::uint16_t code) {
   error_ = code;
@@ -361,7 +365,8 @@ std::expected<std::optional<Message>, std::uint16_t> FrameParser::finish(Header&
     if (!inflated) return fail(inflated.error());
     done.data = std::move(*inflated);
   }
-  if (done.opcode == 0x2) return std::optional<Message>(Message{Message::Type::Binary, std::move(done.data), std::nullopt});
+  if (done.opcode == 0x2)
+    return std::optional<Message>(Message{Message::Type::Binary, std::move(done.data), std::nullopt});
   if (!compat::json::valid_utf8(done.data)) return fail(kCloseEncodingError);
   return std::optional<Message>(Message{Message::Type::Text, std::move(done.data), std::nullopt});
 }
@@ -384,7 +389,7 @@ std::expected<std::optional<Message>, std::uint16_t> FrameParser::next() {
     if (pos_ == buf_.size()) {
       buf_.clear();
       pos_ = 0;
-      if (buf_.capacity() > 64 * 1024) buf_.shrink_to_fit();
+      if (buf_.capacity() > std::size_t{64} * 1024) buf_.shrink_to_fit();
     } else if (pos_ >= 4096 && pos_ * 2 >= buf_.size()) {
       buf_.erase(0, pos_);
       pos_ = 0;

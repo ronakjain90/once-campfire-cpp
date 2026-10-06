@@ -37,7 +37,9 @@ std::string golden_path() {
   return file.substr(0, file.rfind('/')) + "/golden/reference.json";
 }
 
-std::string identifier(const json::Value& v) { return json::generate(v); }
+std::string identifier(const json::Value& v) {
+  return json::generate(v);
+}
 
 std::string command(std::string_view name, const std::string& id, const std::string* data = nullptr) {
   json::Value::Object o{{"command", name}, {"identifier", id}};
@@ -83,7 +85,8 @@ class TypingChannel : public Channel {
     const User& u = sub.user<User>();
     json::Value message(json::Value::Object{
         {"action", action},
-        {"user", json::Value(json::Value::Object{{"id", json::Value(static_cast<std::int64_t>(u.id))}, {"name", u.name}})}});
+        {"user",
+         json::Value(json::Value::Object{{"id", json::Value(static_cast<std::int64_t>(u.id))}, {"name", u.name}})}});
     std::string_view parts[] = {*room_};
     sub.hub().broadcast(sub.broadcasting_for(parts), message);
     return true;
@@ -170,9 +173,11 @@ void replay(bool deflate) {
   registry.add("Turbo::StreamsChannel", [&] { return std::make_unique<TurboChannel>(signed_names); });
 
   auto room = [&](std::uint64_t id) {
-    return identifier(json::Value(json::Value::Object{{"channel", "RoomChannel"}, {"room_id", json::Value(static_cast<std::int64_t>(id))}}));
+    return identifier(json::Value(
+        json::Value::Object{{"channel", "RoomChannel"}, {"room_id", json::Value(static_cast<std::int64_t>(id))}}));
   };
-  auto typing = identifier(json::Value(json::Value::Object{{"channel", "TypingNotificationsChannel"}, {"room_id", json::Value(static_cast<std::int64_t>(room_id))}}));
+  auto typing = identifier(json::Value(json::Value::Object{
+      {"channel", "TypingNotificationsChannel"}, {"room_id", json::Value(static_cast<std::int64_t>(room_id))}}));
   auto turbo = [&](const json::Value& signed_name) {
     json::Value::Object o{{"channel", "Turbo::StreamsChannel"}};
     if (!signed_name.is_null()) o.emplace_back("signed_stream_name", signed_name);
@@ -270,6 +275,10 @@ void replay(bool deflate) {
 
 }  // namespace
 
-TEST_CASE("reference frames replay byte for byte") { replay(false); }
+TEST_CASE("reference frames replay byte for byte") {
+  replay(false);
+}
 
-TEST_CASE("reference frames replay with permessage-deflate") { replay(true); }
+TEST_CASE("reference frames replay with permessage-deflate") {
+  replay(true);
+}

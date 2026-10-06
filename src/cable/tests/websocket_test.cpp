@@ -1,11 +1,12 @@
 // Tests of cable/websocket.hpp. Rust: crates/cable/src/socket.rs tests.
 #include "cable/websocket.hpp"
-#include "cable/tests/support.hpp"
 
 #include <doctest.h>
 
 #include <string>
 #include <vector>
+
+#include "cable/tests/support.hpp"
 
 using namespace campfire::cable::ws;
 

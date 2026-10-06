@@ -1,9 +1,10 @@
 // Tests of the Action Cable protocol through Connection. Rust: crates/cable/tests/protocol.rs and
 // src/naming.rs tests. The Rust tests that need HTTP (404 pages, origin check) belong to T5.
+#include "cable/protocol.hpp"
+
 #include <doctest.h>
 
 #include "cable/connection.hpp"
-#include "cable/protocol.hpp"
 #include "cable/tests/support.hpp"
 
 using namespace campfire;
@@ -79,7 +80,8 @@ std::string reject(std::string_view id) {
   return "T:" + std::string(R"({"identifier":)") + json::encode(json::Value(id)) + R"(,"type":"reject_subscription"})";
 }
 std::string message(std::string_view id, std::string_view m) {
-  return "T:" + std::string(R"({"identifier":)") + json::encode(json::Value(id)) + R"(,"message":)" + std::string(m) + "}";
+  return "T:" + std::string(R"({"identifier":)") + json::encode(json::Value(id)) + R"(,"message":)" + std::string(m) +
+         "}";
 }
 
 constexpr std::string_view kRoom1 = R"({"channel":"RoomChannel","room_id":1})";
@@ -359,7 +361,8 @@ TEST_CASE("server frames are exact JSON bytes") {
   using namespace protocol;
   CHECK(welcome() == R"({"type":"welcome"})");
   CHECK(ping(5) == R"({"type":"ping","message":5})");
-  CHECK(disconnect(DisconnectReason::InvalidRequest, "false") == R"({"type":"disconnect","reason":"invalid_request","reconnect":false})");
+  CHECK(disconnect(DisconnectReason::InvalidRequest, "false") ==
+        R"({"type":"disconnect","reason":"invalid_request","reconnect":false})");
   CHECK(confirmation("{\"a\":1}") == R"({"identifier":"{\"a\":1}","type":"confirm_subscription"})");
   CHECK(rejection("x") == R"({"identifier":"x","type":"reject_subscription"})");
 }

@@ -24,7 +24,9 @@ inline std::string client_frame(std::uint8_t opcode, bool fin, bool rsv1, std::s
   return out + p;
 }
 
-inline std::string text_frame(std::string_view payload) { return client_frame(1, true, false, payload); }
+inline std::string text_frame(std::string_view payload) {
+  return client_frame(1, true, false, payload);
+}
 
 // What a client sees: "T:<text>" for a text frame, "C:<code>" for a close frame, "P:<payload>"
 // for a pong.
@@ -37,11 +39,13 @@ inline std::vector<std::string> decode_server(std::string_view bytes) {
     std::size_t len = b1 & 0x7f;
     pos += 2;
     if (len == 126) {
-      len = (static_cast<std::size_t>(static_cast<std::uint8_t>(bytes[pos])) << 8) | static_cast<std::uint8_t>(bytes[pos + 1]);
+      len = (static_cast<std::size_t>(static_cast<std::uint8_t>(bytes[pos])) << 8) |
+            static_cast<std::uint8_t>(bytes[pos + 1]);
       pos += 2;
     } else if (len == 127) {
       len = 0;
-      for (int i = 0; i < 8; ++i) len = (len << 8) | static_cast<std::uint8_t>(bytes[pos + static_cast<std::size_t>(i)]);
+      for (int i = 0; i < 8; ++i)
+        len = (len << 8) | static_cast<std::uint8_t>(bytes[pos + static_cast<std::size_t>(i)]);
       pos += 8;
     }
     std::string payload(bytes.substr(pos, len));
@@ -55,9 +59,10 @@ inline std::vector<std::string> decode_server(std::string_view bytes) {
         out.push_back("T:" + payload);
       }
     } else if (opcode == 8) {
-      std::uint16_t code = payload.size() >= 2 ? static_cast<std::uint16_t>((static_cast<std::uint8_t>(payload[0]) << 8) |
-                                                                           static_cast<std::uint8_t>(payload[1]))
-                                               : 0;
+      std::uint16_t code = payload.size() >= 2
+                               ? static_cast<std::uint16_t>((static_cast<std::uint8_t>(payload[0]) << 8) |
+                                                            static_cast<std::uint8_t>(payload[1]))
+                               : 0;
       out.push_back("C:" + std::to_string(code));
     } else if (opcode == 10) {
       out.push_back("P:" + payload);

@@ -5,6 +5,7 @@
 #include <string>
 
 #include "cable/connection.hpp"
+#include "core/log.hpp"
 
 namespace {
 struct NullTransport final : campfire::cable::Transport {
@@ -24,6 +25,8 @@ struct Heartbeat final : campfire::cable::Channel {
 
 extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size) {
   using namespace campfire::cable;
+  static const bool quiet = campfire::Logger::instance().set_level_from("fatal");
+  (void)quiet;
   static ChannelRegistry registry = [] {
     ChannelRegistry r;
     r.add("HeartbeatChannel", [] { return std::make_unique<Heartbeat>(); });

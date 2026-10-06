@@ -54,6 +54,10 @@ campfire_library(app
     controllers/pwa.cpp
     controllers/active_storage.cpp
     controllers/qr_codes.cpp
+    controllers/unfurl_links.cpp
+    opengraph/html.cpp
+    opengraph/opengraph.cpp
+    unfurl_http.cpp
     controllers/session_transfers.cpp
     controllers/directs.cpp
     controllers/involvements.cpp

@@ -7,9 +7,11 @@
 // the job area (A9).
 #pragma once
 
+#include <functional>
 #include <optional>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace campfire::app {
 
@@ -20,5 +22,10 @@ namespace campfire::app {
 // The first public address of `host` (IPv4 before IPv6), as text, or nothing if the host does not resolve or only
 // resolves to blocked addresses. It blocks: call it on a job thread.
 [[nodiscard]] std::optional<std::string> resolve_public_address(std::string_view host);
+
+// Name resolution as the guard needs it: the addresses of a host as bytes (4 or 16 each). An empty list is a host that
+// does not resolve. The system one is `getaddrinfo`. The tests of the unfurl client give fixed answers.
+using HostLookup = std::function<std::vector<std::string>(const std::string& host)>;
+[[nodiscard]] std::optional<std::string> resolve_public_address(std::string_view host, const HostLookup& lookup);
 
 }  // namespace campfire::app

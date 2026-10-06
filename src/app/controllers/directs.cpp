@@ -33,6 +33,7 @@ Task<Flow<net::Response>> directs_new(Rq& rq) {
   db::DependencyScope& deps = rq.track();
   auto layout = load_layout(rq);
   if (!layout) co_return std::unexpected(std::move(layout.error()));
+  if (auto format = ensure_html(rq); !format) co_return std::unexpected(std::move(format.error()));
   add_page_facets(rq, deps, "rooms/directs#new");
   const LayoutData& data = *layout;
   const auto render = [&](Out& out) {
@@ -81,9 +82,9 @@ Task<Flow<net::Response>> directs_create(Rq& rq) {
 Task<Flow<net::Response>> directs_edit(Rq& rq) {
   auto before = co_await concerns::before_actions(rq, concerns::Before{});
   if (!before) co_return std::unexpected(std::move(before.error()));
+  db::DependencyScope& deps = rq.track();
   auto room = set_room(rq, models::RoomScope::Directs);
   if (!room) co_return std::unexpected(std::move(room.error()));
-  db::DependencyScope& deps = rq.track();
   auto layout = load_layout(rq);
   if (!layout) co_return std::unexpected(std::move(layout.error()));
   const models::User& current = *rq.current_user();
@@ -103,6 +104,7 @@ Task<Flow<net::Response>> directs_edit(Rq& rq) {
   // `room_display_name(@room)`: the other members' names as a sentence, or the user's own name.
   const std::string sentence = views::helpers::to_sentence(others, " and ");
   edit.display_name = sentence.find_first_not_of(" \t\n\v\f\r") == std::string::npos ? current.name : sentence;
+  if (auto format = ensure_html(rq); !format) co_return std::unexpected(std::move(format.error()));
   add_page_facets(rq, deps, "rooms/directs#edit");
   const LayoutData& data = *layout;
   const auto render = [&](Out& out) {

@@ -24,21 +24,16 @@
         {% end %}
 
         <div id="direct_rooms" contents data-controller="sorted-list" data-action="rooms-list:unread@window->sorted-list#updateItem">
-          {% for membership : sidebar.direct_memberships %}{% render users/sidebars/rooms/direct(ctx, membership) %}{% end %}
-        </div>
+          {% for membership : sidebar.direct_memberships %}{% render users/sidebars/rooms/direct(ctx, membership) %}{% end %}        </div>
 
         <div contents>
-          {% for user : sidebar.direct_placeholder_users %}{% render users/sidebars/rooms/direct_placeholder(ctx, user) %}{% end %}
-        </div>
+          {% for user : sidebar.direct_placeholder_users %}{% render users/sidebars/rooms/direct_placeholder(ctx, user) %}{% end %}        </div>
       </div>
     </turbo-frame>
 
     <div class="rooms position-relative flex flex-column gap">
       <div id="shared_rooms" contents data-controller="sorted-list">
-        {% for room : sidebar.other_memberships %}
-          {% render users/sidebars/rooms/shared(room) %}
-        {% end %}
-      </div>
+{% for room : sidebar.other_memberships %}          {% render users/sidebars/rooms/shared(room) %}{% end %}      </div>
 
       {% if sidebar.can_create_rooms %}
         {% wrap link_to(routes::new_rooms_open(), attrs().cls("rooms__new-btn btn room align-center gap txt-reversed").aria("label", "New Chat Room")) %}

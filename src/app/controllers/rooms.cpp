@@ -64,6 +64,12 @@ void remember_last_room_visited(Rq& rq, const models::Room& room) {
   rq.cookies().set("last_room", std::move(cookie));
 }
 
+Flow<void> ensure_html(Rq& rq) {
+  const req::Format offered[] = {&req::mime::HTML};
+  if (auto format = rq.respond_to(offered); !format) return std::unexpected(std::move(format.error()));
+  return {};
+}
+
 Flow<net::Response> redirect_to_room(Rq& rq, std::int64_t room_id) {
   return rq.redirect_to(rq.url_for(campfire::routes::room(room_id)));
 }
@@ -153,6 +159,8 @@ using FillPage = std::function<void(views::LayoutParts&, std::string&, const vie
 // A page in the application layout, or in the frame layout for a Turbo-Frame request, through the page cache.
 Flow<net::Response> render_page(Rq& rq, std::string_view name, db::DependencyScope& deps, const LayoutData& data,
                                 const FillPage& fill) {
+  // The implicit render finds only an HTML template: `Accept: application/json` is `UnknownFormat` (406).
+  if (auto format = ensure_html(rq); !format) return std::unexpected(std::move(format.error()));
   add_page_facets(rq, deps, name);
   const auto render = [&](Out& out) {
     const views::ViewContext ctx = make_view_context(rq, data);
@@ -213,6 +221,10 @@ Task<Flow<net::Response>> rooms_destroy(Rq& rq) {
 
 Task<Flow<net::Response>> action_not_found(Rq&) {
   co_return fail_with(ErrorKind::NotFound, "The action could not be found");
+}
+
+Task<Flow<net::Response>> missing_controller(Rq&) {
+  co_return fail_internal("uninitialized constant Rooms::SettingsController");
 }
 
 Task<Flow<net::Response>> destroy_without_room(Rq& rq) {
@@ -290,9 +302,9 @@ Task<Flow<net::Response>> opens_create(Rq& rq) {
 Task<Flow<net::Response>> opens_edit(Rq& rq) {
   auto before = co_await concerns::before_actions(rq, concerns::Before{});
   if (!before) co_return std::unexpected(std::move(before.error()));
+  db::DependencyScope& deps = rq.track();
   auto room = set_room(rq, models::RoomScope::WithoutDirects);
   if (!room) co_return std::unexpected(std::move(room.error()));
-  db::DependencyScope& deps = rq.track();
   auto layout = load_layout(rq);
   if (!layout) co_return std::unexpected(std::move(layout.error()));
   views::OpenFormView form;
@@ -376,9 +388,9 @@ Task<Flow<net::Response>> closeds_create(Rq& rq) {
 Task<Flow<net::Response>> closeds_edit(Rq& rq) {
   auto before = co_await concerns::before_actions(rq, concerns::Before{});
   if (!before) co_return std::unexpected(std::move(before.error()));
+  db::DependencyScope& deps = rq.track();
   auto room = set_room(rq, models::RoomScope::WithoutDirects);
   if (!room) co_return std::unexpected(std::move(room.error()));
-  db::DependencyScope& deps = rq.track();
   auto layout = load_layout(rq);
   if (!layout) co_return std::unexpected(std::move(layout.error()));
   const models::User& user = *rq.current_user();
@@ -451,6 +463,9 @@ Task<net::Response> destroy_without_room(net::Ctx& c) {
 }
 Task<net::Response> action_not_found(net::Ctx& c) {
   return app::dispatch(c, &app::controllers::action_not_found);
+}
+Task<net::Response> missing_controller(net::Ctx& c) {
+  return app::dispatch(c, &app::controllers::missing_controller);
 }
 
 }  // namespace campfire::routes::rooms

@@ -31,7 +31,7 @@ each branch against its acceptance list, runs the tests, and merges it into `mai
 |---|---|---|
 | T1 | **Build and core.** Top-level CMake, the three builds (`release`, `asan`, `tsan`), doctest, `bin/dev` (build and test in Docker), `clang-format`, `clang-tidy`, `AGENTS.md`. `src/core/`: arena, `Out` buffer, `SafeHtml`, errors, log, configuration (all variables of the Rust `config.rs`), clock with frozen time (`CAMPFIRE_FROZEN_TIME`), XXH3, Rails time formats, the `Task` coroutine type and its scheduler interface. Copy the Rust `vectors/` to `spec/vectors/`. | — |
 | T2 | **Rails compatibility** (`src/compat/`), all of architecture section 8, with all vector tests. | — |
-| T3 | **Rich text core** (`src/richtext/`): vendor Gumbo at Nokogiri's version, the DOM, the serializer, the sanitizer. Tests from the Rust corpus for the cases without attachments. | — |
+| T3 | merged (verified by Opus) | `task/T3` | 316 of 658 corpus cases in scope, all pass. Expected values equal the Rails-made corpus in the Rust repo. Fuzz 5 min clean. |
 | T4 | **Production image.** `docker/Dockerfile` with the libvips and ffmpeg build stages from the Rust `Dockerfile`, a runtime stage with the same layout (`/rails/storage`), user, ports and entrypoint as `campfire-rust:app`. A placeholder app binary for now. | — |
 
 ## Wave 2: frameworks (parallel, after wave 1)
@@ -48,7 +48,7 @@ format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
 | T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
 | T8 | **Templates.** `tools/ctc.py`, `src/views/` foundation: tag helpers with Rails attribute order, URL helpers (`vectors/campfire_routes.json`), form builders, `time_tag`, `turbo_frame_tag`, the layout and the shared partials. | T1, T2 |
 | T9 | **Assets.** `src/assets/`: Propshaft digests, importmap, the overrides, precompressed bodies, and the vendored frontend files. | T1 |
-| T10 | **Rich text attachments**: mentions (SGID), opengraph embeds, autolink, plain text. All corpus tests. | T2, T3 |
+| T10 | in progress (Sonnet) | `task/T10` | |
 | T11 | **Cable core.** WebSocket framing, `permessage-deflate`, the Action Cable protocol, the hub. Unit tests with the Rust reference frames. | T1 |
 | T12 | **Storage.** Blobs, the disk service, signed URLs, the Marshal variant digest, libvips variants, ffmpeg analysis and posters (`vectors/storage.json`, `vectors/storage/`). | T1, T2, T4 |
 | T13 | **Diff sweep.** `tools/diffsweep`: runs both images on one seed with a frozen clock, sends a list of requests (sign-in, pages, writes, Cable sessions), compares the results. Request lists from `parity/screens.yml` and `reference-tools/http_shape/sweep.py`. | T4 |
@@ -99,7 +99,7 @@ its requests in the diff sweep pass.
 |---|---|---|---|
 | T1 | merged (verified by Opus) | `task/T1` | `test_core` and `test_compat` pass in release, asan and tsan. `bin/dev` needs `seccomp=unconfined` for TSan. |
 | T2 | merged (verified by Opus) | `task/T2` | All vector groups pass in release and ASan. `passwords` (bcrypt) and `csrf` groups moved to T6. Needs T1's doctest wiring. |
-| T3 | in progress (fresh Sonnet agent, 09:35) | `task/T3` | 3 commits. Library compiles. Fuzz run was starting. |
+| T3 | merged (verified by Opus) | `task/T3` | 316 of 658 corpus cases in scope, all pass. Expected values equal the Rails-made corpus in the Rust repo. Fuzz 5 min clean. |
 | T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |
 | T5 | in progress (fresh Sonnet agent, 09:35) | `task/T5` | 3 commits. Response builder in progress. |
 | T6 | in progress (fresh Sonnet agent, 09:35) | `task/T6` | No commits. `param.hpp`/`param.cpp` written, not built. |
@@ -109,7 +109,7 @@ its requests in the diff sweep pass.
 | T11 | paused (usage limit, 2026-10-06 02:45) | `task/T11` | 1 commit, uncommitted work. |
 | T12 | paused (usage limit, 2026-10-06 02:45) | `task/T12` | 1 commit. libvips wrapper in progress. |
 | T13 | paused (usage limit, 2026-10-06 02:45) | `task/T13` | 1 commit. Main script and launcher in progress. |
-| T10 | waits for T3 | | |
+| T10 | in progress (Sonnet) | `task/T10` | |
 
 ## Restart rule
 

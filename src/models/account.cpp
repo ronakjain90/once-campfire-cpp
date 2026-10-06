@@ -4,6 +4,7 @@
 #include <sys/random.h>
 
 #include <cstdlib>
+#include "compat/json.hpp"
 
 namespace campfire::models {
 
@@ -14,11 +15,13 @@ struct AccountRow {
   std::string_view name;
   std::optional<std::string_view> custom_styles;
   std::string_view updated_at;
-  static AccountRow read(db::RowReader& r) { return {r.i64(0), r.text(1), r.text_opt(2), r.text(3)}; }
+  std::optional<std::string_view> settings;
+  static AccountRow read(db::RowReader& r) { return {r.i64(0), r.text(1), r.text_opt(2), r.text(3), r.text_opt(4)}; }
 };
 
 const db::Query<AccountRow()> kFirst{
-    "SELECT \"accounts\".\"id\", \"accounts\".\"name\", \"accounts\".\"custom_styles\", \"accounts\".\"updated_at\" "
+    "SELECT \"accounts\".\"id\", \"accounts\".\"name\", \"accounts\".\"custom_styles\", \"accounts\".\"updated_at\", "
+    "\"accounts\".\"settings\" "
     "FROM \"accounts\" ORDER BY \"accounts\".\"id\" ASC LIMIT 1"};
 
 const db::Query<std::int64_t(std::int64_t)> kLogo{
@@ -38,6 +41,19 @@ const db::Query<std::int64_t(std::string_view, std::string_view, std::string_vie
     kInsert{
         "INSERT INTO \"accounts\" (\"created_at\", \"custom_styles\", \"join_code\", \"name\", \"settings\", "
         "\"singleton_guard\", \"updated_at\") VALUES (?, NULL, ?, ?, ?, 0, ?) RETURNING \"id\""};
+// `restrict_room_creation_to_administrators?` of `has_json :settings`: `present?` of the stored value.
+bool restrict_room_creation(std::optional<std::string_view> settings) {
+  if (!settings) return false;
+  const auto json = compat::json::parse(*settings);
+  if (!json || !json->is_object()) return false;
+  const compat::json::Value* value = json->find("restrict_room_creation_to_administrators");
+  if (value == nullptr || value->is_null()) return false;
+  if (value->is_bool()) return value->as_bool();
+  if (const std::string* text = value->get_string()) return text->find_first_not_of(" \t\n\v\f\r") != std::string::npos;
+  if (value->is_array()) return !value->as_array().empty();
+  if (value->is_object()) return !value->as_object().empty();
+  return true;
+}
 
 }  // namespace
 
@@ -90,6 +106,7 @@ Result<std::optional<Account>> first(db::Connection& conn, Arena& arena) {
   a.name = std::string((*row)->name);
   if ((*row)->custom_styles) a.custom_styles = std::string(*(*row)->custom_styles);
   a.updated_at = std::string((*row)->updated_at);
+  a.restrict_room_creation_to_administrators = restrict_room_creation((*row)->settings);
   auto logo = conn.first(kLogo, arena, a.id);
   if (!logo) return std::unexpected(logo.error());
   a.has_logo = logo->has_value();

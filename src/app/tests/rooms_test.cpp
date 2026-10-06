@@ -80,3 +80,35 @@ TEST_CASE("rooms: opens and closeds show redirect and remember the room") {
 }
 
 }  // namespace campfire::app::testing
+
+namespace campfire::app::testing {
+
+TEST_CASE("sidebar: rooms, direct rooms and placeholders") {
+  Fixture f;
+  add_room(f, "Zebra", "Rooms::Open", true);
+  add_room(f, "alpha", "Rooms::Closed", true);
+  add_room(f, "Hidden", "Rooms::Closed", false);
+  Client c(f.port());
+  const std::string token = sign_in(c);
+  const std::string cookie = "Cookie: " + token + "\r\n";
+
+  // A Turbo-Frame request gets the frame layout; the rooms are in the order of `LOWER(name)`.
+  Reply r = c.request("GET", "/users/me/sidebar", cookie + "Turbo-Frame: user_sidebar\r\n");
+  REQUIRE(r.status == 200);
+  CHECK(r.body.find("<turbo-frame data-turbo-permanent=\"true\"") != std::string::npos);
+  const auto alpha = r.body.find("data-sorted-list-name=\"alpha\"");
+  const auto zebra = r.body.find("data-sorted-list-name=\"Zebra\"");
+  REQUIRE(alpha != std::string::npos);
+  REQUIRE(zebra != std::string::npos);
+  CHECK(alpha < zebra);
+  CHECK(r.body.find("Hidden") == std::string::npos);
+  CHECK(r.body.find("href=\"/rooms/opens/new\"") != std::string::npos);
+  CHECK(r.body.find("<!DOCTYPE html>") == std::string::npos);
+
+  // Without the frame header the sidebar is a full page.
+  r = c.request("GET", "/users/me/sidebar", cookie);
+  CHECK(r.status == 200);
+  CHECK(r.body.starts_with("<!DOCTYPE html>"));
+}
+
+}  // namespace campfire::app::testing

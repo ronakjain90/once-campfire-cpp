@@ -40,6 +40,7 @@ campfire_library(app
     controllers/rooms.cpp
     controllers/sessions.cpp
     controllers/users.cpp
+    controllers/sidebars.cpp
     controllers/welcome.cpp
     dispatch.cpp
     errors.cpp

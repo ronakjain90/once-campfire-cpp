@@ -50,6 +50,24 @@ const db::Query<OwnerRow()> kOwner{
     "SELECT \"users\".\"name\", \"users\".\"email_address\" FROM \"users\" WHERE \"users\".\"role\" = 1 "
     "ORDER BY \"users\".\"id\" ASC LIMIT 1"};
 
+const db::Query<db::schema::UserRow(std::int64_t)> kOfRoom{
+    "SELECT " CF_USER_COLUMNS
+    " FROM \"users\" INNER JOIN \"memberships\" ON \"users\".\"id\" = \"memberships\".\"user_id\" WHERE "
+    "\"memberships\".\"room_id\" = ?"};
+
+// The user ids that share a direct room with a user (`Membership.where(room_id: directs).pluck(:user_id).uniq`).
+const db::Query<std::int64_t(std::int64_t)> kDirectNeighbours{
+    "SELECT DISTINCT \"memberships\".\"user_id\" FROM \"memberships\" WHERE \"memberships\".\"room_id\" IN "
+    "(SELECT \"rooms\".\"id\" FROM \"rooms\" INNER JOIN \"memberships\" ON \"rooms\".\"id\" = "
+    "\"memberships\".\"room_id\" WHERE \"memberships\".\"user_id\" = ? AND \"rooms\".\"type\" = "
+    "'Rooms::Direct')"};
+
+// `User.active.where.not(id: ids).order(:created_at).limit(n)`: the ids come as a JSON array.
+const db::Query<db::schema::UserRow(std::string_view, std::int64_t)> kPlaceholders{
+    "SELECT " CF_USER_COLUMNS
+    " FROM \"users\" WHERE \"users\".\"status\" = 0 AND \"users\".\"id\" NOT IN (SELECT value FROM "
+    "json_each(?)) ORDER BY \"users\".\"created_at\" ASC LIMIT ?"};
+
 // `BCrypt::Password.create("dummy", cost: 12)`: same cost as real digests (Rust: DUMMY_DIGEST).
 constexpr std::string_view kDummyDigest = "$2a$12$FiKmSp4UhLvSB4Sd/ZUjQunyKP6.NjDRHdr5LnKUVk.BUn4Mq12WS";
 
@@ -136,6 +154,32 @@ std::optional<User> authenticated(std::optional<User> candidate, std::string_vie
   }
   if (!candidate->authenticate(password)) return std::nullopt;
   return candidate;
+}
+
+Result<std::vector<User>> of_room(db::Connection& conn, Arena& arena, std::int64_t room_id) {
+  auto rows = conn.all(kOfRoom, arena, room_id);
+  if (!rows) return std::unexpected(rows.error());
+  std::vector<User> out;
+  out.reserve(rows->size());
+  for (const db::schema::UserRow& row : *rows) out.push_back(User::from_row(row));
+  return out;
+}
+
+Result<std::vector<User>> direct_placeholders(db::Connection& conn, Arena& arena, std::int64_t user_id) {
+  auto neighbours = conn.all(kDirectNeighbours, arena, user_id);
+  if (!neighbours) return std::unexpected(neighbours.error());
+  // `exclude_user_ids.including(Current.user.id)` appends the id even when it is there, and the limit counts it.
+  std::string ids = "[";
+  for (const std::int64_t id : *neighbours) ids += std::to_string(id) + ",";
+  ids += std::to_string(user_id) + "]";
+  const std::int64_t excluded = static_cast<std::int64_t>(neighbours->size()) + 1;
+  const std::int64_t limit = std::max<std::int64_t>(kDirectPlaceholders - excluded, 0);
+  auto rows = conn.all(kPlaceholders, arena, ids, limit);
+  if (!rows) return std::unexpected(rows.error());
+  std::vector<User> out;
+  out.reserve(rows->size());
+  for (const db::schema::UserRow& row : *rows) out.push_back(User::from_row(row));
+  return out;
 }
 
 Result<bool> none(db::Connection& conn, Arena& arena) {

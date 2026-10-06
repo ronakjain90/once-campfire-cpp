@@ -26,14 +26,10 @@ std::string capitalize(std::string_view text) {
 std::string to_sentence(const std::vector<std::string>& items, std::string_view two_words_connector) {
   std::string out;
   switch (items.size()) {
-    case 0:
-      return out;
-    case 1:
-      return items[0];
-    case 2:
-      return items[0] + std::string(two_words_connector) + items[1];
-    default:
-      break;
+    case 0: return out;
+    case 1: return items[0];
+    case 2: return items[0] + std::string(two_words_connector) + items[1];
+    default: break;
   }
   for (std::size_t i = 0; i + 1 < items.size(); ++i) {
     if (i > 0) out += ", ";
@@ -69,9 +65,10 @@ Attrs sidebar_turbo_frame_options(std::optional<std::string_view> src) {
   options.set("data-controller", Value("rooms-list read-rooms turbo-frame"));
   options.set("data-rooms-list-unread-class", Value("unread"));
   // `html_safe` in the reference, so that "->" is not escaped.
-  options.set("data-action",
-              Value(SafeHtml::trusted("presence:present@window->rooms-list#read read-rooms:read->rooms-list#read "
-                                      "turbo:frame-load->rooms-list#loaded refresh-room:visible@window->turbo-frame#reload")));
+  options.set(
+      "data-action",
+      Value(SafeHtml::trusted("presence:present@window->rooms-list#read read-rooms:read->rooms-list#read "
+                              "turbo:frame-load->rooms-list#loaded refresh-room:visible@window->turbo-frame#reload")));
   options.set("id", Value("user_sidebar"));
   if (src) {
     options.set("src", Value(*src));

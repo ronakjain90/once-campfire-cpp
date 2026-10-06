@@ -24,6 +24,21 @@ const db::Query<db::schema::UserRow(std::string_view, std::string_view)> kBot{
     " FROM \"users\" WHERE \"users\".\"status\" = 0 AND \"users\".\"role\" = 2 AND \"users\".\"id\" = ? AND "
     "\"users\".\"bot_token\" = ? LIMIT 1"};
 
+const db::Query<std::int64_t(std::optional<std::string_view>, std::optional<std::string_view>, std::string_view,
+                             std::optional<std::string_view>, std::string_view, std::optional<std::string_view>,
+                             std::int64_t, std::int64_t, std::string_view)>
+    kInsert{
+        "INSERT INTO \"users\" (\"bio\", \"bot_token\", \"created_at\", \"email_address\", \"name\", "
+        "\"password_digest\", \"role\", \"status\", \"updated_at\") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "
+        "\"id\""};
+
+// `Membership.insert_all(Rooms::Open.pluck(:id).collect { ... })`: one row for each open room. The times are the
+// time of the database, as the Rust port writes them.
+const db::Query<void(std::int64_t)> kGrantOpenRooms{
+    "INSERT INTO \"memberships\" (\"created_at\",\"room_id\",\"updated_at\",\"user_id\") "
+    "SELECT STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW'), \"rooms\".\"id\", STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW'), ? "
+    "FROM \"rooms\" WHERE \"rooms\".\"type\" = 'Rooms::Open' ON CONFLICT DO NOTHING"};
+
 const db::Query<std::int64_t()> kAny{"SELECT 1 AS one FROM \"users\" LIMIT 1"};
 
 struct OwnerRow {
@@ -67,6 +82,30 @@ bool User::authenticate(std::string_view password) const {
 }
 
 namespace users {
+
+Result<User> create(db::Tx& tx, const NewUser& attributes) {
+  const std::string now = tx.now_db();
+  const auto view = [](const std::optional<std::string>& s) {
+    return s ? std::optional<std::string_view>(*s) : std::nullopt;
+  };
+  Arena arena(256);
+  auto id =
+      tx.conn().first(kInsert, arena, std::nullopt, std::nullopt, now, view(attributes.email_address), attributes.name,
+                      view(attributes.password_digest), static_cast<std::int64_t>(attributes.role), kStatusActive, now);
+  if (!id) return std::unexpected(id.error());
+  if (auto granted = tx.conn().exec(kGrantOpenRooms, **id); !granted) return std::unexpected(granted.error());
+  User u;
+  u.id = **id;
+  u.created_at = u.updated_at = now;
+  u.email_address = attributes.email_address;
+  u.name = attributes.name;
+  u.password_digest = attributes.password_digest;
+  u.role = static_cast<std::int64_t>(attributes.role);
+  u.status = kStatusActive;
+  tx.changed(db::schema::Table::Users, u.id);
+  tx.changed(db::schema::Table::Memberships, u.id);
+  return u;
+}
 
 Result<std::optional<User>> find_by_id(db::Connection& conn, Arena& arena, std::int64_t id) {
   return wrap(conn.first(kById, arena, id));

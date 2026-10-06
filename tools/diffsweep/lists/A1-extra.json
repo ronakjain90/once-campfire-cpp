@@ -1,0 +1,388 @@
+{
+ "area": "A1",
+ "source": "a1",
+ "scenarios": [
+  {
+   "name": "join edge cases",
+   "seed": "default",
+   "mutates": true,
+   "steps": [
+    {
+     "name": "join form frame",
+     "path": "/join/{{join_codes.signal}}",
+     "headers": {
+      "Turbo-Frame": "sidebar"
+     }
+    },
+    {
+     "name": "join form json",
+     "path": "/join/{{join_codes.signal}}.json"
+    },
+    {
+     "name": "join form banned ip",
+     "path": "/join/{{join_codes.signal}}",
+     "headers": {
+      "X-Forwarded-For": "{{ips.banned}}"
+     }
+    },
+    {
+     "name": "join create banned ip",
+     "path": "/join/{{join_codes.signal}}",
+     "method": "POST",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin",
+      "X-Forwarded-For": "{{ips.banned}}"
+     },
+     "form": {
+      "user[name]": "Banned",
+      "user[email_address]": "banned@example.com",
+      "user[password]": "secret123456"
+     }
+    },
+    {
+     "name": "join create no user",
+     "path": "/join/{{join_codes.signal}}",
+     "method": "POST",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     },
+     "form": {
+      "x": "1"
+     }
+    },
+    {
+     "name": "join create no name",
+     "path": "/join/{{join_codes.signal}}",
+     "method": "POST",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     },
+     "form": {
+      "user[email_address]": "noname@example.com",
+      "user[password]": "secret123456"
+     }
+    },
+    {
+     "name": "join create taken email",
+     "path": "/join/{{join_codes.signal}}",
+     "method": "POST",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     },
+     "form": {
+      "user[name]": "Dup",
+      "user[email_address]": "{{emails.david}}",
+      "user[password]": "secret123456"
+     }
+    },
+    {
+     "name": "join create no password",
+     "path": "/join/{{join_codes.signal}}",
+     "method": "POST",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     },
+     "form": {
+      "user[name]": "No Password",
+      "user[email_address]": "nopass@example.com"
+     }
+    },
+    {
+     "name": "join create bad code",
+     "path": "/join/CRMu-l8Ge-KB9C",
+     "method": "POST",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     },
+     "form": {
+      "user[name]": "X"
+     }
+    },
+    {
+     "name": "join signed in",
+     "path": "/join/{{join_codes.signal}}",
+     "actor": "visitor"
+    }
+   ]
+  },
+  {
+   "name": "first run and session routes that do not exist",
+   "seed": "default",
+   "steps": [
+    {
+     "name": "first run exists",
+     "path": "/first_run"
+    },
+    {
+     "name": "first run new",
+     "path": "/first_run/new"
+    },
+    {
+     "name": "first run edit",
+     "path": "/first_run/edit"
+    },
+    {
+     "name": "first run update",
+     "path": "/first_run",
+     "method": "PATCH",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     },
+     "form": {
+      "user[name]": "X"
+     }
+    },
+    {
+     "name": "first run destroy",
+     "path": "/first_run",
+     "method": "DELETE",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "first run create exists",
+     "path": "/first_run",
+     "method": "POST",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     },
+     "form": {
+      "user[name]": "X",
+      "user[email_address]": "x@example.com",
+      "user[password]": "secret123456"
+     }
+    },
+    {
+     "name": "session show",
+     "path": "/session"
+    },
+    {
+     "name": "session edit",
+     "path": "/session/edit"
+    },
+    {
+     "name": "session update",
+     "path": "/session",
+     "method": "PATCH",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "session new json",
+     "path": "/session/new.json"
+    }
+   ]
+  },
+  {
+   "name": "transfers",
+   "seed": "default",
+   "mutates": true,
+   "steps": [
+    {
+     "name": "transfer page frame",
+     "path": "/session/transfers/{{transfers.kevin}}",
+     "headers": {
+      "Turbo-Frame": "sidebar"
+     }
+    },
+    {
+     "name": "transfer page json",
+     "path": "/session/transfers/{{transfers.kevin}}.json"
+    },
+    {
+     "name": "transfer update put",
+     "path": "/session/transfers/{{transfers.kevin}}",
+     "method": "PUT",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "home",
+     "path": "/"
+    },
+    {
+     "name": "transfer update banned ip",
+     "path": "/session/transfers/{{transfers.david}}",
+     "method": "PATCH",
+     "actor": "other",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin",
+      "X-Forwarded-For": "{{ips.banned}}"
+     }
+    },
+    {
+     "name": "transfer page with a session",
+     "path": "/session/transfers/{{transfers.david}}"
+    }
+   ]
+  },
+  {
+   "name": "welcome and sign in on the root",
+   "seed": "default",
+   "steps": [
+    {
+     "op": "login",
+     "actor": "loner"
+    },
+    {
+     "name": "welcome frame",
+     "path": "/",
+     "actor": "loner",
+     "headers": {
+      "Turbo-Frame": "sidebar"
+     }
+    },
+    {
+     "name": "welcome json",
+     "path": "/",
+     "actor": "loner",
+     "accept": "application/json"
+    },
+    {
+     "name": "welcome html",
+     "path": "/",
+     "actor": "loner",
+     "accept": "text/html"
+    },
+    {
+     "name": "welcome revisit",
+     "path": "/",
+     "actor": "loner",
+     "revisit": true
+    },
+    {
+     "name": "welcome gzip",
+     "path": "/",
+     "actor": "loner",
+     "accept_encoding": "gzip"
+    },
+    {
+     "op": "login",
+     "actor": "david"
+    },
+    {
+     "name": "root david",
+     "path": "/",
+     "actor": "david"
+    },
+    {
+     "name": "root with last room",
+     "path": "/",
+     "actor": "david",
+     "headers": {
+      "Cookie": "last_room={{rooms.designers}}"
+     }
+    },
+    {
+     "name": "root with a room of nobody",
+     "path": "/",
+     "actor": "david",
+     "headers": {
+      "Cookie": "last_room=1"
+     }
+    }
+   ]
+  },
+  {
+   "name": "allow_browser",
+   "seed": "default",
+   "mutates": true,
+   "steps": [
+    {
+     "name": "browser safari 17.1",
+     "path": "/session/new",
+     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+    },
+    {
+     "name": "browser safari 17.2",
+     "path": "/session/new",
+     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15"
+    },
+    {
+     "name": "browser firefox 120",
+     "path": "/session/new",
+     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0"
+    },
+    {
+     "name": "browser internet explorer",
+     "path": "/session/new",
+     "user_agent": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)"
+    },
+    {
+     "name": "browser opera 100",
+     "path": "/session/new",
+     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 OPR/100.0.0.0"
+    },
+    {
+     "name": "browser googlebot",
+     "path": "/session/new",
+     "user_agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    },
+    {
+     "name": "browser old android",
+     "path": "/session/new",
+     "user_agent": "Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Mobile Safari/537.36"
+    },
+    {
+     "name": "browser curl",
+     "path": "/session/new",
+     "user_agent": "curl/8.4.0"
+    },
+    {
+     "name": "browser blank",
+     "path": "/session/new",
+     "user_agent": "   "
+    },
+    {
+     "name": "browser frame",
+     "path": "/session/new",
+     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
+     "headers": {
+      "Turbo-Frame": "sidebar"
+     }
+    },
+    {
+     "name": "browser json",
+     "path": "/session/new.json",
+     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+    },
+    {
+     "name": "browser post",
+     "path": "/session",
+     "method": "POST",
+     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     },
+     "form": {
+      "email_address": "x@example.com",
+      "password": "x"
+     }
+    },
+    {
+     "name": "browser join",
+     "path": "/join/{{join_codes.signal}}",
+     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+    },
+    {
+     "name": "browser first run",
+     "path": "/first_run",
+     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+    },
+    {
+     "name": "browser root",
+     "path": "/",
+     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+    },
+    {
+     "name": "browser apple messages",
+     "path": "/",
+     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/601.2.4 (KHTML, like Gecko) Version/9.0.1 Safari/601.2.4 facebookexternalhit/1.1 Facebot Twitterbot/1.0"
+    }
+   ]
+  }
+ ]
+}

@@ -7,6 +7,7 @@
 #include "models/ban.hpp"
 #include "models/session.hpp"
 #include "models/user.hpp"
+#include "req/bcrypt.hpp"
 #include "req/forgery.hpp"
 #include "routes/routes.hpp"
 
@@ -14,7 +15,7 @@ namespace campfire::app::concerns {
 
 namespace {
 
-std::atomic<AllowBrowserFn> g_allow_browser{nullptr};
+std::atomic<AllowBrowserFn> g_allow_browser{&allow_browser};
 
 std::unexpected<Failure> db_error(const Error& error) {
   return fail_internal(error.message);
@@ -229,6 +230,16 @@ Task<Flow<std::optional<models::User>>> authenticate_by(Rq& rq, std::string emai
                                         return models::users::authenticated(std::move(candidate), password);
                                       });
   co_return user;
+}
+
+Task<Flow<std::optional<std::string>>> password_digest(Rq& rq, std::optional<std::string> password) {
+  if (!password || password->empty()) co_return std::optional<std::string>{};
+  // The test environment of Rails uses the lowest cost (`ActiveModel::SecurePassword.min_cost`).
+  const int cost = rq.app.config.environment == "test" ? req::bcrypt::kMinCost : req::bcrypt::kDefaultCost;
+  std::string digest = co_await rq.ctx.offload(
+      rq.app.jobs, [password = std::move(*password), cost] { return req::bcrypt::hash_password(password, cost); });
+  if (digest.empty()) co_return fail_internal("bcrypt failed");
+  co_return std::optional<std::string>(std::move(digest));
 }
 
 Task<Flow<void>> start_new_session_for(Rq& rq, models::User user) {

@@ -1,0 +1,10 @@
+{# reference/app/views/users/new.html.erb: `content_for :nav`. #}
+{% include views/helpers/links.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx %}
+  <div class="flex-item-justify-end">
+    {% wrap link_to(routes::new_session(), attrs().cls("btn flex-item-justify-end")) %}
+      {% call image_tag(ctx, "login-keys.svg", attrs().aria_hidden()) %}
+      <span class="for-screen-reader">Sign in</span>
+    {% end %}
+  </div>

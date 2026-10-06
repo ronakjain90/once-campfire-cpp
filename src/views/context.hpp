@@ -27,6 +27,23 @@ struct AccountSummary {
   bool has_logo = false;
 };
 
+// `ApplicationPlatform` as the views see it (Rust: campfire_views::Platform). A predicate that raises in Ruby is false.
+struct Platform {
+  bool ios = false;
+  bool android = false;
+  bool mac = false;
+  bool windows = false;
+  bool chrome = false;
+  bool firefox = false;
+  bool safari = false;
+  bool edge = false;
+  bool mobile = false;
+  bool desktop = false;
+  bool apple_messages = false;
+  std::string browser;
+  std::string operating_system;
+};
+
 struct ViewContext {
   std::optional<CurrentUser> current_user;
   AccountSummary account;
@@ -50,6 +67,8 @@ struct ViewContext {
   // The id of `last_room_visited`; nullopt links back to the root.
   std::optional<std::int64_t> last_room_visited_id;
   std::string app_version = "0";
+  // `platform`: the User-Agent of the request.
+  Platform platform;
 
   [[nodiscard]] std::string asset(std::string_view logical_path) const { return asset_path(logical_path); }
   // `root_url`, `join_url(...)`: the base URL and the path.

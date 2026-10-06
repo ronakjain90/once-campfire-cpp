@@ -4,8 +4,10 @@ campfire_library(models
   SOURCES
     account.cpp
     ban.cpp
+    first_run.cpp
     session.cpp
     user.cpp
+    user_rooms.cpp
   PUBLIC_DEPS campfire_core campfire_db campfire_req
   WERROR)
 

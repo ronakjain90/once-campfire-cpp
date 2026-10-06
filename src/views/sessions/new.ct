@@ -2,7 +2,6 @@
 {% include views/helpers/forms.hpp %}
 {% include views/sessions/helpers.hpp %}
 {% params const ViewContext& ctx, const helpers::FormWith& form, std::optional<std::string_view> email_address, const std::optional<HelpContact>& help_contact %}
-
 <section class="txt-align-center">
   <div class="panel {{ ctx.flash_alert ? "shake" : "" }}">
     {% call account_logo_tag(ctx, "center margin-block-end txt-xx-large") %}

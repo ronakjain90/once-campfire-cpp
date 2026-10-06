@@ -1,0 +1,7 @@
+{
+ "area": "A6",
+ "source": "writes",
+ "scenarios": [
+  {"name": "unfurl and misc", "seed": "default", "mutates": true, "steps": [{"op": "login", "actor": "david"}, {"name": "unfurl unreachable", "actor": "david", "method": "POST", "path": "/unfurl_link", "headers": {"Content-Type": "application/json"}, "json": {"url": "http://127.0.0.1:9/page"}}, {"name": "unfurl no url", "actor": "david", "method": "POST", "path": "/unfurl_link", "headers": {"Content-Type": "application/json"}, "json": {}}, {"name": "unfurl bad scheme", "actor": "david", "method": "POST", "path": "/unfurl_link", "headers": {"Content-Type": "application/json"}, "json": {"url": "ftp://x"}}, {"name": "old route", "actor": "david", "method": "GET", "path": "/rooms/{{rooms.designers}}/messages/{{messages.plain}}.json"}, {"name": "not found format", "actor": "david", "method": "GET", "path": "/nope.json"}]}
+ ]
+}

@@ -1,0 +1,5 @@
+{"area":"A6","seed":"default","scenarios":[{"name":"five requests","steps":[
+ {"path":"/up"},{"path":"/session/new"},{"path":"/webmanifest"},
+ {"op":"login","actor":"david"},
+ {"actor":"david","path":"/rooms/{{rooms.designers}}"},
+ {"actor":"david","path":"/rooms/{{rooms.hq}}/refresh?since=0","headers":{"Accept":"text/vnd.turbo-stream.html"}}]}]}

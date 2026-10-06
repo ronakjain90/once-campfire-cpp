@@ -1,0 +1,7 @@
+{
+ "area": "A8",
+ "source": "shape",
+ "scenarios": [
+  {"name": "http_shape requests", "seed": "default", "steps": [{"op": "login", "actor": "david"}, {"name": "406 encoding", "actor": "david", "path": "/rooms/{{rooms.hq}}", "headers": {"Accept-Encoding": "identity;q=0"}}, {"name": "no gzip", "actor": "david", "path": "/rooms/{{rooms.hq}}", "headers": {"Accept-Encoding": ""}}]}
+ ]
+}

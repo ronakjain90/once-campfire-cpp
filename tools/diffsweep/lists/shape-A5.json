@@ -1,0 +1,7 @@
+{
+ "area": "A5",
+ "source": "shape",
+ "scenarios": [
+  {"name": "http_shape requests", "seed": "default", "steps": [{"op": "login", "actor": "david"}, {"name": "searches", "actor": "david", "path": "/searches?q=pizza"}, {"name": "searches empty", "actor": "david", "path": "/searches"}]}
+ ]
+}

@@ -1,0 +1,7 @@
+{
+ "area": "A3",
+ "source": "shape",
+ "scenarios": [
+  {"name": "http_shape requests", "seed": "default", "steps": [{"op": "login", "actor": "david"}, {"name": "messages before", "actor": "david", "path": "/rooms/{{rooms.designers}}/messages?before={{messages.image}}", "revisit": true}, {"name": "messages after", "actor": "david", "path": "/rooms/{{rooms.designers}}/messages?after={{messages.first}}"}, {"name": "messages empty page", "actor": "david", "path": "/rooms/{{rooms.designers}}/messages?after={{messages.boosted_by_david}}"}, {"name": "messages none", "actor": "david", "path": "/rooms/{{rooms.hq}}/messages?before={{messages.image}}"}, {"name": "xhr", "actor": "david", "path": "/rooms/{{rooms.designers}}/messages?before={{messages.image}}", "headers": {"X-Requested-With": "XMLHttpRequest"}}, {"name": "autocomplete json", "actor": "david", "path": "/autocompletable/users?query=j", "headers": {"Accept": "application/json"}, "revisit": true}, {"name": "autocomplete html", "actor": "david", "path": "/autocompletable/users?query=j"}, {"name": "bot messages", "path": "/rooms/{{rooms.hq}}/{{bot_keys.bender}}/messages", "cookies": false}, {"name": "bot messages bad key", "path": "/rooms/{{rooms.hq}}/1-nope/messages", "cookies": false}]}
+ ]
+}

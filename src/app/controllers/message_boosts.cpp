@@ -165,7 +165,7 @@ Task<Flow<net::Response>> boosts_destroy(Rq& rq) {
   if (!boost) co_return std::unexpected(std::move(boost.error()));
   if (auto gone = co_await destroy_boost(rq, *message, *boost); !gone) co_return std::unexpected(std::move(gone.error()));
   // No destroy template: `head :no_content`.
-  co_return rq.head(204);
+  co_return messages::no_content(rq);
 }
 
 // ---- Messages::Boosts::ByBotsController -----------------------------------------------------------------------
@@ -225,7 +225,7 @@ Task<Flow<net::Response>> boost_bots_destroy(Rq& rq) {
     co_return std::unexpected(std::move(boost.error()));
   }
   if (auto gone = co_await destroy_boost(rq, *message, *boost); !gone) co_return std::unexpected(std::move(gone.error()));
-  co_return rq.head(204);
+  co_return messages::no_content(rq);
 }
 
 }  // namespace

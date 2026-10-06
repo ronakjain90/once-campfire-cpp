@@ -10,7 +10,9 @@ namespace campfire::views::messages {
 void message(Out& out, const ViewContext&, const MessageView& message) {
   out.append_raw("<div id=\"");
   html_escape(out, message.dom_id());
-  out.append_raw("\" class=\"message\" data-stub=\"true\">");
+  out.append_raw("\" class=\"message\" data-message-id=\"");
+  out.append_int(message.id);
+  out.append_raw("\" data-stub=\"true\">");
   if (const auto* text = std::get_if<TextContent>(&message.content)) {
     out.append(SafeHtml::trusted(text->html));
   } else if (const AttachmentView* attachment = message.attachment()) {

@@ -119,6 +119,12 @@ Flow<void> ensure_can_administer(Rq& rq, const models::Message& message) {
   return {};
 }
 
+net::Response no_content(Rq& rq) {
+  net::Response response = rq.head(204);
+  response.add("content-length", "0");
+  return response;
+}
+
 Flow<net::Response> content_page(Rq& rq, int status, bool always_application,
                                  const std::function<void(Out&, const views::ViewContext&)>& content) {
   auto layout = load_layout(rq);

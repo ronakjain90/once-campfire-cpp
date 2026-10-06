@@ -65,6 +65,10 @@ struct MessageParams {
 // `deliver_webhooks_to_bots`: every active bot of a direct room, else every mentioned active bot, but not the creator.
 [[nodiscard]] Flow<void> deliver_webhooks_to_bots(Rq& rq, const models::RoomRef& room, const models::Message& message);
 
+// `head :no_content`. Rust sends it with `content-length: 0`, which the front drops: the header that moves into its slot
+// is the `vary` that the front adds. The header is here only for that position.
+[[nodiscard]] net::Response no_content(Rq& rq);
+
 // A content-only template in a layout. Rails wraps it in the application layout, or in turbo-rails' frame layout when
 // the request has a `Turbo-Frame` header. `always_application` is for a controller that declares its own `layout`
 // (`MessagesController`: `layout false, only: :index`), which replaces that choice.

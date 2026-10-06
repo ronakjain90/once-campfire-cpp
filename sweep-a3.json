@@ -1,0 +1,1066 @@
+{
+ "expected": "campfire-rust:app",
+ "actual": "campfire-cpp:a3",
+ "results": [
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon",
+   "name": "bot_api/messages/index",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon",
+   "name": "bot_api/messages/index (revisit)",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon",
+   "name": "bot_api/messages/index/before",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages?before=933434569",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon",
+   "name": "bot_api/messages/index/before (revisit)",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages?before=933434569",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "messages/index/fragment",
+   "method": "GET",
+   "path": "/rooms/486777696/messages?before=933434569",
+   "status": [
+    200,
+    404
+   ],
+   "ok": false,
+   "problems": [
+    "status",
+    "header names/order",
+    "body"
+   ],
+   "report": "status: expected 200, actual 404\nheaders:\n--- expected\n+++ actual\n@@ -1,12 +1,2 @@\n-content-type: text/html; charset=utf-8\n-x-version: parity\n-x-rev: parity\n-etag: <ignored>\n-last-modified: Sat, 28 Feb 2026 14:53:00 GMT\n-cache-control: max-age=0, private, must-revalidate\n-x-frame-options: SAMEORIGIN\n-x-xss-protection: 0\n-x-content-type-options: nosniff\n-x-permitted-cross-domain-policies: none\n-referrer-policy: strict-origin-when-cross-origin\n+content-type: text/html; charset=UTF-8\n content-encoding: gzip\nbody (decoded, normalized): first differing byte at offset 0 (expected 364644 bytes, actual 4237 bytes)\n  expected[0..]: '\\\\n\\\\n  <div id=\"message_<uuid>\" class=\"message \" data-controlle'\n  actual  [0..]: '<!DOCTYPE html>\\\\n<html>\\\\n\\\\n<head>\\\\n  <title>We can\u2019t find that'\n--- expected\n+++ actual\n@@ -1,4881 +1,145 @@\n+<!DOCTYPE html>\n+<html>\n \n+<head>\n+  <title>We can\u2019t find that (404)</title>\n+  <meta charset=\"UTF-8\">\n+  <style>\n+    *,\n+    *::before,\n+    *::after {\n+      box-sizing: border-box;\n+    }\n \n-  <div id=\"message_<uuid>\" class=\"message \" data-controller=\"reply\" data-user-id=\"127326141\" data-message-id=\"933434529\" data-message-timestamp=\"1772274000000\" data-message-updated-at=\"1772274000000\" data-sort-value=\"17...(+155 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-02-28T10:20:00Z\" data-local-time-target=\"date\"></time></h2>\n+    body {\n+      --lch-black: 0% 0 0;\n+      --lch-gray: 75% 0.005 96;\n+      --lch-white: 100% 0 0;\n \n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"David\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/127326141\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416...(+94 chars)\n-    </figure>\n+      --color-border: oklch(var(--lch-gray));\n+      --color-bg: oklch(var(--lch-white));\n+      --color-text: oklch(var(--lch-black));\n \n-    <turbo-frame id=\"edit_message_<uuid>\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"David\">\n-                <strong data-reply-target=\"author\">David</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/486777696/@933434529\"><time class=\"message__timestamp\" datetime=\"2026-02-28T10:20:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n... (4979 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "messages/index/fragment (revisit)",
+   "method": "GET",
+   "path": "/rooms/486777696/messages?before=933434569",
+   "status": [
+    304,
+    404
+   ],
+   "ok": false,
+   "problems": [
+    "status",
+    "header names/order",
+    "body"
+   ],
+   "report": "status: expected 304, actual 404\nheaders:\n--- expected\n+++ actual\n@@ -1,15 +1,8 @@\n-x-version: parity\n-x-rev: parity\n-etag: W/\"525245cd62a912e81d1383919cfc2896\"\n-last-modified: Sat, 28 Feb 2026 14:53:00 GMT\n-cache-control: max-age=0, private, must-revalidate\n-x-frame-options: SAMEORIGIN\n-x-xss-protection: 0\n-x-content-type-options: nosniff\n-x-permitted-cross-domain-policies: none\n-referrer-policy: strict-origin-when-cross-origin\n-vary: Accept-Encoding\n+content-type: text/html; charset=UTF-8\n+content-encoding: gzip\n x-request-id: <ignored>\n x-runtime: <ignored>\n+vary: Accept-Encoding\n x-cache: miss\n date: <ignored>\n+transfer-encoding: chunked\nbody (decoded): first differing byte at offset 0 (expected 0 bytes, actual 4237 bytes)\n  expected[0..]: ''\n  actual  [0..]: '<!DOCTYPE html>\\\\n<html>\\\\n\\\\n<head>\\\\n  <title>We can\u2019t find that'\n--- expected\n+++ actual\n@@ -0,0 +1,145 @@\n+<!DOCTYPE html>\n+<html>\n+\n+<head>\n+  <title>We can\u2019t find that (404)</title>\n+  <meta charset=\"UTF-8\">\n+  <style>\n+    *,\n+    *::before,\n+    *::after {\n+      box-sizing: border-box;\n+    }\n+\n+    body {\n+      --lch-black: 0% 0 0;\n+      --lch-gray: 75% 0.005 96;\n+      --lch-white: 100% 0 0;\n+\n+      --color-border: oklch(var(--lch-gray));\n+      --color-bg: oklch(var(--lch-white));\n+      --color-text: oklch(var(--lch-black));\n+\n+      --btn-size: 2.65em;\n+\n+      background-color: var(--color-bg);\n+      block-size: 100dvh;\n+      color: var(--color-text);\n+      display: grid;\n+      margin: 0;\n+      padding: 0;\n+      place-items: center;\n+      font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n+\n+      @media (prefers-color-scheme: dark) {\n+        --lch-black: 100% 0 0;\n+        --lch-gray: 44.95% 0 0;\n+        --lch-white: 0% 0 0;\n... (108 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "messages/show/fragment",
+   "method": "GET",
+   "path": "/rooms/654632876/messages/933434482",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "body"
+   ],
+   "report": "body (decoded, normalized): first differing byte at offset 18976 (expected 29498 bytes, actual 20523 bytes)\n  expected[18916..]: '   <nav id=\"nav\">\\\\n    </nav>\\\\n\\\\n\\\\n    <main id=\"main-content\">\\\\n\\\\n  <div id=\"message_<uuid>\" class=\"message \" data-controller'\n  actual  [18916..]: '   <nav id=\"nav\">\\\\n    </nav>\\\\n\\\\n\\\\n    <main id=\"main-content\">\\\\n<div id=\"message_<uuid>\" class=\"message\" data-stub=\"true\"><d'\n--- expected\n+++ actual\n@@ -247,126 +247,9 @@\n \n     <main id=\"main-content\">\n-\n-  <div id=\"message_<uuid>\" class=\"message \" data-controller=\"reply\" data-user-id=\"149087659\" data-message-id=\"933434482\" data-message-timestamp=\"1772355600000\" data-message-updated-at=\"1772355600000\" data-sort-value=\"17...(+155 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-01T09:00:00Z\" data-local-time-target=\"date\"></time></h2>\n-\n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"Jason\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/149087659\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a0823...(+94 chars)\n-    </figure>\n-\n-    <turbo-frame id=\"edit_message_<uuid>\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"Jason\">\n-                <strong data-reply-target=\"author\">Jason</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/654632876/@933434482\"><time class=\"message__timestamp\" datetime=\"2026-03-01T09:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n-                <a target=\"_top\" data-reply-target=\"link\" href=\"/rooms/654632876/@933434482\">Designers</a>\n-              </span>\n-            </h3>\n-            <div class=\"message__actions\" data-controller=\"soft-keyboard\">\n-  <details class=\"position-relative\" data-controller=\"popup\" data-action=\"keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside\" data-popup-orientation-top-class=\"popup-orienta...(+10 chars)\n-    <summary class=\"btn message__action-btn message__options-btn\">\n-      <img class=\"colorize--black\" aria-hidden=\"true\" src=\"/assets/menu-dots-horizontal-f6a5d793.svg\" width=\"20\" height=\"20\" />\n-      <span class=\"for-screen-reader\">Message options</span>\n-    </summary>\n-\n-    <div class=\"message__actions-menu border shadow\" data-popup-target=\"menu\">\n-      <div class=\"quick-boosts\">\n-          <form data-turbo-frame=\"boosting_message_<uuid>\" data-action=\"popup#close\" action=\"/messages/933434482/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n-            <input type=\"hidden\" name=\"boost[content]\" id=\"boost_content\" value=\"\ud83d\udc4d\" />\n-            <button name=\"button\" type=\"submit\" title=\"Thumbs up\" class=\"btn message__action-btn\" data-emoji=\"\ud83d\udc4d\">\n-              <figure class=\"margin-none boost-character\">\ud83d\udc4d</figure>\n-              <span class=\"for-screen-reader\">Thumbs up</span>\n... (91 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "messages/show/fragment (revisit)",
+   "method": "GET",
+   "path": "/rooms/654632876/messages/933434482",
+   "status": [
+    304,
+    304
+   ],
+   "ok": false,
+   "problems": [
+    "header values"
+   ],
+   "report": "headers:\n--- expected\n+++ actual\n@@ -9,3 +9,3 @@\n referrer-policy: strict-origin-when-cross-origin\n-etag: W/\"7d4c2b8adfb57e417d9e8525a835459a\"\n+etag: W/\"da35b9b0df012a41611a3e5ca4d3087b\"\n vary: Accept-Encoding"
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "autocompletable/users/fragment",
+   "method": "GET",
+   "path": "/autocompletable/users?room_id=654632876&filter=a",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "autocompletable/users/fragment (revisit)",
+   "method": "GET",
+   "path": "/autocompletable/users?room_id=654632876&filter=a",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "autocompletable/users/json",
+   "method": "GET",
+   "path": "/autocompletable/users.json?query=j",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default david",
+   "name": "autocompletable/users/json (revisit)",
+   "method": "GET",
+   "path": "/autocompletable/users.json?query=j",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages before",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?before=933434498",
+   "status": [
+    200,
+    404
+   ],
+   "ok": false,
+   "problems": [
+    "status",
+    "header names/order",
+    "body"
+   ],
+   "report": "status: expected 200, actual 404\nheaders:\n--- expected\n+++ actual\n@@ -1,12 +1,2 @@\n-content-type: text/html; charset=utf-8\n-x-version: parity\n-x-rev: parity\n-etag: <ignored>\n-last-modified: Sun, 01 Mar 2026 11:05:00 GMT\n-cache-control: max-age=0, private, must-revalidate\n-x-frame-options: SAMEORIGIN\n-x-xss-protection: 0\n-x-content-type-options: nosniff\n-x-permitted-cross-domain-policies: none\n-referrer-policy: strict-origin-when-cross-origin\n+content-type: text/html; charset=UTF-8\n content-encoding: gzip\nbody (decoded, normalized): first differing byte at offset 0 (expected 150015 bytes, actual 4237 bytes)\n  expected[0..]: '\\\\n\\\\n  <div id=\"message_<uuid>\" class=\"message \" data-controlle'\n  actual  [0..]: '<!DOCTYPE html>\\\\n<html>\\\\n\\\\n<head>\\\\n  <title>We can\u2019t find that'\n--- expected\n+++ actual\n@@ -1,1990 +1,145 @@\n+<!DOCTYPE html>\n+<html>\n \n+<head>\n+  <title>We can\u2019t find that (404)</title>\n+  <meta charset=\"UTF-8\">\n+  <style>\n+    *,\n+    *::before,\n+    *::after {\n+      box-sizing: border-box;\n+    }\n \n-  <div id=\"message_<uuid>\" class=\"message \" data-controller=\"reply\" data-user-id=\"149087659\" data-message-id=\"933434482\" data-message-timestamp=\"1772355600000\" data-message-updated-at=\"1772355600000\" data-sort-value=\"17...(+155 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-01T09:00:00Z\" data-local-time-target=\"date\"></time></h2>\n+    body {\n+      --lch-black: 0% 0 0;\n+      --lch-gray: 75% 0.005 96;\n+      --lch-white: 100% 0 0;\n \n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"Jason\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/149087659\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a0823...(+94 chars)\n-    </figure>\n+      --color-border: oklch(var(--lch-gray));\n+      --color-bg: oklch(var(--lch-white));\n+      --color-text: oklch(var(--lch-black));\n \n-    <turbo-frame id=\"edit_message_<uuid>\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"Jason\">\n-                <strong data-reply-target=\"author\">Jason</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/654632876/@933434482\"><time class=\"message__timestamp\" datetime=\"2026-03-01T09:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n... (2088 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages before (revisit)",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?before=933434498",
+   "status": [
+    304,
+    404
+   ],
+   "ok": false,
+   "problems": [
+    "status",
+    "header names/order",
+    "body"
+   ],
+   "report": "status: expected 304, actual 404\nheaders:\n--- expected\n+++ actual\n@@ -1,15 +1,8 @@\n-x-version: parity\n-x-rev: parity\n-etag: W/\"0d6a6a8cd2f736d1848d0413d6e4ec73\"\n-last-modified: Sun, 01 Mar 2026 11:05:00 GMT\n-cache-control: max-age=0, private, must-revalidate\n-x-frame-options: SAMEORIGIN\n-x-xss-protection: 0\n-x-content-type-options: nosniff\n-x-permitted-cross-domain-policies: none\n-referrer-policy: strict-origin-when-cross-origin\n-vary: Accept-Encoding\n+content-type: text/html; charset=UTF-8\n+content-encoding: gzip\n x-request-id: <ignored>\n x-runtime: <ignored>\n+vary: Accept-Encoding\n x-cache: miss\n date: <ignored>\n+transfer-encoding: chunked\nbody (decoded): first differing byte at offset 0 (expected 0 bytes, actual 4237 bytes)\n  expected[0..]: ''\n  actual  [0..]: '<!DOCTYPE html>\\\\n<html>\\\\n\\\\n<head>\\\\n  <title>We can\u2019t find that'\n--- expected\n+++ actual\n@@ -0,0 +1,145 @@\n+<!DOCTYPE html>\n+<html>\n+\n+<head>\n+  <title>We can\u2019t find that (404)</title>\n+  <meta charset=\"UTF-8\">\n+  <style>\n+    *,\n+    *::before,\n+    *::after {\n+      box-sizing: border-box;\n+    }\n+\n+    body {\n+      --lch-black: 0% 0 0;\n+      --lch-gray: 75% 0.005 96;\n+      --lch-white: 100% 0 0;\n+\n+      --color-border: oklch(var(--lch-gray));\n+      --color-bg: oklch(var(--lch-white));\n+      --color-text: oklch(var(--lch-black));\n+\n+      --btn-size: 2.65em;\n+\n+      background-color: var(--color-bg);\n+      block-size: 100dvh;\n+      color: var(--color-text);\n+      display: grid;\n+      margin: 0;\n+      padding: 0;\n+      place-items: center;\n+      font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n+\n+      @media (prefers-color-scheme: dark) {\n+        --lch-black: 100% 0 0;\n+        --lch-gray: 44.95% 0 0;\n+        --lch-white: 0% 0 0;\n... (108 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages after",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?after=309456473",
+   "status": [
+    200,
+    404
+   ],
+   "ok": false,
+   "problems": [
+    "status",
+    "header names/order",
+    "body"
+   ],
+   "report": "status: expected 200, actual 404\nheaders:\n--- expected\n+++ actual\n@@ -1,12 +1,2 @@\n-content-type: text/html; charset=utf-8\n-x-version: parity\n-x-rev: parity\n-etag: W/\"f7d682ea0eeaee6c202af60625d373d8\"\n-last-modified: Mon, 02 Mar 2026 15:53:00 GMT\n-cache-control: max-age=0, private, must-revalidate\n-x-frame-options: SAMEORIGIN\n-x-xss-protection: 0\n-x-content-type-options: nosniff\n-x-permitted-cross-domain-policies: none\n-referrer-policy: strict-origin-when-cross-origin\n+content-type: text/html; charset=UTF-8\n content-encoding: gzip\nbody (decoded): first differing byte at offset 0 (expected 18141 bytes, actual 4237 bytes)\n  expected[0..]: '\\\\n\\\\n  <div id=\"message_0002\" class=\"message \" data-controller='\n  actual  [0..]: '<!DOCTYPE html>\\\\n<html>\\\\n\\\\n<head>\\\\n  <title>We can\u2019t find that'\n--- expected\n+++ actual\n@@ -1,245 +1,145 @@\n+<!DOCTYPE html>\n+<html>\n \n+<head>\n+  <title>We can\u2019t find that (404)</title>\n+  <meta charset=\"UTF-8\">\n+  <style>\n+    *,\n+    *::before,\n+    *::after {\n+      box-sizing: border-box;\n+    }\n \n-  <div id=\"message_0002\" class=\"message \" data-controller=\"reply\" data-user-id=\"127326141\" data-message-id=\"908005739\" data-message-timestamp=\"1772465040000\" data-message-updated-at=\"1772465040000\" data-sort-value=\"1772...(+153 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-02T15:24:00Z\" data-local-time-target=\"date\"></time></h2>\n+    body {\n+      --lch-black: 0% 0 0;\n+      --lch-gray: 75% 0.005 96;\n+      --lch-white: 100% 0 0;\n \n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"David\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/127326141\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416...(+94 chars)\n-    </figure>\n+      --color-border: oklch(var(--lch-gray));\n+      --color-bg: oklch(var(--lch-white));\n+      --color-text: oklch(var(--lch-black));\n \n-    <turbo-frame id=\"edit_message_0002\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"David\">\n-                <strong data-reply-target=\"author\">David</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/654632876/@908005739\"><time class=\"message__timestamp\" datetime=\"2026-03-02T15:24:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n... (343 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages empty page",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?after=933434509",
+   "status": [
+    200,
+    404
+   ],
+   "ok": false,
+   "problems": [
+    "status",
+    "header names/order",
+    "body"
+   ],
+   "report": "status: expected 200, actual 404\nheaders:\n--- expected\n+++ actual\n@@ -1,12 +1,2 @@\n-content-type: text/html; charset=utf-8\n-x-version: parity\n-x-rev: parity\n-etag: W/\"d8bdc4afcde15ab7a911b66437f25831\"\n-last-modified: Mon, 02 Mar 2026 15:53:00 GMT\n-cache-control: max-age=0, private, must-revalidate\n-x-frame-options: SAMEORIGIN\n-x-xss-protection: 0\n-x-content-type-options: nosniff\n-x-permitted-cross-domain-policies: none\n-referrer-policy: strict-origin-when-cross-origin\n+content-type: text/html; charset=UTF-8\n content-encoding: gzip\nbody (decoded): first differing byte at offset 0 (expected 28674 bytes, actual 4237 bytes)\n  expected[0..]: '\\\\n\\\\n  <div id=\"message_0001\" class=\"message \" data-controller='\n  actual  [0..]: '<!DOCTYPE html>\\\\n<html>\\\\n\\\\n<head>\\\\n  <title>We can\u2019t find that'\n--- expected\n+++ actual\n@@ -1,381 +1,145 @@\n+<!DOCTYPE html>\n+<html>\n \n+<head>\n+  <title>We can\u2019t find that (404)</title>\n+  <meta charset=\"UTF-8\">\n+  <style>\n+    *,\n+    *::before,\n+    *::after {\n+      box-sizing: border-box;\n+    }\n \n-  <div id=\"message_0001\" class=\"message \" data-controller=\"reply\" data-user-id=\"149087659\" data-message-id=\"309456473\" data-message-timestamp=\"1772463600000\" data-message-updated-at=\"1772463600000\" data-sort-value=\"1772...(+153 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-02T15:00:00Z\" data-local-time-target=\"date\"></time></h2>\n+    body {\n+      --lch-black: 0% 0 0;\n+      --lch-gray: 75% 0.005 96;\n+      --lch-white: 100% 0 0;\n \n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"Jason\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/149087659\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a0823...(+94 chars)\n-    </figure>\n+      --color-border: oklch(var(--lch-gray));\n+      --color-bg: oklch(var(--lch-white));\n+      --color-text: oklch(var(--lch-black));\n \n-    <turbo-frame id=\"edit_message_0001\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"Jason\">\n-                <strong data-reply-target=\"author\">Jason</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/654632876/@309456473\"><time class=\"message__timestamp\" datetime=\"2026-03-02T15:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n... (479 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "messages none",
+   "method": "GET",
+   "path": "/rooms/201306877/messages?before=933434498",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "xhr",
+   "method": "GET",
+   "path": "/rooms/654632876/messages?before=933434498",
+   "status": [
+    200,
+    404
+   ],
+   "ok": false,
+   "problems": [
+    "status",
+    "header names/order",
+    "body"
+   ],
+   "report": "status: expected 200, actual 404\nheaders:\n--- expected\n+++ actual\n@@ -1,13 +1,2 @@\n-content-type: text/html; charset=utf-8\n-vary: Accept,Accept-Encoding\n-x-version: parity\n-x-rev: parity\n-etag: <ignored>\n-last-modified: Sun, 01 Mar 2026 11:05:00 GMT\n-cache-control: max-age=0, private, must-revalidate\n-x-frame-options: SAMEORIGIN\n-x-xss-protection: 0\n-x-content-type-options: nosniff\n-x-permitted-cross-domain-policies: none\n-referrer-policy: strict-origin-when-cross-origin\n+content-type: text/html; charset=UTF-8\n content-encoding: gzip\n@@ -15,2 +4,3 @@\n x-runtime: <ignored>\n+vary: Accept-Encoding\n x-cache: miss\nbody (decoded, normalized): first differing byte at offset 0 (expected 150015 bytes, actual 4237 bytes)\n  expected[0..]: '\\\\n\\\\n  <div id=\"message_<uuid>\" class=\"message \" data-controlle'\n  actual  [0..]: '<!DOCTYPE html>\\\\n<html>\\\\n\\\\n<head>\\\\n  <title>We can\u2019t find that'\n--- expected\n+++ actual\n@@ -1,1990 +1,145 @@\n+<!DOCTYPE html>\n+<html>\n \n+<head>\n+  <title>We can\u2019t find that (404)</title>\n+  <meta charset=\"UTF-8\">\n+  <style>\n+    *,\n+    *::before,\n+    *::after {\n+      box-sizing: border-box;\n+    }\n \n-  <div id=\"message_<uuid>\" class=\"message \" data-controller=\"reply\" data-user-id=\"149087659\" data-message-id=\"933434482\" data-message-timestamp=\"1772355600000\" data-message-updated-at=\"1772355600000\" data-sort-value=\"17...(+155 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-01T09:00:00Z\" data-local-time-target=\"date\"></time></h2>\n+    body {\n+      --lch-black: 0% 0 0;\n+      --lch-gray: 75% 0.005 96;\n+      --lch-white: 100% 0 0;\n \n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"Jason\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/149087659\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a0823...(+94 chars)\n-    </figure>\n+      --color-border: oklch(var(--lch-gray));\n+      --color-bg: oklch(var(--lch-white));\n+      --color-text: oklch(var(--lch-black));\n \n-    <turbo-frame id=\"edit_message_<uuid>\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"Jason\">\n-                <strong data-reply-target=\"author\">Jason</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/654632876/@933434482\"><time class=\"message__timestamp\" datetime=\"2026-03-01T09:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n... (2088 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "autocomplete json",
+   "method": "GET",
+   "path": "/autocompletable/users?query=j",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "autocomplete json (revisit)",
+   "method": "GET",
+   "path": "/autocompletable/users?query=j",
+   "status": [
+    304,
+    304
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "autocomplete html",
+   "method": "GET",
+   "path": "/autocompletable/users?query=j",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "bot messages",
+   "method": "GET",
+   "path": "/rooms/201306877/394959859-BenderBot123/messages",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "shape-A3.json",
+   "scenario": "http_shape requests",
+   "name": "bot messages bad key",
+   "method": "GET",
+   "path": "/rooms/201306877/1-nope/messages",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon requests",
+   "name": "bot_api/messages/update",
+   "method": "PUT",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/933434630",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "screens-A3.json",
+   "scenario": "screens default anon requests",
+   "name": "bot_api/boosts/create",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/136976342/boosts",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "login jason: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "login jason: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "post message 'Hello from the sweep'",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "header values",
+    "body"
+   ],
+   "report": "headers:\n--- expected\n+++ actual\n@@ -9,3 +9,3 @@\n referrer-policy: strict-origin-when-cross-origin\n-etag: W/\"214b99411206f4b5010eb2bbbad262c3\"\n+etag: W/\"717efcd57183a7439d5bba7558800ca3\"\n cache-control: max-age=0, private, must-revalidate\nbody (decoded): first differing byte at offset 81 (expected 9276 bytes, actual 242 bytes)\n  expected[21..]: '\"append\" target=\"messages_rooms_closed_654632876\"><template>\\\\n  <div id=\"message_cm-Hellofr\" class=\"message \" data-contro'\n  actual  [21..]: '\"append\" target=\"messages_rooms_closed_654632876\"><template><div id=\"message_cm-Hellofr\" class=\"message\" data-stub=\"true'\n--- expected\n+++ actual\n@@ -1,122 +1,5 @@\n-<turbo-stream action=\"append\" target=\"messages_rooms_closed_654632876\"><template>\n-  <div id=\"message_cm-Hellofr\" class=\"message \" data-controller=\"reply\" data-user-id=\"127326141\" data-message-id=\"933434638\" data-message-timestamp=\"1772467200000\" data-message-updated-at=\"1772467200000\" data-sort-value...(+159 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"date\"></time></h2>\n-\n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"David\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/127326141\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416...(+94 chars)\n-    </figure>\n-\n-    <turbo-frame id=\"edit_message_cm-Hellofr\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"David\">\n-                <strong data-reply-target=\"author\">David</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/654632876/@933434638\"><time class=\"message__timestamp\" datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n-                <a target=\"_top\" data-reply-target=\"link\" href=\"/rooms/654632876/@933434638\">Designers</a>\n-              </span>\n-            </h3>\n-            <div class=\"message__actions\" data-controller=\"soft-keyboard\">\n-  <details class=\"position-relative\" data-controller=\"popup\" data-action=\"keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside\" data-popup-orientation-top-class=\"popup-orienta...(+10 chars)\n-    <summary class=\"btn message__action-btn message__options-btn\">\n-      <img class=\"colorize--black\" aria-hidden=\"true\" src=\"/assets/menu-dots-horizontal-f6a5d793.svg\" width=\"20\" height=\"20\" />\n-      <span class=\"for-screen-reader\">Message options</span>\n-    </summary>\n-\n-    <div class=\"message__actions-menu border shadow\" data-popup-target=\"menu\">\n-      <div class=\"quick-boosts\">\n-          <form data-turbo-frame=\"boosting_message_cm-Hellofr\" data-action=\"popup#close\" action=\"/messages/933434638/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n-            <input type=\"hidden\" name=\"boost[content]\" id=\"boost_content\" value=\"\ud83d\udc4d\" />\n-            <button name=\"button\" type=\"submit\" title=\"Thumbs up\" class=\"btn message__action-btn\" data-emoji=\"\ud83d\udc4d\">\n-              <figure class=\"margin-none boost-character\">\ud83d\udc4d</figure>\n-              <span class=\"for-screen-reader\">Thumbs up</span>\n-</button></form>\n-          <form data-turbo-frame=\"boosting_message_cm-Hellofr\" data-action=\"popup#close\" action=\"/messages/933434638/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n... (87 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "post edit delete",
+   "name": "ERROR in step post message 'Hello from the sweep'",
+   "method": "",
+   "path": "",
+   "status": [
+    null,
+    null
+   ],
+   "ok": false,
+   "problems": [
+    "step error"
+   ],
+   "report": "StepError: capture mid: regex 'data-message-id=\"(\\\\d+)\"' not found on actual (status 200)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "empty body",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "header values",
+    "body"
+   ],
+   "report": "headers:\n--- expected\n+++ actual\n@@ -9,3 +9,3 @@\n referrer-policy: strict-origin-when-cross-origin\n-etag: W/\"e44eaeca02e0325d0e68be6a2cf64b90\"\n+etag: W/\"df40fe9cda0290199e70c2636e1aec9f\"\n cache-control: max-age=0, private, must-revalidate\nbody (decoded): first differing byte at offset 81 (expected 9144 bytes, actual 215 bytes)\n  expected[21..]: '\"append\" target=\"messages_rooms_closed_654632876\"><template>\\\\n  <div id=\"message_cm-\" class=\"message \" data-controller=\"r'\n  actual  [21..]: '\"append\" target=\"messages_rooms_closed_654632876\"><template><div id=\"message_cm-\" class=\"message\" data-stub=\"true\"><div '\n--- expected\n+++ actual\n@@ -1,122 +1,5 @@\n-<turbo-stream action=\"append\" target=\"messages_rooms_closed_654632876\"><template>\n-  <div id=\"message_cm-\" class=\"message \" data-controller=\"reply\" data-user-id=\"127326141\" data-message-id=\"933434638\" data-message-timestamp=\"1772467200000\" data-message-updated-at=\"1772467200000\" data-sort-value=\"17724...(+152 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"date\"></time></h2>\n-\n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"David\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/127326141\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416...(+94 chars)\n-    </figure>\n-\n-    <turbo-frame id=\"edit_message_cm-\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"David\">\n-                <strong data-reply-target=\"author\">David</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/654632876/@933434638\"><time class=\"message__timestamp\" datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n-                <a target=\"_top\" data-reply-target=\"link\" href=\"/rooms/654632876/@933434638\">Designers</a>\n-              </span>\n-            </h3>\n-            <div class=\"message__actions\" data-controller=\"soft-keyboard\">\n-  <details class=\"position-relative\" data-controller=\"popup\" data-action=\"keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside\" data-popup-orientation-top-class=\"popup-orienta...(+10 chars)\n-    <summary class=\"btn message__action-btn message__options-btn\">\n-      <img class=\"colorize--black\" aria-hidden=\"true\" src=\"/assets/menu-dots-horizontal-f6a5d793.svg\" width=\"20\" height=\"20\" />\n-      <span class=\"for-screen-reader\">Message options</span>\n-    </summary>\n-\n-    <div class=\"message__actions-menu border shadow\" data-popup-target=\"menu\">\n-      <div class=\"quick-boosts\">\n-          <form data-turbo-frame=\"boosting_message_cm-\" data-action=\"popup#close\" action=\"/messages/933434638/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n-            <input type=\"hidden\" name=\"boost[content]\" id=\"boost_content\" value=\"\ud83d\udc4d\" />\n-            <button name=\"button\" type=\"submit\" title=\"Thumbs up\" class=\"btn message__action-btn\" data-emoji=\"\ud83d\udc4d\">\n-              <figure class=\"margin-none boost-character\">\ud83d\udc4d</figure>\n-              <span class=\"for-screen-reader\">Thumbs up</span>\n-</button></form>\n-          <form data-turbo-frame=\"boosting_message_cm-\" data-action=\"popup#close\" action=\"/messages/933434638/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n... (87 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "post message 'Mention <em>x</em> @'",
+   "method": "POST",
+   "path": "/rooms/486777696/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "header values",
+    "body"
+   ],
+   "report": "headers:\n--- expected\n+++ actual\n@@ -9,3 +9,3 @@\n referrer-policy: strict-origin-when-cross-origin\n-etag: W/\"197d5ed646c84e083fda5f211625b173\"\n+etag: W/\"08e49e07e0e705f2661699ce54408e62\"\n cache-control: max-age=0, private, must-revalidate\nbody (decoded): first differing byte at offset 81 (expected 9378 bytes, actual 345 bytes)\n  expected[21..]: '\"append\" target=\"messages_rooms_closed_486777696\"><template>\\\\n  <div id=\"message_cm-Mention\" class=\"message \" data-contro'\n  actual  [21..]: '\"append\" target=\"messages_rooms_closed_486777696\"><template><div id=\"message_cm-Mention\" class=\"message\" data-stub=\"true'\n--- expected\n+++ actual\n@@ -1,122 +1,5 @@\n-<turbo-stream action=\"append\" target=\"messages_rooms_closed_486777696\"><template>\n-  <div id=\"message_cm-Mention\" class=\"message \" data-controller=\"reply\" data-user-id=\"127326141\" data-message-id=\"933434639\" data-message-timestamp=\"1772467200000\" data-message-updated-at=\"1772467200000\" data-sort-value...(+159 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"date\"></time></h2>\n-\n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"David\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/127326141\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416...(+94 chars)\n-    </figure>\n-\n-    <turbo-frame id=\"edit_message_cm-Mention\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"David\">\n-                <strong data-reply-target=\"author\">David</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/486777696/@933434639\"><time class=\"message__timestamp\" datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n-                <a target=\"_top\" data-reply-target=\"link\" href=\"/rooms/486777696/@933434639\">All Talk</a>\n-              </span>\n-            </h3>\n-            <div class=\"message__actions\" data-controller=\"soft-keyboard\">\n-  <details class=\"position-relative\" data-controller=\"popup\" data-action=\"keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside\" data-popup-orientation-top-class=\"popup-orienta...(+10 chars)\n-    <summary class=\"btn message__action-btn message__options-btn\">\n-      <img class=\"colorize--black\" aria-hidden=\"true\" src=\"/assets/menu-dots-horizontal-f6a5d793.svg\" width=\"20\" height=\"20\" />\n-      <span class=\"for-screen-reader\">Message options</span>\n-    </summary>\n-\n-    <div class=\"message__actions-menu border shadow\" data-popup-target=\"menu\">\n-      <div class=\"quick-boosts\">\n-          <form data-turbo-frame=\"boosting_message_cm-Mention\" data-action=\"popup#close\" action=\"/messages/933434639/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n-            <input type=\"hidden\" name=\"boost[content]\" id=\"boost_content\" value=\"\ud83d\udc4d\" />\n-            <button name=\"button\" type=\"submit\" title=\"Thumbs up\" class=\"btn message__action-btn\" data-emoji=\"\ud83d\udc4d\">\n-              <figure class=\"margin-none boost-character\">\ud83d\udc4d</figure>\n-              <span class=\"for-screen-reader\">Thumbs up</span>\n-</button></form>\n-          <form data-turbo-frame=\"boosting_message_cm-Mention\" data-action=\"popup#close\" action=\"/messages/933434639/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n... (87 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "plain text body",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "header values",
+    "body"
+   ],
+   "report": "headers:\n--- expected\n+++ actual\n@@ -9,3 +9,3 @@\n referrer-policy: strict-origin-when-cross-origin\n-etag: W/\"e02e1d5d6421d95a6dfcf57813559860\"\n+etag: W/\"ee76d4024ef690d19e717568f84c5ad6\"\n cache-control: max-age=0, private, must-revalidate\nbody (decoded): first differing byte at offset 81 (expected 9222 bytes, actual 218 bytes)\n  expected[21..]: '\"append\" target=\"messages_rooms_closed_654632876\"><template>\\\\n  <div id=\"message_cm-plain\" class=\"message \" data-controll'\n  actual  [21..]: '\"append\" target=\"messages_rooms_closed_654632876\"><template><div id=\"message_cm-plain\" class=\"message\" data-stub=\"true\">'\n--- expected\n+++ actual\n@@ -1,122 +1,5 @@\n-<turbo-stream action=\"append\" target=\"messages_rooms_closed_654632876\"><template>\n-  <div id=\"message_cm-plain\" class=\"message \" data-controller=\"reply\" data-user-id=\"127326141\" data-message-id=\"933434640\" data-message-timestamp=\"1772467200000\" data-message-updated-at=\"1772467200000\" data-sort-value=\"...(+157 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"date\"></time></h2>\n-\n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"David\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/127326141\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416...(+94 chars)\n-    </figure>\n-\n-    <turbo-frame id=\"edit_message_cm-plain\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"David\">\n-                <strong data-reply-target=\"author\">David</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/654632876/@933434640\"><time class=\"message__timestamp\" datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n-                <a target=\"_top\" data-reply-target=\"link\" href=\"/rooms/654632876/@933434640\">Designers</a>\n-              </span>\n-            </h3>\n-            <div class=\"message__actions\" data-controller=\"soft-keyboard\">\n-  <details class=\"position-relative\" data-controller=\"popup\" data-action=\"keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside\" data-popup-orientation-top-class=\"popup-orienta...(+10 chars)\n-    <summary class=\"btn message__action-btn message__options-btn\">\n-      <img class=\"colorize--black\" aria-hidden=\"true\" src=\"/assets/menu-dots-horizontal-f6a5d793.svg\" width=\"20\" height=\"20\" />\n-      <span class=\"for-screen-reader\">Message options</span>\n-    </summary>\n-\n-    <div class=\"message__actions-menu border shadow\" data-popup-target=\"menu\">\n-      <div class=\"quick-boosts\">\n-          <form data-turbo-frame=\"boosting_message_cm-plain\" data-action=\"popup#close\" action=\"/messages/933434640/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n-            <input type=\"hidden\" name=\"boost[content]\" id=\"boost_content\" value=\"\ud83d\udc4d\" />\n-            <button name=\"button\" type=\"submit\" title=\"Thumbs up\" class=\"btn message__action-btn\" data-emoji=\"\ud83d\udc4d\">\n-              <figure class=\"margin-none boost-character\">\ud83d\udc4d</figure>\n-              <span class=\"for-screen-reader\">Thumbs up</span>\n-</button></form>\n-          <form data-turbo-frame=\"boosting_message_cm-plain\" data-action=\"popup#close\" action=\"/messages/933434640/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n... (87 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "room not found",
+   "method": "POST",
+   "path": "/rooms/1/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "header values",
+    "body"
+   ],
+   "report": "headers:\n--- expected\n+++ actual\n@@ -10,3 +10,3 @@\n referrer-policy: strict-origin-when-cross-origin\n-etag: W/\"0c8144ef6f24c97e8779ba8f151de614\"\n+etag: W/\"a0da04b3c83795068f1b3a317a3907ad\"\n cache-control: max-age=0, private, must-revalidate\nbody (decoded): first differing byte at offset 19234 (expected 20647 bytes, actual 20648 bytes)\n  expected[19174..]: 'span>This room was deleted.</span>\\\\n  </span>\\\\n</turbo-frame>\\\\n      <footer id=\"footer\">\\\\n      </footer>\\\\n    </main>\\\\n\\\\n    '\n  actual  [19174..]: 'span>This room was deleted.</span>\\\\n  </span>\\\\n</turbo-frame>\\\\n\\\\n      <footer id=\"footer\">\\\\n      </footer>\\\\n    </main>\\\\n\\\\n   '\n--- expected\n+++ actual\n@@ -252,4 +252,5 @@\n   </span>\n </turbo-frame>\n+\n       <footer id=\"footer\">\n       </footer>"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "message edge cases",
+   "name": "no room access",
+   "method": "POST",
+   "path": "/rooms/699448327/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "body"
+   ],
+   "report": "body (decoded, normalized): first differing byte at offset 79 (expected 9182 bytes, actual 210 bytes)\n  expected[19..]: 'n=\"append\" target=\"messages_rooms_open_699448327\"><template>\\\\n  <div id=\"message_<uuid>\" class=\"message \" data-controller'\n  actual  [19..]: 'n=\"append\" target=\"messages_rooms_open_699448327\"><template><div id=\"message_<uuid>\" class=\"message\" data-stub=\"true\"><d'\n--- expected\n+++ actual\n@@ -1,122 +1,5 @@\n-<turbo-stream action=\"append\" target=\"messages_rooms_open_699448327\"><template>\n-  <div id=\"message_<uuid>\" class=\"message \" data-controller=\"reply\" data-user-id=\"127326141\" data-message-id=\"933434641\" data-message-timestamp=\"1772467200000\" data-message-updated-at=\"1772467200000\" data-sort-value=\"17...(+155 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"date\"></time></h2>\n-\n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"David\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/127326141\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416...(+94 chars)\n-    </figure>\n-\n-    <turbo-frame id=\"edit_message_<uuid>\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"David\">\n-                <strong data-reply-target=\"author\">David</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/699448327/@933434641\"><time class=\"message__timestamp\" datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n-                <a target=\"_top\" data-reply-target=\"link\" href=\"/rooms/699448327/@933434641\">Archive</a>\n-              </span>\n-            </h3>\n-            <div class=\"message__actions\" data-controller=\"soft-keyboard\">\n-  <details class=\"position-relative\" data-controller=\"popup\" data-action=\"keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside\" data-popup-orientation-top-class=\"popup-orienta...(+10 chars)\n-    <summary class=\"btn message__action-btn message__options-btn\">\n-      <img class=\"colorize--black\" aria-hidden=\"true\" src=\"/assets/menu-dots-horizontal-f6a5d793.svg\" width=\"20\" height=\"20\" />\n-      <span class=\"for-screen-reader\">Message options</span>\n-    </summary>\n-\n-    <div class=\"message__actions-menu border shadow\" data-popup-target=\"menu\">\n-      <div class=\"quick-boosts\">\n-          <form data-turbo-frame=\"boosting_message_<uuid>\" data-action=\"popup#close\" action=\"/messages/933434641/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n-            <input type=\"hidden\" name=\"boost[content]\" id=\"boost_content\" value=\"\ud83d\udc4d\" />\n-            <button name=\"button\" type=\"submit\" title=\"Thumbs up\" class=\"btn message__action-btn\" data-emoji=\"\ud83d\udc4d\">\n-              <figure class=\"margin-none boost-character\">\ud83d\udc4d</figure>\n-              <span class=\"for-screen-reader\">Thumbs up</span>\n-</button></form>\n-          <form data-turbo-frame=\"boosting_message_<uuid>\" data-action=\"popup#close\" action=\"/messages/933434641/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n... (87 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "upload image",
+   "method": "POST",
+   "path": "/rooms/654632876/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "header values",
+    "body"
+   ],
+   "report": "headers:\n--- expected\n+++ actual\n@@ -9,3 +9,3 @@\n referrer-policy: strict-origin-when-cross-origin\n-etag: W/\"23db45648374dee6c33538164b60890d\"\n+etag: W/\"cb45997607ac41603b5fa4992011bd80\"\n cache-control: max-age=0, private, must-revalidate\nbody (decoded): first differing byte at offset 81 (expected 10708 bytes, actual 181 bytes)\n  expected[21..]: '\"append\" target=\"messages_rooms_closed_654632876\"><template>\\\\n  <div id=\"message_cm-img\" class=\"message \" data-controller'\n  actual  [21..]: '\"append\" target=\"messages_rooms_closed_654632876\"><template><div id=\"message_cm-img\" class=\"message\" data-stub=\"true\">mo'\n--- expected\n+++ actual\n@@ -1,122 +1,2 @@\n-<turbo-stream action=\"append\" target=\"messages_rooms_closed_654632876\"><template>\n-  <div id=\"message_cm-img\" class=\"message \" data-controller=\"reply\" data-user-id=\"127326141\" data-message-id=\"933434638\" data-message-timestamp=\"1772467200000\" data-message-updated-at=\"1772467200000\" data-sort-value=\"17...(+155 chars)\n-    <h2 class=\"message__day-separator\"><time datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"date\"></time></h2>\n-\n-    <figure class=\"avatar message__avatar\">\n-      <a title=\"David\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/127326141\"><img aria-hidden=\"true\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTI3MzI2MTQxLCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--0ac8233a4786ee6c413408416...(+94 chars)\n-    </figure>\n-\n-    <turbo-frame id=\"edit_message_cm-img\">\n-      <div class=\"message__body\">\n-        <div class=\"message__body-content\">\n-          <div class=\"message__meta\">\n-            <h3 class=\"message__heading\">\n-              <span class=\"message__author\" title=\"David\">\n-                <strong data-reply-target=\"author\">David</strong>\n-              </span>\n-              <a target=\"_top\" class=\"message__permalink\" href=\"/rooms/654632876/@933434638\"><time class=\"message__timestamp\" datetime=\"2026-03-02T16:00:00Z\" data-local-time-target=\"time\"></time></a>\n-              <span class=\"message__room\">\n-                <a target=\"_top\" data-reply-target=\"link\" href=\"/rooms/654632876/@933434638\">Designers</a>\n-              </span>\n-            </h3>\n-            <div class=\"message__actions\" data-controller=\"soft-keyboard\">\n-  <details class=\"position-relative\" data-controller=\"popup\" data-action=\"keydown.esc-&gt;popup#close toggle-&gt;popup#toggle click@document-&gt;popup#closeOnClickOutside\" data-popup-orientation-top-class=\"popup-orienta...(+10 chars)\n-    <summary class=\"btn message__action-btn message__options-btn\">\n-      <img class=\"colorize--black\" aria-hidden=\"true\" src=\"/assets/menu-dots-horizontal-f6a5d793.svg\" width=\"20\" height=\"20\" />\n-      <span class=\"for-screen-reader\">Message options</span>\n-    </summary>\n-\n-    <div class=\"message__actions-menu border shadow\" data-popup-target=\"menu\">\n-      <div class=\"quick-boosts\">\n-          <form data-turbo-frame=\"boosting_message_cm-img\" data-action=\"popup#close\" action=\"/messages/933434638/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n-            <input type=\"hidden\" name=\"boost[content]\" id=\"boost_content\" value=\"\ud83d\udc4d\" />\n-            <button name=\"button\" type=\"submit\" title=\"Thumbs up\" class=\"btn message__action-btn\" data-emoji=\"\ud83d\udc4d\">\n-              <figure class=\"margin-none boost-character\">\ud83d\udc4d</figure>\n-              <span class=\"for-screen-reader\">Thumbs up</span>\n-</button></form>\n-          <form data-turbo-frame=\"boosting_message_cm-img\" data-action=\"popup#close\" action=\"/messages/933434638/boosts\" accept-charset=\"UTF-8\" method=\"post\">\n... (87 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "attachment",
+   "name": "ERROR in step upload image",
+   "method": "",
+   "path": "",
+   "status": [
+    null,
+    null
+   ],
+   "ok": false,
+   "problems": [
+    "step error"
+   ],
+   "report": "StepError: capture blob: regex '(/rails/active_storage/blobs/[^\"\\\\\\']+)' not found on actual (status 200)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "login jason: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "login jason: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "message",
+   "method": "GET",
+   "path": "/rooms/654632876/@933434506",
+   "status": [
+    200,
+    404
+   ],
+   "ok": false,
+   "problems": [
+    "status",
+    "header names/order",
+    "body"
+   ],
+   "report": "status: expected 200, actual 404\nheaders:\n--- expected\n+++ actual\n@@ -1,13 +1,2 @@\n-content-type: text/html; charset=utf-8\n-x-version: parity\n-x-rev: parity\n-link: </assets/_reset-9c3efd7b.css>; rel=preload; as=style; nopush,</assets/actiontext-7b8d51ea.css>; rel=preload; as=style; nopush,</assets/animation-bcdb4bab.css>; rel=preload; as=style; nopush,</assets/autocomplete-9de8c93f.css>; rel=preload; as=style; nopush,</assets/avatars-279376ab.css>; rel=preload; as=style; nopush,</assets/base-637a0ec8.css>; rel=preload; as=style; nopush,</assets/boosts-da4032a8.css>; rel=preload; as=style; nopush,</assets/buttons-c7d39fd4.css>; rel=preload; as=style; nopush,</assets/code-333ae548.css>; rel=preload; as=style; nopush,</assets/colorize-eb391ca0.css>; rel=preload; as=style; nopush,</assets/colors-aee62523.css>; rel=preload; as=style; nopush,</assets/composer-e490638a.css>; rel=preload; as=style; nopush,</assets/embeds-c20d0a3a.css>; rel=preload; as=style; nopush,</assets/filters-8a4d63ed.css>; rel=preload; as=style; nopush,</assets/flash-a561c1e5.css>; rel=preload; as=style; nopush,</assets/inputs-9e58a07c.css>; rel=preload; as=style; nopush\n-set-cookie: last_room=654632876; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; samesite=lax\n-x-frame-options: SAMEORIGIN\n-x-xss-protection: 0\n-x-content-type-options: nosniff\n-x-permitted-cross-domain-policies: none\n-referrer-policy: strict-origin-when-cross-origin\n-etag: <ignored>\n-cache-control: max-age=0, private, must-revalidate\n+content-type: text/html; charset=UTF-8\n content-encoding: gzip\nbody (decoded, normalized): first differing byte at offset 23 (expected 342795 bytes, actual 4237 bytes)\n  expected[0..]: '<!DOCTYPE html>\\\\n<html>\\\\n  <head>\\\\n    <title>Designers</title>\\\\n\\\\n    <meta name=\"viewp'\n  actual  [0..]: '<!DOCTYPE html>\\\\n<html>\\\\n\\\\n<head>\\\\n  <title>We can\u2019t find that (404)</title>\\\\n  <meta '\n--- expected\n+++ actual\n@@ -1,4423 +1,145 @@\n <!DOCTYPE html>\n <html>\n-  <head>\n-    <title>Designers</title>\n \n-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content\">\n-    <meta name=\"view-transition\" content=\"same-origin\">\n-    <meta name=\"color-scheme\" content=\"light dark\">\n-    <meta name=\"theme-color\" content=\"#ffffff\" media=\"(prefers-color-scheme: light)\">\n-    <meta name=\"theme-color\" content=\"#000000\" media=\"(prefers-color-scheme: dark)\">\n-    <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n-    <meta name=\"current-user-id\" content=\"127326141\" /><meta name=\"current-user-name\" content=\"David\" />\n-    <meta name=\"action-cable-url\" content=\"/cable\">\n+<head>\n+  <title>We can\u2019t find that (404)</title>\n+  <meta charset=\"UTF-8\">\n+  <style>\n+    *,\n+    *::before,\n+    *::after {\n+      box-sizing: border-box;\n+    }\n \n-    <meta name=\"vapid-public-key\" content=\"BEYXTBB5_jNhNzXDmx5KEU55Vbbd-u--Lk9rM5OFQvUkPIBwZJ9QzAq0zdEzFw6yTV8cTriz_qYBVicY02_VxTQ=\">\n-    <meta name=\"turbo-prefetch\" content=\"true\">\n+    body {\n+      --lch-black: 0% 0 0;\n+      --lch-gray: 75% 0.005 96;\n+      --lch-white: 100% 0 0;\n \n-    <link rel=\"manifest\" href=\"/webmanifest.json\">\n-    <link rel=\"icon\" href=\"/account/logo?v=20260101160000\" type=\"image/png\">\n-    <link rel=\"apple-touch-icon\" href=\"/account/logo?v=20260101160000\">\n+      --color-border: oklch(var(--lch-gray));\n+      --color-bg: oklch(var(--lch-white));\n+      --color-text: oklch(var(--lch-black));\n \n... (4509 more diff lines)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "boost",
+   "method": "POST",
+   "path": "/messages/933434506/boosts",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "boosts of message",
+   "method": "GET",
+   "path": "/messages/933434506/boosts",
+   "status": [
+    200,
+    200
+   ],
+   "ok": false,
+   "problems": [
+    "body"
+   ],
+   "report": "body (decoded, normalized): first differing byte at offset 19017 (expected 22706 bytes, actual 20463 bytes)\n  expected[18957..]: 'id=\"main-content\">\\\\n<turbo-frame id=\"boosting_message_<uuid>\">\\\\n  <div class=\"boosts flex flex-wrap align-center gap full-'\n  actual  [18957..]: 'id=\"main-content\">\\\\n<turbo-frame id=\"boosting_message_<uuid>\" data-stub=\"true\"></turbo-frame>\\\\n      <footer id=\"footer\">\\\\n'\n--- expected\n+++ actual\n@@ -247,32 +247,5 @@\n \n     <main id=\"main-content\">\n-<turbo-frame id=\"boosting_message_<uuid>\">\n-  <div class=\"boosts flex flex-wrap align-center gap full-width\" style=\"--column-gap: 0.4ch; --row-gap: 0\"\n-      data-controller=\"turbo-streaming\" data-action=\"turbo:submit-start->turbo-streaming#unsubscribe\">\n-    <div class=\"flex-inline flex-wrap gap\" id=\"boosts_message_<uuid>\" data-turbo-streaming-target=\"container\">\n-      <div id=\"boost_329428245\"\n-      class=\"boost boost-item flex-inline postion--relative max-width align-center fill-white gap\"\n-      data-controller=\"boost-delete\" data-boost-delete-perform-class=\"boost--deleting\" data-boost-delete-reveal-class=\"expanded\" data-boost-delete-booster-id-value=\"149087659\">\n-    <figure class=\"avatar boost__avatar flex-item-no-shrink\">\n-      <a title=\"Jason\" class=\"btn avatar\" data-turbo-frame=\"_top\" href=\"/users/149087659\"><img aria-label=\"Jason boosted \ud83d\udc4d\" src=\"/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb...(+104 chars)\n-    </figure>\n-\n-    <span role=\"button\" class=\"txt-small txt-medium\" data-action=\"click-&gt;boost-delete#reveal keydown.enter-&gt;boost-delete#reveal:prevent\" data-boost-delete-target=\"content\">\ud83d\udc4d</span>\n-\n-    <form class=\"button_to\" method=\"post\" action=\"/messages/933434506/boosts/329428245\"><input type=\"hidden\" name=\"_method\" value=\"delete\" /><button data-action=\"boost-delete#perform\" data-boost-delete-target=\"button\" c...(+75 chars)\n-      <img aria-hidden=\"true\" src=\"/assets/minus-b31a1093.svg\" width=\"20\" height=\"20\" />\n-      <span class=\"for-screen-reader\">Delete this boost</span>\n-</button></form>  </div>\n-  <span id=\"delete_boost_accessible_label\" class=\"for-screen-reader\">Press enter to delete this boost</span>\n-    </div>\n-\n-    <turbo-frame id=\"new_boost_message_<uuid>\">\n-      <div class=\"flex-inline message__boost-inline\" data-controller=\"soft-keyboard\">\n-        <a class=\"boost__action txt-small btn\" action=\"soft-keyboard#open\" href=\"/messages/933434506/boosts/new\">\n-          <img aria-hidden=\"true\" src=\"/assets/boost-4a7bab66.svg\" width=\"20\" height=\"20\" />\n-          <span class=\"for-screen-reader\">Add a boost</span>\n-</a>      </div>\n-</turbo-frame>  </div>\n-</turbo-frame>\n+<turbo-frame id=\"boosting_message_<uuid>\" data-stub=\"true\"></turbo-frame>\n       <footer id=\"footer\">\n       </footer>"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "boosts",
+   "name": "ERROR in step boosts of message",
+   "method": "",
+   "path": "",
+   "status": [
+    null,
+    null
+   ],
+   "ok": false,
+   "problems": [
+    "step error"
+   ],
+   "report": "StepError: capture bid: regex 'id=\"boost_(\\\\d+)\"' not found on actual (status 200)"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "login david: sign-in form",
+   "method": "GET",
+   "path": "/session/new",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "login david: POST /session",
+   "method": "POST",
+   "path": "/session",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "create text",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "create html",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "create upload",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "create empty",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    422,
+    422
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "bad key",
+   "method": "POST",
+   "path": "/rooms/486777696/1-nope/messages",
+   "status": [
+    302,
+    302
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "index",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "index after",
+   "method": "GET",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages?after=933434569",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "update",
+   "method": "PUT",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/933434630",
+   "status": [
+    200,
+    200
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "bot boost",
+   "method": "POST",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/136976342/boosts",
+   "status": [
+    201,
+    201
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "bot delete boost",
+   "method": "DELETE",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/136976342/boosts/136976342",
+   "status": [
+    404,
+    404
+   ],
+   "ok": true,
+   "problems": [],
+   "report": ""
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "bot delete",
+   "method": "DELETE",
+   "path": "/rooms/486777696/394959859-BenderBot123/messages/933434630",
+   "status": [
+    204,
+    204
+   ],
+   "ok": false,
+   "problems": [
+    "header names/order"
+   ],
+   "report": "headers:\n--- expected\n+++ actual\n@@ -8,3 +8,2 @@\n cache-control: no-cache\n-vary: Accept-Encoding\n x-request-id: <ignored>\n@@ -12,2 +11,3 @@\n x-cache: bypass\n+vary: Accept-Encoding\n date: <ignored>"
+  },
+  {
+   "area": "A3",
+   "list": "writes-A3.json",
+   "scenario": "bot api",
+   "name": "room",
+   "method": "GET",
+   "path": "/rooms/486777696",
+   "status": [
+    200,
+    404
+   ],
+   "ok": false,
+   "problems": [
+    "status",
+    "header names/order",
+    "body"
+   ],
+   "report": "status: expected 200, actual 404\nheaders:\n--- expected\n+++ actual\n@@ -1,13 +1,2 @@\n-content-type: text/html; charset=utf-8\n-x-version: parity\n-x-rev: parity\n-link: </assets/_reset-9c3efd7b.css>; rel=preload; as=style; nopush,</assets/actiontext-7b8d51ea.css>; rel=preload; as=style; nopush,</assets/animation-bcdb4bab.css>; rel=preload; as=style; nopush,</assets/autocomplete-9de8c93f.css>; rel=preload; as=style; nopush,</assets/avatars-279376ab.css>; rel=preload; as=style; nopush,</assets/base-637a0ec8.css>; rel=preload; as=style; nopush,</assets/boosts-da4032a8.css>; rel=preload; as=style; nopush,</assets/buttons-c7d39fd4.css>; rel=preload; as=style; nopush,</assets/code-333ae548.css>; rel=preload; as=style; nopush,</assets/colorize-eb391ca0.css>; rel=preload; as=style; nopush,</assets/colors-aee62523.css>; rel=preload; as=style; nopush,</assets/composer-e490638a.css>; rel=preload; as=style; nopush,</assets/embeds-c20d0a3a.css>; rel=preload; as=style; nopush,</assets/filters-8a4d63ed.css>; rel=preload; as=style; nopush,</assets/flash-a561c1e5.css>; rel=preload; as=style; nopush,</assets/inputs-9e58a07c.css>; rel=preload; as=style; nopush\n-set-cookie: last_room=486777696; path=/; expires=Fri, 02 Mar 2046 16:00:00 GMT; samesite=lax\n-x-frame-options: SAMEORIGIN\n-x-xss-protection: 0\n-x-content-type-options: nosniff\n-x-permitted-cross-domain-policies: none\n-referrer-policy: strict-origin-when-cross-origin\n-etag: <ignored>\n-cache-control: max-age=0, private, must-revalidate\n+content-type: text/html; charset=UTF-8\n content-encoding: gzip\nbody (decoded, normalized): first differing byte at offset 23 (expected 404942 bytes, actual 4237 bytes)\n  expected[0..]: '<!DOCTYPE html>\\\\n<html>\\\\n  <head>\\\\n    <title>All Talk</title>\\\\n\\\\n    <meta name=\"viewpo'\n  actual  [0..]: '<!DOCTYPE html>\\\\n<html>\\\\n\\\\n<head>\\\\n  <title>We can\u2019t find that (404)</title>\\\\n  <meta '\n--- expected\n+++ actual\n@@ -1,5386 +1,145 @@\n <!DOCTYPE html>\n <html>\n-  <head>\n-    <title>All Talk</title>\n \n-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content\">\n-    <meta name=\"view-transition\" content=\"same-origin\">\n-    <meta name=\"color-scheme\" content=\"light dark\">\n-    <meta name=\"theme-color\" content=\"#ffffff\" media=\"(prefers-color-scheme: light)\">\n-    <meta name=\"theme-color\" content=\"#000000\" media=\"(prefers-color-scheme: dark)\">\n-    <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n-    <meta name=\"current-user-id\" content=\"127326141\" /><meta name=\"current-user-name\" content=\"David\" />\n-    <meta name=\"action-cable-url\" content=\"/cable\">\n+<head>\n+  <title>We can\u2019t find that (404)</title>\n+  <meta charset=\"UTF-8\">\n+  <style>\n+    *,\n+    *::before,\n+    *::after {\n+      box-sizing: border-box;\n+    }\n \n-    <meta name=\"vapid-public-key\" content=\"BEYXTBB5_jNhNzXDmx5KEU55Vbbd-u--Lk9rM5OFQvUkPIBwZJ9QzAq0zdEzFw6yTV8cTriz_qYBVicY02_VxTQ=\">\n-    <meta name=\"turbo-prefetch\" content=\"true\">\n+    body {\n+      --lch-black: 0% 0 0;\n+      --lch-gray: 75% 0.005 96;\n+      --lch-white: 100% 0 0;\n \n-    <link rel=\"manifest\" href=\"/webmanifest.json\">\n-    <link rel=\"icon\" href=\"/account/logo?v=20260101160000\" type=\"image/png\">\n-    <link rel=\"apple-touch-icon\" href=\"/account/logo?v=20260101160000\">\n+      --color-border: oklch(var(--lch-gray));\n+      --color-bg: oklch(var(--lch-white));\n+      --color-text: oklch(var(--lch-black));\n \n... (5472 more diff lines)"
+  }
+ ]
+}

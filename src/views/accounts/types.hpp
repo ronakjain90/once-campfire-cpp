@@ -15,6 +15,7 @@ namespace campfire::views {
 // A user of the people list (`accounts/users/_user`).
 struct AccountUser {
   UserSummary user;
+  bool is_current = false;  // `user == Current.user`
   bool banned = false;
   bool active = false;
   bool bot = false;

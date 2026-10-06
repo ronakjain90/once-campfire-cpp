@@ -1,0 +1,6 @@
+{# reference/app/views/accounts/users/_next_page_container.html.erb #}
+{% include compat/ruby.hpp %}
+{% params const std::string& page %}
+{% wrap turbo_frame_tag("next_page_container", attrs().attr("loading", "lazy").attr("src", "/account/users.turbo_stream?page=" + compat::cgi_escape(page)).cls("flex center")) %}
+  <div class="spinner center"></div>
+{% end %}

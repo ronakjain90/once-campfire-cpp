@@ -5,6 +5,8 @@
 
 #include "compat/base64.hpp"
 #include "routes/routes.hpp"
+#include "views/helpers/forms.hpp"
+#include "views/templates.gen.hpp"
 
 namespace campfire::views::helpers {
 
@@ -46,6 +48,14 @@ void profile_form_submit_button(Out& out, const ViewContext& ctx) {
     image_tag(o, ctx, "check.svg", attrs().aria_hidden().size(20));
     content_tag_text(o, "span", attrs().cls("for-screen-reader"), "Save changes");
   });
+}
+
+void account_role_form(Out& out, const ViewContext& ctx, const AccountUser& user) {
+  const FormWith form = form_with_url(campfire::routes::account_user(user.user.id))
+                            .model("user")
+                            .data("controller", "form")
+                            .method("patch");
+  form_with(out, form, [&](Out& o) { views::accounts::users::role_form(o, ctx, user, form); });
 }
 
 std::string curl_text_line(std::string_view url) {

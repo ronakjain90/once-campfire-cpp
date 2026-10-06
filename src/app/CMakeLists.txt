@@ -36,6 +36,13 @@ campfire_library(app
     compress.cpp
     concerns.cpp
     controllers/accounts_common.cpp
+    controllers/accounts.cpp
+    controllers/accounts_bots.cpp
+    controllers/accounts_custom_styles.cpp
+    controllers/accounts_join_codes.cpp
+    controllers/accounts_logos.cpp
+    controllers/accounts_users.cpp
+    controllers/accounts_users_list.cpp
     controllers/action_not_found.cpp
     controllers/common.cpp
     controllers/first_runs.cpp

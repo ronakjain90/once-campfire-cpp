@@ -1,0 +1,10 @@
+{# reference/app/views/accounts/users/_user.html.erb: the body of the role form (`form_with` ... `check_box :role`). #}
+{% include views/accounts/types.hpp %}
+{% include views/helpers/forms.hpp %}
+{% params const ViewContext& ctx, const AccountUser& user, const helpers::FormWith& form %}
+
+        <label class="btn txt-small flex-item-no-shrink" for="{{ dom_id("user", std::to_string(user.user.id), "role") }}">
+          <span class="for-screen-reader">Role: {% if user.administrator %}Administrator{% else %}Member{% end %}</span>
+          {% call image_tag(ctx, "crown.svg", attrs().size(20).aria_hidden()) %}
+          {% call form.check_box("role", attrs().data("action", "form#submit").hidden().id(dom_id("user", std::to_string(user.user.id), "role")).disabled(user.is_current), "administrator", "member", user.administrator ? "administrator" : "member") %}
+        </label>

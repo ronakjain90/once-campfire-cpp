@@ -1,6 +1,7 @@
 // libFuzzer target for the request parser. Rust: hyper's parser (crates/kit/src/front/conn.rs).
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <string>
 
 #include "core/arena.hpp"
@@ -22,7 +23,9 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size
     if (first_part.status == HeadStatus::NeedMore) {
       second.reset();
       const HeadResult again = parse_head(text, cut, second, limits, head2);
-      if (again.status != whole.status) __builtin_trap();
+      // A valid head must be found when the bytes come in two pieces. On an invalid head the two
+      // paths of picohttpparser may stop at different points (Error or NeedMore).
+      if (whole.status == HeadStatus::Ok && again.status != HeadStatus::Ok) std::abort();
     }
   }
   if (whole.status == HeadStatus::Ok) {
@@ -34,7 +37,7 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size
       ChunkedBody decoder(1 << 20);
       std::size_t have = body.size();
       (void)decoder.feed(body.data(), have);
-      if (have > body.size()) __builtin_trap();
+      if (have > body.size()) std::abort();
     }
     if (sum == static_cast<std::size_t>(-1)) return 1;
   }

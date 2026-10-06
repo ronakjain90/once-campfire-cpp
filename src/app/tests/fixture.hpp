@@ -66,11 +66,11 @@ struct Fixture {
     QueueScheduler scheduler;
     const std::string digest = req::bcrypt::hash_password(kPassword, req::bcrypt::kMinCost);
     auto wrote = db::testing::run_task(scheduler, state->db->write(scheduler, [&](db::Tx& tx) -> Status {
-                                         if (auto r = tx.conn().exec(kInsertAccount); !r) return std::unexpected(r.error());
-                                         auto r = tx.conn().exec(kInsertUser, "David", "david@example.com", digest, 1);
-                                         if (!r) return std::unexpected(r.error());
-                                         return {};
-                                       }));
+      if (auto r = tx.conn().exec(kInsertAccount); !r) return std::unexpected(r.error());
+      auto r = tx.conn().exec(kInsertUser, "David", "david@example.com", digest, 1);
+      if (!r) return std::unexpected(r.error());
+      return {};
+    }));
     REQUIRE(wrote.has_value());
   }
 

@@ -36,8 +36,7 @@ struct Session {
 namespace sessions {
 
 // `Session.find_by(token:)`.
-[[nodiscard]] Result<std::optional<Session>> find_by_token(db::Connection& conn, Arena& arena,
-                                                           std::string_view token);
+[[nodiscard]] Result<std::optional<Session>> find_by_token(db::Connection& conn, Arena& arena, std::string_view token);
 
 // `user.sessions.start!(user_agent:, ip_address:)`. Records a change of the table `sessions`.
 [[nodiscard]] Result<Session> start(db::Tx& tx, std::int64_t user_id, std::optional<std::string_view> user_agent,

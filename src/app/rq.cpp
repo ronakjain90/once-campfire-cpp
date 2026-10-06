@@ -49,7 +49,9 @@ HttpError param_failure(const req::ParamError& error) {
 Rq::Rq(net::Ctx& c)
     : ctx(c), app(app::app()), worker(worker_state()), request(c.request()), info(c.request(), app.proxy) {}
 
-Rq::~Rq() { worker.reader().set_scope(nullptr); }
+Rq::~Rq() {
+  worker.reader().set_scope(nullptr);
+}
 
 Flow<void> Rq::init() {
   std::vector<std::string_view> cookie_headers;
@@ -76,9 +78,10 @@ Flow<void> Rq::init() {
 
   req::ParamMap request_params(mr);
   if (!request.body.empty()) {
-    auto parsed = req::parse_body(request.method_text, request.has_header("content-type")
-                                                           ? std::optional<std::string_view>(request.header("content-type"))
-                                                           : std::nullopt,
+    auto parsed = req::parse_body(request.method_text,
+                                  request.has_header("content-type")
+                                      ? std::optional<std::string_view>(request.header("content-type"))
+                                      : std::nullopt,
                                   request.body, std::filesystem::temp_directory_path(), mr);
     if (!parsed) {
       if (!failure) failure = HttpError{ErrorKind::Status, 413, "request body too large"};
@@ -105,7 +108,9 @@ Flow<void> Rq::init() {
   return {};
 }
 
-req::Session& Rq::session() { return session_.load(*cookies_); }
+req::Session& Rq::session() {
+  return session_.load(*cookies_);
+}
 
 req::Flash& Rq::flash() {
   if (!flash_) {
@@ -156,7 +161,8 @@ Flow<req::Format> Rq::respond_to(std::span<const req::Format> offered) {
 req::Format Rq::rendered_format() {
   if (rendered_format_ != nullptr) return rendered_format_;
   if (!formats_) formats_ = req::formats(negotiation_input());
-  if (*formats_ && !(*formats_)->empty() && (*formats_)->front() != nullptr && (*formats_)->front() != &req::mime::ALL) {
+  if (*formats_ && !(*formats_)->empty() && (*formats_)->front() != nullptr &&
+      (*formats_)->front() != &req::mime::ALL) {
     return (*formats_)->front();
   }
   return &req::mime::HTML;

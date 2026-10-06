@@ -47,10 +47,14 @@ std::string_view page_for(int status) noexcept {
 std::string xml_escape(std::string_view text) {
   std::string out;
   for (const char c : text) {
-    if (c == '&') out += "&amp;";
-    else if (c == '<') out += "&lt;";
-    else if (c == '>') out += "&gt;";
-    else out += c;
+    if (c == '&')
+      out += "&amp;";
+    else if (c == '<')
+      out += "&lt;";
+    else if (c == '>')
+      out += "&gt;";
+    else
+      out += c;
   }
   return out;
 }

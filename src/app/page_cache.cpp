@@ -33,7 +33,9 @@ struct Sha256Etag::Impl {
 Sha256Etag::Sha256Etag() : impl_(std::make_unique<Impl>()) {}
 Sha256Etag::~Sha256Etag() = default;
 
-void Sha256Etag::update(const void* data, std::size_t size) noexcept { EVP_DigestUpdate(impl_->ctx, data, size); }
+void Sha256Etag::update(const void* data, std::size_t size) noexcept {
+  EVP_DigestUpdate(impl_->ctx, data, size);
+}
 
 std::string Sha256Etag::etag() {
   unsigned char digest[EVP_MAX_MD_SIZE];
@@ -55,7 +57,9 @@ std::string body_etag(std::string_view body) {
   return sha.etag();
 }
 
-std::string key_etag(const Hash128& key) { return "W/\"" + key.hex() + "\""; }
+std::string key_etag(const Hash128& key) {
+  return "W/\"" + key.hex() + "\"";
+}
 
 PageCache::PageCache(Options options) : options_(options) {
   const std::size_t count = options_.shards == 0 ? 1 : options_.shards;
@@ -83,8 +87,8 @@ std::shared_ptr<const PageEntry> PageCache::put(const Hash128& key, std::string 
   entry->gzip = gzip_compress(identity);
   entry->identity = std::move(identity);
   entry->content_type = std::move(content_type);
-  const std::size_t cost = entry->identity.size() + entry->gzip.size() + entry->etag.size() +
-                           entry->content_type.size() + 128;
+  const std::size_t cost =
+      entry->identity.size() + entry->gzip.size() + entry->etag.size() + entry->content_type.size() + 128;
   if (cost > shard_bytes_) return entry;
   Shard& shard = shard_for(key);
   const std::lock_guard lock(shard.mutex);
@@ -147,9 +151,8 @@ bool PageCache::audit_compare(const Hash128& key, const PageEntry& cached, std::
   std::size_t at = 0;
   while (at < fresh.size() && at < cached.identity.size() && fresh[at] == cached.identity[at]) ++at;
   const std::string message = "page cache audit: key " + key.hex() + " cached " +
-                              std::to_string(cached.identity.size()) + " bytes, fresh " +
-                              std::to_string(fresh.size()) + " bytes, first difference at byte " + std::to_string(at) +
-                              ". A facet is missing.";
+                              std::to_string(cached.identity.size()) + " bytes, fresh " + std::to_string(fresh.size()) +
+                              " bytes, first difference at byte " + std::to_string(at) + ". A facet is missing.";
   FailureHandler handler;
   {
     const std::lock_guard lock(handler_mutex_);

@@ -67,7 +67,8 @@ using Flow = std::expected<T, Failure>;
   return std::unexpected<Failure>(Failure(std::in_place_type<HttpError>, HttpError{kind, 0, std::move(message)}));
 }
 [[nodiscard]] inline std::unexpected<Failure> fail_status(int status, std::string message = {}) {
-  return std::unexpected<Failure>(Failure(std::in_place_type<HttpError>, HttpError{ErrorKind::Status, status, std::move(message)}));
+  return std::unexpected<Failure>(
+      Failure(std::in_place_type<HttpError>, HttpError{ErrorKind::Status, status, std::move(message)}));
 }
 [[nodiscard]] inline std::unexpected<Failure> fail_internal(std::string message) {
   return fail_with(ErrorKind::Internal, std::move(message));

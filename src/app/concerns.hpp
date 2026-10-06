@@ -21,7 +21,8 @@ namespace campfire::app::concerns {
 enum class Authentication : std::uint8_t {
   Required,               // require_authentication
   Skipped,                // allow_unauthenticated_access
-  RequireUnauthenticated  // require_unauthenticated_access: skip, then restore_authentication and redirect a signed in user
+  RequireUnauthenticated  // require_unauthenticated_access: skip, then restore_authentication and redirect a signed in
+                          // user
 };
 
 // How the declarations of a controller change the chain for one action.
@@ -30,7 +31,9 @@ struct Before {
   bool deny_bots = true;           // `allow_bot_access` turns it off
   bool forgery_protection = true;  // `skip_forgery_protection` turns it off
 
-  [[nodiscard]] Before allow_unauthenticated_access() const { return {Authentication::Skipped, deny_bots, forgery_protection}; }
+  [[nodiscard]] Before allow_unauthenticated_access() const {
+    return {Authentication::Skipped, deny_bots, forgery_protection};
+  }
   [[nodiscard]] Before require_unauthenticated_access() const {
     return {Authentication::RequireUnauthenticated, deny_bots, forgery_protection};
   }

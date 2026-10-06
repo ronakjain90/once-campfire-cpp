@@ -1,7 +1,8 @@
 // Unknown route. Rails: ActionDispatch::PublicExceptions (public/404.html); Rust: crates/kit/src/exceptions.rs.
+#include "app/not_found.hpp"
+
 #include "app/data.hpp"
 #include "app/rails.hpp"
-#include "app/not_found.hpp"
 
 namespace campfire::app {
 

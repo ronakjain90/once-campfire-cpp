@@ -32,7 +32,9 @@ struct User {
   std::string updated_at;
 
   [[nodiscard]] static User from_row(const db::schema::UserRow& row);
-  [[nodiscard]] bool is_administrator() const noexcept { return role == static_cast<std::int64_t>(Role::Administrator); }
+  [[nodiscard]] bool is_administrator() const noexcept {
+    return role == static_cast<std::int64_t>(Role::Administrator);
+  }
   [[nodiscard]] bool is_bot() const noexcept { return role == static_cast<std::int64_t>(Role::Bot); }
   // `can_administer?` with no record: administrators only.
   [[nodiscard]] bool can_administer() const noexcept { return is_administrator(); }

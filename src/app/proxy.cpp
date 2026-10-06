@@ -52,7 +52,9 @@ std::vector<std::string> forwarded_values(std::string_view header, std::string_v
   return values;
 }
 
-bool is_scheme(std::string_view s) { return s == "https" || s == "http" || s == "wss" || s == "ws"; }
+bool is_scheme(std::string_view s) {
+  return s == "https" || s == "http" || s == "wss" || s == "ws";
+}
 
 bool scheme_is_https(const net::Request& r) {
   if (r.header("x-forwarded-ssl") == "on") return true;
@@ -212,7 +214,9 @@ std::string RequestInfo::host_with_port() const {
   return p == (ssl_ ? 443 : 80) ? host() : host() + ":" + std::to_string(p);
 }
 
-std::string RequestInfo::base_url() const { return std::string(protocol()) + host_with_port(); }
+std::string RequestInfo::base_url() const {
+  return std::string(protocol()) + host_with_port();
+}
 
 std::string RequestInfo::fullpath() const {
   std::string out(request_->path);
@@ -220,7 +224,9 @@ std::string RequestInfo::fullpath() const {
   return out;
 }
 
-std::string RequestInfo::url() const { return base_url() + fullpath(); }
+std::string RequestInfo::url() const {
+  return base_url() + fullpath();
+}
 
 std::optional<std::string> RequestInfo::remote_ip() const {
   const auto peer = IpAddress::parse(request_->remote_ip);

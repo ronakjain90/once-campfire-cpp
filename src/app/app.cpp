@@ -24,7 +24,8 @@ constexpr std::string_view kSchemaSha1 = "f75da8dad38bfb179ffd757bd7a7c2b3f818bc
 
 // An index that this app adds to the Rails schema: a room's messages are paged by `created_at`.
 constexpr std::string_view kAdditions =
-    "CREATE INDEX IF NOT EXISTS \"index_messages_on_room_id_and_created_at\" ON \"messages\" (\"room_id\", \"created_at\");";
+    "CREATE INDEX IF NOT EXISTS \"index_messages_on_room_id_and_created_at\" ON \"messages\" (\"room_id\", "
+    "\"created_at\");";
 
 }  // namespace
 
@@ -70,7 +71,9 @@ Result<std::unique_ptr<App>> App::create(Config config, SharedClock clock, const
   return app;
 }
 
-void set_app(const App* app) noexcept { g_app.store(app, std::memory_order_release); }
+void set_app(const App* app) noexcept {
+  g_app.store(app, std::memory_order_release);
+}
 
 const App& app() {
   const App* a = g_app.load(std::memory_order_acquire);

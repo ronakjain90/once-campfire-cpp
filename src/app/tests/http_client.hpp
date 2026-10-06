@@ -2,6 +2,7 @@
 #pragma once
 
 #include <arpa/inet.h>
+#include <doctest.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -12,14 +13,12 @@
 #include <string>
 #include <vector>
 
-#include <doctest.h>
-
 namespace campfire::app::testing {
 
 struct Reply {
   int status = 0;
   std::string head;
-  std::string body;  // as sent: a gzip body stays gzip
+  std::string body;                                          // as sent: a gzip body stays gzip
   std::vector<std::pair<std::string, std::string>> headers;  // names in lower case, in order
 
   [[nodiscard]] std::string header(const std::string& name) const {

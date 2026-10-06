@@ -7,13 +7,13 @@ namespace campfire::models {
 
 namespace {
 
-#define CF_USER_COLUMNS                                                                                      \
-  "\"users\".\"id\", \"users\".\"bio\", \"users\".\"bot_token\", \"users\".\"created_at\", "                 \
-  "\"users\".\"email_address\", \"users\".\"name\", \"users\".\"password_digest\", \"users\".\"role\", "     \
+#define CF_USER_COLUMNS                                                                                  \
+  "\"users\".\"id\", \"users\".\"bio\", \"users\".\"bot_token\", \"users\".\"created_at\", "             \
+  "\"users\".\"email_address\", \"users\".\"name\", \"users\".\"password_digest\", \"users\".\"role\", " \
   "\"users\".\"status\", \"users\".\"updated_at\""
 
-const db::Query<db::schema::UserRow(std::int64_t)> kById{
-    "SELECT " CF_USER_COLUMNS " FROM \"users\" WHERE \"users\".\"id\" = ? LIMIT 1"};
+const db::Query<db::schema::UserRow(std::int64_t)> kById{"SELECT " CF_USER_COLUMNS
+                                                         " FROM \"users\" WHERE \"users\".\"id\" = ? LIMIT 1"};
 
 const db::Query<db::schema::UserRow(std::string_view)> kActiveByEmail{
     "SELECT " CF_USER_COLUMNS

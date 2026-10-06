@@ -11,7 +11,7 @@ namespace campfire::models {
 
 namespace {
 
-#define CF_SESSION_COLUMNS                                                                                      \
+#define CF_SESSION_COLUMNS                                                                                           \
   "\"sessions\".\"id\", \"sessions\".\"created_at\", \"sessions\".\"ip_address\", \"sessions\".\"last_active_at\", " \
   "\"sessions\".\"token\", \"sessions\".\"updated_at\", \"sessions\".\"user_agent\", \"sessions\".\"user_id\""
 
@@ -19,14 +19,16 @@ const db::Query<db::schema::SessionRow(std::string_view)> kByToken{
     "SELECT " CF_SESSION_COLUMNS " FROM \"sessions\" WHERE \"sessions\".\"token\" = ? LIMIT 1"};
 
 const db::Query<std::int64_t(std::string_view, std::optional<std::string_view>, std::string_view, std::string_view,
-                             std::string_view, std::optional<std::string_view>, std::int64_t)> kInsert{
-    "INSERT INTO \"sessions\" (\"created_at\", \"ip_address\", \"last_active_at\", \"token\", \"updated_at\", "
-    "\"user_agent\", \"user_id\") VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING \"id\""};
+                             std::string_view, std::optional<std::string_view>, std::int64_t)>
+    kInsert{
+        "INSERT INTO \"sessions\" (\"created_at\", \"ip_address\", \"last_active_at\", \"token\", \"updated_at\", "
+        "\"user_agent\", \"user_id\") VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING \"id\""};
 
 const db::Query<void(std::optional<std::string_view>, std::string_view, std::string_view,
-                     std::optional<std::string_view>, std::int64_t)> kResume{
-    "UPDATE \"sessions\" SET \"ip_address\" = ?, \"last_active_at\" = ?, \"updated_at\" = ?, \"user_agent\" = ? "
-    "WHERE \"sessions\".\"id\" = ?"};
+                     std::optional<std::string_view>, std::int64_t)>
+    kResume{
+        "UPDATE \"sessions\" SET \"ip_address\" = ?, \"last_active_at\" = ?, \"updated_at\" = ?, \"user_agent\" = ? "
+        "WHERE \"sessions\".\"id\" = ?"};
 
 const db::Query<void(std::int64_t)> kDestroy{"DELETE FROM \"sessions\" WHERE \"sessions\".\"id\" = ?"};
 

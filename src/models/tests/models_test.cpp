@@ -49,13 +49,13 @@ TEST_CASE("sessions: start, find, resume, destroy") {
   Arena arena;
 
   REQUIRE(run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Status {
-                     auto r = tx.conn().exec(kInsertUser, "Kevin", "kevin@example.com", "digest", 0);
-                     if (!r) return std::unexpected(r.error());
-                     return {};
-                   })).has_value());
+            auto r = tx.conn().exec(kInsertUser, "Kevin", "kevin@example.com", "digest", 0);
+            if (!r) return std::unexpected(r.error());
+            return {};
+          })).has_value());
   auto started = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Result<Session> {
-                            return sessions::start(tx, 1, "agent", "10.0.0.1");
-                          }));
+    return sessions::start(tx, 1, "agent", "10.0.0.1");
+  }));
   REQUIRE(started.has_value());
   CHECK(started->token.size() == 24);
   CHECK(started->last_active_at == "2026-03-02 16:00:00");
@@ -73,8 +73,8 @@ TEST_CASE("sessions: start, find, resume, destroy") {
   std::vector<db::Change> seen;
   database->subscribe([&](std::span<const db::Change> c) { seen.assign(c.begin(), c.end()); });
   auto resumed = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Status {
-                            return sessions::resume(tx, session, "agent2", std::nullopt);
-                          }));
+    return sessions::resume(tx, session, "agent2", std::nullopt);
+  }));
   REQUIRE(resumed.has_value());
   CHECK(session.last_active_at == "2026-03-02 17:00:01");
   REQUIRE(seen.size() == 1);
@@ -84,9 +84,8 @@ TEST_CASE("sessions: start, find, resume, destroy") {
   CHECK((*again)->user_agent == "agent2");
   CHECK_FALSE((*again)->ip_address.has_value());
 
-  auto destroyed = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Status {
-                              return sessions::destroy(tx, session);
-                            }));
+  auto destroyed = run_task(
+      scheduler, database->write(scheduler, [&](db::Tx& tx) -> Status { return sessions::destroy(tx, session); }));
   REQUIRE(destroyed.has_value());
   CHECK_FALSE(sessions::find_by_token(reader, arena, session.token)->has_value());
 }
@@ -108,10 +107,10 @@ TEST_CASE("users: authenticate_by, bots, owner, none") {
   CHECK(*users::none(reader, arena));
   const std::string digest = req::bcrypt::hash_password("secret", req::bcrypt::kMinCost);
   auto wrote = run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Status {
-                          auto r = tx.conn().exec(kInsertUser, "David", "david@example.com", digest, 1);
-                          if (!r) return std::unexpected(r.error());
-                          return {};
-                        }));
+    auto r = tx.conn().exec(kInsertUser, "David", "david@example.com", digest, 1);
+    if (!r) return std::unexpected(r.error());
+    return {};
+  }));
   REQUIRE(wrote.has_value());
   CHECK_FALSE(*users::none(reader, arena));
   auto candidate = users::find_active_by_email_address(reader, arena, "david@example.com");

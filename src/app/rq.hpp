@@ -52,7 +52,7 @@ struct CacheControl {
 
 // Validators for `fresh_when` and `stale?`.
 struct Freshness {
-  std::optional<std::string> etag;         // the weak validator, already a cache key
+  std::optional<std::string> etag;  // the weak validator, already a cache key
   std::optional<std::string> strong_etag;
   std::optional<Timestamp> last_modified;
   bool is_public = false;
@@ -126,10 +126,10 @@ class Rq {
 
   // Builders. A body is an `Out` in the arena.
   [[nodiscard]] net::Response render_as(int status, std::string_view content_type, Out&& body);
-  [[nodiscard]] net::Response html(int status, Out&& body);          // `text/html; charset=utf-8`
-  [[nodiscard]] net::Response turbo_stream(Out&& body);              // `text/vnd.turbo-stream.html; charset=utf-8`
+  [[nodiscard]] net::Response html(int status, Out&& body);  // `text/html; charset=utf-8`
+  [[nodiscard]] net::Response turbo_stream(Out&& body);      // `text/vnd.turbo-stream.html; charset=utf-8`
   [[nodiscard]] net::Response json(int status, const compat::json::Value& value);  // ActiveSupport::JSON
-  [[nodiscard]] net::Response head(int status);                      // `head status`
+  [[nodiscard]] net::Response head(int status);                                    // `head status`
   [[nodiscard]] Flow<net::Response> redirect_to(std::string_view location, RedirectOptions options = {});
   // `send_data` and `send_file`. The file is read into memory: streaming is a later task (A6).
   [[nodiscard]] net::Response send_data(std::string_view bytes, std::string_view content_type,

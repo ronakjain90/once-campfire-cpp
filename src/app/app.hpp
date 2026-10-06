@@ -26,8 +26,8 @@ namespace campfire::app {
 // Settings that only this layer reads.
 struct AppOptions {
   std::size_t page_cache_bytes = std::size_t{32} << 20;  // CAMPFIRE_PAGE_CACHE_MB
-  unsigned audit_every = default_audit_every();           // CAMPFIRE_PAGE_AUDIT_EVERY
-  std::size_t job_threads = 2;                            // threads of the blocking pool (bcrypt)
+  unsigned audit_every = default_audit_every();          // CAMPFIRE_PAGE_AUDIT_EVERY
+  std::size_t job_threads = 2;                           // threads of the blocking pool (bcrypt)
   bool prepare_database = true;
 };
 
@@ -40,8 +40,8 @@ struct App {
   std::shared_ptr<SharedFragmentCache> fragments;
   mutable PageCache pages;  // shared, synchronized inside
   std::shared_ptr<ChangeHub> changes;
-  mutable RateLimiter rate_limits;  // `rate_limit`: the Rails cache counters, one process like one cache store
-  mutable net::ThreadPool jobs;  // blocking work: bcrypt
+  mutable RateLimiter rate_limits;     // `rate_limit`: the Rails cache counters, one process like one cache store
+  mutable net::ThreadPool jobs;        // blocking work: bcrypt
   assets::StylesheetTags stylesheets;  // `stylesheet_link_tag :all`, fixed at build time
   std::string preload_link_header;     // the `link` header of a page in the application layout
 
@@ -52,7 +52,7 @@ struct App {
 
   // Opens the database (and loads the schema into an empty one), starts the writer, and wires the change hub.
   [[nodiscard]] static Result<std::unique_ptr<App>> create(Config config, SharedClock clock,
-                                                            const AppOptions& options = {});
+                                                           const AppOptions& options = {});
 
   [[nodiscard]] Timestamp now() const { return clock->now(); }
 

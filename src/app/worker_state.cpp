@@ -20,14 +20,13 @@ db::Connection open_reader_or_die(const App& app) {
 }  // namespace
 
 WorkerState::WorkerState(const App& app)
-    : hub_(app.changes),
-      fragments_(app.fragments),
-      reader_(open_reader_or_die(app)),
-      fragment_cache_(*fragments_) {
+    : hub_(app.changes), fragments_(app.fragments), reader_(open_reader_or_die(app)), fragment_cache_(*fragments_) {
   hub_->add(&inbox_);
 }
 
-WorkerState::~WorkerState() { hub_->remove(&inbox_); }
+WorkerState::~WorkerState() {
+  hub_->remove(&inbox_);
+}
 
 SessionCache& WorkerState::sessions() {
   if (inbox_.pending()) {

@@ -26,7 +26,9 @@ constexpr std::string_view kDefaultHeaders[][2] = {
     {"referrer-policy", "strict-origin-when-cross-origin"},
 };
 
-bool bodiless(int status) { return (status >= 100 && status < 200) || status == 204 || status == 205 || status == 304; }
+bool bodiless(int status) {
+  return (status >= 100 && status < 200) || status == 204 || status == 205 || status == 304;
+}
 
 // HeaderMap::remove: the last header takes the place of the removed one.
 void swap_remove(net::Response& r, std::string_view name) {
@@ -111,9 +113,11 @@ class Finisher {
 
 net::Response Finisher::error_response(Rq& rq, const HttpError& error) {
   if (error.status() >= 500) {
-    log_error("request failed: {} {} -> {}: {}", rq.request.method_text, rq.request.path, error.status(), error.message);
+    log_error("request failed: {} {} -> {}: {}", rq.request.method_text, rq.request.path, error.status(),
+              error.message);
   } else {
-    log_info("request rejected: {} {} -> {}: {}", rq.request.method_text, rq.request.path, error.status(), error.message);
+    log_info("request rejected: {} {} -> {}: {}", rq.request.method_text, rq.request.path, error.status(),
+             error.message);
   }
   if (!rq.formats_) rq.formats_ = req::formats(rq.negotiation_input());
   req::Format format = nullptr;
@@ -188,7 +192,8 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
   // `should_deflate?`
   bool deflate = !(response.status >= 100 && response.status < 200) && response.status != 204 && response.status != 304;
   if (deflate && has_word(response.get("cache-control"), "no-transform")) deflate = false;
-  if (deflate && response.has("content-encoding") && !has_word(response.get("content-encoding"), "identity")) deflate = false;
+  if (deflate && response.has("content-encoding") && !has_word(response.get("content-encoding"), "identity"))
+    deflate = false;
   if (deflate && app_set_length && response.get("content-length") == "0") deflate = false;
   bool vary_missing = false;
   if (deflate) {
@@ -312,6 +317,8 @@ net::Response Finisher::run(Rq& rq, Flow<net::Response> result) {
   return outer(rq, std::move(*out));
 }
 
-net::Response Rq::finish(Flow<net::Response> result) { return Finisher::run(*this, std::move(result)); }
+net::Response Rq::finish(Flow<net::Response> result) {
+  return Finisher::run(*this, std::move(result));
+}
 
 }  // namespace campfire::app

@@ -18,7 +18,7 @@ Flow<net::Response> redirect_to_https(Rq& rq) {
   while (!host.empty() && host.front() == ' ') host.erase(host.begin());
   if (host.empty()) host = "localhost";
   if (const std::size_t colon = host.rfind(':'); colon != std::string::npos && colon + 1 < host.size() &&
-      host.find_first_not_of("0123456789", colon + 1) == std::string::npos) {
+                                                 host.find_first_not_of("0123456789", colon + 1) == std::string::npos) {
     host.resize(colon);
   }
   net::Response response = rq.ctx.response(rq.is_get() || rq.is_head() ? 301 : 308);

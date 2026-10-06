@@ -135,8 +135,14 @@ Task<Flow<net::Response>> sessions_destroy(Rq& rq) {
 // The route handlers (src/app/routes/sessions.inc).
 namespace campfire::routes::sessions {
 
-Task<net::Response> new_(net::Ctx& c) { return app::dispatch(c, &app::controllers::sessions_new); }
-Task<net::Response> create(net::Ctx& c) { return app::dispatch(c, &app::controllers::sessions_create); }
-Task<net::Response> destroy(net::Ctx& c) { return app::dispatch(c, &app::controllers::sessions_destroy); }
+Task<net::Response> new_(net::Ctx& c) {
+  return app::dispatch(c, &app::controllers::sessions_new);
+}
+Task<net::Response> create(net::Ctx& c) {
+  return app::dispatch(c, &app::controllers::sessions_create);
+}
+Task<net::Response> destroy(net::Ctx& c) {
+  return app::dispatch(c, &app::controllers::sessions_destroy);
+}
 
 }  // namespace campfire::routes::sessions

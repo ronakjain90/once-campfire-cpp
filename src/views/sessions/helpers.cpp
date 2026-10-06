@@ -24,11 +24,12 @@ void translations_for(Out& out, std::string_view key) {
 }
 
 void translation_button(Out& out, const ViewContext& ctx, std::string_view key) {
-  Attrs details = attrs()
-                      .cls("position-relative")
-                      .data("controller", "popup")
-                      .data("action", "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside")
-                      .data("popup_orientation_top_class", "popup-orientation-top");
+  Attrs details =
+      attrs()
+          .cls("position-relative")
+          .data("controller", "popup")
+          .data("action", "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside")
+          .data("popup_orientation_top_class", "popup-orientation-top");
   content_tag(out, "details", details, [&](Out& body) {
     content_tag(body, "summary", attrs().cls("btn").tabindex(-1), [&](Out& summary) {
       image_tag(summary, ctx, "globe.svg", attrs().size(20).aria_hidden().cls("color-icon"));
@@ -41,9 +42,8 @@ void translation_button(Out& out, const ViewContext& ctx, std::string_view key) 
 
 void account_logo_tag(Out& out, const ViewContext& ctx, std::optional<std::string_view> style) {
   const std::string klass = "account-logo avatar " + std::string(style.value_or(""));
-  content_tag(out, "figure", attrs().cls(klass), [&](Out& body) {
-    image_tag(body, ctx, ctx.account.logo_url, attrs().alt("Account logo").size(300));
-  });
+  content_tag(out, "figure", attrs().cls(klass),
+              [&](Out& body) { image_tag(body, ctx, ctx.account.logo_url, attrs().alt("Account logo").size(300)); });
 }
 
 }  // namespace campfire::views::helpers

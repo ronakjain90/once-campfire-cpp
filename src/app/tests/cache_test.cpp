@@ -52,8 +52,8 @@ TEST_CASE("session cache: the writer clears the caches of every worker") {
   REQUIRE(f.state->changes->size() >= 2);
   QueueScheduler scheduler;
   auto started = db::testing::run_task(scheduler, f.state->db->write(scheduler, [&](db::Tx& tx) {
-                                         return models::sessions::start(tx, 1, "agent", "10.0.0.1");
-                                       }));
+    return models::sessions::start(tx, 1, "agent", "10.0.0.1");
+  }));
   REQUIRE(started.has_value());
   first.sessions().put("raw-cookie", entry(started->id, 1));
   second.sessions().put("raw-cookie", entry(started->id, 1));
@@ -62,8 +62,8 @@ TEST_CASE("session cache: the writer clears the caches of every worker") {
   // Destroying the session posts a change to both inboxes. Each worker applies it before its next lookup.
   const models::Session session = *started;
   auto destroyed = db::testing::run_task(scheduler, f.state->db->write(scheduler, [&](db::Tx& tx) -> Status {
-                                           return models::sessions::destroy(tx, session);
-                                         }));
+    return models::sessions::destroy(tx, session);
+  }));
   REQUIRE(destroyed.has_value());
   CHECK(first.inbox().pending());
   CHECK(second.inbox().pending());
@@ -167,7 +167,8 @@ TEST_CASE("page cache: miss, hit, gzip, ETag") {
 
 TEST_CASE("page cache: bounded by bytes") {
   PageCache cache({.max_bytes = 64 * 1024, .shards = 1, .audit_every = 0});
-  for (int i = 0; i < 100; ++i) cache.put(xxh3_128("p" + std::to_string(i)), std::string(2000, static_cast<char>('a' + i % 26)), "text/html");
+  for (int i = 0; i < 100; ++i)
+    cache.put(xxh3_128("p" + std::to_string(i)), std::string(2000, static_cast<char>('a' + i % 26)), "text/html");
   CHECK(cache.bytes() <= 64 * 1024);
   CHECK(cache.entries() < 100);
   CHECK(cache.get(xxh3_128("p99")) != nullptr);
@@ -200,7 +201,8 @@ TEST_CASE("page cache: the audit finds a page that changed without a new key") {
 TEST_CASE("rate limiter: a fixed window that starts at the first hit") {
   RateLimiter limiter;
   const Timestamp start = Timestamp::from_seconds(1000);
-  for (std::uint64_t i = 1; i <= 11; ++i) CHECK(limiter.increment("ip", start.plus_seconds(static_cast<std::int64_t>(i)), 180) == i);
+  for (std::uint64_t i = 1; i <= 11; ++i)
+    CHECK(limiter.increment("ip", start.plus_seconds(static_cast<std::int64_t>(i)), 180) == i);
   CHECK(limiter.increment("other", start.plus_seconds(12), 180) == 1);
   // The window does not slide: it ended 180 seconds after the first hit.
   CHECK(limiter.increment("ip", start.plus_seconds(181 + 5), 180) == 1);

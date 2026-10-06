@@ -108,7 +108,8 @@ std::optional<std::string> url_host(std::string_view url) {
   const std::string_view authority = rest.substr(0, rest.find_first_of("/?#"));
   const std::size_t at = authority.rfind('@');
   const std::string_view host_port = at == std::string_view::npos ? authority : authority.substr(at + 1);
-  if (host_port.starts_with('[')) return std::string("[") + std::string(host_port.substr(1, host_port.find(']') - 1)) + "]";
+  if (host_port.starts_with('['))
+    return std::string("[") + std::string(host_port.substr(1, host_port.find(']') - 1)) + "]";
   return std::string(host_port.substr(0, host_port.find(':')));
 }
 
@@ -201,8 +202,10 @@ std::optional<net::Response> Rq::fresh_when(const Freshness& freshness) {
   if (etagged) {
     const bool weak = !freshness.strong_etag;
     std::vector<std::string> parts;
-    if (freshness.strong_etag) parts.push_back(*freshness.strong_etag);
-    else if (freshness.etag) parts.push_back(*freshness.etag);
+    if (freshness.strong_etag)
+      parts.push_back(*freshness.strong_etag);
+    else if (freshness.etag)
+      parts.push_back(*freshness.etag);
     if (is_turbo_frame_request()) parts.emplace_back("frame");
     if (freshness.template_digest) parts.push_back(*freshness.template_digest);
     // ETagWithFlash: a flash changes the validator.

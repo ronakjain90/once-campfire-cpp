@@ -63,7 +63,8 @@ TEST_CASE("sign in, resume, sign out") {
   const std::string guest = cookie_pair(r, "_campfire_session");
 
   // A wrong password gives the rejection page.
-  r = c.request("POST", "/session", kSameOrigin + kForm + "Cookie: " + guest + "\r\n", form("david@example.com", "wrong"));
+  r = c.request("POST", "/session", kSameOrigin + kForm + "Cookie: " + guest + "\r\n",
+                form("david@example.com", "wrong"));
   CHECK(r.status == 401);
   CHECK(r.body.find("Too many requests or unauthorized.") != std::string::npos);
   CHECK(r.body.find("class=\"panel shake\"") != std::string::npos);
@@ -72,7 +73,8 @@ TEST_CASE("sign in, resume, sign out") {
   CHECK(r.header("cache-control") == "no-cache");
 
   // The right password starts a session and goes back to where the visitor came from.
-  r = c.request("POST", "/session", kSameOrigin + kForm + "Cookie: " + guest + "\r\n", form("david@example.com", kPassword));
+  r = c.request("POST", "/session", kSameOrigin + kForm + "Cookie: " + guest + "\r\n",
+                form("david@example.com", kPassword));
   CHECK(r.status == 302);
   CHECK(r.header("location") == "http://test.example/?x=1");
   const std::string token = cookie_pair(r, "session_token");

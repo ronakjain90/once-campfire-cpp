@@ -16,7 +16,9 @@ namespace {
 
 std::atomic<AllowBrowserFn> g_allow_browser{nullptr};
 
-std::unexpected<Failure> db_error(const Error& error) { return fail_internal(error.message); }
+std::unexpected<Failure> db_error(const Error& error) {
+  return fail_internal(error.message);
+}
 
 // `Session.find_by(token:)` and its user, through the cache of the worker. A user that is gone means no session.
 Flow<std::shared_ptr<const AuthEntry>> lookup_session(Rq& rq) {
@@ -89,7 +91,9 @@ Flow<bool> bot_authentication(Rq& rq) {
 
 }  // namespace
 
-void set_allow_browser(AllowBrowserFn fn) noexcept { g_allow_browser.store(fn); }
+void set_allow_browser(AllowBrowserFn fn) noexcept {
+  g_allow_browser.store(fn);
+}
 
 void set_version_headers(Rq& rq) {
   rq.set_header("x-version", rq.app.config.app_version);
@@ -130,7 +134,8 @@ Task<Flow<bool>> restore_authentication(Rq& rq) {
     models::Session before = entry->session;
     auto wrote = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Result<models::Session> {
       models::Session s = before;
-      if (auto resumed = models::sessions::resume(tx, s, agent, ip_view); !resumed) return std::unexpected(resumed.error());
+      if (auto resumed = models::sessions::resume(tx, s, agent, ip_view); !resumed)
+        return std::unexpected(resumed.error());
       return s;
     });
     if (!wrote) co_return db_error(wrote.error());
@@ -191,13 +196,15 @@ Task<Flow<void>> before_actions(Rq& rq, Before before) {
   // set_current_request: `default_url_options` carry the host and protocol of the request; url_for does that.
   if (auto banned = co_await reject_banned_ip(rq); !banned) co_return std::unexpected(std::move(banned.error()));
   if (before.authentication == Authentication::Required) {
-    if (auto authed = co_await require_authentication(rq); !authed) co_return std::unexpected(std::move(authed.error()));
+    if (auto authed = co_await require_authentication(rq); !authed)
+      co_return std::unexpected(std::move(authed.error()));
   }
   if (before.deny_bots) {
     if (auto denied = deny_bots(rq); !denied) co_return std::unexpected(std::move(denied.error()));
   }
   if (before.forgery_protection && rq.authenticated_by != AuthenticatedBy::BotKey) {
-    if (auto verified = verify_authenticity_token(rq); !verified) co_return std::unexpected(std::move(verified.error()));
+    if (auto verified = verify_authenticity_token(rq); !verified)
+      co_return std::unexpected(std::move(verified.error()));
   }
   if (const AllowBrowserFn allow = g_allow_browser.load()) {
     if (auto allowed = co_await allow(rq); !allowed) co_return std::unexpected(std::move(allowed.error()));
@@ -217,10 +224,10 @@ Task<Flow<std::optional<models::User>>> authenticate_by(Rq& rq, std::string emai
   if (password.empty()) co_return std::optional<models::User>{};
   auto candidate = models::users::find_active_by_email_address(rq.db(), rq.arena(), email_address);
   if (!candidate) co_return db_error(candidate.error());
-  auto user = co_await rq.ctx.offload(
-      rq.app.jobs, [candidate = std::move(*candidate), password = std::move(password)]() mutable {
-        return models::users::authenticated(std::move(candidate), password);
-      });
+  auto user = co_await rq.ctx.offload(rq.app.jobs,
+                                      [candidate = std::move(*candidate), password = std::move(password)]() mutable {
+                                        return models::users::authenticated(std::move(candidate), password);
+                                      });
   co_return user;
 }
 
@@ -234,7 +241,8 @@ Task<Flow<void>> start_new_session_for(Rq& rq, models::User user) {
     return models::sessions::start(tx, user_id, agent, ip_view);
   });
   if (!started) co_return db_error(started.error());
-  if (auto cookie = set_authentication_cookie(rq, *started); !cookie) co_return std::unexpected(std::move(cookie.error()));
+  if (auto cookie = set_authentication_cookie(rq, *started); !cookie)
+    co_return std::unexpected(std::move(cookie.error()));
   rq.auth = std::make_shared<const AuthEntry>(AuthEntry{std::move(*started), std::move(user)});
   rq.authenticated_by = AuthenticatedBy::Session;
   co_return Flow<void>{};
@@ -243,9 +251,8 @@ Task<Flow<void>> start_new_session_for(Rq& rq, models::User user) {
 Task<Flow<void>> terminate_current_session(Rq& rq) {
   if (const models::Session* current = rq.current_session(); current != nullptr) {
     const models::Session session = *current;
-    auto destroyed = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
-      return models::sessions::destroy(tx, session);
-    });
+    auto destroyed = co_await rq.app.db->write(
+        rq.ctx.scheduler(), [&](db::Tx& tx) -> Status { return models::sessions::destroy(tx, session); });
     if (!destroyed) co_return db_error(destroyed.error());
   }
   rq.reset_session();

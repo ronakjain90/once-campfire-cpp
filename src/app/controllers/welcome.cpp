@@ -18,6 +18,8 @@ Task<Flow<net::Response>> welcome_show(Rq& rq) {
 
 namespace campfire::routes::welcome {
 
-Task<net::Response> show(net::Ctx& c) { return app::dispatch(c, &app::controllers::welcome_show); }
+Task<net::Response> show(net::Ctx& c) {
+  return app::dispatch(c, &app::controllers::welcome_show);
+}
 
 }  // namespace campfire::routes::welcome

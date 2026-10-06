@@ -2,16 +2,21 @@
 // (crates/richtext/tests/corpus/expected.json, made by reference-tools/richtext/generate.rb in the
 // campfire-reference image). For each case and each output field, the C++ result must equal the
 // recorded Rails result, except for the deliberate differences of the Rust README "Known differences".
+#include <algorithm>
+#include <cctype>
 #include <cstdio>
 #include <fstream>
+#include <functional>
 #include <map>
 #include <optional>
+#include <regex>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include "compat/json.hpp"
 #include "doctest.h"
+#include "port_rules.hpp"
 #include "richtext/attachables.hpp"
 #include "richtext/richtext.hpp"
 
@@ -192,38 +197,11 @@ std::string with_port_divergences(const std::string& rails) {
   return out;
 }
 
-// Removes ` <name>="..."` from each tag (as the T3 corpus test does).
-std::string without_attribute(const std::string& html, const std::string& name) {
-  const std::string needle = " " + name + "=\"";
-  std::string out;
-  bool in_tag = false;
-  for (std::size_t i = 0; i < html.size();) {
-    if (!in_tag && html[i] == '<' && i + 1 < html.size() && html[i + 1] != '/' && html[i + 1] != '!') {
-      in_tag = true;
-    } else if (in_tag && html[i] == '>') {
-      in_tag = false;
-    } else if (in_tag && html.compare(i, needle.size(), needle) == 0) {
-      std::size_t end = html.find('"', i + needle.size());
-      if (end != std::string::npos) {
-        i = end + 1;
-        continue;
-      }
-    } else if (in_tag && html[i] == '"') {
-      std::size_t end = html.find('"', i + 1);
-      if (end != std::string::npos) {
-        out.append(html, i, end + 1 - i);
-        i = end + 1;
-        continue;
-      }
-    }
-    out.push_back(html[i++]);
-  }
-  return out;
-}
-
 struct Tally {
   std::size_t total = 0;
   std::size_t equal = 0;
+  std::size_t name_dropped = 0;
+  std::size_t style_changed = 0;
   std::size_t deliberate = 0;  // Counted as equal because of a documented difference
   std::vector<std::string> failures;
 
@@ -360,19 +338,22 @@ TEST_CASE("the attachment pipeline matches Rails for all corpus cases") {
       } else if (!actual) {
         t.note(false, name, ok_string(expected), "<error " + actual.error().message + ">");
       } else {
-        // Deliberate (README "Rich text attributes"): `name` attributes are dropped, and a style keeps
-        // only plain color values. The two are compared with the style attribute removed.
-        const std::string want = ok_string(expected);
-        const bool has_style =
-            want.find(" style=\"") != std::string::npos || actual->find(" style=\"") != std::string::npos;
-        std::string a = without_attribute(*actual, "name");
-        std::string w = without_attribute(want, "name");
-        if (has_style) {
-          a = without_attribute(a, "style");
-          w = without_attribute(w, "style");
+        // Only the expected Rails value is transformed, by the documented rules of the Rust port
+        // (corpus.rs `with_port_divergences`, sanitizer.rs `scrub_style`). The actual output is exact.
+        const std::string rails = ok_string(expected);
+        // `filtered` is not autolinked, so the bracket escaping of with_port_divergences does not apply.
+        std::string want = port_rules::without_names(rails);
+        const bool name_dropped = want != rails;
+        std::string styled = port_rules::rewrite_attribute(want, "style", port_rules::port_style);
+        const bool style_changed = styled != want;
+        want = styled;
+        const std::string got = port_rules::canonical_styles(*actual);
+        t.note(got == want, name, want, got);
+        if (got == want) {
+          t.name_dropped += name_dropped;
+          t.style_changed += style_changed;
+          t.deliberate += name_dropped || style_changed;
         }
-        t.note(a == w, name, w, a);
-        if (a == w && (a != *actual || w != want)) ++t.deliberate;
       }
     }
   }
@@ -397,8 +378,8 @@ TEST_CASE("the attachment pipeline matches Rails for all corpus cases") {
 
   std::size_t failed = 0;
   for (const auto& [field, t] : tallies) {
-    std::printf("corpus %-20s %zu of %zu equal (%zu by a documented difference)\n", field.c_str(), t.equal, t.total,
-                t.deliberate);
+    std::printf("corpus %-20s %zu of %zu equal (%zu by a documented difference; name %zu, style %zu)\n", field.c_str(),
+                t.equal, t.total, t.deliberate, t.name_dropped, t.style_changed);
     for (const auto& f : t.failures) {
       std::printf("%s\n", f.c_str());
     }

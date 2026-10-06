@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "doctest.h"
+#include "port_rules.hpp"
 #include "richtext/filters.hpp"
 
 namespace {
@@ -155,37 +156,6 @@ class Reader {
   std::size_t pos_ = 0;
 };
 
-// Removes the attribute ` <name>="..."` from every tag. Values are escaped, so no raw quote is
-// inside one. Used for the deliberate differences from Rails (see the test below).
-std::string without_attribute(const std::string& html, const std::string& name) {
-  const std::string needle = " " + name + "=\"";
-  std::string out;
-  bool in_tag = false;
-  for (std::size_t i = 0; i < html.size();) {
-    if (!in_tag && html[i] == '<' && i + 1 < html.size() && html[i + 1] != '/' && html[i + 1] != '!') {
-      in_tag = true;
-    } else if (in_tag && html[i] == '>') {
-      in_tag = false;
-    } else if (in_tag && html.compare(i, needle.size(), needle) == 0) {
-      std::size_t end = html.find('"', i + needle.size());
-      if (end != std::string::npos) {
-        i = end + 1;
-        continue;
-      }
-    } else if (in_tag && html[i] == '"') {
-      // Skip a value that follows another attribute.
-      std::size_t end = html.find('"', i + 1);
-      if (end != std::string::npos) {
-        out.append(html, i, end + 1 - i);
-        i = end + 1;
-        continue;
-      }
-    }
-    out.push_back(html[i++]);
-  }
-  return out;
-}
-
 bool in_scope(const Case& c) {
   // Bodies with Action Text attachments (mentions, opengraph embeds, Trix attachments and
   // galleries) belong to task T10: canonicalization and the attachment filters change the result.
@@ -223,25 +193,20 @@ TEST_CASE("the filtered output matches Rails for the corpus cases without attach
     if (c.has_error) {
       ok = !result.has_value();
     } else if (result.has_value()) {
-      // Deliberate differences from Rails (README "Rich text attributes"): `name` attributes are
-      // dropped, and style keeps only plain color and background-color values, in the form
-      // "color: red;" (Rails keeps "color:red;" and an empty style=""). Both are compared with
-      // the style attribute removed. The style rules have their own tests.
+      // Deliberate differences from Rails (README "Rich text attributes"), applied to the expected value only:
+      // `name` attributes are dropped, and style keeps only plain color and background-color values.
+      // The style format is compared in the canonical form (Rails writes "color:red;", the port keeps the input).
       const bool has_name = c.filtered.find(" name=\"") != std::string::npos;
-      const bool has_style =
-          c.filtered.find(" style=\"") != std::string::npos || result->find(" style=\"") != std::string::npos;
+      const bool has_style = c.filtered.find(" style=\"") != std::string::npos;
       if (has_name) {
         ++name_cases;
       }
       if (has_style) {
         ++style_cases;
       }
-      std::string expected = without_attribute(c.filtered, "name");
-      std::string actual = *result;
-      if (has_style) {
-        expected = without_attribute(expected, "style");
-        actual = without_attribute(actual, "style");
-      }
+      std::string expected = port_rules::without_names(c.filtered);
+      expected = port_rules::rewrite_attribute(expected, "style", port_rules::port_style);
+      const std::string actual = port_rules::canonical_styles(*result);
       ok = expected == actual;
     }
     if (ok) {

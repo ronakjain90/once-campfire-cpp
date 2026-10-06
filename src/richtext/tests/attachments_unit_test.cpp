@@ -50,8 +50,8 @@ TEST_CASE("URI.parse matches Ruby") {
 TEST_CASE("the compat resolver verifies SGIDs and finds records") {
   const campfire::compat::Secrets secrets("test-secret");
   const Records records;
-  const campfire::compat::Timestamp now = std::chrono::time_point_cast<std::chrono::nanoseconds>(
-      std::chrono::sys_days{std::chrono::year{2024} / 1 / 2});
+  const campfire::compat::Timestamp now =
+      std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::sys_days{std::chrono::year{2024} / 1 / 2});
   const CompatResolver resolver(secrets, now, records);
 
   const std::string good = gid::attachable_sgid(secrets, gid::GlobalId::make("User", "1"));
@@ -103,7 +103,9 @@ TEST_CASE("content attachments nest at most eight levels") {
 TEST_CASE("autolink escapes brackets in attributes and links bare URLs") {
   auto out = auto_link("<p title=\"a>b http://x.test/\">see http://y.test/a.</p>", SafeList::auto_link());
   REQUIRE(out.has_value());
-  CHECK(*out == "<p title=\"a&gt;b http://x.test/\">see <a target=\"_blank\" href=\"http://y.test/a\">http://y.test/a</a>.</p>");
+  CHECK(
+      *out ==
+      "<p title=\"a&gt;b http://x.test/\">see <a target=\"_blank\" href=\"http://y.test/a\">http://y.test/a</a>.</p>");
   CHECK(*auto_link("mail me@x.test now", SafeList::auto_link()) ==
         "mail <a target=\"_blank\" href=\"mailto:me@x.test\">me@x.test</a> now");
 }

@@ -65,7 +65,7 @@ its requests in the diff sweep pass.
 | A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
 | A2 | partly merged (Claude cloud session) | `origin/main` | Sidebar, room forms, direct rooms, involvements. Sweep: 53/150 equal; room page, messages page and refresh are missing (404). Rest is A2b. |
 | A3 | merged (verified by Opus) | `task/A3` | Sweep 63/91 equal; the rest wait for A2b's partial or other areas. DB rows equal to Rust. Broadcasts unified with A2's. |
-| A4 | Accounts, users, profiles, avatars, bots and keys, join codes, logo, custom styles, push subscriptions, QR codes | `controllers/accounts*`, `users/*`, `qr_code` |
+| A4 | merged (verified by Opus) | `task/A4` | 131/140 equal; rest: rooms/webmanifest routes, and gzip content-length of compressed cache hits (decision pending). Avatar 1.7x Rust at c=16, 2.8x at c=64. |
 | A5 | Search | `controllers/searches` |
 | A6 | PWA, the service worker, link unfurl, `/up`, error pages, Active Storage endpoints | `pwa`, `unfurl_links`, Active Storage |
 | A7 | The 7 channels, `Turbo::StreamsChannel`, the room stream authorization patch | `channels/*` |
@@ -130,5 +130,5 @@ whose transcript is long.
 | A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
 | A2 | partly merged (Claude cloud session) | `origin/main` | Sidebar, room forms, direct rooms, involvements. Sweep: 53/150 equal; room page, messages page and refresh are missing (404). Rest is A2b. |
 | A3 | merged (verified by Opus) | `task/A3` | Sweep 63/91 equal; the rest wait for A2b's partial or other areas. DB rows equal to Rust. Broadcasts unified with A2's. |
-| A4 | in progress (Sonnet) | `task/A4` | |
+| A4 | merged (verified by Opus) | `task/A4` | 131/140 equal; rest: rooms/webmanifest routes, and gzip content-length of compressed cache hits (decision pending). Avatar 1.7x Rust at c=16, 2.8x at c=64. |
 | A2b | in progress (Sonnet) | `task/A2b` | |

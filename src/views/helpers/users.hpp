@@ -21,6 +21,8 @@ namespace campfire::views::helpers {
 [[nodiscard]] std::string to_sentence(const std::vector<std::string>& items, std::string_view two_words_connector);
 // The first character of `text` (a whole UTF-8 sequence): `str[0]`.
 [[nodiscard]] std::string first_character(std::string_view text);
+// `User#title`: the name and the bio joined by " – ", leaving out a blank part.
+[[nodiscard]] std::string user_title(std::string_view name, const std::optional<std::string>& bio);
 // `User#initials`: the first letter or digit of each word.
 [[nodiscard]] std::string initials(std::string_view name);
 

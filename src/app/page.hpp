@@ -42,6 +42,10 @@ struct LayoutData {
 // Renders `parts` in the application layout, or in turbo-rails' frame layout for a Turbo-Frame request.
 void render_in_layout(Rq& rq, const LayoutData& data, const views::LayoutParts& parts, Out& out);
 
+// The facets that every page in the layout prints and that are not SQL: the page name, the base URL, the frame
+// flag, the current user (the layout shows the avatar) and the flash. It reads the flash.
+void add_page_facets(Rq& rq, db::DependencyScope& deps, std::string_view page);
+
 // A page in the layout, with the `Link` preload header of `stylesheet_link_tag`. Not cached.
 [[nodiscard]] net::Response layout_response(Rq& rq, int status, Out&& body);
 

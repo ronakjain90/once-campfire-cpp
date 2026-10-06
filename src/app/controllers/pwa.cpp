@@ -62,7 +62,9 @@ Task<Flow<net::Response>> pwa_service_worker(Rq& rq) {
 }
 
 // A string as a JSON value, quotes included. ERB escaped HTML in the Rails manifest: the Rust port does not.
-std::string json_string(std::string_view text) { return compat::json::generate(compat::json::Value(std::string(text))); }
+std::string json_string(std::string_view text) {
+  return compat::json::generate(compat::json::Value(std::string(text)));
+}
 
 // `image_url(source)`
 std::string image_url(const Rq& rq, std::string_view logical) {
@@ -91,9 +93,11 @@ Task<Flow<net::Response>> pwa_manifest(Rq& rq) {
   body += "{\n  \"name\": " + json_string(name) + ",\n";
   body += "  \"icons\": [\n    {\n      \"src\": " + small +
           ",\n      \"type\": \"image/png\",\n      \"sizes\": \"192x192\"\n    },\n";
-  body += "    {\n      \"src\": " + large + ",\n      \"type\": \"image/png\",\n      \"sizes\": \"512x512\"\n    },\n";
+  body +=
+      "    {\n      \"src\": " + large + ",\n      \"type\": \"image/png\",\n      \"sizes\": \"512x512\"\n    },\n";
   body += "    {\n      \"src\": " + large +
-          ",\n      \"type\": \"image/png\",\n      \"sizes\": \"512x512\",\n      \"purpose\": \"maskable\"\n    }\n  ],\n";
+          ",\n      \"type\": \"image/png\",\n      \"sizes\": \"512x512\",\n      \"purpose\": \"maskable\"\n    }\n  "
+          "],\n";
   body += R"J(  "start_url": "/",
   "display": "standalone",
   "scope": "/",
@@ -106,30 +110,35 @@ Task<Flow<net::Response>> pwa_manifest(Rq& rq) {
       "name": "New chat room",
       "description": "Open Campfire and start a new chat room",
       "url": "rooms/opens/new",
-      "icons": [{ "src": )J" + icon("add.svg") + R"J(, "sizes": "any" }]
+      "icons": [{ "src": )J" +
+          icon("add.svg") + R"J(, "sizes": "any" }]
     },
     {
       "name": "My profile",
       "description": "Open Campfire and view your profile",
       "url": "/users/me/profile",
-      "icons": [{ "src": )J" + icon("person.svg") + R"J(, "sizes": "any" }]
+      "icons": [{ "src": )J" +
+          icon("person.svg") + R"J(, "sizes": "any" }]
     }
   ],
   "screenshots": [
     {
-      "src": )J" + icon("screenshots/android-chat.png") + R"J(,
+      "src": )J" +
+          icon("screenshots/android-chat.png") + R"J(,
       "sizes": "1080x2400",
       "form_factor": "narrow",
       "label": "Campfire is an installable, self-hosted group chat system."
     },
     {
-      "src": )J" + icon("screenshots/android-sidebar.png") + R"J(,
+      "src": )J" +
+          icon("screenshots/android-sidebar.png") + R"J(,
       "sizes": "1080x2400",
       "form_factor": "narrow",
       "label": "Easily invite people. Make rooms. @mentions, DMs, and mobile support."
     },
     {
-      "src": )J" + icon("screenshots/android-dark-mode.png") + R"J(,
+      "src": )J" +
+          icon("screenshots/android-dark-mode.png") + R"J(,
       "sizes": "1080x2400",
       "form_factor": "narrow",
       "label": "Full support for dark mode, customizable to your brand."

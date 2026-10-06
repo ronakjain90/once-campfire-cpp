@@ -50,7 +50,8 @@ struct FakeDns {
       std::scoped_lock lock(mutex);
       // getaddrinfo reads numeric forms (2130706433, 0x7f.1) without asking DNS.
       in_addr numeric{};
-      if (inet_aton(host.c_str(), &numeric) != 0) return std::vector<std::string>{std::string(reinterpret_cast<char*>(&numeric), 4)};
+      if (inet_aton(host.c_str(), &numeric) != 0)
+        return std::vector<std::string>{std::string(reinterpret_cast<char*>(&numeric), 4)};
       lookups.push_back(host);
       std::vector<std::string> out;
       const auto it = hosts.find(host);
@@ -76,7 +77,9 @@ unfurl::Network network_to(FakeDns& dns, std::uint16_t port, std::set<std::strin
   return network;
 }
 
-std::string decode_b64(const std::string& text) { return *compat::base64::strict_decode(text); }
+std::string decode_b64(const std::string& text) {
+  return *compat::base64::strict_decode(text);
+}
 
 test::FakeRoute route_of(const Value& spec) {
   const auto text = [&](const char* key) {
@@ -94,7 +97,8 @@ test::FakeRoute route_of(const Value& spec) {
   if (const Value* b64 = spec.find("body_b64")) {
     route.body = decode_b64(b64->as_string());
   } else if (const Value* repeat = spec.find("body_repeat")) {
-    route.body.assign(static_cast<std::size_t>(*repeat->as_array()[1].to_int64()), repeat->as_array()[0].as_string()[0]);
+    route.body.assign(static_cast<std::size_t>(*repeat->as_array()[1].to_int64()),
+                      repeat->as_array()[0].as_string()[0]);
   } else {
     route.body = text("body");
   }
@@ -131,7 +135,8 @@ TEST_CASE("unfurl: the cases of the Rails reference") {
     }
     const unfurl::Network network = network_to(dns, server.port(), public_ips);
     const std::size_t before = server.received().size();
-    const auto result = opengraph::unfurl(network, cases[i].find("url")->as_string(), Clock::now() + std::chrono::seconds(10));
+    const auto result =
+        opengraph::unfurl(network, cases[i].find("url")->as_string(), Clock::now() + std::chrono::seconds(10));
     Value::Object response;
     if (!result) {
       response.emplace_back("status", 500);
@@ -151,9 +156,11 @@ TEST_CASE("unfurl: the cases of the Rails reference") {
     }
     Value::Array lookups;
     for (const std::string& host : dns.lookups) lookups.emplace_back(host);
-    const Value actual(Value::Object{{"response", Value(std::move(response))}, {"lookups", Value(std::move(lookups))},
+    const Value actual(Value::Object{{"response", Value(std::move(response))},
+                                     {"lookups", Value(std::move(lookups))},
                                      {"requests", Value(std::move(requests))}});
-    const Value want(Value::Object{{"response", *wanted[i].find("response")}, {"lookups", *wanted[i].find("lookups")},
+    const Value want(Value::Object{{"response", *wanted[i].find("response")},
+                                   {"lookups", *wanted[i].find("lookups")},
                                    {"requests", *wanted[i].find("requests")}});
     INFO(name);
     INFO("expected ", compat::json::generate(want));

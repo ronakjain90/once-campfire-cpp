@@ -40,6 +40,7 @@ struct Unfurl {
 
 // `Opengraph::Document#opengraph_attributes`: from each `meta` whose `property` or `name` starts with "og:", the
 // attribute with every "og:" removed, and the value its non-blank `content`, for the four keys, in this order.
-[[nodiscard]] std::vector<std::pair<std::string, std::string>> opengraph_attributes(std::optional<std::string_view> body);
+[[nodiscard]] std::vector<std::pair<std::string, std::string>> opengraph_attributes(
+    std::optional<std::string_view> body);
 
 }  // namespace campfire::app::opengraph

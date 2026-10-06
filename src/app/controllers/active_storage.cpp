@@ -5,10 +5,11 @@
 // These controllers inherit from `ActiveStorage::BaseController` (`protect_from_forgery with: :exception`), not from
 // `ApplicationController`: none of the concerns of Campfire run. Downloads are public behind signed URLs. The disk
 // PUT and the direct uploads need a Campfire session.
+#include "app/active_storage.hpp"
+
 #include <chrono>
 #include <random>
 
-#include "app/active_storage.hpp"
 #include "app/concerns.hpp"
 #include "app/controllers/accounts_common.hpp"
 #include "app/dispatch.hpp"
@@ -40,7 +41,8 @@ constexpr std::int64_t kMaxBufferedBody = std::int64_t{16} << 20;
 // signature is `head :not_found`. A valid one for a missing blob is `RecordNotFound`.
 Flow<storage::Blob> set_blob(Rq& rq) {
   const std::string_view signed_id = rq.param_str("signed_blob_id").value_or(rq.param_str("signed_id").value_or(""));
-  const auto blob_id = storage::paths::verify_signed_blob_id(rq.app.storage->verifier(), signed_id, to_compat(rq.now()));
+  const auto blob_id =
+      storage::paths::verify_signed_blob_id(rq.app.storage->verifier(), signed_id, to_compat(rq.now()));
   if (!blob_id) return halt(concerns::head_in_before_action(rq, 404));
   auto blob = models::attachments::find_blob(rq.db(), *blob_id);
   if (!blob) return fail_internal(blob.error().message);
@@ -151,9 +153,8 @@ Flow<net::Response> send_blob_byte_range_data(Rq& rq, const storage::Blob& blob,
     const std::string boundary = random_boundary();
     content_type = "multipart/byteranges; boundary=" + boundary;
     for (const auto& r : *ranges) {
-      body += "\r\n--" + boundary + "\r\nContent-Type: " + content_type_for_serving +
-              "\r\nContent-Range: bytes " + std::to_string(r.first) + "-" + std::to_string(r.last) + "/" + size_text +
-              "\r\n\r\n";
+      body += "\r\n--" + boundary + "\r\nContent-Type: " + content_type_for_serving + "\r\nContent-Range: bytes " +
+              std::to_string(r.first) + "-" + std::to_string(r.last) + "/" + size_text + "\r\n\r\n";
       if (auto done = read(r); !done) return fail_internal(done.error().message);
     }
     body += "\r\n--" + boundary + "--\r\n";
@@ -167,7 +168,8 @@ Flow<net::Response> send_blob_byte_range_data(Rq& rq, const storage::Blob& blob,
 
 // `ActiveStorage::Blobs::RedirectController#show`
 Task<Flow<net::Response>> blobs_redirect(Rq& rq) {
-  if (auto verified = concerns::verify_authenticity_token(rq); !verified) co_return std::unexpected(std::move(verified.error()));
+  if (auto verified = concerns::verify_authenticity_token(rq); !verified)
+    co_return std::unexpected(std::move(verified.error()));
   auto blob = set_blob(rq);
   if (!blob) co_return std::unexpected(std::move(blob.error()));
   co_return redirect_to_blob(rq, *blob);
@@ -175,11 +177,11 @@ Task<Flow<net::Response>> blobs_redirect(Rq& rq) {
 
 // `ActiveStorage::Blobs::ProxyController#show`
 Task<Flow<net::Response>> blobs_proxy(Rq& rq) {
-  if (auto verified = concerns::verify_authenticity_token(rq); !verified) co_return std::unexpected(std::move(verified.error()));
+  if (auto verified = concerns::verify_authenticity_token(rq); !verified)
+    co_return std::unexpected(std::move(verified.error()));
   auto blob = set_blob(rq);
   if (!blob) co_return std::unexpected(std::move(blob.error()));
-  if (const std::string_view range = rq.request.header("range");
-      compat::strip(range).size() != 0) {
+  if (const std::string_view range = rq.request.header("range"); compat::strip(range).size() != 0) {
     co_return send_blob_byte_range_data(rq, *blob, range);
   }
   if (auto fresh = http_cache_forever(rq)) co_return std::move(*fresh);
@@ -191,7 +193,8 @@ Task<Flow<net::Response>> blobs_proxy(Rq& rq) {
 
 // `ActiveStorage::Representations::RedirectController#show`
 Task<Flow<net::Response>> representations_redirect(Rq& rq) {
-  if (auto verified = concerns::verify_authenticity_token(rq); !verified) co_return std::unexpected(std::move(verified.error()));
+  if (auto verified = concerns::verify_authenticity_token(rq); !verified)
+    co_return std::unexpected(std::move(verified.error()));
   auto blob = set_blob(rq);
   if (!blob) co_return std::unexpected(std::move(blob.error()));
   auto image = co_await set_representation(rq, *blob);
@@ -201,7 +204,8 @@ Task<Flow<net::Response>> representations_redirect(Rq& rq) {
 
 // `ActiveStorage::Representations::ProxyController#show`
 Task<Flow<net::Response>> representations_proxy(Rq& rq) {
-  if (auto verified = concerns::verify_authenticity_token(rq); !verified) co_return std::unexpected(std::move(verified.error()));
+  if (auto verified = concerns::verify_authenticity_token(rq); !verified)
+    co_return std::unexpected(std::move(verified.error()));
   auto blob = set_blob(rq);
   if (!blob) co_return std::unexpected(std::move(blob.error()));
   auto image = co_await set_representation(rq, *blob);
@@ -218,8 +222,8 @@ std::optional<std::string_view> optional_header(const Rq& rq, std::string_view n
 // `ActiveStorage::DiskController#show`, and the `after_action` of the initializer: `Cache-Control`.
 Task<Flow<net::Response>> disk_show(Rq& rq) {
   const storage::Storage& storage = *rq.app.storage;
-  const auto key = storage::decode_verified_key(storage.verifier(), rq.param_str("encoded_key").value_or(""),
-                                                to_compat(rq.now()));
+  const auto key =
+      storage::decode_verified_key(storage.verifier(), rq.param_str("encoded_key").value_or(""), to_compat(rq.now()));
   if (!key) co_return rq.head(404);
   const FileRequest file_request{rq.request.method_text, optional_header(rq, "range"),
                                  optional_header(rq, "if-modified-since")};
@@ -265,7 +269,8 @@ bool acceptable_content(const Rq& rq, const storage::DiskToken& token) {
 
 // `ActiveStorage::DiskController#update`: the direct upload PUT.
 Task<Flow<net::Response>> disk_update(Rq& rq) {
-  if (auto authed = require_active_storage_authentication(rq); !authed) co_return std::unexpected(std::move(authed.error()));
+  if (auto authed = require_active_storage_authentication(rq); !authed)
+    co_return std::unexpected(std::move(authed.error()));
   const storage::Storage& storage = *rq.app.storage;
   const auto token = storage::decode_verified_token(storage.verifier(), rq.param_str("encoded_token").value_or(""),
                                                     to_compat(rq.now()));
@@ -303,13 +308,16 @@ std::string json_time(const std::string& db_time) {
 
 // `ActiveStorage::DirectUploadsController#create`
 Task<Flow<net::Response>> direct_uploads_create(Rq& rq) {
-  if (auto verified = concerns::verify_authenticity_token(rq); !verified) co_return std::unexpected(std::move(verified.error()));
-  if (auto authed = require_active_storage_authentication(rq); !authed) co_return std::unexpected(std::move(authed.error()));
+  if (auto verified = concerns::verify_authenticity_token(rq); !verified)
+    co_return std::unexpected(std::move(verified.error()));
+  if (auto authed = require_active_storage_authentication(rq); !authed)
+    co_return std::unexpected(std::move(authed.error()));
   // `params.expect(blob: [:filename, :byte_size, :checksum, :content_type, metadata: {}])`
   const auto required = rq.params().require("blob");
   if (!required) co_return fail_with(ErrorKind::ParameterMissing, required.error().message);
   const req::ParamMap* blob_params = (*required)->as_hash();
-  if (blob_params == nullptr) co_return fail_with(ErrorKind::ParameterMissing, "param is missing or the value is empty: blob");
+  if (blob_params == nullptr)
+    co_return fail_with(ErrorKind::ParameterMissing, "param is missing or the value is empty: blob");
   const auto filename = text_param(*blob_params, "filename");
   const auto checksum = text_param(*blob_params, "checksum");
   if (!filename || filename->empty() || !checksum || checksum->empty()) co_return fail_status(422);
@@ -375,9 +383,9 @@ Task<Flow<net::Response>> direct_uploads_create(Rq& rq) {
 
 namespace campfire::routes::active_storage {
 
-#define CF_AS_ROUTE(name)                                       \
-  Task<net::Response> name(net::Ctx& c) {                       \
-    return app::dispatch(c, &app::controllers::name);           \
+#define CF_AS_ROUTE(name)                             \
+  Task<net::Response> name(net::Ctx& c) {             \
+    return app::dispatch(c, &app::controllers::name); \
   }
 CF_AS_ROUTE(blobs_redirect)
 CF_AS_ROUTE(blobs_proxy)

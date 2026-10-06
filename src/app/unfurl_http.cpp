@@ -3,6 +3,7 @@
 
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <libdeflate.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <openssl/err.h>
@@ -15,7 +16,6 @@
 #include <algorithm>
 #include <cerrno>
 #include <cstring>
-#include <libdeflate.h>
 
 #include "compat/ruby.hpp"
 
@@ -27,8 +27,12 @@ namespace {
 constexpr std::string_view kAcceptEncoding = "gzip;q=1.0,deflate;q=0.6,identity;q=0.3";
 constexpr std::size_t kMaxHead = 64 * 1024;
 
-Error timeout_error(std::string message) { return Error{Errc::Timeout, std::move(message)}; }
-Error io_error(std::string message) { return Error{Errc::Io, std::move(message)}; }
+Error timeout_error(std::string message) {
+  return Error{Errc::Timeout, std::move(message)};
+}
+Error io_error(std::string message) {
+  return Error{Errc::Io, std::move(message)};
+}
 
 struct SslDeleter {
   void operator()(SSL* ssl) const { SSL_free(ssl); }
@@ -287,10 +291,14 @@ Result<Body> read_framed(Connection& c, bool chunked, std::optional<std::uint64_
       std::uint64_t size = 0;
       for (const char ch : compat::strip(line)) {
         int digit;
-        if (ch >= '0' && ch <= '9') digit = ch - '0';
-        else if (ch >= 'a' && ch <= 'f') digit = ch - 'a' + 10;
-        else if (ch >= 'A' && ch <= 'F') digit = ch - 'A' + 10;
-        else return fail(Errc::Parse, "wrong chunk size line");
+        if (ch >= '0' && ch <= '9')
+          digit = ch - '0';
+        else if (ch >= 'a' && ch <= 'f')
+          digit = ch - 'a' + 10;
+        else if (ch >= 'A' && ch <= 'F')
+          digit = ch - 'A' + 10;
+        else
+          return fail(Errc::Parse, "wrong chunk size line");
         if (size > (UINT64_MAX >> 5)) return fail(Errc::Parse, "wrong chunk size line");
         size = size * 16 + static_cast<std::uint64_t>(digit);
       }
@@ -363,9 +371,9 @@ Result<Body> inflate(const std::string& packed, std::size_t limit) {
       if (!is_gzip(at)) return fail(Errc::Parse, "not in gzip format");
       std::size_t used = 0;
       std::size_t made = 0;
-      const auto result = libdeflate_gzip_decompress_ex(decompressor.d, packed.data() + at, packed.size() - at,
-                                                        body.bytes.data() + total, body.bytes.size() - total, &used,
-                                                        &made);
+      const auto result =
+          libdeflate_gzip_decompress_ex(decompressor.d, packed.data() + at, packed.size() - at,
+                                        body.bytes.data() + total, body.bytes.size() - total, &used, &made);
       if (result == LIBDEFLATE_INSUFFICIENT_SPACE) return Body{{}, true};
       if (result != LIBDEFLATE_SUCCESS) return fail(Errc::Parse, "invalid compressed data");
       at += used;
@@ -434,8 +442,8 @@ Result<Response> exchange(const Network& network, const Endpoint& endpoint, cons
   while (line_end != std::string::npos) {
     const std::size_t start = line_end + 2;
     line_end = head.find("\r\n", start);
-    const std::string_view line = std::string_view(head).substr(
-        start, line_end == std::string::npos ? std::string::npos : line_end - start);
+    const std::string_view line =
+        std::string_view(head).substr(start, line_end == std::string::npos ? std::string::npos : line_end - start);
     const std::size_t colon = line.find(':');
     if (colon == std::string_view::npos) continue;
     std::string name(line.substr(0, colon));

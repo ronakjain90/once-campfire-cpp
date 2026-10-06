@@ -20,11 +20,21 @@ constexpr std::array kEntities = std::to_array<EntityEntry>({
 // How many attributes of one tag are kept; the rest are parsed and dropped.
 constexpr std::size_t kMaxAttributes = 256;
 
-bool is_blank(char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
-bool is_alpha(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
-bool is_digit(char c) { return c >= '0' && c <= '9'; }
-bool is_alnum(char c) { return is_alpha(c) || is_digit(c); }
-char lower(char c) { return c >= 'A' && c <= 'Z' ? static_cast<char>(c - 'A' + 'a') : c; }
+bool is_blank(char c) {
+  return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+bool is_alpha(char c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+bool is_digit(char c) {
+  return c >= '0' && c <= '9';
+}
+bool is_alnum(char c) {
+  return is_alpha(c) || is_digit(c);
+}
+char lower(char c) {
+  return c >= 'A' && c <= 'Z' ? static_cast<char>(c - 'A' + 'a') : c;
+}
 
 void append_utf8(std::string& out, std::uint32_t cp) {
   if (cp < 0x80) {
@@ -232,9 +242,7 @@ class Scanner {
 
   // `htmlParseHTMLAttribute`: up to the quote, or (unquoted) a blank or `>`.
   std::string attribute_text(std::optional<char> stop) {
-    const auto ends_text = [&](char c) {
-      return c == '&' || stop == c || (!stop && (c == '>' || is_blank(c)));
-    };
+    const auto ends_text = [&](char c) { return c == '&' || stop == c || (!stop && (c == '>' || is_blank(c))); };
     std::string out;
     bool truncated = false;
     for (;;) {
@@ -296,7 +304,8 @@ class Scanner {
     ++pos_;
     const std::size_t start = pos_;
     if (peek(0) && (is_alpha(*peek(0)) || *peek(0) == '_' || *peek(0) == ':')) {
-      while (peek(0) && (is_alnum(*peek(0)) || *peek(0) == '_' || *peek(0) == ':' || *peek(0) == '.' || *peek(0) == '-')) {
+      while (peek(0) &&
+             (is_alnum(*peek(0)) || *peek(0) == '_' || *peek(0) == ':' || *peek(0) == '.' || *peek(0) == '-')) {
         ++pos_;
       }
     }

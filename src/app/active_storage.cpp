@@ -192,7 +192,8 @@ Task<Flow<storage::Blob>> preview_image_of(Rq& rq, const storage::Blob& blob) {
 }  // namespace
 
 net::ThreadPool& media_pool() {
-  static net::ThreadPool pool(std::clamp<std::size_t>(std::thread::hardware_concurrency(), 2, storage::kMaxMediaThreads));
+  static net::ThreadPool pool(
+      std::clamp<std::size_t>(std::thread::hardware_concurrency(), 2, storage::kMaxMediaThreads));
   return pool;
 }
 

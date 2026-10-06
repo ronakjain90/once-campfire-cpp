@@ -1,8 +1,9 @@
-// A small HTTP/1.1 server for the tests of the outbound clients: it answers canned routes and records what it was asked.
-// Rust: crates/campfire/src/integrations/test_support.rs (FakeServer).
+// A small HTTP/1.1 server for the tests of the outbound clients: it answers canned routes and records what it was
+// asked. Rust: crates/campfire/src/integrations/test_support.rs (FakeServer).
 #pragma once
 
 #include <arpa/inet.h>
+#include <libdeflate.h>
 #include <netinet/in.h>
 #include <openssl/ssl.h>
 #include <poll.h>
@@ -16,8 +17,6 @@
 #include <thread>
 #include <utility>
 #include <vector>
-
-#include <libdeflate.h>
 
 namespace campfire::app::test {
 
@@ -97,7 +96,9 @@ class FakeServer {
   struct Stream {
     int fd = -1;
     SSL* ssl = nullptr;
-    ssize_t read(char* out, std::size_t n) const { return ssl ? SSL_read(ssl, out, static_cast<int>(n)) : ::recv(fd, out, n, 0); }
+    ssize_t read(char* out, std::size_t n) const {
+      return ssl ? SSL_read(ssl, out, static_cast<int>(n)) : ::recv(fd, out, n, 0);
+    }
     bool write(const std::string& data) const {
       std::size_t done = 0;
       while (done < data.size()) {
@@ -164,8 +165,8 @@ class FakeServer {
       received.headers.emplace_back(line.substr(0, colon), line.substr(colon + 2));
     }
     host = received.header("host");
-    if (const std::size_t colon = host.rfind(':'); colon != std::string::npos &&
-        host.find_first_not_of("0123456789", colon + 1) == std::string::npos) {
+    if (const std::size_t colon = host.rfind(':');
+        colon != std::string::npos && host.find_first_not_of("0123456789", colon + 1) == std::string::npos) {
       host = host.substr(0, colon);
     }
     {
@@ -191,8 +192,10 @@ class FakeServer {
       if (strcasecmp(name.c_str(), "content-length") == 0) has_length = true;
     }
     if (route->gzip) head += "Content-Encoding: gzip\r\n";
-    if (route->chunked) head += "Transfer-Encoding: chunked\r\n";
-    else if (!has_length && !route->trickle) head += "Content-Length: " + std::to_string(body.size()) + "\r\n";
+    if (route->chunked)
+      head += "Transfer-Encoding: chunked\r\n";
+    else if (!has_length && !route->trickle)
+      head += "Content-Length: " + std::to_string(body.size()) + "\r\n";
     head += "Connection: close\r\n\r\n";
     if (!stream.write(head)) return;
     if (route->trickle) {

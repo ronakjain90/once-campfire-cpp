@@ -3,10 +3,10 @@
 // config/initializers/active_storage*.rb. Rust: crates/campfire/src/active_storage.rs.
 #include <doctest.h>
 
+#include "app/controllers/accounts_common.hpp"
 #include "app/tests/fixture.hpp"
 #include "compat/base64.hpp"
 #include "compat/json.hpp"
-#include "app/controllers/accounts_common.hpp"
 #include "models/attachments.hpp"
 #include "storage/key.hpp"
 #include "storage/paths.hpp"
@@ -168,8 +168,8 @@ TEST_CASE("active storage: direct uploads and the disk PUT need a session") {
   const std::string data = "uploaded bytes";
   const std::string checksum = storage::checksum(data);
   const std::string json_headers = kSameOrigin + "Content-Type: application/json\r\n";
-  const std::string body = R"({"blob":{"filename":"up.txt","byte_size":14,"checksum":")" + checksum +
-                           R"(","content_type":"text/plain"}})";
+  const std::string body =
+      R"({"blob":{"filename":"up.txt","byte_size":14,"checksum":")" + checksum + R"(","content_type":"text/plain"}})";
   CHECK(c.request("POST", "/rails/active_storage/direct_uploads", json_headers, body).status == 401);
   const std::string cookie = sign_in(c);
   const Reply created = c.request("POST", "/rails/active_storage/direct_uploads", json_headers + cookie, body);

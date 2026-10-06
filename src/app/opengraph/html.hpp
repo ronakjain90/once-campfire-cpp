@@ -3,12 +3,11 @@
 // opengraph/html.rs.
 #pragma once
 
+#include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
-
-#include <optional>
 
 namespace campfire::app::opengraph {
 

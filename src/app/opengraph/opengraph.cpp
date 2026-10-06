@@ -27,7 +27,9 @@ constexpr std::array<std::string_view, 4> kAllowedImageContentTypes = {"image/jp
                                                                        "image/webp"};
 constexpr std::string_view kAllowedDocumentContentType = "text/html";
 
-bool is_blank(std::string_view text) { return richtext::is_blank(text); }
+bool is_blank(std::string_view text) {
+  return richtext::is_blank(text);
+}
 
 struct Context {
   const unfurl::Network& network;
@@ -42,16 +44,19 @@ bool word_char(char c) {
 // `url.match(FILES_AND_MEDIA_URL_REGEX)`: /\bhttps?:\/\/\S+\.(?:zip|tar|...|mpeg)\b/
 bool files_and_media_url(std::string_view text) {
   static constexpr std::array<std::string_view, 37> kExtensions = {
-      "zip", "tar",  "gz",  "bz2", "xz",  "rar", "7z",  "dmg", "exe",  "msi", "pkg", "deb", "iso",
-      "jpg", "jpeg", "png", "gif", "bmp", "mp4", "mov", "avi", "mkv",  "wmv", "flv", "heic", "heif",
+      "zip", "tar",  "gz",  "bz2", "xz",  "rar",  "7z",  "dmg", "exe",  "msi",    "pkg",    "deb",  "iso",
+      "jpg", "jpeg", "png", "gif", "bmp", "mp4",  "mov", "avi", "mkv",  "wmv",    "flv",    "heic", "heif",
       "mp3", "wav",  "ogg", "aac", "wma", "webm", "ogv", "mpg", "mpeg", "tar.gz", "tar.bz2"};
   const auto space = [](char c) { return c == ' ' || (c >= '\t' && c <= '\r'); };
   for (std::size_t i = 0; i < text.size(); ++i) {
     if (i > 0 && word_char(text[i - 1])) continue;
     std::size_t rest;
-    if (text.compare(i, 8, "https://") == 0) rest = i + 8;
-    else if (text.compare(i, 7, "http://") == 0) rest = i + 7;
-    else continue;
+    if (text.compare(i, 8, "https://") == 0)
+      rest = i + 8;
+    else if (text.compare(i, 7, "http://") == 0)
+      rest = i + 7;
+    else
+      continue;
     std::size_t end = rest;
     while (end < text.size() && !space(text[end])) ++end;
     const std::string_view run = text.substr(rest, end - rest);
@@ -291,7 +296,8 @@ bool is_twitter_host(const std::optional<std::string>& host) {
 Result<bool> tweet_url(std::string_view url) {
   auto parsed = richtext::parse_uri(url);
   if (!parsed) {
-    if (parsed.error() == richtext::UriError::InvalidComponent) return fail(Errc::Internal, "URI::InvalidComponentError");
+    if (parsed.error() == richtext::UriError::InvalidComponent)
+      return fail(Errc::Internal, "URI::InvalidComponentError");
     return false;
   }
   return is_twitter_host(parsed->host) && parsed->path && !is_blank(*parsed->path) && *parsed->path != "/";
@@ -322,7 +328,8 @@ Result<std::optional<std::string>> metadata_document(const Context& context, std
 }
 
 // `valid_canonical_url(url, fallback)`
-std::string valid_canonical_url(const Context& context, const std::optional<std::string>& url, std::string_view fallback) {
+std::string valid_canonical_url(const Context& context, const std::optional<std::string>& url,
+                                std::string_view fallback) {
   if (url) {
     Location location(context, *url);
     if (location.is_valid()) return *url;

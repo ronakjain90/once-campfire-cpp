@@ -86,9 +86,8 @@ Result<ServedFile> serving(const FileRequest& request, const std::filesystem::pa
   const auto size_text = std::to_string(size);
   if (ranges->size() == 1) {
     const auto range = ranges->front();
-    served.headers.emplace_back("content-range",
-                                "bytes " + std::to_string(range.first) + "-" + std::to_string(range.last) + "/" +
-                                    size_text);
+    served.headers.emplace_back(
+        "content-range", "bytes " + std::to_string(range.first) + "-" + std::to_string(range.last) + "/" + size_text);
     if (auto added = add_range(range); !added) return std::unexpected(added.error());
   } else {
     set_header(served, "content-type", "multipart/byteranges; boundary=" + std::string(kBoundary));

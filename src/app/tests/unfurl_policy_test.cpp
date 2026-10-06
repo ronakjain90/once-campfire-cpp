@@ -24,7 +24,7 @@ unfurl::Network network_to(std::uint16_t port, std::vector<std::string>* dialed 
   network.lookup = [](const std::string& host) {
     std::vector<std::string> out;
     if (host == "www.example.com") out.push_back(std::string("\x5d\xb8\xd8\x22", 4));  // 93.184.216.34
-    if (host == "private.example") out.push_back(std::string("\x0a\x00\x00\x01", 4));   // 10.0.0.1
+    if (host == "private.example") out.push_back(std::string("\x0a\x00\x00\x01", 4));  // 10.0.0.1
     return out;
   };
   network.dial_override = [port, dialed](std::string& ip, std::uint16_t& target) {
@@ -200,7 +200,9 @@ TEST_CASE("opengraph html: references decode like libxml2") {
   CHECK(title("&apos;") == "a'b");
   CHECK(title("&eacute") == "a&eacuteb");
   CHECK(title("&eacute;x") == "a\xC3\xA9xb");
-  CHECK(title("&#233") == "a\xC3\xA9" "b");
+  CHECK(title("&#233") ==
+        "a\xC3\xA9"
+        "b");
   CHECK(title("&AMP;") == "a&AMP;b");
   CHECK(title("&unknown;") == "a&unknown;b");
   CHECK(title("&#xD800;") == "a");
@@ -210,7 +212,8 @@ TEST_CASE("opengraph html: references decode like libxml2") {
 
 TEST_CASE("opengraph html: the scanner skips what libxml2 skips") {
   const auto title = [](const std::string& html) { return title_of("<meta charset=utf-8>" + html); };
-  CHECK(title("<script><meta property=\"og:title\" content=\"x\"></script><meta property=\"og:title\" content=\"after\">") == "after");
+  CHECK(title("<script><meta property=\"og:title\" content=\"x\"></script><meta property=\"og:title\" "
+              "content=\"after\">") == "after");
   CHECK_FALSE(title("<style><meta property=\"og:title\" content=\"x\"></style>"));
   CHECK_FALSE(title("<!-- <meta property=\"og:title\" content=\"x\"> --><p>"));
   CHECK(title("<!--> <meta property=\"og:title\" content=\"x\"> -->") == "x");

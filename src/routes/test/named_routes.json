@@ -1,0 +1,514 @@
+[
+  {
+    "name": "root",
+    "path": "/",
+    "endpoint": "welcome#show",
+    "defaults": {}
+  },
+  {
+    "name": "new_first_run",
+    "path": "/first_run/new",
+    "endpoint": "first_runs#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_first_run",
+    "path": "/first_run/edit",
+    "endpoint": "first_runs#edit",
+    "defaults": {}
+  },
+  {
+    "name": "first_run",
+    "path": "/first_run",
+    "endpoint": "first_runs#show",
+    "defaults": {}
+  },
+  {
+    "name": "session_transfer",
+    "path": "/session/transfers/:id",
+    "endpoint": "sessions/transfers#show",
+    "defaults": {}
+  },
+  {
+    "name": "new_session",
+    "path": "/session/new",
+    "endpoint": "sessions#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_session",
+    "path": "/session/edit",
+    "endpoint": "sessions#edit",
+    "defaults": {}
+  },
+  {
+    "name": "session",
+    "path": "/session",
+    "endpoint": "sessions#show",
+    "defaults": {}
+  },
+  {
+    "name": "account_users",
+    "path": "/account/users",
+    "endpoint": "accounts/users#index",
+    "defaults": {}
+  },
+  {
+    "name": "new_account_user",
+    "path": "/account/users/new",
+    "endpoint": "accounts/users#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_account_user",
+    "path": "/account/users/:id/edit",
+    "endpoint": "accounts/users#edit",
+    "defaults": {}
+  },
+  {
+    "name": "account_user",
+    "path": "/account/users/:id",
+    "endpoint": "accounts/users#show",
+    "defaults": {}
+  },
+  {
+    "name": "account_bot_key",
+    "path": "/account/bots/:bot_id/key",
+    "endpoint": "accounts/bots/keys#update",
+    "defaults": {}
+  },
+  {
+    "name": "account_bots",
+    "path": "/account/bots",
+    "endpoint": "accounts/bots#index",
+    "defaults": {}
+  },
+  {
+    "name": "new_account_bot",
+    "path": "/account/bots/new",
+    "endpoint": "accounts/bots#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_account_bot",
+    "path": "/account/bots/:id/edit",
+    "endpoint": "accounts/bots#edit",
+    "defaults": {}
+  },
+  {
+    "name": "account_bot",
+    "path": "/account/bots/:id",
+    "endpoint": "accounts/bots#show",
+    "defaults": {}
+  },
+  {
+    "name": "account_join_code",
+    "path": "/account/join_code",
+    "endpoint": "accounts/join_codes#create",
+    "defaults": {}
+  },
+  {
+    "name": "account_logo",
+    "path": "/account/logo",
+    "endpoint": "accounts/logos#show",
+    "defaults": {}
+  },
+  {
+    "name": "edit_account_custom_styles",
+    "path": "/account/custom_styles/edit",
+    "endpoint": "accounts/custom_styles#edit",
+    "defaults": {}
+  },
+  {
+    "name": "account_custom_styles",
+    "path": "/account/custom_styles",
+    "endpoint": "accounts/custom_styles#update",
+    "defaults": {}
+  },
+  {
+    "name": "new_account",
+    "path": "/account/new",
+    "endpoint": "accounts#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_account",
+    "path": "/account/edit",
+    "endpoint": "accounts#edit",
+    "defaults": {}
+  },
+  {
+    "name": "account",
+    "path": "/account",
+    "endpoint": "accounts#show",
+    "defaults": {}
+  },
+  {
+    "name": "join",
+    "path": "/join/:join_code",
+    "endpoint": "users#new",
+    "defaults": {}
+  },
+  {
+    "name": "qr_code",
+    "path": "/qr_code/:id",
+    "endpoint": "qr_code#show",
+    "defaults": {}
+  },
+  {
+    "name": "user_avatar",
+    "path": "/users/:user_id/avatar",
+    "endpoint": "users/avatars#show",
+    "defaults": {}
+  },
+  {
+    "name": "user_ban",
+    "path": "/users/:user_id/ban",
+    "endpoint": "users/bans#destroy",
+    "defaults": {}
+  },
+  {
+    "name": "user_sidebar",
+    "path": "/users/:user_id/sidebar",
+    "endpoint": "users/sidebars#show",
+    "defaults": {
+      "user_id": "me"
+    }
+  },
+  {
+    "name": "new_user_profile",
+    "path": "/users/:user_id/profile/new",
+    "endpoint": "users/profiles#new",
+    "defaults": {
+      "user_id": "me"
+    }
+  },
+  {
+    "name": "edit_user_profile",
+    "path": "/users/:user_id/profile/edit",
+    "endpoint": "users/profiles#edit",
+    "defaults": {
+      "user_id": "me"
+    }
+  },
+  {
+    "name": "user_profile",
+    "path": "/users/:user_id/profile",
+    "endpoint": "users/profiles#show",
+    "defaults": {
+      "user_id": "me"
+    }
+  },
+  {
+    "name": "user_push_subscription_test_notifications",
+    "path": "/users/:user_id/push_subscriptions/:push_subscription_id/test_notifications",
+    "endpoint": "users/push_subscriptions/test_notifications#create",
+    "defaults": {
+      "user_id": "me"
+    }
+  },
+  {
+    "name": "user_push_subscriptions",
+    "path": "/users/:user_id/push_subscriptions",
+    "endpoint": "users/push_subscriptions#index",
+    "defaults": {
+      "user_id": "me"
+    }
+  },
+  {
+    "name": "new_user_push_subscription",
+    "path": "/users/:user_id/push_subscriptions/new",
+    "endpoint": "users/push_subscriptions#new",
+    "defaults": {
+      "user_id": "me"
+    }
+  },
+  {
+    "name": "edit_user_push_subscription",
+    "path": "/users/:user_id/push_subscriptions/:id/edit",
+    "endpoint": "users/push_subscriptions#edit",
+    "defaults": {
+      "user_id": "me"
+    }
+  },
+  {
+    "name": "user_push_subscription",
+    "path": "/users/:user_id/push_subscriptions/:id",
+    "endpoint": "users/push_subscriptions#show",
+    "defaults": {
+      "user_id": "me"
+    }
+  },
+  {
+    "name": "user",
+    "path": "/users/:id",
+    "endpoint": "users#show",
+    "defaults": {}
+  },
+  {
+    "name": "autocompletable_users",
+    "path": "/autocompletable/users",
+    "endpoint": "autocompletable/users#index",
+    "defaults": {}
+  },
+  {
+    "name": "room_messages",
+    "path": "/rooms/:room_id/messages",
+    "endpoint": "messages#index",
+    "defaults": {}
+  },
+  {
+    "name": "new_room_message",
+    "path": "/rooms/:room_id/messages/new",
+    "endpoint": "messages#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_room_message",
+    "path": "/rooms/:room_id/messages/:id/edit",
+    "endpoint": "messages#edit",
+    "defaults": {}
+  },
+  {
+    "name": "room_message",
+    "path": "/rooms/:room_id/messages/:id",
+    "endpoint": "messages#show",
+    "defaults": {}
+  },
+  {
+    "name": "room_bot_message_boosts",
+    "path": "/rooms/:room_id/:bot_key/messages/:message_id/boosts",
+    "endpoint": "messages/boosts/by_bots#create",
+    "defaults": {
+      "format": "json"
+    }
+  },
+  {
+    "name": "room_bot_message_boost",
+    "path": "/rooms/:room_id/:bot_key/messages/:message_id/boosts/:id",
+    "endpoint": "messages/boosts/by_bots#destroy",
+    "defaults": {
+      "format": "json"
+    }
+  },
+  {
+    "name": "room_bot_messages",
+    "path": "/rooms/:room_id/:bot_key/messages",
+    "endpoint": "messages/by_bots#index",
+    "defaults": {
+      "format": "json"
+    }
+  },
+  {
+    "name": "room_bot_message",
+    "path": "/rooms/:room_id/:bot_key/messages/:id",
+    "endpoint": "messages/by_bots#update",
+    "defaults": {
+      "format": "json"
+    }
+  },
+  {
+    "name": "room_refresh",
+    "path": "/rooms/:room_id/refresh",
+    "endpoint": "rooms/refreshes#show",
+    "defaults": {}
+  },
+  {
+    "name": "room_settings",
+    "path": "/rooms/:room_id/settings",
+    "endpoint": "rooms/settings#show",
+    "defaults": {}
+  },
+  {
+    "name": "room_involvement",
+    "path": "/rooms/:room_id/involvement",
+    "endpoint": "rooms/involvements#show",
+    "defaults": {}
+  },
+  {
+    "name": "room_at_message",
+    "path": "/rooms/:room_id/@:message_id",
+    "endpoint": "rooms#show",
+    "defaults": {}
+  },
+  {
+    "name": "rooms",
+    "path": "/rooms",
+    "endpoint": "rooms#index",
+    "defaults": {}
+  },
+  {
+    "name": "new_room",
+    "path": "/rooms/new",
+    "endpoint": "rooms#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_room",
+    "path": "/rooms/:id/edit",
+    "endpoint": "rooms#edit",
+    "defaults": {}
+  },
+  {
+    "name": "room",
+    "path": "/rooms/:id",
+    "endpoint": "rooms#show",
+    "defaults": {}
+  },
+  {
+    "name": "rooms_opens",
+    "path": "/rooms/opens",
+    "endpoint": "rooms/opens#index",
+    "defaults": {}
+  },
+  {
+    "name": "new_rooms_open",
+    "path": "/rooms/opens/new",
+    "endpoint": "rooms/opens#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_rooms_open",
+    "path": "/rooms/opens/:id/edit",
+    "endpoint": "rooms/opens#edit",
+    "defaults": {}
+  },
+  {
+    "name": "rooms_open",
+    "path": "/rooms/opens/:id",
+    "endpoint": "rooms/opens#show",
+    "defaults": {}
+  },
+  {
+    "name": "rooms_closeds",
+    "path": "/rooms/closeds",
+    "endpoint": "rooms/closeds#index",
+    "defaults": {}
+  },
+  {
+    "name": "new_rooms_closed",
+    "path": "/rooms/closeds/new",
+    "endpoint": "rooms/closeds#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_rooms_closed",
+    "path": "/rooms/closeds/:id/edit",
+    "endpoint": "rooms/closeds#edit",
+    "defaults": {}
+  },
+  {
+    "name": "rooms_closed",
+    "path": "/rooms/closeds/:id",
+    "endpoint": "rooms/closeds#show",
+    "defaults": {}
+  },
+  {
+    "name": "rooms_directs",
+    "path": "/rooms/directs",
+    "endpoint": "rooms/directs#index",
+    "defaults": {}
+  },
+  {
+    "name": "new_rooms_direct",
+    "path": "/rooms/directs/new",
+    "endpoint": "rooms/directs#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_rooms_direct",
+    "path": "/rooms/directs/:id/edit",
+    "endpoint": "rooms/directs#edit",
+    "defaults": {}
+  },
+  {
+    "name": "rooms_direct",
+    "path": "/rooms/directs/:id",
+    "endpoint": "rooms/directs#show",
+    "defaults": {}
+  },
+  {
+    "name": "message_boosts",
+    "path": "/messages/:message_id/boosts",
+    "endpoint": "messages/boosts#index",
+    "defaults": {}
+  },
+  {
+    "name": "new_message_boost",
+    "path": "/messages/:message_id/boosts/new",
+    "endpoint": "messages/boosts#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_message_boost",
+    "path": "/messages/:message_id/boosts/:id/edit",
+    "endpoint": "messages/boosts#edit",
+    "defaults": {}
+  },
+  {
+    "name": "message_boost",
+    "path": "/messages/:message_id/boosts/:id",
+    "endpoint": "messages/boosts#show",
+    "defaults": {}
+  },
+  {
+    "name": "messages",
+    "path": "/messages",
+    "endpoint": "messages#index",
+    "defaults": {}
+  },
+  {
+    "name": "new_message",
+    "path": "/messages/new",
+    "endpoint": "messages#new",
+    "defaults": {}
+  },
+  {
+    "name": "edit_message",
+    "path": "/messages/:id/edit",
+    "endpoint": "messages#edit",
+    "defaults": {}
+  },
+  {
+    "name": "message",
+    "path": "/messages/:id",
+    "endpoint": "messages#show",
+    "defaults": {}
+  },
+  {
+    "name": "clear_searches",
+    "path": "/searches/clear",
+    "endpoint": "searches#clear",
+    "defaults": {}
+  },
+  {
+    "name": "searches",
+    "path": "/searches",
+    "endpoint": "searches#index",
+    "defaults": {}
+  },
+  {
+    "name": "unfurl_link",
+    "path": "/unfurl_link",
+    "endpoint": "unfurl_links#create",
+    "defaults": {}
+  },
+  {
+    "name": "webmanifest",
+    "path": "/webmanifest",
+    "endpoint": "pwa#manifest",
+    "defaults": {}
+  },
+  {
+    "name": "service_worker",
+    "path": "/service-worker",
+    "endpoint": "pwa#service_worker",
+    "defaults": {}
+  },
+  {
+    "name": "rails_health_check",
+    "path": "/up",
+    "endpoint": "rails/health#show",
+    "defaults": {}
+  }
+]

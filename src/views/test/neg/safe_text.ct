@@ -1,0 +1,2 @@
+{% params std::string_view text %}
+{{= text }}

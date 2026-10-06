@@ -1,0 +1,6 @@
+{% include <cstdint> %}
+{% include <optional> %}
+{% include <string> %}
+{% params %}
+{{ -5 }} {{ std::uint64_t{18446744073709551615ULL} }} {{ true }} {{ std::string("a<") }} {{ std::optional<int>{} }}|{{ std::optional<int>{7} }}
+{{ SafeHtml::literal("<s>") }} {{= SafeHtml::literal("<s>") }}

@@ -1,0 +1,6 @@
+{% include <vector> %}
+{% include <optional> %}
+{% params std::string_view name, SafeHtml markup, const std::vector<std::string_view>& items, int n, bool flag, std::optional<std::string_view> nothing %}
+<p>{{ name }}</p>
+<p title="{{ name }}">{{n}} {{ flag }} [{{ nothing }}]</p>
+{{ "lit<>" }}{{ std::string("s&") }}

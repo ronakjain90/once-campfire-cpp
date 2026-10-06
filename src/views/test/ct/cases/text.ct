@@ -1,0 +1,6 @@
+{% include <vector> %}
+{% include <optional> %}
+{% params std::string_view name, SafeHtml markup, const std::vector<std::string_view>& items, int n, bool flag, std::optional<std::string_view> nothing %}
+Plain text: <div class="a">'q' & "d" \ back\slash</div>
+	tab, unicode: é ✓ 😀, trailing spaces   
+last line without newline

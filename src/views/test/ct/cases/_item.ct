@@ -1,0 +1,2 @@
+{% params std::string_view label, int index %}
+<li data-i="{{ index }}">{{ label }}</li>

@@ -1,0 +1,10 @@
+{% include <vector> %}
+{% include <optional> %}
+{% params std::string_view name, SafeHtml markup, const std::vector<std::string_view>& items, int n, bool flag, std::optional<std::string_view> nothing %}
+{%- for item : items -%}
+  {%- if item == "b" -%}
+<b>{{ item }}</b>
+  {%- else -%}
+<s>{{ item }}</s>
+  {%- end %}
+{% end -%}

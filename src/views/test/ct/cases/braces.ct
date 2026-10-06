@@ -1,0 +1,5 @@
+{% include <vector> %}
+{% include <optional> %}
+{% params std::string_view name, SafeHtml markup, const std::vector<std::string_view>& items, int n, bool flag, std::optional<std::string_view> nothing %}
+{{ std::string_view("}}") }} {{ std::string(1, '}') }} {% if flag && std::string_view("%}").size() == 2 %}ok{% end %}
+{{ std::vector<int>{1, 2}.size() }}

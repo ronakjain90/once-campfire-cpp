@@ -26,8 +26,8 @@ constexpr Range kWordRanges[] = {
 };
 
 constexpr std::array<std::string_view, 24> kSchemes = {
-    "ed2k",  "ftp",  "http",   "https", "irc", "mailto", "news", "gopher", "nntp", "telnet", "webcal", "xmpp",
-    "callto", "feed", "svn",    "urn",   "aim", "rsync",  "tag",  "ssh",    "sftp", "rtsp",   "afs",    "file"};
+    "ed2k",   "ftp",  "http", "https", "irc", "mailto", "news", "gopher", "nntp", "telnet", "webcal", "xmpp",
+    "callto", "feed", "svn",  "urn",   "aim", "rsync",  "tag",  "ssh",    "sftp", "rtsp",   "afs",    "file"};
 
 char lower(char c) {
   return (c >= 'A' && c <= 'Z') ? static_cast<char>(c - 'A' + 'a') : c;
@@ -55,7 +55,8 @@ bool is_url_stop(std::string_view text, std::size_t pos) {
   if (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\v' || c == '\f' || c == '<' || c == '"') {
     return true;
   }
-  return static_cast<unsigned char>(c) == 0xC2 && pos + 1 < text.size() && static_cast<unsigned char>(text[pos + 1]) == 0xA0;
+  return static_cast<unsigned char>(c) == 0xC2 && pos + 1 < text.size() &&
+         static_cast<unsigned char>(text[pos + 1]) == 0xA0;
 }
 
 struct UrlMatch {
@@ -78,7 +79,8 @@ std::optional<UrlMatch> find_url(std::string_view text, std::size_t from) {
     }
     if (prefix_end == 0) {
       for (std::string_view scheme : kSchemes) {
-        if (scheme[0] == c && starts_with_nocase(text, i, scheme) && text.substr(i + scheme.size()).starts_with("://")) {
+        if (scheme[0] == c && starts_with_nocase(text, i, scheme) &&
+            text.substr(i + scheme.size()).starts_with("://")) {
           prefix_end = i + scheme.size() + 3;
           has_scheme = true;
           break;

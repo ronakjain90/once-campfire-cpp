@@ -230,7 +230,8 @@ Result<OpengraphEmbed> embed_from_content(std::string_view content, std::string_
   for (Node* n : all) {
     if (is_named(n, "img")) {
       const auto up = ancestors(n);
-      if (std::any_of(up.begin(), up.end(), [](Node* a) { return a->is_element() && has_class(a, "og-embed__image"); })) {
+      if (std::any_of(up.begin(), up.end(),
+                      [](Node* a) { return a->is_element() && has_class(a, "og-embed__image"); })) {
         image = n;
         break;
       }
@@ -389,7 +390,7 @@ bool is_asset_uri(std::string_view url) {
     const std::string_view rest = url.substr(line);
     std::size_t n = 0;
     while (n < rest.size() && (rest[n] == '-' || (std::isalpha(static_cast<unsigned char>(rest[n])) != 0 &&
-                                                   static_cast<unsigned char>(rest[n]) < 0x80))) {
+                                                  static_cast<unsigned char>(rest[n]) < 0x80))) {
       ++n;
     }
     if (n > 0 && rest.substr(n).starts_with("://")) {
@@ -494,8 +495,8 @@ Result<std::string> render_attachment(const Attachment& attachment, const Render
       html = "<figure class=\"attachment attachment--preview attachment--video\">\n  <video controls=\"controls\"";
       if (a.width) html += " width=\"" + html_escape(*a.width) + "\"";
       if (a.height) html += " height=\"" + html_escape(*a.height) + "\"";
-      html += ">\n    <source src=\"" + html_escape(a.url) + "\" type=\"" + html_escape(a.content_type) +
-              "\">\n</video>";
+      html +=
+          ">\n    <source src=\"" + html_escape(a.url) + "\" type=\"" + html_escape(a.content_type) + "\">\n</video>";
       append_caption(html, attachment);
       html += "</figure>\n";
       break;
@@ -512,8 +513,7 @@ PlainTextRepresentation attachment_plain_text(const Attachment& attachment) {
     case Attachable::Kind::OpengraphEmbed: return {false, ""};
     case Attachable::Kind::Content: return {true, a.content};
     case Attachable::Kind::RemoteImage: return {false, "[" + caption.value_or("Image") + "]"};
-    case Attachable::Kind::RemoteVideo:
-      return {false, "[" + (caption ? *caption : a.filename.value_or("Video")) + "]"};
+    case Attachable::Kind::RemoteVideo: return {false, "[" + (caption ? *caption : a.filename.value_or("Video")) + "]"};
     case Attachable::Kind::Missing: return {false, caption.value_or("")};
   }
   return {};

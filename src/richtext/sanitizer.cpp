@@ -806,7 +806,7 @@ std::expected<std::string, ParseError> sanitize(std::string_view html, const Saf
 }
 
 std::expected<std::string, ParseError> sanitize_with_escaped_attribute_brackets(std::string_view html,
-                                                                                  const SafeList& list) {
+                                                                                const SafeList& list) {
   if (html.empty()) {
     return std::string();
   }

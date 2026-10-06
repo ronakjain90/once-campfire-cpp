@@ -35,8 +35,8 @@ constexpr std::array<std::pair<std::string_view, std::string_view>, 12> kTrixAtt
 
 // The attachment attributes of Action Text (and Lexxy), in the order of the sanitizer list.
 constexpr std::array<std::string_view, 12> kAttachmentAttributes = {
-    "sgid", "content-type", "url",          "href",    "filename", "filesize",
-    "width", "height",      "previewable", "presentation", "caption", "content"};
+    "sgid",  "content-type", "url",         "href",         "filename", "filesize",
+    "width", "height",       "previewable", "presentation", "caption",  "content"};
 
 Node* make_attachment(Dom& dom, const std::vector<std::pair<std::string_view, std::string>>& attrs) {
   Node* node = dom.create_element(kAttachmentTag);
@@ -86,7 +86,8 @@ Result<void> convert_trix_attachments(Dom& dom, Node* root, const RenderContext&
         if (!known) {
           continue;
         }
-        auto existing = std::find_if(attributes.begin(), attributes.end(), [&](const auto& a) { return a.first == key; });
+        auto existing =
+            std::find_if(attributes.begin(), attributes.end(), [&](const auto& a) { return a.first == key; });
         if (existing != attributes.end()) {
           existing->second = value;
         } else {
@@ -264,7 +265,8 @@ Result<void> render_attachment_galleries(Dom& dom, Node* root, const RenderConte
 }
 
 Result<std::string> render_attachment_html_at(const Attachment& attachment, const RenderContext& ctx, int depth) {
-  return render_attachment(attachment, [&](std::string_view content) { return render_content_at(content, ctx, depth); });
+  return render_attachment(attachment,
+                           [&](std::string_view content) { return render_content_at(content, ctx, depth); });
 }
 
 }  // namespace

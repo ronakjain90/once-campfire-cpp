@@ -23,7 +23,7 @@ inline constexpr std::string_view kOpengraphEmbedContentType = "application/vnd.
 struct MentionUser {
   std::int64_t id = 0;
   std::string name;
-  std::string title;           // User#title: name and bio joined with " – "
+  std::string title;            // User#title: name and bio joined with " – "
   std::string attachable_sgid;  // user.attachable_sgid: a new SGID for the "attachable" purpose
   std::string user_path;        // user_path(user)
   std::string avatar_path;      // fresh_user_avatar_path(user)
@@ -37,8 +37,8 @@ struct SignedLookup {
     Invalid,        // Bad signature, wrong purpose, expired, or not an SGID.
   };
   Kind kind = Kind::Invalid;
-  MentionUser user;         // Kind::User
-  std::string model_name;   // Kind::MissingRecord
+  MentionUser user;        // Kind::User
+  std::string model_name;  // Kind::MissingRecord
 };
 
 // A record that `GlobalID.find` located.
@@ -132,7 +132,8 @@ struct Attachment {
 // `render_action_text_attachment(attachment)`: the partial of the attachable, chomped.
 // `render_content` renders the content of a nested content attachment (ContentAttachment#to_html).
 using RenderContentFn = std::function<Result<std::string>(std::string_view content)>;
-[[nodiscard]] Result<std::string> render_attachment(const Attachment& attachment, const RenderContentFn& render_content);
+[[nodiscard]] Result<std::string> render_attachment(const Attachment& attachment,
+                                                    const RenderContentFn& render_content);
 
 // reference/app/views/users/_mention.html.erb, with `avatar_tag`.
 [[nodiscard]] std::string render_mention(const MentionUser& user);

@@ -234,7 +234,8 @@ struct Tally {
     if (ok) {
       ++equal;
     } else if (failures.size() < 20) {
-      failures.push_back("  FAIL " + name + "\n    expected: " + expected.substr(0, 500) + "\n    actual:   " + actual.substr(0, 500));
+      failures.push_back("  FAIL " + name + "\n    expected: " + expected.substr(0, 500) +
+                         "\n    actual:   " + actual.substr(0, 500));
     }
   }
 };
@@ -266,7 +267,8 @@ TEST_CASE("the attachment pipeline matches Rails for all corpus cases") {
     const RenderContext ctx{resolver, str(c, "host")};
     const Value& presentation = *c.find("presentation");
     const std::string raised_message = str(c, "presentation_raised_message");
-    const bool raised = c.find("presentation_raised") != nullptr && c.find("presentation_raised")->get_string() != nullptr;
+    const bool raised =
+        c.find("presentation_raised") != nullptr && c.find("presentation_raised")->get_string() != nullptr;
     const bool missing_partial = raised_message.find("to_missing_attachable_partial_path") != std::string::npos;
 
     // presentation and presentation_raised
@@ -282,8 +284,8 @@ TEST_CASE("the attachment pipeline matches Rails for all corpus cases") {
         t.note(ok, name, "<contains ☒>", actual.html);
         if (ok) ++t.deliberate;
       } else {
-        t.note(actual.kind == Presentation::Kind::Html && actual.html == with_port_divergences(ok_string(presentation)), name,
-               with_port_divergences(ok_string(presentation)), actual.html);
+        t.note(actual.kind == Presentation::Kind::Html && actual.html == with_port_divergences(ok_string(presentation)),
+               name, with_port_divergences(ok_string(presentation)), actual.html);
       }
       Tally& r = tallies["presentation_raised"];
       if (missing_partial) {
@@ -359,7 +361,8 @@ TEST_CASE("the attachment pipeline matches Rails for all corpus cases") {
         // Deliberate (README "Rich text attributes"): `name` attributes are dropped, and a style keeps
         // only plain color values. The two are compared with the style attribute removed.
         const std::string want = ok_string(expected);
-        const bool has_style = want.find(" style=\"") != std::string::npos || actual->find(" style=\"") != std::string::npos;
+        const bool has_style =
+            want.find(" style=\"") != std::string::npos || actual->find(" style=\"") != std::string::npos;
         std::string a = without_attribute(*actual, "name");
         std::string w = without_attribute(want, "name");
         if (has_style) {
@@ -385,13 +388,15 @@ TEST_CASE("the attachment pipeline matches Rails for all corpus cases") {
       const Value* v = expected.find("ok");
       const bool has = v != nullptr && v->get_string() != nullptr;
       const bool ok = actual.has_value() && actual->has_value() == has && (!has || **actual == *v->get_string());
-      t.note(ok, value, has ? *v->get_string() : "<none>", !actual ? "<error>" : (actual->has_value() ? **actual : "<none>"));
+      t.note(ok, value, has ? *v->get_string() : "<none>",
+             !actual ? "<error>" : (actual->has_value() ? **actual : "<none>"));
     }
   }
 
   std::size_t failed = 0;
   for (const auto& [field, t] : tallies) {
-    std::printf("corpus %-20s %zu of %zu equal (%zu by a documented difference)\n", field.c_str(), t.equal, t.total, t.deliberate);
+    std::printf("corpus %-20s %zu of %zu equal (%zu by a documented difference)\n", field.c_str(), t.equal, t.total,
+                t.deliberate);
     for (const auto& f : t.failures) {
       std::printf("%s\n", f.c_str());
     }

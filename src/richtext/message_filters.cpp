@@ -54,7 +54,8 @@ Result<std::optional<std::string>> normalize_tweet_url(const std::optional<std::
 Result<Content> remove_solo_unfurled_link_text(Content content, const RenderContext& ctx) {
   std::vector<Node*> unfurled_links;
   for (Node* n : descendants(content.root)) {
-    if (is_named(n, kAttachmentTag) && attr_value(n, "content-type") == std::optional<std::string_view>(kOpengraphEmbedContentType)) {
+    if (is_named(n, kAttachmentTag) &&
+        attr_value(n, "content-type") == std::optional<std::string_view>(kOpengraphEmbedContentType)) {
       unfurled_links.push_back(n);
     }
   }
@@ -93,7 +94,8 @@ Result<Content> remove_solo_unfurled_link_text(Content content, const RenderCont
         continue;
       }
       const std::vector<Node*> inside = descendants(p);
-      const bool has_attachment = std::any_of(inside.begin(), inside.end(), [](Node* n) { return is_named(n, kAttachmentTag); });
+      const bool has_attachment =
+          std::any_of(inside.begin(), inside.end(), [](Node* n) { return is_named(n, kAttachmentTag); });
       if (!has_attachment) {
         dom.detach(p);
       }

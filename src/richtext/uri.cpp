@@ -14,10 +14,18 @@ namespace {
 
 using Bytes = std::string_view;
 
-bool is_alpha(unsigned char b) { return std::isalpha(b) != 0 && b < 0x80; }
-bool is_digit(unsigned char b) { return b >= '0' && b <= '9'; }
-bool is_hex(unsigned char b) { return is_digit(b) || (b >= 'a' && b <= 'f') || (b >= 'A' && b <= 'F'); }
-bool is_alnum(unsigned char b) { return is_alpha(b) || is_digit(b); }
+bool is_alpha(unsigned char b) {
+  return std::isalpha(b) != 0 && b < 0x80;
+}
+bool is_digit(unsigned char b) {
+  return b >= '0' && b <= '9';
+}
+bool is_hex(unsigned char b) {
+  return is_digit(b) || (b >= 'a' && b <= 'f') || (b >= 'A' && b <= 'F');
+}
+bool is_alnum(unsigned char b) {
+  return is_alpha(b) || is_digit(b);
+}
 
 std::string ascii_lower(std::string_view s) {
   std::string out(s);
@@ -77,10 +85,18 @@ std::size_t take_while_class(Bytes s, std::size_t i, Pred class_fn) {
   }
 }
 
-bool seg_char(unsigned char b) { return is_unreserved_or_sub(b) || b == ':' || b == '@' || b == '/'; }
-bool seg_nc_char(unsigned char b) { return is_unreserved_or_sub(b) || b == '@'; }
-bool fragment_char(unsigned char b) { return is_unreserved_or_sub(b) || b == ':' || b == '@' || b == '/' || b == '?'; }
-bool userinfo_char(unsigned char b) { return is_unreserved_or_sub(b) || b == ':'; }
+bool seg_char(unsigned char b) {
+  return is_unreserved_or_sub(b) || b == ':' || b == '@' || b == '/';
+}
+bool seg_nc_char(unsigned char b) {
+  return is_unreserved_or_sub(b) || b == '@';
+}
+bool fragment_char(unsigned char b) {
+  return is_unreserved_or_sub(b) || b == ':' || b == '@' || b == '/' || b == '?';
+}
+bool userinfo_char(unsigned char b) {
+  return is_unreserved_or_sub(b) || b == ':';
+}
 
 // The IP-literal alternative of HOST (a bracketed address). Returns its end.
 std::optional<std::size_t> ip_literal(Bytes s, std::size_t i) {
@@ -98,9 +114,9 @@ std::optional<std::size_t> ip_literal(Bytes s, std::size_t i) {
     if (dot != std::string::npos) {
       const std::string_view hex = std::string_view(inner).substr(1, dot - 1);
       const std::string_view rest = std::string_view(inner).substr(dot + 1);
-      valid = !hex.empty() && std::all_of(hex.begin(), hex.end(), [](char c) { return is_hex(static_cast<unsigned char>(c)); }) &&
-              !rest.empty() &&
-              std::all_of(rest.begin(), rest.end(), [](char c) {
+      valid = !hex.empty() &&
+              std::all_of(hex.begin(), hex.end(), [](char c) { return is_hex(static_cast<unsigned char>(c)); }) &&
+              !rest.empty() && std::all_of(rest.begin(), rest.end(), [](char c) {
                 return is_unreserved_or_sub(static_cast<unsigned char>(c)) || c == ':';
               });
     }
@@ -274,8 +290,8 @@ std::optional<Uri> split_relative(std::string_view value) {
     valid = take_while_class(s, 0, seg_char) == tail->hier_end;
   } else {
     const std::size_t first = take_while_class(s, 0, seg_nc_char);
-    valid = first > 0 && (first == tail->hier_end ||
-                          (s[first] == '/' && take_while_class(s, first, seg_char) == tail->hier_end));
+    valid = first > 0 &&
+            (first == tail->hier_end || (s[first] == '/' && take_while_class(s, first, seg_char) == tail->hier_end));
   }
   if (!valid) {
     return std::nullopt;

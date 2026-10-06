@@ -70,21 +70,25 @@ bool Worker::fill(Conn& c) {
   c.rbuf.reserve(c.rbuf.size() + kReadStep);
   const std::size_t room = c.rbuf.room();
   std::size_t got = 0;
-  if (io_read(c, c.rbuf.tail(), room, got) != Io::Ok) {
+  const Io result = io_read(c, c.rbuf.tail(), room, got);
+  if (result != Io::Ok) {
     if (got != 0) {
       c.rbuf.commit(got);
       return true;
+    }
+    if (result == Io::WouldBlock) {
+      c.readable = false;  // the socket has no more bytes: wait for the next event
+      return false;
     }
     close_conn(c);
     return false;
   }
   c.rbuf.commit(got);
-  if (got < room) c.readable = false;
+  if (got < room && !c.ssl) c.readable = false;  // TLS: a record is not all the bytes
   return true;
 }
 
 bool Worker::step_head(Conn& c) {
-  log_info("step_head h2c={} rbuf={}", c.h2c, c.rbuf.size());
   if (c.h2c) {
     // `Protocol::Auto`: the first bytes decide between HTTP/1.1 and HTTP/2 (the preface).
     const std::size_t compared = std::min(c.rbuf.size(), kH2Preface.size());

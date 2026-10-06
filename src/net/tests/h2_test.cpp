@@ -177,14 +177,16 @@ class H2Client {
                         reinterpret_cast<std::uint8_t*>(values[i].data()), names[i].size(), values[i].size(),
                         NGHTTP2_NV_FLAG_NONE});
     }
-    bodies_.push_back(std::string(body));
+    bodies_.emplace_back(std::string(body), 0);
     nghttp2_data_provider provider{};
     provider.source.ptr = &bodies_.back();
     provider.read_callback = [](nghttp2_session*, std::int32_t, std::uint8_t* data, std::size_t length,
-                                std::uint32_t*, nghttp2_data_source* source, void*) -> ssize_t {
-      const auto* text = static_cast<const std::string*>(source->ptr);
-      const std::size_t take = std::min(text->size(), length);
-      std::memcpy(data, text->data(), take);
+                                std::uint32_t* flags, nghttp2_data_source* source, void*) -> ssize_t {
+      auto* body = static_cast<std::pair<std::string, std::size_t>*>(source->ptr);
+      const std::size_t take = std::min(body->first.size() - body->second, length);
+      std::memcpy(data, body->first.data() + body->second, take);
+      body->second += take;
+      if (body->second == body->first.size()) *flags |= NGHTTP2_DATA_FLAG_EOF;
       return static_cast<ssize_t>(take);
     };
     // A request body goes with the HEADERS of the request, as one data provider (not as a
@@ -207,7 +209,7 @@ class H2Client {
           ssl_ != nullptr ? SSL_read(ssl_, chunk, sizeof chunk) : static_cast<int>(::recv(fd_, chunk, sizeof chunk, 0));
       if (n <= 0) {
         if (state.ended) break;
-        if (errno == EAGAIN || errno == EWOULDBLOCK) continue;
+        if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) continue;
         break;
       }
       state.pending.append(chunk, static_cast<std::size_t>(n));
@@ -234,7 +236,7 @@ class H2Client {
       const int n =
           ssl_ != nullptr ? SSL_read(ssl_, chunk, sizeof chunk) : static_cast<int>(::recv(fd_, chunk, sizeof chunk, 0));
       if (n <= 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) continue;
+        if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) continue;  // n == 0: the peer closed
         return true;
       }
     }
@@ -280,7 +282,7 @@ class H2Client {
   nghttp2_session_callbacks* callbacks_ = nullptr;
   std::string alpn_;
   ClientState state_;               // the `user_data` of `session_`
-  std::deque<std::string> bodies_;  // the DATA of the requests: `std::deque` keeps the pointers
+  std::deque<std::pair<std::string, std::size_t>> bodies_;  // the DATA of the requests: `std::deque` keeps the pointers
 };
 
 std::shared_ptr<front::TlsServer> tls_server(const std::filesystem::path& storage) {
@@ -325,7 +327,7 @@ TEST_CASE("the HTTPS port speaks HTTP/2 when ALPN chooses it") {
   CHECK(reply.get("x-cache") == "miss");
   CHECK(reply.get("vary") == "Accept-Encoding");
   CHECK_FALSE(reply.get("date").empty());
-  CHECK(reply.get("x-forwarded-proto") == "https");
+  CHECK(reply.body.find("\nx-forwarded-proto: https") != std::string::npos);
   // HTTP/2 forbids connection-specific headers.
   CHECK(reply.get("connection").empty());
   CHECK(reply.get("transfer-encoding").empty());
@@ -365,7 +367,6 @@ TEST_CASE("several streams on one connection, and a second request after the fir
 }
 
 TEST_CASE("a cleartext client speaks HTTP/2 only when H2C_ENABLED is on") {
-  Logger::instance().set_level(LogLevel::Debug);
   {
     ServerOptions options;
     options.h2c = true;
@@ -394,7 +395,8 @@ TEST_CASE("a cleartext client speaks HTTP/2 only when H2C_ENABLED is on") {
     setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
     char chunk[4096];
     const ssize_t got = ::recv(fd, chunk, sizeof chunk, 0);
-    CHECK(got <= 0);  // the server gives up on a head it cannot parse
+    // The server answers with an HTTP/1.1 error (or closes): it never speaks HTTP/2.
+    CHECK((got <= 0 || std::string_view(chunk, static_cast<std::size_t>(got)).rfind("HTTP/1.1 ", 0) == 0));
     ::close(fd);
   }
 }

@@ -464,7 +464,7 @@ bool Worker::h2_step(Conn& c) {
     const Io result = io_read(c, c.rbuf.tail(), room, got);
     if (got != 0) {
       c.rbuf.commit(got);
-      if (result == Io::Ok && got < room) c.readable = false;
+      if (result == Io::Ok && got < room && !c.ssl) c.readable = false;  // TLS: a record is not all the bytes
       progress = true;
     } else if (result == Io::WouldBlock) {
       c.readable = false;

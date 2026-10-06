@@ -1,7 +1,9 @@
-# Writes erb/<case>.<set>.expected: the output of the ERB file with trim_mode "-". The C++ test
+# Writes erb/<case>.<set>.expected: the output of the ERB file compiled by Erubi (the engine of
+# Rails ActionView, trim mode on). The C++ test
 # compares the output of the matching .ct file with it. Run it in the campfire-reference image:
-#   docker run --rm -v $PWD/src/views/test:/t campfire-reference:app ruby /t/gen_expected.rb /t
+#   docker run --rm -v $PWD/src/views/test:/t campfire-reference:app bundle exec ruby /t/gen_expected.rb /t
 require "erb"
+require "erubi"
 
 DIR = ARGV.fetch(0)
 SETS = {
@@ -18,7 +20,7 @@ end
 Dir[File.join(DIR, "erb", "*.erb")].sort.each do |path|
   base = File.basename(path, ".erb")
   SETS.each do |set, vars|
-    out = ERB.new(File.read(path), trim_mode: "-").result(Ctx.new(vars).get_binding)
+    out = eval(Erubi::Engine.new(File.binread(path)).src, Ctx.new(vars).get_binding)
     File.binwrite(File.join(DIR, "erb", "#{base}.#{set}.expected"), out)
   end
 end

@@ -22,9 +22,13 @@ Syntax:
   {% params T a, U b %}       the parameters of the function (consumes its own line)
   {% include path.hpp %}      add an #include to the header and the source (consumes its line)
   {# text #}                  comment; the first comment names the ERB source file
-  `-%}` `-}}` `-#}`           remove the newline after the tag (ERB `-%>`)
-  `{%-` `{{- ` `{#-`          remove the indentation before the tag, if the tag starts its line
-                              (ERB `<%-`)
+  Trim (Erubi, trim mode): a line that holds only a `{% %}` statement tag or a `{# #}` comment
+                              loses its indentation and its newline. Text before or after the tag
+                              on the same line stops the trim. `{%-` and `-%}` are the same as `{%`
+                              and `%}` (Erubi gives `<%-` and `-%>` no effect on a statement).
+  `{% call %}` `{% wrap %}` `{% render %}` stand for ERB `<%= %>`: no trim, as for `{{ }}`.
+  `-}}` `-%}`                 remove the newline after an expression (ERB `<%= x -%>`)
+  `{{- `                      remove the indentation before an expression (ctc only)
 
 Names: the file `a/b/_c.ct` is the function `campfire::views::a::b::c`. A dot in a file name
 becomes `_`. A name that is a C++ keyword gets a `_` suffix.
@@ -100,6 +104,9 @@ def find_close(src, i, opener):
 
 OPEN = re.compile(r"\{\{=?|\{%|\{#")
 DIRECTIVE = re.compile(r"(params|include)\b")
+EXPR_TAG = re.compile(r"\s*(call|wrap|render)\b")
+SPACE_ONLY = re.compile(r"[ \t]*")
+RSPACE = re.compile(r"[ \t]*\r?\n")
 
 
 def lex(src, path):
@@ -111,6 +118,7 @@ def lex(src, path):
     toks = []
     pos = 0
     n = len(src)
+    is_bol = True  # Erubi: the previous tag ended its line (or no tag yet)
     while True:
         m = OPEN.search(src, pos)
         end = m.start() if m else n
@@ -121,14 +129,39 @@ def lex(src, path):
             return toks
         opener = m.group(0)
         body_start = m.end()
-        # `{%-`, `{#-` and `{{- ` remove the indentation before the tag.
-        if opener != "{{=" and src.startswith("-", body_start):
-            if opener != "{{" or src[body_start + 1:body_start + 2] in (" ", "\t", "\r", "\n"):
-                body_start += 1
-                stripped = text.rstrip(" \t")
-                chunk_starts_line = pos == 0 or src[pos - 1] == "\n"
-                if stripped.endswith("\n") or (stripped == "" and chunk_starts_line):
-                    text = stripped
+        stmt_like = opener in ("{%", "{#")
+        # `{%-` and `{#-` are the same as `{%` and `{#`: Erubi gives `<%-` no extra effect.
+        if stmt_like and src.startswith("-", body_start):
+            body_start += 1
+        # `call`, `wrap` and `render` stand for ERB `<%= ... %>`: Erubi does not trim an expression.
+        if opener == "{%" and EXPR_TAG.match(src, body_start):
+            stmt_like = False
+        # Erubi (lib/erubi.rb): the spaces before a statement tag or a comment are "lspace" when
+        # the tag is the first thing on its line.
+        lspace = None
+        if stmt_like:
+            if text == "":
+                if is_bol:
+                    lspace = ""
+            elif text.endswith("\n"):
+                lspace = ""
+            else:
+                cut = text.rfind("\n")
+                if cut >= 0:
+                    if SPACE_ONLY.fullmatch(text[cut + 1:]):
+                        lspace = text[cut + 1:]
+                        text = text[:cut + 1]
+                elif is_bol and SPACE_ONLY.fullmatch(text):
+                    lspace = text
+                    text = ""
+        elif opener == "{{" and src.startswith("-", body_start) \
+                and src[body_start + 1:body_start + 2] in (" ", "\t", "\r", "\n"):
+            # `{{- ` (ctc only): remove the indentation before the tag, if the tag starts its line.
+            body_start += 1
+            stripped = text.rstrip(" \t")
+            chunk_starts_line = pos == 0 or src[pos - 1] == "\n"
+            if stripped.endswith("\n") or (stripped == "" and chunk_starts_line):
+                text = stripped
         if text:
             toks.append(Tok("text", text, line_of(pos)))
         try:
@@ -141,14 +174,31 @@ def lex(src, path):
             body = body[:-1]
         body = body.strip()
         kind = {"{{=": "safe", "{{": "out", "{%": "stmt", "{#": "comment"}[opener]
-        # A `params` or `include` line is not part of the output.
-        consume = trim_right or (kind == "stmt" and DIRECTIVE.match(body))
-        if consume:
-            if src.startswith("\r\n", after):
-                after += 2
-            elif src.startswith("\n", after):
-                after += 1
+        rm = RSPACE.match(src, after)
+        rspace = rm.group(0) if rm else None
+        is_bol = rspace is not None
+        directive = kind == "stmt" and DIRECTIVE.match(body)
+        if stmt_like:
+            # Erubi: a tag with lspace and rspace drops both. A `params` or `include` line is not
+            # part of the output.
+            if rspace is not None:
+                after += len(rspace)
+            if not (lspace is not None and rspace is not None) and not directive:
+                if lspace:
+                    toks.append(Tok("text", lspace, line_of(m.start())))
+                if rspace is not None:
+                    pending_rspace = rspace
+                else:
+                    pending_rspace = None
+            else:
+                pending_rspace = None
+        else:
+            pending_rspace = None
+            if trim_right and rspace is not None:
+                after += len(rspace)  # `-}}`: Erubi drops the newline of an expression
         toks.append(Tok(kind, body, line_of(m.start())))
+        if pending_rspace:
+            toks.append(Tok("text", pending_rspace, line_of(m.start())))
         pos = after
 
 

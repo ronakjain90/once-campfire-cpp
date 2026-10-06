@@ -35,10 +35,10 @@ class QueueScheduler final : public Scheduler {
   QueueScheduler() : owner_(std::this_thread::get_id()) {}
 
   void post(std::coroutine_handle<> handle) override {
-    {
-      const std::lock_guard lock(mutex_);
-      queue_.push_back(handle);
-    }
+    // Notify while the lock is held: the owner can destroy this scheduler as soon as it sees the
+    // handle, and a notify after the unlock would then touch a destroyed condition variable.
+    const std::lock_guard lock(mutex_);
+    queue_.push_back(handle);
     ready_.notify_one();
   }
 

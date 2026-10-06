@@ -1,0 +1,116 @@
+// Rails: app/models/user.rb and app/models/user/bot.rb. Rust: crates/db/src/models/user.rs.
+#include "models/user.hpp"
+
+#include "req/bcrypt.hpp"
+
+namespace campfire::models {
+
+namespace {
+
+#define CF_USER_COLUMNS                                                                                  \
+  "\"users\".\"id\", \"users\".\"bio\", \"users\".\"bot_token\", \"users\".\"created_at\", "             \
+  "\"users\".\"email_address\", \"users\".\"name\", \"users\".\"password_digest\", \"users\".\"role\", " \
+  "\"users\".\"status\", \"users\".\"updated_at\""
+
+const db::Query<db::schema::UserRow(std::int64_t)> kById{"SELECT " CF_USER_COLUMNS
+                                                         " FROM \"users\" WHERE \"users\".\"id\" = ? LIMIT 1"};
+
+const db::Query<db::schema::UserRow(std::string_view)> kActiveByEmail{
+    "SELECT " CF_USER_COLUMNS
+    " FROM \"users\" WHERE \"users\".\"status\" = 0 AND \"users\".\"email_address\" = ? LIMIT 1"};
+
+const db::Query<db::schema::UserRow(std::string_view, std::string_view)> kBot{
+    "SELECT " CF_USER_COLUMNS
+    " FROM \"users\" WHERE \"users\".\"status\" = 0 AND \"users\".\"role\" = 2 AND \"users\".\"id\" = ? AND "
+    "\"users\".\"bot_token\" = ? LIMIT 1"};
+
+const db::Query<std::int64_t()> kAny{"SELECT 1 AS one FROM \"users\" LIMIT 1"};
+
+struct OwnerRow {
+  std::string_view name;
+  std::optional<std::string_view> email;
+  static OwnerRow read(db::RowReader& r) { return {r.text(0), r.text_opt(1)}; }
+};
+const db::Query<OwnerRow()> kOwner{
+    "SELECT \"users\".\"name\", \"users\".\"email_address\" FROM \"users\" WHERE \"users\".\"role\" = 1 "
+    "ORDER BY \"users\".\"id\" ASC LIMIT 1"};
+
+// `BCrypt::Password.create("dummy", cost: 12)`: same cost as real digests (Rust: DUMMY_DIGEST).
+constexpr std::string_view kDummyDigest = "$2a$12$FiKmSp4UhLvSB4Sd/ZUjQunyKP6.NjDRHdr5LnKUVk.BUn4Mq12WS";
+
+Result<std::optional<User>> wrap(Result<std::optional<db::schema::UserRow>> row) {
+  if (!row) return std::unexpected(row.error());
+  if (!*row) return std::optional<User>{};
+  return std::optional<User>(User::from_row(**row));
+}
+
+}  // namespace
+
+User User::from_row(const db::schema::UserRow& row) {
+  User u;
+  u.id = row.id;
+  if (row.bio) u.bio = std::string(*row.bio);
+  if (row.bot_token) u.bot_token = std::string(*row.bot_token);
+  u.created_at = std::string(row.created_at);
+  if (row.email_address) u.email_address = std::string(*row.email_address);
+  u.name = std::string(row.name);
+  if (row.password_digest) u.password_digest = std::string(*row.password_digest);
+  u.role = row.role;
+  u.status = row.status;
+  u.updated_at = std::string(row.updated_at);
+  return u;
+}
+
+bool User::authenticate(std::string_view password) const {
+  if (!password_digest || password_digest->empty()) return false;
+  return req::bcrypt::verify_password(password, *password_digest);
+}
+
+namespace users {
+
+Result<std::optional<User>> find_by_id(db::Connection& conn, Arena& arena, std::int64_t id) {
+  return wrap(conn.first(kById, arena, id));
+}
+
+Result<std::optional<User>> find_active_by_email_address(db::Connection& conn, Arena& arena,
+                                                         std::string_view email_address) {
+  return wrap(conn.first(kActiveByEmail, arena, email_address));
+}
+
+Result<std::optional<User>> authenticate_bot(db::Connection& conn, Arena& arena, std::string_view bot_key) {
+  // Ruby `split("-")` drops trailing empty fields: a key without a token finds nothing.
+  const std::size_t dash = bot_key.find('-');
+  if (dash == std::string_view::npos) return std::optional<User>{};
+  const std::string_view id_text = bot_key.substr(0, dash);
+  std::string_view token = bot_key.substr(dash + 1);
+  if (const std::size_t next = token.find('-'); next != std::string_view::npos) token = token.substr(0, next);
+  if (token.empty()) return std::optional<User>{};
+  return wrap(conn.first(kBot, arena, id_text, token));
+}
+
+std::optional<User> authenticated(std::optional<User> candidate, std::string_view password) {
+  if (password.empty()) return std::nullopt;
+  if (!candidate) {
+    // authenticate_by hashes anyway: a missing account takes as long as a wrong password.
+    [[maybe_unused]] const bool ignored = req::bcrypt::verify_password(password, kDummyDigest);
+    return std::nullopt;
+  }
+  if (!candidate->authenticate(password)) return std::nullopt;
+  return candidate;
+}
+
+Result<bool> none(db::Connection& conn, Arena& arena) {
+  auto row = conn.first(kAny, arena);
+  if (!row) return std::unexpected(row.error());
+  return !row->has_value();
+}
+
+Result<std::optional<Owner>> first_administrator(db::Connection& conn, Arena& arena) {
+  auto row = conn.first(kOwner, arena);
+  if (!row) return std::unexpected(row.error());
+  if (!*row) return std::optional<Owner>{};
+  return std::optional<Owner>(Owner{std::string((*row)->name), std::string((*row)->email.value_or(""))});
+}
+
+}  // namespace users
+}  // namespace campfire::models

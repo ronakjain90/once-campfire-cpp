@@ -20,12 +20,12 @@ const db::Query<void(std::int64_t)> kGrantActiveUsers{
 
 }  // namespace
 
-Result<User> create(db::Tx& tx, std::string_view name, std::string_view email_address,
+Result<User> create(db::Tx& tx, std::string_view name, const std::optional<std::string>& email_address,
                     std::optional<std::string> password_digest) {
   if (auto account = accounts::create(tx, kAccountName); !account) return std::unexpected(account.error());
   NewUser attributes;
   attributes.name = std::string(name);
-  attributes.email_address = std::string(email_address);
+  attributes.email_address = email_address;
   attributes.password_digest = std::move(password_digest);
   attributes.role = Role::Administrator;
   auto administrator = users::create(tx, attributes);

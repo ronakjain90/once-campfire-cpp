@@ -1,0 +1,59 @@
+{# reference/app/views/first_runs/show.html.erb: the content of the page. The title, the body class and the layout come from the controller. #}
+{% include views/helpers/forms.hpp %}
+{% include views/sessions/helpers.hpp %}
+{% params const ViewContext& ctx, const helpers::FormWith& form, std::string_view page_title %}
+{% wrap form_with(form) %}
+  <section class="nametag u-relative">
+    <div class="flex justify-center align-center pad-block">
+      {% call image_tag(ctx, "lanyard.svg", attrs().cls("nametag__lanyard").aria_hidden()) %}
+    </div>
+
+    <div class="nametag__inner flex flex-column gap">
+      <fieldset class="flex flex-column center-block">
+        <legend class="txt-large txt-align-center"><strong>{{ page_title }}</strong></legend>
+
+        <label class="align-center center avatar__form gap" data-controller="upload-preview">
+          <div class="btn input--file">
+            {% call image_tag(ctx, "camera.svg", attrs().aria_hidden()) %}
+            {% call form.file_field("avatar", attrs().cls("input").attr("accept", "image/*").data("upload_preview_target", "input").data("action", "upload-preview#previewImage")) %}
+            <span class="for-screen-reader">Add your avatar</span>
+          </div>
+
+          <div class="btn avatar input--file txt-xx-large">
+            {% call image_tag(ctx, "default-avatar.svg", attrs().aria_hidden().data("upload_preview_target", "image").alt("Add your avatar")) %}
+            <span class="for-screen-reader">Avatar</span>
+          </div>
+        </label>
+      </fieldset>
+
+      <div class="flex align-center gap">
+        {% call translation_button(ctx, "user_name") %}
+        <label class="flex align-center gap flex-item-grow txt-large input input--actor">
+          {% call form.text_field("name", std::nullopt, attrs().cls("input").autocomplete("name").placeholder("Name").autofocus().required(true).data("1p-ignore", true)) %}
+          {% call image_tag(ctx, "person.svg", attrs().aria_hidden().size(24).cls("colorize--black")) %}
+        </label>
+      </div>
+
+      <div class="flex align-center gap">
+        {% call translation_button(ctx, "email_address") %}
+        <label class="flex align-center gap flex-item-grow txt-large input input--actor">
+          {% call form.email_field("email_address", std::nullopt, attrs().cls("input").autocomplete("username").placeholder("Email address").required(true)) %}
+          {% call image_tag(ctx, "email.svg", attrs().aria_hidden().size(24).cls("colorize--black")) %}
+        </label>
+      </div>
+
+      <div class="flex align-center gap">
+        {% call translation_button(ctx, "password") %}
+        <label class="flex align-center gap flex-item-grow txt-large input input--actor">
+          {% call form.password_field("password", attrs().cls("input").autocomplete("new-password").placeholder("Password").required(true).maxlength(72)) %}
+          {% call image_tag(ctx, "password.svg", attrs().aria_hidden().size(24).cls("colorize--black")) %}
+        </label>
+      </div>
+
+      {% wrap button_tag(attrs().cls("btn btn--reversed center txt-large").type("submit")) %}
+        {% call image_tag(ctx, "arrow-right.svg", attrs().aria_hidden()) %}
+        <span class="for-screen-reader">Save</span>
+      {% end %}
+    </div>
+  </section>
+{% end %}

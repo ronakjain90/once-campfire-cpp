@@ -29,10 +29,16 @@ pkg_check_modules(LIBDEFLATE REQUIRED IMPORTED_TARGET libdeflate)
 
 campfire_library(app
   SOURCES
+    allow_browser.cpp
     app.cpp
     compress.cpp
     concerns.cpp
+    controllers/action_not_found.cpp
+    controllers/common.cpp
+    controllers/first_runs.cpp
+    controllers/session_transfers.cpp
     controllers/sessions.cpp
+    controllers/users.cpp
     controllers/welcome.cpp
     dispatch.cpp
     errors.cpp
@@ -46,6 +52,7 @@ campfire_library(app
     proxy.cpp
     rails.cpp
     rate_limit.cpp
+    render_page.cpp
     rq.cpp
     rq_response.cpp
     session_cache.cpp

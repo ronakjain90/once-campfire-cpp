@@ -16,7 +16,7 @@ inline constexpr std::string_view kFirstRoomName = "All Talk";
 
 // `FirstRun.create!(user_params)`: the account, an administrator, and the first open room. The administrator is a
 // member of the room. A duplicate email address gives a constraint error with "UNIQUE" in its message.
-[[nodiscard]] Result<User> create(db::Tx& tx, std::string_view name, std::string_view email_address,
+[[nodiscard]] Result<User> create(db::Tx& tx, std::string_view name, const std::optional<std::string>& email_address,
                                   std::optional<std::string> password_digest);
 
 }  // namespace campfire::models::first_run

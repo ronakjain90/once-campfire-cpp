@@ -48,8 +48,8 @@ format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
 | T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
 | T8 | merged (verified by Opus) | `task/T8` | 1,134 Rails path cases, 81 named routes, 34 Rails helper goldens, 7 layout goldens pass. Follow-up T8b: Erubi trim rules. |
 | T9 | in progress (Sonnet) | `task/T9` | |
-| T10 | queued | `task/T10` | 4+ commits. Stopped at the 3-agent limit; acceptance run was next. |
-| T8b | in progress (Sonnet) | `task/T8b` | Erubi trim rules in `ctc.py` |
+| T10 | in progress (Sonnet) | `task/T10` | |
+| T8b | merged (verified by Opus) | `task/T8b` | Erubi trim rule applied by `ctc.py`. Expected files made by Erubi in the Rails container. |
 | T11 | queued | `task/T11` | Stopped at the 3-agent limit. |
 | T12 | queued | `task/T12` | 3 commits. Stopped at the 3-agent limit. |
 | T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
@@ -110,8 +110,8 @@ its requests in the diff sweep pass.
 | T11 | queued | `task/T11` | Stopped at the 3-agent limit. |
 | T12 | queued | `task/T12` | 3 commits. Stopped at the 3-agent limit. |
 | T13 | merged (verified by Opus) | `task/T13` | 553 requests in 9 areas. Rust against Rust: 0 differences. Reports missing C++ routes correctly. No TLS/HTTP/2 checks (A8 adds them). |
-| T10 | queued | `task/T10` | 4+ commits. Stopped at the 3-agent limit; acceptance run was next. |
-| T8b | in progress (Sonnet) | `task/T8b` | Erubi trim rules in `ctc.py` |
+| T10 | in progress (Sonnet) | `task/T10` | |
+| T8b | merged (verified by Opus) | `task/T8b` | Erubi trim rule applied by `ctc.py`. Expected files made by Erubi in the Rails container. |
 
 ## Parallel limit
 

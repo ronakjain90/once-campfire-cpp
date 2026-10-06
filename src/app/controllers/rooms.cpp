@@ -219,10 +219,6 @@ Task<Flow<net::Response>> rooms_destroy(Rq& rq) {
   co_return co_await destroy_room(rq, std::move(*room));
 }
 
-Task<Flow<net::Response>> action_not_found(Rq&) {
-  co_return fail_with(ErrorKind::NotFound, "The action could not be found");
-}
-
 Task<Flow<net::Response>> missing_controller(Rq&) {
   co_return fail_internal("uninitialized constant Rooms::SettingsController");
 }
@@ -460,9 +456,6 @@ Task<net::Response> destroy(net::Ctx& c) {
 }
 Task<net::Response> destroy_without_room(net::Ctx& c) {
   return app::dispatch(c, &app::controllers::destroy_without_room);
-}
-Task<net::Response> action_not_found(net::Ctx& c) {
-  return app::dispatch(c, &app::controllers::action_not_found);
 }
 Task<net::Response> missing_controller(net::Ctx& c) {
   return app::dispatch(c, &app::controllers::missing_controller);

@@ -1,18 +1,18 @@
 # Rooms. Rails: config/routes.rb `resources :rooms { scope module: "rooms" ... }` and `namespace :rooms`. The order is
 # the order of the Rails routes: `/rooms/:id` comes before `/rooms/opens`, so `GET /rooms/opens` is `rooms#show` with
-# the id "opens". An action that Rails does not have is `rooms::action_not_found`.
+# the id "opens". An action that Rails does not have is `misc::action_not_found`.
 GET    /rooms/:room_id/refresh(.:format)        rooms_refreshes::show
 GET    /rooms/:room_id/settings(.:format)       rooms::missing_controller
 GET    /rooms/:room_id/involvement(.:format)    rooms_involvements::show
 PATCH  /rooms/:room_id/involvement(.:format)    rooms_involvements::update
 PUT    /rooms/:room_id/involvement(.:format)    rooms_involvements::update
 GET    /rooms(.:format)                         rooms::index
-POST   /rooms(.:format)                         rooms::action_not_found
-GET    /rooms/new(.:format)                     rooms::action_not_found
-GET    /rooms/:id/edit(.:format)                rooms::action_not_found
+POST   /rooms(.:format)                         misc::action_not_found
+GET    /rooms/new(.:format)                     misc::action_not_found
+GET    /rooms/:id/edit(.:format)                misc::action_not_found
 GET    /rooms/:id(.:format)                     rooms::show
-PATCH  /rooms/:id(.:format)                     rooms::action_not_found
-PUT    /rooms/:id(.:format)                     rooms::action_not_found
+PATCH  /rooms/:id(.:format)                     misc::action_not_found
+PUT    /rooms/:id(.:format)                     misc::action_not_found
 DELETE /rooms/:id(.:format)                     rooms::destroy
 GET    /rooms/opens(.:format)                   rooms::index
 POST   /rooms/opens(.:format)                   rooms_opens::create
@@ -35,6 +35,6 @@ POST   /rooms/directs(.:format)                 rooms_directs::create
 GET    /rooms/directs/new(.:format)             rooms_directs::new_
 GET    /rooms/directs/:id/edit(.:format)        rooms_directs::edit
 GET    /rooms/directs/:id(.:format)             rooms_directs::show
-PATCH  /rooms/directs/:id(.:format)             rooms::action_not_found
-PUT    /rooms/directs/:id(.:format)             rooms::action_not_found
+PATCH  /rooms/directs/:id(.:format)             misc::action_not_found
+PUT    /rooms/directs/:id(.:format)             misc::action_not_found
 DELETE /rooms/directs/:id(.:format)             rooms_directs::destroy

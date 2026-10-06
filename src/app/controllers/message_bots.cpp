@@ -196,7 +196,7 @@ Task<Flow<net::Response>> bots_destroy(Rq& rq) {
   if (auto gone = co_await messages::destroy_message(rq, *room, *message); !gone) {
     co_return std::unexpected(std::move(gone.error()));
   }
-  co_return messages::no_content(rq);
+  co_return rq.head(204);
 }
 
 }  // namespace

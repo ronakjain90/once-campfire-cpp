@@ -41,7 +41,7 @@ std::string append_stream(const models::RoomRef& room, std::string_view message_
   html_escape(out, broadcasts::room_dom_id(room, "messages"));
   out.append_raw("\"><template>");
   out.append_raw(message_html);
-  out.append_raw("</template></turbo-stream>\n");
+  out.append_raw("</template></turbo-stream>");
   return out.to_string();
 }
 
@@ -151,7 +151,7 @@ Task<Flow<net::Response>> messages_destroy(Rq& rq) {
   Out out(rq.ctx.resource());
   out.append_raw("<turbo-stream action=\"remove\" target=\"message_");
   html_escape(out, message->client_message_id);
-  out.append_raw("\"></turbo-stream>\n");
+  out.append_raw("\"></turbo-stream>");
   co_return rq.turbo_stream(std::move(out));
 }
 

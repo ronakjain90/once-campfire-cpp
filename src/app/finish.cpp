@@ -248,7 +248,10 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
   // and the runtime. `apply_front_headers` then removes it (`HeaderMap::remove`), which moves the
   // last header ("vary") into its slot. Add it here so the front can do the same. The wire drops
   // it for a bodiless status (see `net::Wire`).
-  if (response.status == 304 && !response.has("content-length")) response.add("content-length", "0");
+  // A 204 from `head :no_content` has the same empty body, so it is the same (found by the diff sweep of A3).
+  if ((response.status == 304 || response.status == 204) && !response.has("content-length")) {
+    response.add("content-length", "0");
+  }
   add_rails_tail(rq.ctx, response);
   if (vary_missing) response.add("vary", "Accept-Encoding");
   if (rq.app.proxy.force_ssl && rq.info.ssl()) {

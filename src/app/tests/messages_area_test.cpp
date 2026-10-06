@@ -71,7 +71,7 @@ TEST_CASE("messages: create, show, edit, update and destroy") {
   REQUIRE(r.status == 200);
   CHECK(r.header("content-type") == "text/vnd.turbo-stream.html; charset=utf-8");
   CHECK(r.body.starts_with("<turbo-stream action=\"append\" target=\"messages_rooms_open_1\"><template>"));
-  CHECK(r.body.ends_with("</template></turbo-stream>\n"));
+  CHECK(r.body.ends_with("</template></turbo-stream>"));
   CHECK(scalar(f, "SELECT client_message_id FROM messages") == "cm-1");
   CHECK(scalar(f, "SELECT body FROM action_text_rich_texts WHERE record_type = 'Message'") == "<p>Hello</p>");
   CHECK(scalar(f, "SELECT body FROM message_search_index WHERE rowid = 1") == "Hello");
@@ -113,7 +113,7 @@ TEST_CASE("messages: create, show, edit, update and destroy") {
   CHECK(r.status == 403);
   r = c.request("DELETE", "/rooms/1/messages/1", david + kSameOrigin + kTurbo);
   CHECK(r.status == 200);
-  CHECK(r.body == "<turbo-stream action=\"remove\" target=\"message_cm-1\"></turbo-stream>\n");
+  CHECK(r.body == "<turbo-stream action=\"remove\" target=\"message_cm-1\"></turbo-stream>");
   // The request with the wrong format made message 2: `create` ran before the 406.
   CHECK(scalar(f, "SELECT COUNT(*) FROM messages WHERE id = 1") == "0");
   CHECK(scalar(f, "SELECT COUNT(*) FROM action_text_rich_texts WHERE record_id = 1") == "0");

@@ -68,6 +68,18 @@ const db::Query<BotRoomRow(std::int64_t)> kBotRooms{
     "\"rooms\".\"id\" = \"memberships\".\"room_id\" WHERE \"memberships\".\"user_id\" = ? AND \"rooms\".\"type\" != "
     "'Rooms::Direct' ORDER BY LOWER(name)"};
 
+struct ProfileRow {
+  std::int64_t room_id;
+  std::string_view type;
+  std::optional<std::string_view> name;
+  std::optional<std::string_view> involvement;
+  static ProfileRow read(db::RowReader& r) { return {r.i64(0), r.text(1), r.text_opt(2), r.text_opt(3)}; }
+};
+const db::Query<ProfileRow(std::int64_t)> kProfileMemberships{
+    "SELECT \"rooms\".\"id\", \"rooms\".\"type\", \"rooms\".\"name\", \"memberships\".\"involvement\" FROM \"memberships\" "
+    "INNER JOIN \"rooms\" ON \"rooms\".\"id\" = \"memberships\".\"room_id\" WHERE \"memberships\".\"user_id\" = ? ORDER BY "
+    "LOWER(rooms.name)"};
+
 const db::Query<void(std::string_view, std::optional<std::string_view>, std::optional<std::string_view>,
                      std::optional<std::string_view>, std::optional<std::string_view>, std::int64_t, std::int64_t,
                      std::string_view, std::int64_t)>
@@ -235,6 +247,21 @@ Result<std::vector<User>> account_users(db::Connection& conn, Arena& arena, bool
 
 Result<std::vector<User>> active_bots_ordered(db::Connection& conn, Arena& arena) {
   return wrap_all(conn.all(kActiveBots, arena));
+}
+
+Result<std::vector<ProfileMembership>> profile_memberships(db::Connection& conn, Arena& arena, std::int64_t user_id) {
+  auto rows = conn.all(kProfileMemberships, arena, user_id);
+  if (!rows) return std::unexpected(rows.error());
+  std::vector<ProfileMembership> out;
+  for (const ProfileRow& row : *rows) {
+    ProfileMembership m;
+    m.room_id = row.room_id;
+    m.room_type = std::string(row.type);
+    if (row.name) m.room_name = std::string(*row.name);
+    if (row.involvement) m.involvement = std::string(*row.involvement);
+    out.push_back(std::move(m));
+  }
+  return out;
 }
 
 Result<std::optional<std::string>> webhook_url(db::Connection& conn, Arena& arena, std::int64_t user_id) {

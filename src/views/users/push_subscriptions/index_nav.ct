@@ -1,0 +1,5 @@
+{# reference/app/views/users/push_subscriptions/index.html.erb: `content_for :nav`. #}
+{% params const ViewContext& ctx %}
+  <div class="flex-item-justify-start">
+    {% call link_back_to_last_room_visited(ctx) %}
+  </div>

@@ -47,6 +47,11 @@ campfire_library(app
     controllers/sessions.cpp
     controllers/users.cpp
     controllers/users_avatars.cpp
+    controllers/users_bans.cpp
+    controllers/users_profiles.cpp
+    controllers/users_push_subscriptions.cpp
+    controllers/users_show.cpp
+    controllers/users_test_notifications.cpp
     controllers/sidebars.cpp
     controllers/welcome.cpp
     dispatch.cpp
@@ -54,6 +59,7 @@ campfire_library(app
     finish.cpp
     fragment_cache.cpp
     health.cpp
+    network_guard.cpp
     not_found.cpp
     page.cpp
     page_cache.cpp

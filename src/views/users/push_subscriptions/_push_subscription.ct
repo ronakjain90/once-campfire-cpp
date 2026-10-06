@@ -1,0 +1,25 @@
+{# reference/app/views/users/push_subscriptions/_push_subscription.html.erb #}
+{% include views/accounts/types.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const PushSubscriptionView& push_subscription %}
+<li class="flex flex-column margin-none membership-item">
+  <span class="overflow-ellipsis txt-primary txt-undecorated">
+    <strong>{{ push_subscription.browser }} {{ push_subscription.version }} on {{ push_subscription.platform }}</strong><br>
+  </span>
+
+  <span class="flex align-start gap txt-small">
+    <span>{{ push_subscription.endpoint }}</span>
+
+    <span class="flex align-center gap">
+      {% wrap button_to(routes::user_push_subscription_test_notifications(push_subscription.id), attrs().cls("btn btn--reversed")) %}
+        {% call image_tag(ctx, "notification-bell-everything.svg", attrs().aria_hidden().size(20)) %}
+        <span class="for-screen-reader">Send test notification</span>
+      {% end %}
+
+      {% wrap button_to(routes::user_push_subscription(push_subscription.id), attrs().method("delete").cls("btn btn--negative")) %}
+        {% call image_tag(ctx, "minus.svg", attrs().aria_hidden().size(20)) %}
+        <span class="for-screen-reader">Delete subscription</span>
+      {% end %}
+    </span>
+  </span>
+</li>

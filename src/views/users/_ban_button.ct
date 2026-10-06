@@ -1,0 +1,15 @@
+{# reference/app/views/users/_ban_button.html.erb #}
+{% include views/accounts/types.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const UserShowView& user %}
+{% if user.active %}
+  {% wrap button_to(routes::user_ban(user.user.id), attrs().method("post").cls("btn full-width").data("turbo_confirm", "Are you sure you want to ban this user? This will log them out, delete their messages, and block their IP addresses.")) %}
+    {% call image_tag(ctx, "cancel.svg", attrs().aria("hidden", "true").aria("label", "Ban " + user.user.name)) %}
+    <span>Ban {{ user.user.name }}</span>
+  {% end %}
+{% else %}
+  {% wrap button_to(routes::user_ban(user.user.id), attrs().method("delete").cls("btn btn--negative full-width").data("turbo_confirm", "Are you sure you want to remove the ban on this user?")) %}
+    {% call image_tag(ctx, "cancel.svg", attrs().aria("hidden", "true").aria("label", "Remove Ban " + user.user.name)) %}
+    <span>Remove ban</span>
+  {% end %}
+{% end %}

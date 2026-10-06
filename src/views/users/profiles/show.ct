@@ -1,0 +1,90 @@
+{# reference/app/views/users/profiles/show.html.erb: the content of the page. The title and the nav come from the controller. #}
+{% include views/helpers/accounts.hpp %}
+{% include views/helpers/forms.hpp %}
+{% include views/helpers/users.hpp %}
+{% include views/sessions/helpers.hpp %}
+{% include views/accounts/types.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const ProfileShowView& profile, const helpers::FormWith& form, const helpers::FormWith& first_form, const helpers::FormWith& text_form %}
+<section class="panel flex flex-column gap" style="view-transition-name: avatar-{{ profile.user.id }}">
+  {% render users/profiles/install_instructions(ctx) %}
+
+  <div class="align-center center avatar__form gap" data-controller="upload-preview">
+    {% wrap form_with(first_form) %}
+      <label class="btn input--file">
+        {% call image_tag(ctx, "camera.svg", attrs().aria_hidden().size(20)) %}
+        {% call first_form.file_field("avatar", attrs().id("file").cls("input").attr("accept", "image/*").data("upload_preview_target", "input").data("action", "upload-preview#previewImage change->form#submit")) %}
+        <span class="for-screen-reader">Upload avatar</span>
+      </label>
+    {% end %}
+
+    {% wrap form_with(form) %}
+      <label class="btn avatar input--file txt-xx-large">
+        {% call image_tag(ctx, profile.user.avatar_path, attrs().aria_hidden().size(300).data("upload_preview_target", "image")) %}
+        {% call form.file_field("avatar", attrs().id("file").cls("input").attr("accept", "image/*").data("upload_preview_target", "input").data("action", "upload-preview#previewImage change->form#submit")) %}
+        <span class="for-screen-reader">Avatar</span>
+      </label>
+    {% end %}
+
+    {% if profile.avatar_attached %}
+      {% wrap button_to(routes::user_avatar(profile.user.id), attrs().method("delete").cls("btn btn--negative txt-small avatar__delete-btn")) %}
+        {% call image_tag(ctx, "minus.svg", attrs().aria_hidden().size(20)) %}
+        <span class="for-screen-reader">Delete avatar</span>
+      {% end %}
+    {% end %}
+  </div>
+
+  {% wrap form_with(text_form) %}
+    <div class="flex flex-column gap">
+      <div class="flex align-center gap">
+        {% call translation_button(ctx, "user_name") %}
+
+        <label class="flex align-center gap flex-item-grow input input--actor">
+          {% call text_form.text_field("name", std::optional<std::string_view>(profile.user.name), attrs().cls("input txt-large ").autocomplete("name").placeholder("Enter your name").autofocus().required(true).data("1p-ignore", true)) %}
+          {% call image_tag(ctx, "person.svg", attrs().aria_hidden().size(24).cls("colorize--black")) %}
+        </label>
+      </div>
+
+      <div class="flex align-center gap">
+        {% call translation_button(ctx, "email_address") %}
+
+        <label class="flex align-center gap flex-item-grow input input--actor">
+          {% call text_form.email_field("email_address", std::nullopt, attrs().cls("input txt-large").attr_opt("value", profile.email_address ? std::optional<std::string_view>(*profile.email_address) : std::nullopt).autocomplete("username").placeholder("Enter your email address").required(false)) %}
+          {% call image_tag(ctx, "email.svg", attrs().aria_hidden().size(24).cls("colorize--black")) %}
+        </label>
+      </div>
+
+      <div class="flex align-center gap">
+        {% call translation_button(ctx, "update_password") %}
+
+        <label class="flex align-center gap flex-item-grow input input--actor">
+          {% call text_form.password_field("password", attrs().cls("input txt-large").autocomplete("new-password").placeholder("Change password").required(false).maxlength(72)) %}
+          {% call image_tag(ctx, "password.svg", attrs().aria_hidden().size(24).cls("colorize--black")) %}
+        </label>
+      </div>
+
+      <div class="flex align-start gap">
+        {% call translation_button(ctx, "bio") %}
+
+        <label class="flex align--center gap flex-item--grow input input--actor">
+          {% call text_form.text_area("bio", profile.bio ? std::optional<std::string_view>(*profile.bio) : std::nullopt, attrs().cls("input txt-large").placeholder("A few words about yourself…").maxlength(200).rows(3).required(false)) %}
+          {% call image_tag(ctx, "bio.svg", attrs().aria_hidden().size(24).cls("colorize--black")) %}
+        </label>
+      </div>
+
+      {% call profile_form_submit_button(ctx) %}
+    </div>
+  {% end %}
+
+  <div class="margin-block pad-inline pad-block fill-shade border-radius">
+    <menu class="flex flex-column gap margin-none pad">
+      {% for membership : profile.shared_memberships %}{% render users/profiles/membership(ctx, membership) %}{% end %}
+      {% if !profile.direct_memberships.empty() && !profile.shared_memberships.empty() %}
+        <hr class="separator full-width" style="--border-style: solid">
+      {% end %}
+
+      {% for membership : profile.direct_memberships %}{% render users/profiles/membership(ctx, membership) %}{% end %}    </menu>
+  </div>
+
+  {% render users/profiles/transfer(ctx, true, profile.transfer_url) %}
+</section>

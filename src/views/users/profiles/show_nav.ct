@@ -1,0 +1,17 @@
+{# reference/app/views/users/profiles/show.html.erb: `content_for :nav`. #}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx %}
+  <div class="flex-item-justify-start">
+    {% call link_back(ctx) %}
+  </div>
+
+  <div class="flex-item-justify-end">
+    {% wrap form_with(form_with_url(routes::session()).method("delete").data("controller", "sessions")) %}
+      {% call hidden_field_tag("push_subscription_endpoint", std::nullopt, attrs().data("sessions_target", "pushSubscriptionEndpoint")) %}
+
+      <button class="btn" data-action="sessions#logout:prevent">
+        {% call image_tag(ctx, "logout.svg", attrs().aria_hidden()) %}
+        <span class="for-screen-reader">Log out</span>
+      </button>
+    {% end %}
+  </div>

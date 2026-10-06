@@ -50,6 +50,16 @@ struct BotRoom {
 };
 [[nodiscard]] Result<std::vector<BotRoom>> bot_rooms(db::Connection& conn, Arena& arena, std::int64_t user_id);
 
+// `user.memberships.with_ordered_room`: invisible rooms included, ordered by `LOWER(rooms.name)`.
+struct ProfileMembership {
+  std::int64_t room_id = 0;
+  std::string room_type;  // "Rooms::Open", "Rooms::Closed" or "Rooms::Direct"
+  std::optional<std::string> room_name;
+  std::optional<std::string> involvement;
+};
+[[nodiscard]] Result<std::vector<ProfileMembership>> profile_memberships(db::Connection& conn, Arena& arena,
+                                                                         std::int64_t user_id);
+
 // `user.update(changes)`: it reads the row again on the writer, writes only when a value changes, and
 // sets `updated_at` then. It gives the new row. Records a change of `users`.
 [[nodiscard]] Result<User> update(db::Tx& tx, std::int64_t id, const UserChanges& changes);

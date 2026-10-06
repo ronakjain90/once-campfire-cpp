@@ -39,4 +39,4 @@
       </button>
     </div>
   </details>
-{% end %}{{= SafeHtml::literal("") }}
+{% end %}

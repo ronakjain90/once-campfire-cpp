@@ -3,7 +3,7 @@
 {% include views/messages/support.hpp %}
 {% include routes/routes.hpp %}
 {% params const ViewContext& ctx, const RoomView& room %}
-  <div class="composer flex align-end gap position-relative"
+<div class="composer flex align-end gap position-relative"
       data-controller="typing-notifications" data-typing-notifications-active-class="typing-indicator--active">
     <a class="btn flex-item-no-shrink margin-block-end composer__context-btn" style="view-transition-name: input-switcher" href="{{ routes::searches() }}">
       <img aria-hidden="true" src="{{ ctx.asset("search.svg") }}" width="20" height="20" />

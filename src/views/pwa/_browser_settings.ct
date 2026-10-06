@@ -85,4 +85,4 @@
         </ol>
 {% else %}        <p>Ensure notifications are enabled for <em>{{ ctx.url("/") }}</em> in your web browser settings.</p>
 {% end %}  </details>
-{% end %}{{= SafeHtml::literal("") }}
+{% end %}

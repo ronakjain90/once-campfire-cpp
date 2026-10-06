@@ -3,7 +3,7 @@
 {% include views/messages/types.hpp %}
 {% params const ViewContext& ctx, const BoostView& boost %}
 {% cache boost_fragment_key(boost.id, boost.updated_at) %}
-  <div id="boost_{{ boost.id }}"
+<div id="boost_{{ boost.id }}"
       class="boost boost-item flex-inline postion--relative max-width align-center fill-white gap"
       data-controller="boost-delete" data-boost-delete-perform-class="boost--deleting" data-boost-delete-reveal-class="expanded" data-boost-delete-booster-id-value="{{ boost.booster.id }}">
     <figure class="avatar boost__avatar flex-item-no-shrink">
@@ -16,5 +16,4 @@
       <img aria-hidden="true" src="{{ ctx.asset("minus.svg") }}" width="20" height="20" />
       <span class="for-screen-reader">Delete this boost</span>
 </button></form>  </div>
-  <span id="delete_boost_accessible_label" class="for-screen-reader">Press enter to delete this boost</span>
-{% end %}
+  <span id="delete_boost_accessible_label" class="for-screen-reader">Press enter to delete this boost</span>{% end %}

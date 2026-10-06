@@ -1,0 +1,19 @@
+{# reference/app/views/autocompletable/users/index.html.erb, with _prompt_item and users/_mention #}
+{% include views/autocompletable/types.hpp %}
+{% include views/messages/support.hpp %}
+{% params const ViewContext& ctx, const std::vector<MentionUserView>& users %}
+{% for user : users %}
+<lexxy-prompt-item search="{{ user.name }}" sgid="{{ user.attachable_sgid }}">
+  <template type="menu">
+    <span class="autocomplete__item flex align-center gap unpad">
+      {% call messages::avatar_tag(ctx, user.id, user.title, user.avatar_url) %}
+      <span class="autocompletable__name">{{ user.name }}</span>
+    </span>
+  </template>
+  <template type="editor">
+    <span class="mention" sgid="{{ user.attachable_sgid }}">{% call messages::avatar_tag(ctx, user.id, user.title, user.avatar_url) %} {{ user.name }}</span>
+
+  </template>
+</lexxy-prompt-item>
+{% end %}
+

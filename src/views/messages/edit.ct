@@ -1,0 +1,54 @@
+{# reference/app/views/messages/edit.html.erb #}
+{% include views/messages/support.hpp %}
+{% include views/sessions/helpers.hpp %}
+{% include views/messages/types.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const MessageView& message, const std::string& editable_body_html, const std::optional<SafeHtml>& attachment_html %}
+<turbo-frame id="{{ message.dom_id("edit") }}">
+  <div class="message__body position-relative" data-controller="scroll-into-view">
+    <div class="message__body-content message__body-content--editing gap">
+      {% if attachment_html %}
+        {{= *attachment_html }}
+
+        <div class="message__edit-btns flex align-center justify-space-between gap full-width pad-block-start-half">
+          {% wrap button_tag(attrs().cls("btn btn--negative center margin-block-end").type("submit").attr("form", message.dom_id("delete_form")).data("turbo_confirm", "Are you sure you want to delete this message?")) %}
+            {% call image_tag(ctx, "trash.svg", attrs().aria_hidden()) %}
+            <span class="for-screen-reader">Delete message</span>
+          {% end %}
+        </div>
+      {% else %}
+        <div class="composer--edit composer--rich-text">
+          {% wrap form_with(helpers::form_with_url(campfire::routes::room_message(message.room_id, message.id)).model("message").method("patch").id(message.dom_id("form")).data("controller", "form").data("action", "lexxy:file-accept->form#preventAttachment keydown.esc->form#cancel keydown.ctrl+enter->form#submit:prevent keydown.meta+enter->form#submit:prevent")) %}
+            <div class="full-width input input--actor min-width fill-white">
+              <lexxy-editor rows="1" class="input lexxy-content" aria-multiline="true" aria-label="Edit message" autofocus="autofocus" permitted-attachment-types="application/vnd.campfire.mention application/vnd.actiontext.opengraph-embed" data-action="lexxy:change->typing-notifications#start keydown->composer#submitByKeyboard:capture" data-direct-upload-url="{{ ctx.url("/rails/active_storage/direct_uploads") }}" data-blob-url-template="{{ ctx.url("/rails/active_storage/blobs/redirect/:signed_id/:filename") }}" id="message_body" input="message_body_trix_input_{{ message.dom_id() }}" name="message[body]" value="{{ editable_body_html }}">
+                <lexxy-prompt trigger="@" name="mention" src="{{ mention_prompt_src(message.room_id) }}" remote-filtering="true" empty-results="No matches"></lexxy-prompt>
+</lexxy-editor>            </div>
+
+            {% wrap link_to(campfire::routes::room_message(message.room_id, message.id), attrs().data("form_target", "cancel").hidden()) %}Close editor and discard changes{% end %}
+
+            <div class="message__edit-btns flex align-center justify-space-between gap full-width pad-block-start-half">
+              {% wrap button_tag(attrs().type("submit").cls("btn btn--reversed")) %}
+                {% call image_tag(ctx, "check.svg", attrs().aria_hidden()) %}
+                <span class="for-screen-reader">Save changes</span>
+              {% end %}
+
+              {% wrap button_tag(attrs().cls("btn btn--negative").type("submit").attr("form", message.dom_id("delete_form")).data("turbo_confirm", "Are you sure you want to delete this message?")) %}
+                {% call image_tag(ctx, "trash.svg", attrs().aria_hidden()) %}
+                <span class="for-screen-reader">Delete message</span>
+              {% end %}
+            </div>
+          {% end %}
+        </div>
+      {% end %}
+    </div>
+
+    <div class="message__actions flex flex-wrap">
+      {% wrap link_to(campfire::routes::room_message(message.room_id, message.id), attrs().cls("message__action-btn message__edit-close-btn txt-small btn btn--borderless")) %}
+        {% call image_tag(ctx, "remove.svg", attrs().cls("colorize--black").aria_hidden()) %}
+        <span class="for-screen-reader">Close editor and discard changes</span>
+      {% end %}
+    </div>
+
+    {% call open_form(helpers::form_with_url(campfire::routes::room_message(message.room_id, message.id)).method("delete").id(message.dom_id("delete_form")).data("turbo_frame", message.dom_id("edit"))) %}
+  </div>
+</turbo-frame>

@@ -29,7 +29,8 @@ std::string read_file(const std::filesystem::path& path) {
 
 Status CertManager::issue(const std::string& name, std::shared_ptr<CertifiedKey>& out) {
   if (!account_) {
-    account_ = std::make_unique<AcmeAccount>(options_.directory_url, options_.directory_root, options_.http_timeout_seconds);
+    account_ =
+        std::make_unique<AcmeAccount>(options_.directory_url, options_.directory_root, options_.http_timeout_seconds);
   }
   if (!account_->has_key()) {
     const std::string pem = read_file(options_.storage_path / std::string(kAccountKey));
@@ -70,8 +71,8 @@ Status CertManager::issue(const std::string& name, std::shared_ptr<CertifiedKey>
       log_info("TLS: obtained certificate domain={}", name);
       return {};
     }
-    log_info("TLS: order failed domain={} challenge={} error={}", name, type == ChallengeType::TlsAlpn01 ? "tls-alpn-01" : "http-01",
-             status.error().message);
+    log_info("TLS: order failed domain={} challenge={} error={}", name,
+             type == ChallengeType::TlsAlpn01 ? "tls-alpn-01" : "http-01", status.error().message);
     last = status.error();
   }
   return std::unexpected(last);
@@ -80,7 +81,8 @@ Status CertManager::issue(const std::string& name, std::shared_ptr<CertifiedKey>
 Status CertManager::order(const std::string& name, ChallengeType type, std::shared_ptr<CertifiedKey>& out) {
   AcmeAccount& account = *account_;
   std::string order_url;
-  auto order = account.post_json(account.new_order_url(), R"({"identifiers":[{"type":"dns","value":")" + name + R"("}]})", false, &order_url);
+  auto order = account.post_json(account.new_order_url(),
+                                 R"({"identifiers":[{"type":"dns","value":")" + name + R"("}]})", false, &order_url);
   if (!order) return std::unexpected(order.error());
 
   // The challenge answers live until the order is done.
@@ -96,7 +98,8 @@ Status CertManager::order(const std::string& name, ChallengeType type, std::shar
   } provisioned{this, {}, {}};
 
   const std::string_view wanted = type == ChallengeType::TlsAlpn01 ? "tls-alpn-01" : "http-01";
-  for (const Json& authorization_url : order->find("authorizations") != nullptr ? order->find("authorizations")->array() : Json::Array{}) {
+  for (const Json& authorization_url :
+       order->find("authorizations") != nullptr ? order->find("authorizations")->array() : Json::Array{}) {
     auto authorization = account.post_json(std::string(authorization_url.as_string()), {}, true);
     if (!authorization) return std::unexpected(authorization.error());
     const std::string_view status = authorization->str("status");
@@ -128,7 +131,8 @@ Status CertManager::order(const std::string& name, ChallengeType type, std::shar
       http_tokens_[path] = key_authorization;
       provisioned.paths.push_back(path);
     }
-    if (auto ready = account.post_json(std::string(chosen->str("url")), "{}", false); !ready) return std::unexpected(ready.error());
+    if (auto ready = account.post_json(std::string(chosen->str("url")), "{}", false); !ready)
+      return std::unexpected(ready.error());
   }
 
   // Polls the order until it leaves "pending" and "processing", at most 2 minutes.
@@ -139,8 +143,11 @@ Status CertManager::order(const std::string& name, ChallengeType type, std::shar
       if (!current) return current;
       const std::string_view status = current->str("status");
       if (status == goal || (goal == "ready" && status == "valid")) return current;
-      if (status == "invalid") return fail(Errc::Io, "order is invalid: " + std::string(current->find("error") != nullptr ? "see the ACME server" : ""));
-      if (std::chrono::steady_clock::now() > deadline) return fail(Errc::Timeout, "the order did not become " + std::string(goal));
+      if (status == "invalid")
+        return fail(Errc::Io,
+                    "order is invalid: " + std::string(current->find("error") != nullptr ? "see the ACME server" : ""));
+      if (std::chrono::steady_clock::now() > deadline)
+        return fail(Errc::Timeout, "the order did not become " + std::string(goal));
       std::this_thread::sleep_for(options_.poll_interval);
     }
   };
@@ -153,7 +160,8 @@ Status CertManager::order(const std::string& name, ChallengeType type, std::shar
   if (!csr) return std::unexpected(csr.error());
   const std::string finalize(order->str("finalize"));
   if (ready->str("status") != "valid") {
-    if (auto finalized = account.post_json(finalize, R"({"csr":")" + compat::base64::urlsafe_encode_unpadded(*csr) + "\"}", false);
+    if (auto finalized =
+            account.post_json(finalize, R"({"csr":")" + compat::base64::urlsafe_encode_unpadded(*csr) + "\"}", false);
         !finalized) {
       return std::unexpected(finalized.error());
     }

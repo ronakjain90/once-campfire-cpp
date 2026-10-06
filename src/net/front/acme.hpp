@@ -35,12 +35,12 @@ enum class ChallengeType : std::uint8_t { TlsAlpn01, Http01 };
 
 struct AcmeOptions {
   std::string directory_url;
-  std::string eab_kid;                    // EAB_KID
-  std::string eab_hmac_key;               // EAB_HMAC_KEY, unpadded URL-safe base64
+  std::string eab_kid;       // EAB_KID
+  std::string eab_hmac_key;  // EAB_HMAC_KEY, unpadded URL-safe base64
   std::filesystem::path storage_path;
   std::vector<std::string> domains;
   std::vector<ChallengeType> challenge_types{ChallengeType::TlsAlpn01, ChallengeType::Http01};
-  std::string directory_root;             // a PEM file of roots for the ACME directory (test CAs)
+  std::string directory_root;  // a PEM file of roots for the ACME directory (test CAs)
   int http_timeout_seconds = 30;
   // For tests: how long the renewal waits is `not_after - renew_before`, at least this many ms.
   std::chrono::seconds renew_before = std::chrono::hours(30 * 24);
@@ -62,7 +62,8 @@ class CertManager {
   enum class State : std::uint8_t { Ready, Pending, Failed };
   // The certificate for the server name of a handshake (`GetCertificate`). Ready: `out` is set.
   // Pending: an order runs in the background thread; ask again later. Failed: `error` says why.
-  [[nodiscard]] State certificate(std::string_view server_name, std::shared_ptr<const CertifiedKey>& out, std::string& error);
+  [[nodiscard]] State certificate(std::string_view server_name, std::shared_ptr<const CertifiedKey>& out,
+                                  std::string& error);
 
   // The certificate that a TLS-ALPN-01 validation handshake for `server_name` gets.
   [[nodiscard]] std::shared_ptr<const CertifiedKey> challenge_certificate_for(std::string_view server_name) const;

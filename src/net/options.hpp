@@ -9,17 +9,21 @@
 #include "core/config.hpp"
 #include "net/ctx.hpp"
 #include "net/front/front.hpp"
+#include "net/front/tls.hpp"
 #include "net/parser.hpp"
 #include "net/router.hpp"
 
 namespace campfire::net {
 
 struct ServerOptions {
-  std::uint16_t http_port = 80;     // the front: HTTP_PORT (0: choose a free port)
-  std::uint16_t target_port = 3000; // the app: TARGET_PORT (0: choose a free port)
+  std::uint16_t http_port = 80;      // the front: HTTP_PORT (0: choose a free port)
+  std::uint16_t https_port = 443;    // with TLS: HTTPS_PORT (0: choose a free port)
+  std::uint16_t target_port = 3000;  // the app: TARGET_PORT (0: choose a free port)
   std::string target_bind = "127.0.0.1";
   bool listen_http = true;
   bool listen_target = true;
+  bool listen_https = false;  // set with `tls`
+  bool h2c = false;           // H2C_ENABLED: HTTP/2 with prior knowledge on the HTTP port
   // Timeouts in milliseconds. 0 means no timeout (as in Go).
   std::int64_t idle_timeout_ms = 60'000;
   std::int64_t read_timeout_ms = 30'000;
@@ -36,6 +40,8 @@ struct ServerOptions {
   // The front pipeline (cache, compression, X-Forwarded-*). `Server` makes one with the default
   // settings if `front_headers` is on and this is null. `from_config` makes one from the config.
   std::shared_ptr<front::Front> front;
+  // TLS_DOMAIN: the certificates and the TLS contexts. With them, the HTTP port only redirects.
+  std::shared_ptr<front::TlsServer> tls;
   // ActionDispatch::Static: answer from the asset table before the routes (A8, front/static_files.cpp).
   bool serve_static = false;
 

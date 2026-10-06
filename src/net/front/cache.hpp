@@ -1,4 +1,5 @@
-// Thruster's response cache. Rust: crates/kit/src/front/cache.rs (Thruster: cache_handler.go, memory_cache.go, variant.go).
+// Thruster's response cache. Rust: crates/kit/src/front/cache.rs (Thruster: cache_handler.go, memory_cache.go,
+// variant.go).
 #pragma once
 
 #include <chrono>

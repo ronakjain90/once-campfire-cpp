@@ -54,7 +54,9 @@ CertManager::~CertManager() {
   if (thread_.joinable()) thread_.join();
 }
 
-bool CertManager::host_allowed(std::string_view host) const { return allowed_.contains(std::string(host)); }
+bool CertManager::host_allowed(std::string_view host) const {
+  return allowed_.contains(std::string(host));
+}
 
 std::string CertManager::server_name_to_domain(std::string_view server_name, std::string& error) {
   if (server_name.empty()) {
@@ -160,8 +162,9 @@ void CertManager::install(const std::string& name, std::shared_ptr<const Certifi
   }
   // autocert's `domainRenewal`: `RenewBefore` ahead of the end, less a jitter.
   static thread_local std::mt19937_64 random{std::random_device{}()};
-  const auto jitter = std::chrono::seconds(static_cast<std::int64_t>(
-      std::uniform_real_distribution<double>(0.0, 1.0)(random) * static_cast<double>(std::chrono::seconds(kRenewJitter).count())));
+  const auto jitter =
+      std::chrono::seconds(static_cast<std::int64_t>(std::uniform_real_distribution<double>(0.0, 1.0)(random) *
+                                                     static_cast<double>(std::chrono::seconds(kRenewJitter).count())));
   const auto end = std::chrono::system_clock::from_time_t(not_after);
   const std::lock_guard lock(work_mutex_);
   renewals_[name] = end - options_.renew_before - jitter;
@@ -173,7 +176,8 @@ Status CertManager::obtain_now(const std::string& name) {
     install(name, cached);
     return {};
   }
-  if (!host_allowed(name)) return fail(Errc::Config, "acme/autocert: host \"" + name + "\" not configured in HostWhitelist");
+  if (!host_allowed(name))
+    return fail(Errc::Config, "acme/autocert: host \"" + name + "\" not configured in HostWhitelist");
   std::shared_ptr<CertifiedKey> issued;
   if (auto status = issue(name, issued); !status) return status;
   install(name, issued);
@@ -218,7 +222,9 @@ void CertManager::run() {
         log_error("TLS: certificate renewal failed domain={} error={}", job, status.error().message);
         static thread_local std::mt19937_64 random{std::random_device{}()};
         const auto half = std::chrono::seconds(kRenewJitter).count() / 2;
-        const auto wait = std::chrono::seconds(half + static_cast<std::int64_t>(std::uniform_real_distribution<double>(0.0, 1.0)(random) * static_cast<double>(half)));
+        const auto wait = std::chrono::seconds(
+            half + static_cast<std::int64_t>(std::uniform_real_distribution<double>(0.0, 1.0)(random) *
+                                             static_cast<double>(half)));
         const std::lock_guard guard(work_mutex_);
         renewals_[job] = std::chrono::system_clock::now() + wait;
       }

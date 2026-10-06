@@ -65,7 +65,9 @@ void Response::body_shared(std::shared_ptr<const void> owner, std::string_view b
   owner_ = std::move(owner);
 }
 
-std::size_t Response::body_size() const noexcept { return out_ ? out_->size() : view_.size(); }
+std::size_t Response::body_size() const noexcept {
+  return out_ ? out_->size() : view_.size();
+}
 
 std::size_t Response::body_iovecs(std::span<iovec> out, std::size_t skip) const noexcept {
   if (out.empty()) return 0;

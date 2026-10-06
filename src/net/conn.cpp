@@ -4,7 +4,13 @@
 #include <algorithm>
 #include <cstring>
 
+#include "net/h2.hpp"
+
 namespace campfire::net {
+
+// The members that need a whole type (`H2Session`) are in the header, so the two ends live here.
+Conn::Conn() = default;
+Conn::~Conn() = default;
 
 void ReadBuffer::reserve(std::size_t total) {
   if (capacity_ - begin_ >= total) return;

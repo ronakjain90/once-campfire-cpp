@@ -1,17 +1,16 @@
 // OpenSSL helpers for certificates and keys. Rust: crates/kit/src/front/acme.rs.
 #include "net/front/tls_keys.hpp"
 
+#include <arpa/inet.h>
+#include <fcntl.h>
 #include <openssl/bio.h>
 #include <openssl/ec.h>
 #include <openssl/err.h>
 #include <openssl/pem.h>
 #include <openssl/rand.h>
 #include <openssl/x509v3.h>
-#include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-#include <arpa/inet.h>
 
 #include <algorithm>
 #include <cctype>
@@ -108,8 +107,8 @@ Result<std::shared_ptr<CertifiedKey>> parse_cached(std::string_view pem, std::st
   if (X509_cmp_time(X509_get0_notBefore(leaf), &now) > 0 || X509_cmp_time(X509_get0_notAfter(leaf), &now) < 0) {
     return fail(Errc::Parse, "certificate is expired or not yet valid");
   }
-  if (X509_check_host(leaf, domain.data(), domain.size(), X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS | X509_CHECK_FLAG_NEVER_CHECK_SUBJECT,
-                      nullptr) != 1) {
+  if (X509_check_host(leaf, domain.data(), domain.size(),
+                      X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS | X509_CHECK_FLAG_NEVER_CHECK_SUBJECT, nullptr) != 1) {
     return fail(Errc::Parse, "certificate is not valid for " + std::string(domain));
   }
   if (X509_check_private_key(leaf, result->key.get()) != 1) {
@@ -128,7 +127,8 @@ Status write_cache_file(const std::filesystem::path& dir, std::string_view name,
   if (ec) return fail(Errc::Io, "cannot create " + dir.string() + ": " + ec.message());
   ::chmod(dir.c_str(), 0700);  // NOLINT(hicpp-signed-bitwise)
   const std::filesystem::path temporary = dir / (std::string(name) + ".tmp" + std::to_string(::getpid()));
-  const int fd = ::open(temporary.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0600);  // NOLINT(cppcoreguidelines-pro-type-vararg)
+  const int fd =
+      ::open(temporary.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0600);  // NOLINT(cppcoreguidelines-pro-type-vararg)
   if (fd < 0) return fail(Errc::Io, "cannot write " + temporary.string());
   std::size_t done = 0;
   while (done < data.size()) {
@@ -213,7 +213,8 @@ Result<std::shared_ptr<CertifiedKey>> challenge_certificate(std::string_view dom
   return result;
 }
 
-Result<std::shared_ptr<CertifiedKey>> self_signed(std::string_view domain, std::time_t not_before, std::time_t not_after) {
+Result<std::shared_ptr<CertifiedKey>> self_signed(std::string_view domain, std::time_t not_before,
+                                                  std::time_t not_after) {
   auto key = generate_p256_key();
   if (!key) return std::unexpected(key.error());
   X509Ptr cert = new_certificate(key->get(), domain, not_before, not_after);
@@ -244,7 +245,8 @@ Result<std::string> make_csr(std::string_view domain, EVP_PKEY* key) {
   sk_X509_EXTENSION_push(extensions, ext);
   X509_REQ_add_extensions(request.get(), extensions);
   sk_X509_EXTENSION_pop_free(extensions, X509_EXTENSION_free);
-  if (X509_REQ_sign(request.get(), key, EVP_sha256()) == 0) return fail(Errc::Internal, "cannot sign the CSR: " + ssl_error());
+  if (X509_REQ_sign(request.get(), key, EVP_sha256()) == 0)
+    return fail(Errc::Internal, "cannot sign the CSR: " + ssl_error());
   unsigned char* der = nullptr;
   const int size = i2d_X509_REQ(request.get(), &der);
   if (size <= 0) return fail(Errc::Internal, "cannot encode the CSR");

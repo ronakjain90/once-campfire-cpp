@@ -47,21 +47,21 @@ struct CertifiedKey {
 
 // `validCert` of autocert: the leaf covers `domain`, it is current at `now`, and it matches the key.
 [[nodiscard]] Result<std::shared_ptr<CertifiedKey>> parse_cached(std::string_view pem, std::string_view domain,
-                                                                std::time_t now);
+                                                                 std::time_t now);
 
 // `DirCache.Put`: the directory 0700, the file 0600, written through a temporary file.
 [[nodiscard]] Status write_cache_file(const std::filesystem::path& dir, std::string_view name, std::string_view data);
 
 // A TLS-ALPN-01 challenge certificate (RFC 8737). `digest` is the SHA-256 of the key authorization.
 [[nodiscard]] Result<std::shared_ptr<CertifiedKey>> challenge_certificate(std::string_view domain,
-                                                                         std::string_view digest);
+                                                                          std::string_view digest);
 
 // A CSR (DER) for one DNS name, signed with `key`.
 [[nodiscard]] Result<std::string> make_csr(std::string_view domain, EVP_PKEY* key);
 
 // Self-signed certificate for tests and tools.
 [[nodiscard]] Result<std::shared_ptr<CertifiedKey>> self_signed(std::string_view domain, std::time_t not_before,
-                                                               std::time_t not_after);
+                                                                std::time_t not_after);
 
 // PEM encoding of a certificate.
 [[nodiscard]] std::string certificate_pem(X509* cert);

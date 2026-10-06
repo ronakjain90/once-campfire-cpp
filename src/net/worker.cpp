@@ -23,6 +23,7 @@ namespace {
 constexpr std::uint64_t kTagWake = 1;
 constexpr std::uint64_t kTagHttp = 2;
 constexpr std::uint64_t kTagTarget = 3;
+constexpr std::uint64_t kTagHttps = 4;
 constexpr std::uint64_t kStopGraceMs = 5000;
 constexpr int kMaxEvents = 256;
 constexpr int kAcceptBatch = 128;
@@ -45,6 +46,7 @@ void add_to_epoll(int epoll_fd, int fd, std::uint32_t events, std::uint64_t tag)
 ServerOptions ServerOptions::from_config(const FrontConfig& config) {
   ServerOptions options;
   options.http_port = config.http_port;
+  options.https_port = config.https_port;
   options.target_port = config.target_port;
   options.target_bind = config.target_bind;
   options.idle_timeout_ms = config.http_idle_timeout_s * 1000;
@@ -53,16 +55,25 @@ ServerOptions ServerOptions::from_config(const FrontConfig& config) {
   options.max_request_body = static_cast<std::uint64_t>(std::max<std::int64_t>(config.max_request_body, 0));
   options.front = std::make_shared<front::Front>(config);
   options.serve_static = true;
-  // The Rust front does not listen twice on one port.
-  if (config.target_port == config.http_port) options.listen_target = false;
+  options.h2c = config.h2c_enabled;
+  if (!config.tls_domains.empty()) {
+    options.tls = std::make_shared<front::TlsServer>(
+        std::make_shared<front::CertManager>(front::AcmeOptions::from_config(config)));
+    options.listen_https = true;
+  }
+  // The Rust front does not listen twice on one port (Rust: front.rs `serve_upstream`).
+  if (config.target_port == config.http_port || (options.listen_https && config.target_port == config.https_port)) {
+    options.listen_target = false;
+  }
   return options;
 }
 
-Worker::Worker(const ServerOptions& options, const App& app, int http_listener, int target_listener)
+Worker::Worker(const ServerOptions& options, const App& app, int http_listener, int target_listener, int https_listener)
     : options_(options),
       app_(app),
       http_listener_(http_listener),
       target_listener_(target_listener),
+      https_listener_(https_listener),
       now_ms_(monotonic_ms()),
       wheel_(now_ms_) {
   epoll_fd_ = epoll_create1(EPOLL_CLOEXEC);
@@ -70,6 +81,7 @@ Worker::Worker(const ServerOptions& options, const App& app, int http_listener, 
   add_to_epoll(epoll_fd_, wake_fd_, EPOLLIN, kTagWake);
   if (http_listener_ >= 0) add_to_epoll(epoll_fd_, http_listener_, EPOLLIN, kTagHttp);
   if (target_listener_ >= 0) add_to_epoll(epoll_fd_, target_listener_, EPOLLIN, kTagTarget);
+  if (https_listener_ >= 0) add_to_epoll(epoll_fd_, https_listener_, EPOLLIN, kTagHttps);
 }
 
 Worker::~Worker() {
@@ -83,7 +95,7 @@ Worker::~Worker() {
   }
   conns_.clear();
   graveyard_.clear();
-  for (const int fd : {http_listener_, target_listener_, wake_fd_, epoll_fd_}) {
+  for (const int fd : {http_listener_, target_listener_, https_listener_, wake_fd_, epoll_fd_}) {
     if (fd >= 0) ::close(fd);
   }
 }
@@ -100,7 +112,9 @@ void Worker::post(std::coroutine_handle<> handle) {
   }
 }
 
-bool Worker::on_owner_thread() const noexcept { return owner_.load() == std::this_thread::get_id(); }
+bool Worker::on_owner_thread() const noexcept {
+  return owner_.load() == std::this_thread::get_id();
+}
 
 void Worker::start() {
   thread_ = std::thread([this] {
@@ -129,15 +143,15 @@ void Worker::run() {
     if (stopping_.load() && !stop_begun) {
       stop_begun = true;
       stop_deadline = now_ms_ + kStopGraceMs;
-      for (const int fd : {http_listener_, target_listener_}) {
+      for (const int fd : {http_listener_, target_listener_, https_listener_}) {
         if (fd >= 0) epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, fd, nullptr);
       }
       // Idle connections close now. The others close when their response is written.
       for (std::size_t i = conns_.size(); i-- > 0;) {
         Conn& c = *conns_[i];
-        if (!c.closed && ((c.state == ConnState::Head && c.rbuf.empty()) || c.state == ConnState::Linger)) {
-          close_conn(c);
-        }
+        const bool idle = (c.state == ConnState::Head && c.rbuf.empty()) || c.state == ConnState::Linger ||
+                          c.state == ConnState::Handshake || (c.state == ConnState::Http2 && (!c.h2 || c.h2->idle()));
+        if (!c.closed && idle) close_conn(c);
       }
     }
     if (stop_begun && (conns_.empty() || now_ms_ >= stop_deadline)) break;
@@ -165,8 +179,13 @@ void Worker::handle_event(void* tag, std::uint32_t events) {
     [[maybe_unused]] const ssize_t n = ::read(wake_fd_, &counter, sizeof counter);
     return;
   }
-  if (value == kTagHttp || value == kTagTarget) {
-    if (!stopping_.load()) on_accept(value == kTagHttp ? http_listener_ : target_listener_, value == kTagHttp);
+  if (value == kTagHttp || value == kTagTarget || value == kTagHttps) {
+    if (!stopping_.load()) {
+      on_accept(value == kTagHttp     ? http_listener_
+                : value == kTagTarget ? target_listener_
+                                      : https_listener_,
+                value == kTagHttp, value == kTagHttps);
+    }
     return;
   }
   Conn& c = *static_cast<Conn*>(tag);
@@ -176,7 +195,7 @@ void Worker::handle_event(void* tag, std::uint32_t events) {
   pump(c);
 }
 
-void Worker::on_accept(int listener_fd, bool via_front) {
+void Worker::on_accept(int listener_fd, bool via_front, bool tls) {
   for (int i = 0; i < kAcceptBatch; ++i) {
     sockaddr_storage address{};
     socklen_t length = sizeof address;
@@ -192,6 +211,7 @@ void Worker::on_accept(int listener_fd, bool via_front) {
     c.fd = fd;
     c.via_front = via_front;
     c.timer.owner = &c;
+    c.accepted_ms = now_ms_;
     // The text of the peer address in canonical form: an IPv4-mapped IPv6 address is IPv4.
     const char* text = nullptr;
     if (address.ss_family == AF_INET) {
@@ -199,17 +219,34 @@ void Worker::on_accept(int listener_fd, bool via_front) {
     } else if (address.ss_family == AF_INET6) {
       const in6_addr& a6 = reinterpret_cast<sockaddr_in6*>(&address)->sin6_addr;
       text = IN6_IS_ADDR_V4MAPPED(&a6) ? inet_ntop(AF_INET, &a6.s6_addr[12], c.remote, sizeof c.remote)
-                                         : inet_ntop(AF_INET6, &a6, c.remote, sizeof c.remote);
+                                       : inet_ntop(AF_INET6, &a6, c.remote, sizeof c.remote);
     }
     c.remote_size = text != nullptr ? static_cast<std::uint8_t>(std::strlen(c.remote)) : 0;
     c.index = conns_.size();
+    if (tls) {
+      c.ssl = options_.tls->accept(fd);
+      if (!c.ssl) {
+        log_debug("http: cannot make a TLS connection state for remote={}", c.remote);
+        ::close(fd);
+        continue;
+      }
+    }
+    // With TLS on, the HTTP port answers ACME HTTP-01 challenges and redirects the rest.
+    c.redirect_mode = !tls && via_front && options_.tls != nullptr;
+    // H2C_ENABLED: a cleartext client on the front port may send the HTTP/2 preface.
+    c.h2c = !tls && via_front && options_.h2c && !c.redirect_mode;
     conns_.push_back(std::move(conn));
     connection_count_.fetch_add(1);
     epoll_event event{};
     event.events = EPOLLIN | EPOLLOUT | EPOLLRDHUP | EPOLLET;
     event.data.ptr = &c;
     epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, fd, &event);
-    begin_wait(c);
+    if (tls) {
+      c.state = ConnState::Handshake;
+      arm(c, options_.read_timeout_ms, c.accepted_ms, kTimerHandshake);
+    } else {
+      begin_wait(c);
+    }
   }
 }
 
@@ -244,7 +281,9 @@ void Worker::drain_finished() {
   draining_ = false;
 }
 
-void Worker::sweep() { graveyard_.clear(); }
+void Worker::sweep() {
+  graveyard_.clear();
+}
 
 std::unique_ptr<Arena> Worker::take_arena() {
   if (!arenas_.empty()) {

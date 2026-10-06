@@ -171,7 +171,8 @@ Result<HttpResult> http_request(std::string_view method, std::string_view url_te
   std::string raw;
   char buffer[16384];
   while (true) {
-    const int n = ssl ? SSL_read(ssl.get(), buffer, sizeof buffer) : static_cast<int>(::recv(socket->get(), buffer, sizeof buffer, 0));
+    const int n = ssl ? SSL_read(ssl.get(), buffer, sizeof buffer)
+                      : static_cast<int>(::recv(socket->get(), buffer, sizeof buffer, 0));
     if (n <= 0) break;
     raw.append(buffer, static_cast<std::size_t>(n));
   }
@@ -186,7 +187,8 @@ Result<HttpResult> http_request(std::string_view method, std::string_view url_te
   result.status = std::atoi(status_line.c_str() + space + 1);
   while (line_end != std::string::npos) {
     const std::size_t next = head.find("\r\n", line_end + 2);
-    const std::string line = head.substr(line_end + 2, next == std::string::npos ? std::string::npos : next - line_end - 2);
+    const std::string line =
+        head.substr(line_end + 2, next == std::string::npos ? std::string::npos : next - line_end - 2);
     line_end = next;
     const std::size_t colon = line.find(':');
     if (colon == std::string::npos) continue;
@@ -292,7 +294,9 @@ class JsonParser {
       pos_ += 4;
     } else {
       const std::size_t start = pos_;
-      while (pos_ < text_.size() && (std::isdigit(static_cast<unsigned char>(text_[pos_])) != 0 || std::strchr("+-.eE", text_[pos_]) != nullptr)) ++pos_;
+      while (pos_ < text_.size() && (std::isdigit(static_cast<unsigned char>(text_[pos_])) != 0 ||
+                                     std::strchr("+-.eE", text_[pos_]) != nullptr))
+        ++pos_;
       if (start == pos_) return fail(Errc::Parse, "bad JSON value");
       out.data_ = std::strtod(std::string(text_.substr(start, pos_ - start)).c_str(), nullptr);
     }
@@ -344,7 +348,9 @@ class JsonParser {
   std::size_t pos_ = 0;
 };
 
-Result<Json> Json::parse(std::string_view text) { return JsonParser(text).parse(); }
+Result<Json> Json::parse(std::string_view text) {
+  return JsonParser(text).parse();
+}
 
 const Json* Json::find(std::string_view key) const noexcept {
   if (const auto* object = std::get_if<Object>(&data_)) {

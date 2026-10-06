@@ -1,19 +1,18 @@
 // Headers of the front server. Rust: crates/kit/src/front/handler.rs, compression.rs (add_vary), conn.rs (Date).
 #include "net/front.hpp"
 
-#include "net/front/cache.hpp"
-
 #include <chrono>
 #include <string>
 #include <vector>
+
+#include "net/front/cache.hpp"
 
 namespace campfire::net {
 
 namespace {
 
 constexpr const char* kDays[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-constexpr const char* kMonths[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+constexpr const char* kMonths[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 void put2(char* p, int v) noexcept {
   p[0] = static_cast<char>('0' + v / 10);
@@ -54,7 +53,9 @@ std::string_view http_date_now(char (&buffer)[32]) noexcept {
   return format_http_date(std::chrono::system_clock::to_time_t(now), buffer);
 }
 
-bool should_cache_request(const Request& request) noexcept { return front::should_cache_request(request); }
+bool should_cache_request(const Request& request) noexcept {
+  return front::should_cache_request(request);
+}
 
 void suppress_bodiless_headers(Response& response) {
   const int status = response.status;

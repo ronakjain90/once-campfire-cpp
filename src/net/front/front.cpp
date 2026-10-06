@@ -13,7 +13,9 @@ namespace campfire::net::front {
 
 namespace {
 
-std::string_view first_value(const Response& response, std::string_view name) { return response.get(name); }
+std::string_view first_value(const Response& response, std::string_view name) {
+  return response.get(name);
+}
 
 bool token_in_list(std::string_view list, std::string_view token) {
   std::size_t begin = 0;
@@ -66,8 +68,7 @@ bool may_compress(const Response& response) {
 }  // namespace
 
 Front::Front(const FrontConfig& config)
-    : config_(config),
-      cache_(std::make_unique<MemoryCache>(config.cache_size, config.max_cache_item_size)) {
+    : config_(config), cache_(std::make_unique<MemoryCache>(config.cache_size, config.max_cache_item_size)) {
   if (config.gzip_compression_enabled) {
     compression_.emplace(config.gzip_compression_jitter, config.gzip_compression_disable_on_auth);
   }
@@ -92,7 +93,8 @@ void Front::begin(FrontState& state, const Request& request) const {
   }
 }
 
-Response Front::hit_response(const FrontState& state, const Request& request, std::pmr::memory_resource* resource) const {
+Response Front::hit_response(const FrontState& state, const Request& request,
+                             std::pmr::memory_resource* resource) const {
   const CachedResponse& entry = *state.hit;
   const bool not_modified = was_not_modified(entry, request);
   Response response(resource, not_modified ? 304 : entry.status);
@@ -122,7 +124,8 @@ void Front::proxied(Request& request, Arena& arena, bool tls) const {
     }
   }
   const std::string_view host = request.header("host");
-  std::string forwarded_for = prior_for.empty() ? std::string(request.remote_ip) : prior_for + ", " + std::string(request.remote_ip);
+  std::string forwarded_for =
+      prior_for.empty() ? std::string(request.remote_ip) : prior_for + ", " + std::string(request.remote_ip);
 
   auto* items = static_cast<Header*>(arena.allocate((request.headers.size() + 5) * sizeof(Header), alignof(Header)));
   std::size_t count = 0;
@@ -134,12 +137,14 @@ void Front::proxied(Request& request, Arena& arena, bool tls) const {
     items[count++] = h;
   }
   if (!have_request_start) {
-    const auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    const auto millis =
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
     items[count++] = {"x-request-start", arena.copy("t=" + std::to_string(millis.count()))};
   }
   items[count++] = {"x-forwarded-for", arena.copy(forwarded_for)};
   items[count++] = {"x-forwarded-host", forward && !incoming_host.empty() ? incoming_host : host};
-  items[count++] = {"x-forwarded-proto", forward && !incoming_proto.empty() ? incoming_proto : (tls ? "https" : "http")};
+  items[count++] = {"x-forwarded-proto",
+                    forward && !incoming_proto.empty() ? incoming_proto : (tls ? "https" : "http")};
   request.headers = std::span<const Header>(items, count);
 }
 
@@ -147,7 +152,8 @@ void Front::compress(FrontState& state, Response& response) const {
   if (!compression_) return;
   if (response.status >= 100 && response.status < 200) return;
   const Negotiation& negotiation = state.negotiation;
-  const bool guarded = negotiation.user_specific_request || (compression_->disable_on_auth() && has_user_specific_response_headers(response));
+  const bool guarded = negotiation.user_specific_request ||
+                       (compression_->disable_on_auth() && has_user_specific_response_headers(response));
   const bool vetoed = guarded || response.has("no-gzip-compression");
   remove_header(response, "no-gzip-compression");
   if (negotiation.encoding == Encoding::None || vetoed || !may_compress(response)) return;
@@ -204,10 +210,12 @@ void Front::finish(FrontState& state, const Request& request, Response& response
       break;
     }
     case CacheStatus::Miss: {
-      const auto lifetime = cache_lifetime(response.status, first_value(response, "vary"), first_value(response, "cache-control"));
+      const auto lifetime =
+          cache_lifetime(response.status, first_value(response, "vary"), first_value(response, "cache-control"));
       if (lifetime) remove_header(response, "set-cookie");
       const bool head = request.method == Method::Head;
-      const bool fits = head || response.body_size() <= static_cast<std::size_t>(std::max<std::int64_t>(config_.max_cache_item_size, 0));
+      const bool fits = head || response.body_size() <=
+                                    static_cast<std::size_t>(std::max<std::int64_t>(config_.max_cache_item_size, 0));
       // A response with chunk framing in its body is not stored: no cacheable route sends one.
       if (lifetime && fits && !response.framed) {
         auto entry = std::make_shared<CachedResponse>();
@@ -219,7 +227,8 @@ void Front::finish(FrontState& state, const Request& request, Response& response
         if (!head) response.body_append_to(entry->body);
         state.variant->set_response_vary(first_value(response, "vary"));
         entry->variant = state.variant->variant_headers();
-        // Thruster keys the entry with the key that has no `vary` names (Rust: `key` is made before `set_response_headers`).
+        // Thruster keys the entry with the key that has no `vary` names (Rust: `key` is made before
+        // `set_response_headers`).
         const std::string key(state.variant->base_key());
         const auto now = CacheClock::now();
         const std::shared_ptr<const CachedResponse> shared = entry;

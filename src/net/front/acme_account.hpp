@@ -38,7 +38,8 @@ class AcmeAccount {
   [[nodiscard]] const std::string& new_order_url() const noexcept { return new_order_; }
 
  private:
-  [[nodiscard]] Result<HttpResult> signed_request(const std::string& url, std::string_view payload, bool as_get, bool use_jwk);
+  [[nodiscard]] Result<HttpResult> signed_request(const std::string& url, std::string_view payload, bool as_get,
+                                                  bool use_jwk);
   [[nodiscard]] Result<std::string> sign(std::string_view protected_json, std::string_view payload_b64) const;
   [[nodiscard]] Result<std::string> jwk_json() const;
   [[nodiscard]] Status fetch_nonce();

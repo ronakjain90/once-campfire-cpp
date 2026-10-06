@@ -10,6 +10,7 @@
 #include "core/task.hpp"
 #include "net/ctx.hpp"
 #include "net/front/front.hpp"
+#include "net/front/tls.hpp"
 #include "net/parser.hpp"
 #include "net/response.hpp"
 #include "net/timer_wheel.hpp"
@@ -48,25 +49,34 @@ class ReadBuffer {
 };
 
 enum class ConnState : std::uint8_t {
-  Head,      // waiting for a request head (idle, or part of a head)
-  Body,      // the head is parsed, the body is not complete
-  Handling,  // a coroutine runs the handler
-  Writing,   // the response is in the send buffer or on the way
-  Linger,    // the reply is written and the write side is shut: drain reads, then close
+  Head,       // waiting for a request head (idle, or part of a head)
+  Body,       // the head is parsed, the body is not complete
+  Handling,   // a coroutine runs the handler
+  Writing,    // the response is in the send buffer or on the way
+  Linger,     // the reply is written and the write side is shut: drain reads, then close
+  Handshake,  // the TLS handshake runs (A8)
+  Http2,      // an HTTP/2 session runs on the connection (A8)
 };
 
-enum TimerKind : std::uint32_t { kTimerHead = 1, kTimerBody, kTimerWrite, kTimerLinger };
+enum TimerKind : std::uint32_t { kTimerHead = 1, kTimerBody, kTimerWrite, kTimerLinger, kTimerHandshake, kTimerH2 };
 
 class Worker;
+class H2Session;
 
 struct Conn {
-  Conn() = default;
+  Conn();
+  ~Conn();
   Conn(const Conn&) = delete;
   Conn& operator=(const Conn&) = delete;
 
   int fd = -1;
   bool via_front = false;
   bool tls = false;  // the connection is TLS (A8)
+  front::SslPtr ssl;
+  bool redirect_mode = false;  // TLS is on and this is the HTTP port: answer HTTP-01 and redirect
+  bool h2c = false;            // H2C_ENABLED: this plain connection may speak HTTP/2 (prior knowledge)
+  std::uint64_t accepted_ms = 0;
+  std::unique_ptr<H2Session> h2;
   bool readable = false;  // edge-triggered: the socket may hold data
   bool writable = true;   // edge-triggered: the socket may take data
   bool closed = false;    // the descriptor is closed; the object waits for the end of the handler

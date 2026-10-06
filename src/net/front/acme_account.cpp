@@ -14,7 +14,9 @@ namespace campfire::net::front {
 
 namespace {
 
-std::string b64(std::string_view data) { return compat::base64::urlsafe_encode_unpadded(data); }
+std::string b64(std::string_view data) {
+  return compat::base64::urlsafe_encode_unpadded(data);
+}
 
 std::string json_escape(std::string_view text) {
   std::string out;
@@ -58,9 +60,11 @@ std::string AcmeAccount::key_authorization(std::string_view token) const {
 Result<std::string> AcmeAccount::sign(std::string_view protected_json, std::string_view payload_b64) const {
   const std::string input = b64(protected_json) + "." + std::string(payload_b64);
   std::unique_ptr<EVP_MD_CTX, decltype(&EVP_MD_CTX_free)> ctx(EVP_MD_CTX_new(), &EVP_MD_CTX_free);
-  if (EVP_DigestSignInit(ctx.get(), nullptr, EVP_sha256(), nullptr, key_.get()) != 1) return fail(Errc::Internal, "sign init failed");
+  if (EVP_DigestSignInit(ctx.get(), nullptr, EVP_sha256(), nullptr, key_.get()) != 1)
+    return fail(Errc::Internal, "sign init failed");
   std::size_t size = 0;
-  if (EVP_DigestSign(ctx.get(), nullptr, &size, reinterpret_cast<const unsigned char*>(input.data()), input.size()) != 1) {
+  if (EVP_DigestSign(ctx.get(), nullptr, &size, reinterpret_cast<const unsigned char*>(input.data()), input.size()) !=
+      1) {
     return fail(Errc::Internal, "sign failed");
   }
   std::string der(size, '\0');
@@ -86,7 +90,8 @@ Status AcmeAccount::fetch_nonce() {
   return {};
 }
 
-Result<HttpResult> AcmeAccount::signed_request(const std::string& url, std::string_view payload, bool as_get, bool use_jwk) {
+Result<HttpResult> AcmeAccount::signed_request(const std::string& url, std::string_view payload, bool as_get,
+                                               bool use_jwk) {
   for (int attempt = 0; attempt < 2; ++attempt) {
     if (nonce_.empty()) {
       if (auto status = fetch_nonce(); !status) return std::unexpected(status.error());
@@ -105,7 +110,8 @@ Result<HttpResult> AcmeAccount::signed_request(const std::string& url, std::stri
     const std::size_t dot2 = jws->rfind('.');
     const std::size_t dot1 = jws->find('.');
     const std::string body = R"({"protected":")" + jws->substr(0, dot1) + R"(","payload":")" +
-                             jws->substr(dot1 + 1, dot2 - dot1 - 1) + R"(","signature":")" + jws->substr(dot2 + 1) + "\"}";
+                             jws->substr(dot1 + 1, dot2 - dot1 - 1) + R"(","signature":")" + jws->substr(dot2 + 1) +
+                             "\"}";
     auto result = http_request("POST", url, {{"content-type", "application/jose+json"}}, body, ca_file_, timeout_);
     if (!result) return result;
     if (const std::string next = result->header("replay-nonce"); !next.empty()) nonce_ = next;
@@ -119,7 +125,8 @@ Result<HttpResult> AcmeAccount::post(const std::string& url, std::string_view pa
   return signed_request(url, payload, as_get, false);
 }
 
-Result<Json> AcmeAccount::post_json(const std::string& url, std::string_view payload, bool as_get, std::string* location) {
+Result<Json> AcmeAccount::post_json(const std::string& url, std::string_view payload, bool as_get,
+                                    std::string* location) {
   auto result = post(url, payload, as_get);
   if (!result) return std::unexpected(result.error());
   if (result->status < 200 || result->status >= 300) {
@@ -137,7 +144,8 @@ Status AcmeAccount::register_account(const std::string& eab_kid, const std::stri
   new_nonce_ = std::string(json->str("newNonce"));
   new_account_ = std::string(json->str("newAccount"));
   new_order_ = std::string(json->str("newOrder"));
-  if (new_nonce_.empty() || new_account_.empty() || new_order_.empty()) return fail(Errc::Parse, "the ACME directory is not complete");
+  if (new_nonce_.empty() || new_account_.empty() || new_order_.empty())
+    return fail(Errc::Parse, "the ACME directory is not complete");
 
   const auto register_with = [&](std::string_view payload, std::string& location) -> Status {
     auto result = signed_request(new_account_, payload, false, true);
@@ -160,7 +168,8 @@ Status AcmeAccount::register_account(const std::string& eab_kid, const std::stri
   if (!eab_kid.empty() && !eab_hmac.empty()) {
     auto jwk = jwk_json();
     if (!jwk) return std::unexpected(jwk.error());
-    const std::string protected_json = R"({"alg":"HS256","kid":")" + json_escape(eab_kid) + R"(","url":")" + json_escape(new_account_) + "\"}";
+    const std::string protected_json =
+        R"({"alg":"HS256","kid":")" + json_escape(eab_kid) + R"(","url":")" + json_escape(new_account_) + "\"}";
     const std::string signing_input = b64(protected_json) + "." + b64(*jwk);
     unsigned char mac[EVP_MAX_MD_SIZE];
     unsigned int mac_size = 0;

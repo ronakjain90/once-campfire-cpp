@@ -1,4 +1,5 @@
-// Thruster's response cache. Rust: crates/kit/src/front/cache.rs (Thruster: cache_handler.go, memory_cache.go, variant.go).
+// Thruster's response cache. Rust: crates/kit/src/front/cache.rs (Thruster: cache_handler.go, memory_cache.go,
+// variant.go).
 #include "net/front/cache.hpp"
 
 #include <algorithm>
@@ -8,10 +9,14 @@ namespace campfire::net::front {
 
 namespace {
 
-bool is_word(char c) noexcept { return std::isalnum(static_cast<unsigned char>(c)) != 0 || c == '_'; }
+bool is_word(char c) noexcept {
+  return std::isalnum(static_cast<unsigned char>(c)) != 0 || c == '_';
+}
 
 // Regex `\b<token>` at a position: no word character before it.
-bool word_start(std::string_view text, std::size_t at) noexcept { return at == 0 || !is_word(text[at - 1]); }
+bool word_start(std::string_view text, std::size_t at) noexcept {
+  return at == 0 || !is_word(text[at - 1]);
+}
 
 // Regex `\b<word>\b`.
 bool has_word(std::string_view text, std::string_view word) noexcept {
@@ -231,7 +236,9 @@ void Variant::set_response_vary(std::string_view vary) {
   std::sort(names_.begin(), names_.end());
 }
 
-std::string_view Variant::request_value(const std::string& name) const noexcept { return request_->header(name); }
+std::string_view Variant::request_value(const std::string& name) const noexcept {
+  return request_->header(name);
+}
 
 std::string_view Variant::cache_key() {
   key_ = base_;

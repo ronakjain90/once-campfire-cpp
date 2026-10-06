@@ -1,4 +1,5 @@
-// ActionDispatch::Static and Rack::Deflater for the asset table. Rust: crates/campfire/src/app.rs, crates/kit/src/deflater.rs.
+// ActionDispatch::Static and Rack::Deflater for the asset table. Rust: crates/campfire/src/app.rs,
+// crates/kit/src/deflater.rs.
 #include "net/front/static_files.hpp"
 
 #include <algorithm>
@@ -162,8 +163,8 @@ std::optional<Response> serve_static(Ctx& ctx) {
   const std::string_view encoding = select_best_encoding(parse_accept_encoding(request.header("accept-encoding")));
   if (encoding.empty()) {
     // Rack::Deflater: 406 with the message below. The path is the request target.
-    const std::string message = "An acceptable encoding for the requested resource " + std::string(request.target) +
-                                " could not be found.";
+    const std::string message =
+        "An acceptable encoding for the requested resource " + std::string(request.target) + " could not be found.";
     Response refused = ctx.response(406);
     refused.add("content-type", "text/plain");
     refused.add_copy("content-length", std::to_string(message.size()));
@@ -201,7 +202,8 @@ std::optional<Response> serve_static(Ctx& ctx) {
     return response;
   }
   response.chunked = true;
-  if (!full_gzip.empty() && body.data() == served->file->identity.data() && body.size() == served->file->identity.size()) {
+  if (!full_gzip.empty() && body.data() == served->file->identity.data() &&
+      body.size() == served->file->identity.size()) {
     response.body_view(full_gzip);
   } else {
     const auto mtime = static_cast<std::uint32_t>(assets::generated_data().built_at);

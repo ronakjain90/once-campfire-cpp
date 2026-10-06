@@ -137,17 +137,21 @@ Server::Server(ServerOptions options, App app) : options_(std::move(options)), a
   if (!options_.front_headers) options_.front.reset();
 }
 
-Server::~Server() { stop(); }
+Server::~Server() {
+  stop();
+}
 
 Status Server::start() {
   if (!workers_.empty()) return fail(Errc::Internal, "the server is already started");
   const std::size_t count = options_.workers != 0 ? options_.workers : cpuset_size();
   std::vector<std::unique_ptr<Worker>> workers;
   std::uint16_t http_port = options_.http_port;
+  std::uint16_t https_port = options_.https_port;
   std::uint16_t target_port = options_.target_port;
   for (std::size_t i = 0; i < count; ++i) {
     Fd http;
     Fd target;
+    Fd https;
     if (options_.listen_http) {
       auto fd = listen_on("", http_port);
       if (!fd) return std::unexpected(fd.error());
@@ -160,9 +164,16 @@ Status Server::start() {
       target = std::move(*fd);
       if (i == 0) target_port = bound_port(target.get());
     }
-    workers.push_back(std::make_unique<Worker>(options_, app_, http.release(), target.release()));
+    if (options_.listen_https) {
+      auto fd = listen_on("", https_port);
+      if (!fd) return std::unexpected(fd.error());
+      https = std::move(*fd);
+      if (i == 0) https_port = bound_port(https.get());
+    }
+    workers.push_back(std::make_unique<Worker>(options_, app_, http.release(), target.release(), https.release()));
   }
   http_port_ = options_.listen_http ? http_port : 0;
+  https_port_ = options_.listen_https ? https_port : 0;
   target_port_ = options_.listen_target ? target_port : 0;
   workers_ = std::move(workers);
   for (const std::unique_ptr<Worker>& worker : workers_) worker->start();

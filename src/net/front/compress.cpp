@@ -112,7 +112,9 @@ std::string zstd_encode(std::string_view body, std::string_view jitter) {
 
 }  // namespace
 
-std::string gzip_member(std::string_view body, std::uint32_t mtime) { return gzip_encode(body, {}, mtime, '\x03'); }
+std::string gzip_member(std::string_view body, std::uint32_t mtime) {
+  return gzip_encode(body, {}, mtime, '\x03');
+}
 
 Encoding select_encoding(Method method, std::string_view accept_encoding) noexcept {
   if (method == Method::Head || accept_encoding.empty()) return Encoding::None;
@@ -132,8 +134,8 @@ bool content_type_filter(std::string_view content_type) {
   static constexpr std::array<std::string_view, 8> kContains{"compress", "zip",  "snappy", "lzma",
                                                              "xz",       "zstd", "brotli", "stuffit"};
   static constexpr std::array<std::string_view, 13> kPrefix{
-      "video/",     "audio/",     "image/jp",   "image/jpeg", "image/jpg",  "image/png", "image/apng",
-      "image/webp", "image/gif",  "image/avif", "image/heic", "image/heif", "image/jxl"};
+      "video/",     "audio/",    "image/jp",   "image/jpeg", "image/jpg",  "image/png", "image/apng",
+      "image/webp", "image/gif", "image/avif", "image/heic", "image/heif", "image/jxl"};
   for (const std::string_view s : kContains) {
     if (type.find(s) != std::string::npos) return false;
   }
@@ -150,9 +152,9 @@ std::string_view detect_content_type(std::string_view data) noexcept {
                               trimmed.front() == '\r' || trimmed.front() == ' ')) {
     trimmed.remove_prefix(1);
   }
-  static constexpr std::array<std::string_view, 17> kHtml{"<!DOCTYPE HTML", "<HTML",  "<HEAD",  "<SCRIPT", "<IFRAME", "<H1",
-                                                          "<DIV",           "<FONT",  "<TABLE", "<A",      "<STYLE",  "<TITLE",
-                                                          "<B",             "<BODY",  "<BR",    "<P",      "<!--"};
+  static constexpr std::array<std::string_view, 17> kHtml{
+      "<!DOCTYPE HTML", "<HTML",  "<HEAD", "<SCRIPT", "<IFRAME", "<H1", "<DIV", "<FONT", "<TABLE", "<A",
+      "<STYLE",         "<TITLE", "<B",    "<BODY",   "<BR",     "<P",  "<!--"};
   for (const std::string_view signature : kHtml) {
     if (trimmed.size() > signature.size() && iequals(trimmed.substr(0, signature.size()), signature) &&
         (trimmed[signature.size()] == ' ' || trimmed[signature.size()] == '>')) {
@@ -181,7 +183,8 @@ std::string_view detect_content_type(std::string_view data) noexcept {
   if (data.starts_with("PK\x03\x04")) return "application/zip";
   for (const char ch : data) {
     const auto b = static_cast<unsigned char>(ch);
-    if (b <= 0x08 || b == 0x0B || (b >= 0x0E && b <= 0x1A) || (b >= 0x1C && b <= 0x1F)) return "application/octet-stream";
+    if (b <= 0x08 || b == 0x0B || (b >= 0x0E && b <= 0x1A) || (b >= 0x1C && b <= 0x1F))
+      return "application/octet-stream";
   }
   return "text/plain; charset=utf-8";
 }

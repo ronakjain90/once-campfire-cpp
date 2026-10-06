@@ -20,6 +20,7 @@ campfire_library(net
     front/front.cpp
     front/headers.cpp
     front/static_files.cpp
+    front/tls.cpp
     front/tls_keys.cpp
     http.cpp
     parser.cpp
@@ -30,6 +31,8 @@ campfire_library(net
     timer_wheel.cpp
     worker.cpp
     worker_conn.cpp
+    worker_h2.cpp
+    worker_io.cpp
   PUBLIC_DEPS campfire_core campfire_picohttpparser campfire_assets OpenSSL::SSL OpenSSL::Crypto
   DEPS campfire_compat PkgConfig::LIBDEFLATE PkgConfig::ZSTD PkgConfig::NGHTTP2
   WERROR)

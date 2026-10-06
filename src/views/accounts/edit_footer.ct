@@ -1,0 +1,3 @@
+{# reference/app/views/accounts/edit.html.erb: `content_for :footer`. #}
+{% params const ViewContext& ctx %}
+  <div class="txt-align-center center margin-block-double txt-subtle">Campfire&trade; version {% call version_badge(ctx) %}</div>

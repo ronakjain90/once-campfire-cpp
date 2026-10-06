@@ -1,0 +1,79 @@
+{
+ "app": "cpp",
+ "image": "campfire-cpp:a4",
+ "rep": 1,
+ "http": [
+  {
+   "avg_bytes": 3354,
+   "conc": 1,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 10.415,
+    "mean_ms": 0.05,
+    "n": 148016,
+    "p50_ms": 0.043,
+    "p90_ms": 0.066,
+    "p99_ms": 0.117
+   },
+   "ok": 148016,
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "rps": 18500.9,
+   "secs": 8.0,
+   "statuses": {
+    "200": 148016
+   },
+   "route": "avatar",
+   "app_cpu_usec": 3676277,
+   "requests": 148016
+  },
+  {
+   "avg_bytes": 3354,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 23.151,
+    "mean_ms": 0.25,
+    "n": 513238,
+    "p50_ms": 0.108,
+    "p90_ms": 0.384,
+    "p99_ms": 3.425
+   },
+   "ok": 513238,
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "rps": 64084.4,
+   "secs": 8.01,
+   "statuses": {
+    "200": 513238
+   },
+   "route": "avatar",
+   "app_cpu_usec": 8792545,
+   "requests": 513238
+  },
+  {
+   "avg_bytes": 3354,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 40.159,
+    "mean_ms": 0.68,
+    "n": 750977,
+    "p50_ms": 0.369,
+    "p90_ms": 1.532,
+    "p99_ms": 4.647
+   },
+   "ok": 750977,
+   "path": "/users/eyJfcmFpbHMiOnsiZGF0YSI6MTQ5MDg3NjU5LCJwdXIiOiJ1c2VyL2F2YXRhciJ9fQ--3717de512c048bb2a011a08236969887ee56ae9f8bd2fb510959b9915f449e17/avatar",
+   "rps": 93826.2,
+   "secs": 8.0,
+   "statuses": {
+    "200": 750977
+   },
+   "route": "avatar",
+   "app_cpu_usec": 9683612,
+   "requests": 750977
+  }
+ ]
+}

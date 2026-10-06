@@ -1,0 +1,58 @@
+{# reference/app/views/users/show.html.erb: the content of the page. The title and the nav come from the controller. #}
+{% include views/helpers/accounts.hpp %}
+{% include views/helpers/rooms.hpp %}
+{% include views/accounts/types.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const UserShowView& user %}
+<section class="panel txt-align-center">
+  <div class="flex flex-column gap {% if user.banned %}banned{% end %}">
+    <div class="avatar txt-xx-large center" style="background: white">
+      {% call image_tag(ctx, user.user.avatar_path, attrs().alt("Profile avatar").cls("avatar")) %}
+    </div>
+
+    {% if user.bot %}
+      <div class="pad-double--inline push--inline push--block-start">
+        {% if user.active %}
+          {% wrap button_to(rooms_directs_with_user(user.user.id), attrs().cls("btn btn--primary full-width txt--large")) %}{% call image_tag(ctx, "messages.svg") %}{% end %}
+        {% else %}
+          <div>{{ user.user.name }} is no longer on this account</div>
+        {% end %}
+      </div>
+    {% else %}
+      {% if !user.deactivated %}
+        <div class="flex flex-column gap" style="--row-gap: calc(var(--block-space) / 3)">
+          <h1 class="txt-x-large txt-tight-lines margin-none">{{ user.user.name }}</h1>
+          {% if ctx.can_administer() %}
+            <div>{% call mail_to(user.email_address.value_or("")) %}</div>
+          {% end %}
+          <div>{{ user.bio }}</div>
+        </div>
+
+        {% if user.active %}
+          <div class="pad-inline-double margin-inline margin-block-start">
+            {% wrap button_to(rooms_directs_with_user(user.user.id), attrs().cls("btn btn--reversed full-width txt-large")) %}
+              {% call image_tag(ctx, "messages.svg", attrs().aria("hidden", "true").aria("label", "Ping " + user.user.name)) %}
+            {% end %}
+          </div>
+
+          {% if ctx.can_administer() %}
+            <hr class="margin-block-start borderless">
+
+            {% render users/profiles/transfer(ctx, user.is_current, user.transfer_url) %}
+          {% end %}
+        {% end %}
+
+        {% if ctx.can_administer() && !user.is_current %}
+          <div class="margin-block-start">
+            {% render users/ban_button(ctx, user) %}
+          </div>
+        {% end %}
+      {% else %}
+        <div>
+          <h1 class="txt-x-large margin-none">{{ user.user.name }}</h1>
+          <div>{{ user.user.name }} is no longer on this account</div>
+        </div>
+      {% end %}
+    {% end %}
+  </div>
+</section>

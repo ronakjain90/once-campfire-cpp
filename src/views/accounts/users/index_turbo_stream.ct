@@ -1,0 +1,7 @@
+{# reference/app/views/accounts/users/index.turbo_stream.erb #}
+{% include views/accounts/types.hpp %}
+{% params const ViewContext& ctx, const AccountUsersStreamView& view %}
+<turbo-stream action="replace" target="next_page_container"><template>{% for user : view.users %}{% render accounts/users/user(ctx, user) %}{% end %}</template></turbo-stream>
+
+{% if view.next_page %}<turbo-stream action="append" target="account_users"><template>{% render accounts/users/next_page_container(*view.next_page) %}</template></turbo-stream>
+{% end %}

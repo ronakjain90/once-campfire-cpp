@@ -1,0 +1,16 @@
+{# reference/app/views/users/show.html.erb: `content_for :nav`. #}
+{% include views/helpers/accounts.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, bool is_current %}
+  <div class="flex-item-justify-start">
+    {% call link_back(ctx) %}
+  </div>
+
+  <div class="flex align-center gap flex-item-justify-end">
+    {% if is_current %}
+      {% wrap link_to(routes::user_profile(), attrs().cls("btn")) %}
+        {% call image_tag(ctx, "pencil.svg", attrs().aria_hidden()) %}
+        <span class="for-screen-reader">Edit my profile</span>
+      {% end %}
+    {% end %}
+  </div>

@@ -71,6 +71,8 @@ class Flash {
   void discard(std::optional<std::string_view> key = std::nullopt);
   void remove(std::string_view key);
   [[nodiscard]] bool empty() const { return flashes_.empty(); }
+  // The flashes in the order that they were set.
+  [[nodiscard]] const std::vector<std::pair<std::string, compat::json::Value>>& entries() const { return flashes_; }
   [[nodiscard]] std::optional<std::string_view> notice() const { return get_str("notice"); }
   [[nodiscard]] std::optional<std::string_view> alert() const { return get_str("alert"); }
 

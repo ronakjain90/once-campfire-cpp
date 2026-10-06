@@ -79,6 +79,26 @@ net::Response Rq::head(int status) {
 
 namespace {
 
+// Rust's `{:?}` of a `serde_json::Value`: `String("text")` for text.
+std::string rust_debug(const compat::json::Value& value) {
+  if (const std::string* text = value.get_string()) {
+    std::string out = "String(\"";
+    for (const char c : *text) {
+      switch (c) {
+        case '"': out += "\\\""; break;
+        case '\\': out += "\\\\"; break;
+        case '\n': out += "\\n"; break;
+        case '\r': out += "\\r"; break;
+        case '\t': out += "\\t"; break;
+        case '\0': out += "\\0"; break;
+        default: out.push_back(c);
+      }
+    }
+    return out + "\")";
+  }
+  return compat::json::generate(value);
+}
+
 bool is_absolute_url(std::string_view location) {
   if (location.starts_with("//")) return true;
   if (location.empty() || !std::isalpha(static_cast<unsigned char>(location.front()))) return false;
@@ -208,7 +228,15 @@ std::optional<net::Response> Rq::fresh_when(const Freshness& freshness) {
       parts.push_back(*freshness.etag);
     if (is_turbo_frame_request()) parts.emplace_back("frame");
     if (freshness.template_digest) parts.push_back(*freshness.template_digest);
-    // ETagWithFlash: a flash changes the validator.
+    // ETagWithFlash: a flash changes the validator. Rust: `"{key}={:?}"` of each flash, joined with "&".
+    if (const req::Flash& current = flash(); !current.empty()) {
+      std::string flashes;
+      for (const auto& [key, value] : current.entries()) {
+        if (!flashes.empty()) flashes += '&';
+        flashes += key + "=Some(" + rust_debug(value) + ")";
+      }
+      parts.push_back(std::move(flashes));
+    }
     std::string joined;
     for (std::size_t i = 0; i < parts.size(); ++i) joined += (i != 0 ? "/" : "") + parts[i];
     const std::string tag = body_etag(joined);  // `W/"<32 hex>"`

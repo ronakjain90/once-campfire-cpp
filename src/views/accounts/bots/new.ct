@@ -1,0 +1,9 @@
+{# reference/app/views/accounts/bots/new.html.erb: the content of the page. #}
+{% include views/accounts/types.hpp %}
+{% include views/helpers/forms.hpp %}
+{% params const ViewContext& ctx, const BotFormView& bot, const helpers::FormWith& form %}
+<section class="panel">
+  {% wrap form_with(form) %}
+    {% render accounts/bots/form(ctx, bot, form) %}
+  {% end %}
+</section>

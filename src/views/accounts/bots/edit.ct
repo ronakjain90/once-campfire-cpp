@@ -1,0 +1,24 @@
+{# reference/app/views/accounts/bots/edit.html.erb: the content of the page. #}
+{% include views/accounts/types.hpp %}
+{% include views/helpers/forms.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, std::int64_t bot_id, const BotFormView& bot, const helpers::FormWith& form %}
+<section class="panel" style="view-transition-name: chat-bot-{{ bot_id }}">
+  {% wrap form_with(form) %}
+    {% render accounts/bots/form(ctx, bot, form) %}
+  {% end %}
+
+  <hr class="separator full-width margin-block-double">
+
+  <div class="flex align-center gap justify-space-between">
+    {% wrap button_to(routes::account_bot(bot_id), attrs().method("delete").cls("btn txt--small btn--negative").aria("label", "Delete this chat bot").data("turbo_confirm", "Are you sure you want to permanently remove this bot from the account? This can’t be undone.")) %}
+      {% call image_tag(ctx, "trash.svg", attrs().aria_hidden().size(20)) %}
+      {% call image_tag(ctx, "bot.svg", attrs().aria_hidden().size(20)) %}
+    {% end %}
+
+    {% wrap button_to(routes::account_bot_key(bot_id), attrs().method("put").cls("btn full-width txt--small btn--negative").aria("label", "Generate a new key").data("turbo_confirm", "Are you sure you want to change the bot key? All usage of this bot must be updated.")) %}
+      {% call image_tag(ctx, "refresh.svg", attrs().aria_hidden().size(20)) %}
+      {% call image_tag(ctx, "key.svg", attrs().aria_hidden().size(20)) %}
+    {% end %}
+  </div>
+</section>

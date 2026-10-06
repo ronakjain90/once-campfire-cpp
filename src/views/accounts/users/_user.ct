@@ -1,0 +1,35 @@
+{# reference/app/views/accounts/users/_user.html.erb #}
+{% include views/accounts/types.hpp %}
+{% include views/helpers/accounts.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const AccountUser& user %}
+<li class="flex align-center gap margin-none {% if user.banned %}banned{% end %}">
+  <figure class="avatar flex-item-no-shrink" style="--avatar-size: 3.75ch;">
+    {% call avatar_tag(ctx, user.user.id, user.user.title, user.user.avatar_path, attrs().attr("loading", "lazy")) %}
+  </figure>
+
+  <div class="min-width">
+    <div class="overflow-ellipsis fill-shade"><strong>{{ user.user.name }}</strong></div>
+  </div>
+
+  <hr class="separator" aria-hidden="true">
+
+  {% if ctx.can_administer() && user.active %}
+    {% if !user.bot %}
+      {% call account_role_form(ctx, user) -%}
+    {% end %}
+
+    {% if !user.is_current %}
+      {% wrap button_to(routes::account_user(user.user.id), attrs().method("delete").cls("btn txt-small flex-item-no-shrink btn--negative").data("turbo_confirm", "Are you sure you want to permanently remove this person from the account? This can’t be undone.")) %}
+        {% call image_tag(ctx, "minus.svg", attrs().size(20).aria_hidden()) %}
+        <span class="for-screen-reader">Delete {{ user.user.name }}</span>
+      {% end %}
+    {% end %}
+  {% end %}
+  {% if user.is_current %}
+    {% wrap link_to(routes::user_profile(), attrs().cls("btn txt-small flex-item-no-shrink").target("_top")) %}
+      {% call image_tag(ctx, "pencil.svg", attrs().size(20).aria_hidden()) %}
+      <span class="for-screen-reader">My settings</span>
+    {% end %}
+  {% end %}
+</li>

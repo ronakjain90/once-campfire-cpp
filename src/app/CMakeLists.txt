@@ -33,8 +33,17 @@ campfire_library(app
     allow_browser.cpp
     app.cpp
     broadcasts.cpp
+    active_storage.cpp
     compress.cpp
     concerns.cpp
+    controllers/accounts_common.cpp
+    controllers/accounts.cpp
+    controllers/accounts_bots.cpp
+    controllers/accounts_custom_styles.cpp
+    controllers/accounts_join_codes.cpp
+    controllers/accounts_logos.cpp
+    controllers/accounts_users.cpp
+    controllers/accounts_users_list.cpp
     controllers/action_not_found.cpp
     controllers/autocompletable_users.cpp
     controllers/common.cpp
@@ -42,12 +51,19 @@ campfire_library(app
     controllers/message_boosts.cpp
     controllers/message_bots.cpp
     controllers/messages.cpp
+    controllers/qr_codes.cpp
     controllers/session_transfers.cpp
     controllers/directs.cpp
     controllers/involvements.cpp
     controllers/rooms.cpp
     controllers/sessions.cpp
     controllers/users.cpp
+    controllers/users_avatars.cpp
+    controllers/users_bans.cpp
+    controllers/users_profiles.cpp
+    controllers/users_push_subscriptions.cpp
+    controllers/users_show.cpp
+    controllers/users_test_notifications.cpp
     controllers/sidebars.cpp
     controllers/welcome.cpp
     dispatch.cpp
@@ -58,6 +74,7 @@ campfire_library(app
     message_actions.cpp
     message_partial_stub.cpp
     message_presenter.cpp
+    network_guard.cpp
     not_found.cpp
     page.cpp
     page_cache.cpp
@@ -68,6 +85,7 @@ campfire_library(app
     render_page.cpp
     rq.cpp
     rq_response.cpp
+    rqrcode.cpp
     session_cache.cpp
     user_agent.cpp
     worker_state.cpp
@@ -80,10 +98,12 @@ campfire_library(app
 
 campfire_test(app
   SOURCES
+    tests/accounts_area_test.cpp
     tests/app_test.cpp
     tests/cache_test.cpp
     tests/finish_test.cpp
     tests/messages_area_test.cpp
+    tests/rqrcode_test.cpp
     tests/signin_area_test.cpp
     tests/user_agent_test.cpp
     tests/rooms_test.cpp

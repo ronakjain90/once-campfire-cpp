@@ -2,6 +2,8 @@
 add_subdirectory("${PROJECT_SOURCE_DIR}/vendor/picohttpparser" "${CMAKE_BINARY_DIR}/vendor/picohttpparser")
 
 find_package(PkgConfig REQUIRED)
+find_package(OpenSSL REQUIRED)
+pkg_check_modules(NGHTTP2 REQUIRED IMPORTED_TARGET libnghttp2)
 pkg_check_modules(LIBDEFLATE REQUIRED IMPORTED_TARGET libdeflate)
 pkg_check_modules(ZSTD REQUIRED IMPORTED_TARGET libzstd)
 
@@ -9,11 +11,16 @@ campfire_library(net
   SOURCES
     conn.cpp
     front.cpp
+    front/acme.cpp
+    front/acme_account.cpp
+    front/acme_flow.cpp
+    front/acme_http.cpp
     front/cache.cpp
     front/compress.cpp
     front/front.cpp
     front/headers.cpp
     front/static_files.cpp
+    front/tls_keys.cpp
     http.cpp
     parser.cpp
     response.cpp
@@ -23,8 +30,8 @@ campfire_library(net
     timer_wheel.cpp
     worker.cpp
     worker_conn.cpp
-  PUBLIC_DEPS campfire_core campfire_picohttpparser campfire_assets
-  DEPS PkgConfig::LIBDEFLATE PkgConfig::ZSTD
+  PUBLIC_DEPS campfire_core campfire_picohttpparser campfire_assets OpenSSL::SSL OpenSSL::Crypto
+  DEPS campfire_compat PkgConfig::LIBDEFLATE PkgConfig::ZSTD PkgConfig::NGHTTP2
   WERROR)
 
 # A route table for the router tests.

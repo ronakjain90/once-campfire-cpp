@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Host launcher: builds the campfire-diffsweep image if needed and runs sweep.py inside it.
+#   tools/diffsweep/diffsweep [sweep.py options]   (see README.md)
+#   tools/diffsweep/diffsweep gen                  regenerate lists/ (gen_lists.py, runs on the host)
+set -euo pipefail
+HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+WORKSPACE=/Volumes/ExternalHD/Code/AI/once-campfire
+BENCH_DIR=/var/lib/campfire-bench
+if [ "${1:-}" = gen ]; then shift; exec python3 "$HERE/gen_lists.py" "$@"; fi
+if ! docker image inspect campfire-diffsweep >/dev/null 2>&1; then
+  docker image inspect campfire-bench-runner >/dev/null 2>&1 || \
+    docker build -t campfire-bench-runner -f "$WORKSPACE/once-campfire-cpp/gate/bench/Dockerfile" "$WORKSPACE/once-campfire-rust/bench/loadgen" >&2
+  docker build -t campfire-diffsweep "$HERE" >&2
+fi
+args=(); prev=
+for a in "$@"; do
+  if [ "$prev" = --out ]; then case "$a" in /*) ;; *) a=$PWD/$a ;; esac; fi
+  if [ -e "$a" ] && [ "${a:0:1}" != / ]; then a=$PWD/$a; fi
+  args+=("$a"); prev=$a
+done
+exec docker run --rm --name "t13-diffsweep-$$" --network host \
+  -v /var/run/docker.sock:/var/run/docker.sock -v "$WORKSPACE:$WORKSPACE" -v "$BENCH_DIR:$BENCH_DIR" \
+  "campfire-diffsweep" python3 "$HERE/sweep.py" ${args[@]+"${args[@]}"}

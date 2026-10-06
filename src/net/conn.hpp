@@ -9,6 +9,7 @@
 #include "core/arena.hpp"
 #include "core/task.hpp"
 #include "net/ctx.hpp"
+#include "net/front/front.hpp"
 #include "net/parser.hpp"
 #include "net/response.hpp"
 #include "net/timer_wheel.hpp"
@@ -65,6 +66,7 @@ struct Conn {
 
   int fd = -1;
   bool via_front = false;
+  bool tls = false;  // the connection is TLS (A8)
   bool readable = false;  // edge-triggered: the socket may hold data
   bool writable = true;   // edge-triggered: the socket may take data
   bool closed = false;    // the descriptor is closed; the object waits for the end of the handler
@@ -92,6 +94,7 @@ struct Conn {
   std::optional<Ctx> ctx;
   Task<void> task;
   std::optional<Response> response;
+  front::FrontState front_state;
   std::optional<Wire> wire;
   std::size_t written = 0;
   std::size_t consumed = 0;  // bytes of `rbuf` that belong to the current request

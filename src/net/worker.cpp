@@ -51,6 +51,8 @@ ServerOptions ServerOptions::from_config(const FrontConfig& config) {
   options.read_timeout_ms = config.http_read_timeout_s * 1000;
   options.write_timeout_ms = config.http_write_timeout_s * 1000;
   options.max_request_body = static_cast<std::uint64_t>(std::max<std::int64_t>(config.max_request_body, 0));
+  options.front = std::make_shared<front::Front>(config);
+  options.serve_static = true;
   // The Rust front does not listen twice on one port.
   if (config.target_port == config.http_port) options.listen_target = false;
   return options;

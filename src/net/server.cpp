@@ -132,7 +132,10 @@ std::size_t cpuset_size() noexcept {
   return 1;
 }
 
-Server::Server(ServerOptions options, App app) : options_(std::move(options)), app_(app) {}
+Server::Server(ServerOptions options, App app) : options_(std::move(options)), app_(app) {
+  if (options_.front_headers && !options_.front) options_.front = std::make_shared<front::Front>(FrontConfig{});
+  if (!options_.front_headers) options_.front.reset();
+}
 
 Server::~Server() { stop(); }
 

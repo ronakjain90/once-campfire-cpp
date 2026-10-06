@@ -1,6 +1,8 @@
 // Headers of the front server. Rust: crates/kit/src/front/handler.rs, compression.rs (add_vary), conn.rs (Date).
 #include "net/front.hpp"
 
+#include "net/front/cache.hpp"
+
 #include <chrono>
 #include <string>
 #include <vector>
@@ -8,8 +10,6 @@
 namespace campfire::net {
 
 namespace {
-
-constexpr std::size_t kMaxCacheableUri = 2048;  // the Rust README: "skip URIs over 2 KB"
 
 constexpr const char* kDays[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 constexpr const char* kMonths[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -54,12 +54,7 @@ std::string_view http_date_now(char (&buffer)[32]) noexcept {
   return format_http_date(std::chrono::system_clock::to_time_t(now), buffer);
 }
 
-bool should_cache_request(const Request& request) noexcept {
-  const bool allowed = request.method == Method::Get || request.method == Method::Head;
-  const bool upgrade = request.header("connection") == "Upgrade" || request.header("upgrade") == "websocket";
-  const bool range = !request.header("range").empty();
-  return allowed && !upgrade && !range && request.target.size() <= kMaxCacheableUri;
-}
+bool should_cache_request(const Request& request) noexcept { return front::should_cache_request(request); }
 
 void suppress_bodiless_headers(Response& response) {
   const int status = response.status;

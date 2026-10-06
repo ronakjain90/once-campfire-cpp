@@ -1,10 +1,19 @@
 # HTTP server: parser, router, response, workers. T5.
 add_subdirectory("${PROJECT_SOURCE_DIR}/vendor/picohttpparser" "${CMAKE_BINARY_DIR}/vendor/picohttpparser")
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBDEFLATE REQUIRED IMPORTED_TARGET libdeflate)
+pkg_check_modules(ZSTD REQUIRED IMPORTED_TARGET libzstd)
+
 campfire_library(net
   SOURCES
     conn.cpp
     front.cpp
+    front/cache.cpp
+    front/compress.cpp
+    front/front.cpp
+    front/headers.cpp
+    front/static_files.cpp
     http.cpp
     parser.cpp
     response.cpp
@@ -14,7 +23,8 @@ campfire_library(net
     timer_wheel.cpp
     worker.cpp
     worker_conn.cpp
-  PUBLIC_DEPS campfire_core campfire_picohttpparser
+  PUBLIC_DEPS campfire_core campfire_picohttpparser campfire_assets
+  DEPS PkgConfig::LIBDEFLATE PkgConfig::ZSTD
   WERROR)
 
 # A route table for the router tests.

@@ -8,6 +8,7 @@
 #include <memory_resource>
 #include <optional>
 #include <span>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -54,6 +55,13 @@ class Response {
   [[nodiscard]] bool has_body() const noexcept { return body_size() != 0; }
   // Appends the body iovecs, from byte `skip` on. Returns the number written.
   std::size_t body_iovecs(std::span<iovec> out, std::size_t skip) const noexcept;
+  // The body as one view, or nothing if the body is a chain of buffers (A8: the front cache reads it).
+  [[nodiscard]] std::optional<std::string_view> body_contiguous() const noexcept {
+    if (out_) return std::nullopt;
+    return view_;
+  }
+  // Appends the whole body to `out`.
+  void body_append_to(std::string& out) const;
 
  private:
   friend class Wire;

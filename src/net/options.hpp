@@ -3,10 +3,12 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <string>
 
 #include "core/config.hpp"
 #include "net/ctx.hpp"
+#include "net/front/front.hpp"
 #include "net/parser.hpp"
 #include "net/router.hpp"
 
@@ -31,6 +33,11 @@ struct ServerOptions {
   ParserLimits parser;
   // Add the headers of the front (vary, x-cache, date) to the responses on the HTTP_PORT.
   bool front_headers = true;
+  // The front pipeline (cache, compression, X-Forwarded-*). `Server` makes one with the default
+  // settings if `front_headers` is on and this is null. `from_config` makes one from the config.
+  std::shared_ptr<front::Front> front;
+  // ActionDispatch::Static: answer from the asset table before the routes (A8, front/static_files.cpp).
+  bool serve_static = false;
 
   [[nodiscard]] static ServerOptions from_config(const FrontConfig& config);
 };

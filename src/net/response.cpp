@@ -76,6 +76,21 @@ std::size_t Response::body_iovecs(std::span<iovec> out, std::size_t skip) const 
   return 1;
 }
 
+void Response::body_append_to(std::string& out) const {
+  const std::size_t total = body_size();
+  out.reserve(out.size() + total);
+  std::size_t skip = 0;
+  while (skip < total) {
+    iovec iov[16];
+    const std::size_t n = body_iovecs(iov, skip);
+    if (n == 0) break;
+    for (std::size_t i = 0; i < n; ++i) {
+      out.append(static_cast<const char*>(iov[i].iov_base), iov[i].iov_len);
+      skip += iov[i].iov_len;
+    }
+  }
+}
+
 std::string_view reason_phrase(int status) noexcept {
   switch (status) {
     case 100: return "Continue";

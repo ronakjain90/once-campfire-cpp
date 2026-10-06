@@ -11,6 +11,7 @@
 
 #include "core/log.hpp"
 #include "net/front.hpp"
+#include "net/front/static_files.hpp"
 #include "net/worker.hpp"
 
 namespace campfire::net {
@@ -213,6 +214,20 @@ void Worker::dispatch(Conn& c) {
   }
   c.state = ConnState::Handling;
   arm(c, options_.write_timeout_ms, c.request_start_ms, kTimerWrite);
+  if (c.via_front && options_.front) {
+    options_.front->begin(c.front_state, request);
+    if (c.front_state.status == front::CacheStatus::Hit) {
+      c.response.emplace(options_.front->hit_response(c.front_state, request, c.arena->resource()));
+      return;
+    }
+    options_.front->proxied(request, *c.arena, c.tls);
+  }
+  if (options_.serve_static) {
+    if (std::optional<Response> served = front::serve_static(*c.ctx)) {
+      c.response.emplace(std::move(*served));
+      return;
+    }
+  }
   c.handler_active = true;
   c.in_start = true;
   c.task = serve(c);
@@ -223,8 +238,8 @@ void Worker::dispatch(Conn& c) {
 void Worker::begin_write(Conn& c) {
   Response& response = *c.response;
   const Request& request = c.head.request;
-  if (c.via_front && options_.front_headers) {
-    apply_front_headers(request, response);
+  if (c.via_front && options_.front) {
+    options_.front->finish(c.front_state, request, response);
   } else {
     suppress_bodiless_headers(response);
   }

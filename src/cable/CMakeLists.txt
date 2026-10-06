@@ -21,3 +21,11 @@ campfire_test(cable
     tests/websocket_edge_test.cpp
     tests/websocket_test.cpp
   WERROR)
+
+campfire_executable(bench_cable_broadcast SOURCES bench/bench_broadcast.cpp DEPS campfire_cable)
+
+# Fuzz targets (architecture section 14): built only with -DCAMPFIRE_FUZZ=ON.
+option(CAMPFIRE_FUZZ "Build the libFuzzer targets" OFF)
+if(CAMPFIRE_FUZZ)
+  add_subdirectory(fuzz)
+endif()

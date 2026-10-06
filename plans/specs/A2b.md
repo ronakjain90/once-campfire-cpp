@@ -12,12 +12,12 @@ Owns: the files of this area in `src/app/`, `src/models/`, `src/views/` (extend 
 
 ## Scope
 
-- The message display partials (`messages/_message` and what it uses) with the fragment cache, as A2.md says. A3 runs at the same time and calls them through `src/app/message_partial.hpp` (`campfire::views::messages::message`): implement that declared function with your real partial, so A3's stub can be removed. Read `wt/A3/src/app/message_partial.hpp` for the signature A3 uses; if the inputs must change, change the header and report it.
+- The message display partials (`messages/_message` and what it uses) with the fragment cache, as A2.md says. A3 is merged and calls them through `src/app/message_partial.hpp` with a marked stub in `src/app/message_partial_stub.cpp` (partials `message`, `presentation`, `attachment_presentation` in `views::messages`, and `boosts`, `boost` in `views::messages::boosts`). Write the real partials as `.ct` templates with those names, delete the stub, and point A3's code (`message_actions.cpp`, the controllers) at them. Merge A3's `message_presenter.cpp` and `sound.cpp` with anything you need rather than writing a second presenter. After this, the A3 sweep (`--area A3`) must lose all its kind (a) differences (28 now: bodies with a rendered message).
 - Room show (with `@:message_id`), the messages page (paging), the refresh, and the `last_room` cookie.
 - Performance: these are benchmark routes. Page cache with all inputs in the key; no render on a hit.
 
 ## Acceptance (raw output in the report)
 
 - `bin/dev build` and `bin/dev test` for release, asan, tsan pass, including the page cache audit.
-- Image `campfire-cpp:a2b`. Diff sweep against `campfire-rust:app`: `--area A2` 0 differences except request bodies that contain partials of A3 or A4 (list each), `--area A1` 0, `--area A8` 0.
-- Benchmark: `gate/bench/run --apps rust=campfire-rust:app,cpp=campfire-cpp:a2b --routes room_show,messages_page,sidebar --reps 2`. Report the table.
+- Image `campfire-cpp:a2b`. Diff sweep against `campfire-rust:app`: `--area A2` 0 differences except request bodies that contain partials of A3 or A4 (list each), `--area A1` 0, `--area A8` 0, `--area A3` 0 except routes of A6 (the blob redirect).
+- Benchmark: `gate/bench/run --apps rust=campfire-rust:app,cpp=campfire-cpp:a2b --routes room_show,messages_page,sidebar,post_message --reps 2`. Report the table.

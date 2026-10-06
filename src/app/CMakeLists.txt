@@ -90,6 +90,7 @@ campfire_library(app
 
 campfire_test(app
   SOURCES
+    tests/accounts_area_test.cpp
     tests/app_test.cpp
     tests/cache_test.cpp
     tests/finish_test.cpp

@@ -32,3 +32,5 @@ campfire_test(storage
   WERROR)
 target_compile_definitions(test_storage PRIVATE
   CAMPFIRE_VECTORS_DIR="${CAMPFIRE_VECTORS_DIR}" CAMPFIRE_FIXTURES_DIR="${CAMPFIRE_FIXTURES_DIR}")
+set_tests_properties(test_storage PROPERTIES
+  ENVIRONMENT "TSAN_OPTIONS=suppressions=${CMAKE_CURRENT_SOURCE_DIR}/tests/tsan.supp")

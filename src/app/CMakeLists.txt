@@ -35,6 +35,7 @@ campfire_library(app
     active_storage.cpp
     compress.cpp
     concerns.cpp
+    controllers/accounts_common.cpp
     controllers/action_not_found.cpp
     controllers/common.cpp
     controllers/first_runs.cpp

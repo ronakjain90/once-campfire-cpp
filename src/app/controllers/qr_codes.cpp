@@ -1,5 +1,6 @@
 // QrCodeController. Rails: app/controllers/qr_code_controller.rb. Rust: crates/campfire/src/controllers/qr_code.rs.
 #include "app/concerns.hpp"
+#include "app/controllers/accounts_common.hpp"
 #include "app/dispatch.hpp"
 #include "app/rqrcode.hpp"
 #include "compat/base64.hpp"
@@ -19,8 +20,7 @@ Task<Flow<net::Response>> qr_codes_show(Rq& rq) {
   const auto svg = rqrcode::svg(*url);
   if (!svg) co_return fail_status(422, "Data length exceed maximum capacity of version 40");
   // `expires_in 1.year, public: true`
-  rq.cache_control.max_age = 31'556'952;
-  rq.cache_control.is_public = true;
+  expires_in(rq, 31'556'952, true);
   Out out(rq.ctx.resource());
   out.append_raw(*svg);
   co_return rq.render_as(200, "image/svg+xml; charset=utf-8", std::move(out));

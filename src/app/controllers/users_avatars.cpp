@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 #include "app/active_storage.hpp"
+#include "app/controllers/accounts_common.hpp"
 #include "app/concerns.hpp"
 #include "app/dispatch.hpp"
 #include "assets/assets.hpp"
@@ -103,6 +104,7 @@ Flow<std::shared_ptr<const AvatarEntry>> make_entry(Rq& rq, std::string_view tok
 Task<Flow<net::Response>> avatars_show(Rq& rq) {
   auto before = co_await concerns::before_actions(rq, concerns::Before{});
   if (!before) co_return std::unexpected(std::move(before.error()));
+  rq.live_response = true;  // `include ActiveStorage::Streaming`
   const std::string_view token = rq.param_str("user_id").value_or("");
   const std::uint64_t generation = rq.app.changes->users_generation();
   auto& cache = local_cache();
@@ -124,9 +126,7 @@ Task<Flow<net::Response>> avatars_show(Rq& rq) {
   freshness.etag = entry->cache_key;
   if (template_found(rq)) freshness.template_digest = std::string(kTemplateDigest);
   if (auto not_modified = rq.fresh_when(freshness)) co_return std::move(*not_modified);
-  rq.cache_control.max_age = kMaxAge;
-  rq.cache_control.is_public = true;
-  rq.cache_control.stale_while_revalidate = kStaleWhileRevalidate;
+  expires_in(rq, kMaxAge, true, kStaleWhileRevalidate);
 
   if (entry->has_variant) {
     // `send_file ..., content_type: "image/webp", disposition: :inline`
@@ -136,7 +136,7 @@ Task<Flow<net::Response>> avatars_show(Rq& rq) {
     if (!variant) co_return std::unexpected(std::move(variant.error()));
     if (*variant) {
       const std::string path = rq.app.storage->path_for(**variant).string();
-      co_return rq.send_file(path, "image/webp", "inline");
+      co_return rq.send_file(path, "image/webp", "inline", (**variant).key);
     }
   }
   if (entry->bot) {
@@ -144,7 +144,7 @@ Task<Flow<net::Response>> avatars_show(Rq& rq) {
     const auto logical = assets::asset_path("default-bot-avatar.svg");
     const auto file = logical ? assets::find_file(*logical) : std::nullopt;
     if (!file) co_return fail_internal("missing asset default-bot-avatar.svg");
-    co_return rq.send_data(file->identity, "image/svg+xml", "inline");
+    co_return rq.send_data(file->identity, "image/svg+xml", "inline", "default-bot-avatar.svg");
   }
   // `render formats: :svg`
   Out out(rq.ctx.resource());
@@ -162,6 +162,7 @@ Task<Flow<net::Response>> avatars_show(Rq& rq) {
 
 // `Current.user.avatar.destroy`, then back to the profile.
 Task<Flow<net::Response>> avatars_destroy(Rq& rq) {
+  rq.live_response = true;  // `include ActiveStorage::Streaming`
   auto before = co_await concerns::before_actions(rq, concerns::Before{});
   if (!before) co_return std::unexpected(std::move(before.error()));
   const std::int64_t user_id = rq.current_user()->id;
@@ -175,7 +176,7 @@ Task<Flow<net::Response>> avatars_destroy(Rq& rq) {
   if (!written) co_return fail_internal(written.error().message);
   active_storage::Assignment none;
   co_await active_storage::after_write(rq, models::attachments::Record::user(user_id), none, applied);
-  co_return rq.redirect_to(rq.url_for(campfire::routes::user_profile()));
+  co_return redirect_to_path(rq, campfire::routes::user_profile());
 }
 
 }  // namespace

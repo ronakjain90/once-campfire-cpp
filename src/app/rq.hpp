@@ -151,6 +151,10 @@ class Rq {
   [[nodiscard]] net::Response finish(Flow<net::Response> result);
   // Marks a GET for the cross-origin JavaScript check (verify_same_origin_request).
   bool marked_for_same_origin_verification = false;
+  // A controller that includes `ActionController::Live` (`ActiveStorage::Streaming` does): its response is made with
+  // `Live::Response.new`, which skips `ActionDispatch::Response.create`, so it has no `default_headers` and no
+  // `Rack::ETag` digest. Rust: `Ctx::use_live_response`.
+  bool live_response = false;
 
  private:
   friend class Finisher;

@@ -45,7 +45,7 @@ format), `docker/Dockerfile` (the real build step). T6 `src/req/`. T7 `src/db/`,
 |---|---|---|
 | T5 | **Server.** `src/net/`: event loop, HTTP/1.1, the router generator, `Ctx`, the response builder, timers, worker threads, the cross-worker queues. | T1 |
 | T6 | **Request parts.** Rack-compatible params (nested keys), multipart, cookies, encrypted session, flash, `Sec-Fetch-Site` forgery protection with the old-token path, formats and `Accept` rules, bcrypt (vendored `crypt_blowfish`). Vector groups `csrf` and `passwords` of `rails_compat.json`. Fuzz targets for each parser. | T1, T2 |
-| T7 | **Database.** `src/db/`: connections, typed statements, `schema_gen.py`, the writer with group commit and after-commit hand-back, change events, the checkpointer, the tracked dependency hash. | T1 |
+| T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
 | T8 | **Templates.** `tools/ctc.py`, `src/views/` foundation: tag helpers with Rails attribute order, URL helpers (`vectors/campfire_routes.json`), form builders, `time_tag`, `turbo_frame_tag`, the layout and the shared partials. | T1, T2 |
 | T9 | **Assets.** `src/assets/`: Propshaft digests, importmap, the overrides, precompressed bodies, and the vendored frontend files. | T1 |
 | T10 | **Rich text attachments**: mentions (SGID), opengraph embeds, autolink, plain text. All corpus tests. | T2, T3 |
@@ -103,7 +103,7 @@ its requests in the diff sweep pass.
 | T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |
 | T5 | in progress (fresh Sonnet agent, 09:35) | `task/T5` | 3 commits. Response builder in progress. |
 | T6 | in progress (fresh Sonnet agent, 09:35) | `task/T6` | No commits. `param.hpp`/`param.cpp` written, not built. |
-| T7 | in progress (fresh Sonnet agent, 09:35) | `task/T7` | 3 commits. Dependency scope written. Typed statements next. |
+| T7 | merged (verified by Opus) | `task/T7` | Tests pass in release, asan, tsan. Group commit 198k writes/s vs 72k one-per-transaction. Dependency tracking costs 28% of a 40-row read: optimize in wave 5. `db.write(sched, fn)` takes the scheduler. |
 | T8 | in progress (fresh Sonnet agent, 09:35) | `task/T8` | No commits yet. |
 | T9 | paused (usage limit, 2026-10-06 02:45) | `task/T9` | 1 commit. Load path code in progress. |
 | T11 | paused (usage limit, 2026-10-06 02:45) | `task/T11` | 1 commit, uncommitted work. |

@@ -17,4 +17,7 @@ void opens_edit(LayoutParts& parts, std::string& title, const ViewContext& ctx, 
 void closeds_new(LayoutParts& parts, std::string& title, const ViewContext& ctx, const ClosedFormView& form);
 void closeds_edit(LayoutParts& parts, std::string& title, const ViewContext& ctx, const ClosedFormView& form);
 
+void directs_new(LayoutParts& parts, const ViewContext& ctx);
+void directs_edit(LayoutParts& parts, std::string& title, const ViewContext& ctx, const DirectEditView& edit);
+
 }  // namespace campfire::views::rooms

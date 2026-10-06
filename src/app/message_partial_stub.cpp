@@ -15,7 +15,12 @@ void message(Out& out, const ViewContext&, const MessageView& message) {
   if (const auto* text = std::get_if<TextContent>(&message.content)) {
     out.append(SafeHtml::trusted(text->html));
   } else if (const AttachmentView* attachment = message.attachment()) {
+    // The sweep captures the blob path from the page.
+    out.append_raw("<a href=\"");
+    html_escape(out, attachment->blob_path);
+    out.append_raw("\">");
     html_escape(out, attachment->filename);
+    out.append_raw("</a>");
   }
   out.append_raw("</div>\n");
 }
@@ -38,10 +43,12 @@ void attachment_presentation(Out& out, const ViewContext&, const AttachmentView&
 
 namespace campfire::views::messages::boosts {
 
-void boosts(Out& out, const ViewContext&, const MessageView& view) {
+void boosts(Out& out, const ViewContext& ctx, const MessageView& view) {
   out.append_raw("<turbo-frame id=\"");
   html_escape(out, view.dom_id("boosting"));
-  out.append_raw("\" data-stub=\"true\"></turbo-frame>");
+  out.append_raw("\" data-stub=\"true\">");
+  for (const BoostView& item : view.boosts) boost(out, ctx, item);
+  out.append_raw("</turbo-frame>");
 }
 
 void boost(Out& out, const ViewContext&, const BoostView& boost) {

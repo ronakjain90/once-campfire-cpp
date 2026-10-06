@@ -122,7 +122,7 @@ Wire::Wire(std::pmr::memory_resource* resource, const Response& response, const 
   send_body_ = !options.head_only && !bodiless_status;
   body_size_ = send_body_ ? response.body_size() : 0;
 
-  head_.append_raw("HTTP/1.1 ");
+  head_.append_raw(options.http_minor == 0 ? "HTTP/1.0 " : "HTTP/1.1 ");
   head_.append_int(status);
   head_.append_char(' ');
   head_.append_raw(reason_phrase(status));
@@ -139,7 +139,14 @@ Wire::Wire(std::pmr::memory_resource* resource, const Response& response, const 
     head_.append_raw("connection: keep-alive\r\n");
   }
   const bool chunked = response.chunked && !bodiless_status;
-  if (chunked) head_.append_raw("transfer-encoding: chunked\r\n");
+  if (chunked) {
+    head_.append_raw("transfer-encoding: chunked\r\n");
+  } else if (!bodiless_status && !response.has("content-length")) {
+    // hyper writes the length of a body after the headers of the map (and after "connection").
+    head_.append_raw("content-length: ");
+    head_.append_uint(response.body_size());
+    head_.append_raw("\r\n");
+  }
   head_.append_raw("\r\n");
   if (chunked && send_body_) {
     if (body_size_ != 0) {

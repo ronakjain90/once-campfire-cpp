@@ -14,6 +14,7 @@ struct TimerNode {
   std::uint64_t expire_tick = 0;
   std::uint32_t kind = 0;
   bool armed = false;
+  void* owner = nullptr;  // the object that the node belongs to
 };
 
 // The wheel has `slots` lists. A timer goes to the list of (expire tick mod slots). A timer that

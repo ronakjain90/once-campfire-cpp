@@ -68,6 +68,7 @@ struct WireOptions {
   bool head_only = false;  // answer to HEAD: send the headers and no body
   bool close = false;      // add "connection: close"
   bool keep_alive_header = false;  // HTTP/1.0 keep-alive: add "connection: keep-alive"
+  int http_minor = 1;              // the status line has the version of the request, as hyper does
 };
 
 // The bytes of one response: the head (status line, headers, blank line) and the body. The Wire

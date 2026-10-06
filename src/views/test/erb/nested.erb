@@ -1,7 +1,7 @@
-<%- items.each do |item| -%>
-  <%- if item == "b" -%>
+<% items.each do |item| %>
+  <% if item == "b" %>
 <b><%= ERB::Util.h(item) %></b>
-  <%- else -%>
+  <% else %>
 <s><%= ERB::Util.h(item) %></s>
-  <%- end %>
-<% end -%>
+  <% end %>
+<% end %>

@@ -1,4 +1,4 @@
-{#- reference/app/views/layouts/application.html.erb. Erubi drops a line that holds only a statement, so those lines use `{%- -%}`. csrf_meta_tags and csp_meta_tag are left out: no CSRF tags (Rust "Known differences"). -#}
+{# reference/app/views/layouts/application.html.erb. Erubi drops a line that holds only a statement; ctc does the same. csrf_meta_tags and csp_meta_tag are left out: no CSRF tags (Rust "Known differences"). #}
 {% include views/layout.hpp %}
 {% include routes/routes.hpp %}
 {% params const ViewContext& ctx, const LayoutParts& page %}
@@ -38,18 +38,18 @@
       {% call region(page.nav) %}
     </nav>
 
-{%- if ctx.flash_notice || ctx.flash_alert -%}
+{% if ctx.flash_notice || ctx.flash_alert %}
       <div class="flash" data-controller="element-removal" data-action="animationend->element-removal#remove">
         <div class="flash__inner shadow" style="{% if ctx.flash_alert %}--flash-background: var(--color-negative){% end %}">
-{%- if ctx.flash_alert -%}
+{% if ctx.flash_alert %}
             {% call image_tag(ctx, "alert.svg", attrs().aria("hidden", true).size(24).cls("colorize--white")) %}</span>
-{%- else -%}
+{% else %}
             {% call image_tag(ctx, "check.svg", attrs().aria("hidden", true).size(24).cls("colorize--white")) %}</span>
-{%- end -%}
+{% end %}
         </div>
         <span class="for-screen-reader" role="alert" aria-atomic="true">{{ ctx.flash_notice.value_or(ctx.flash_alert.value_or("")) }}</span>
       </div>
-{%- end -%}
+{% end %}
 
     <main id="main-content">
       {% call region(page.content) %}

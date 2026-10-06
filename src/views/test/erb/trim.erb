@@ -1,11 +1,39 @@
 a
-  <%- if flag -%>
+  <% if flag %>
   b
-  <%- end -%>
+  <% end %>
 c <%= n -%>
 d
-x <%- if flag %> y<% end %>
+x <% if flag %> y<% end %>
 <%= n %>
-e <%- if flag -%>   
+e <% if flag %>   
  f<% end %>
-g
+g <% if flag %>h<% end %> i
+<% if flag %><% end %>j
+<% if flag %>  <% end %>
+k  <% if flag %>
+l
+	<%- if flag -%>	
+m
+<% end %>  <%= n %>
+<% end %>
+<% if flag %>  
+<% elsif n > 5 %>	
+n<% else %>
+o
+<% end %>
+<%# comment alone %>
+  <%# indented comment %>
+p <%# comment after text %>
+<%# comment before text %> q
+<%# two-line
+comment %>
+r
+  <% if flag %>x<% end %>  
+  <% if flag %>
+s<% end %>
+t
+  <% if flag %>z<% end %>
+  <% if flag %>
+w
+  <% end %>

@@ -1,4 +1,4 @@
-{#- reference/app/views/layouts/_lightbox.html.erb -#}
+{# reference/app/views/layouts/_lightbox.html.erb #}
 {% params const ViewContext& ctx %}
 <dialog class="lightbox" aria-label="Image Viewer (Press escape to close)" data-lightbox-target="dialog" data-action="close->lightbox#reset">
   <img src="" class="lightbox__image" data-lightbox-target="zoomedImage" />

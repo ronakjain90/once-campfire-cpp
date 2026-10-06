@@ -11,9 +11,18 @@
 #include "storage/key.hpp"
 #include "storage/paths.hpp"
 
+extern "C" void vips_concurrency_set(int concurrency);  // libvips
+
 namespace campfire::app::testing {
 
 namespace {
+
+// libvips works with its own threads, whose locks (in glib) ThreadSanitizer cannot see: it reports a race in the
+// queues of glib. The tests of this binary run libvips on the calling thread.
+[[maybe_unused]] const bool kVipsOnOneThread = [] {
+  vips_concurrency_set(1);
+  return true;
+}();
 
 std::string cookie_pair(const Reply& reply, const std::string& name) {
   for (const auto& [k, v] : reply.headers) {

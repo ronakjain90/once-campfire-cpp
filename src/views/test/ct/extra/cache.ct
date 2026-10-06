@@ -1,0 +1,2 @@
+{% params int n %}
+[{% cache "k" + std::to_string(n) %}c{{ n }}{% end %}]

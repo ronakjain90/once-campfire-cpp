@@ -1,0 +1,10 @@
+{% include <vector> %}
+{% include <optional> %}
+{% params std::string_view name, SafeHtml markup, const std::vector<std::string_view>& items, int n, bool flag, std::optional<std::string_view> nothing %}
+<ul>
+{% for item : items %}
+{% render cases/item(item, n) %}
+{% end %}
+</ul>
+{% render cases/item("x", 0) -%}
+{% render item("rel", 1) %}

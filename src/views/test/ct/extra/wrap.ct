@@ -1,0 +1,4 @@
+{% include views/test/test_helpers.hpp %}
+{% params std::string_view name %}
+{% wrap box(name) %}<p>{{ name }}</p>{% wrap box("in") %}x{% end %}{% end %}
+{% call badge(name) %}{% wrap with_kind(name) |kind| %}<i>{{ kind }}</i>{% end %}

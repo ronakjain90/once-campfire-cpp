@@ -1,0 +1,11 @@
+{% include <vector> %}
+{% include <optional> %}
+{% params std::string_view name, SafeHtml markup, const std::vector<std::string_view>& items, int n, bool flag, std::optional<std::string_view> nothing %}
+{% if flag %}
+yes
+{% elif n == 2 %}
+two
+{% else %}
+no
+{% end %}
+[{% if !flag %}a{% elif n > 100 %}b{% else %}c{% end %}]

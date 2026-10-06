@@ -90,7 +90,7 @@ H2Session::H2Session(Worker& worker, Conn& conn) : worker_(worker), conn_(&conn)
       });
   nghttp2_session_callbacks_set_on_invalid_frame_recv_callback(
       callbacks_,
-      [](nghttp2_session*, const nghttp2_frame* frame, int lib_error_code, void*) -> int {
+      [](nghttp2_session*, const nghttp2_frame*, int, void*) -> int {
         return 0;
       });
 

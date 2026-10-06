@@ -190,8 +190,9 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
   if (deflate && has_word(response.get("cache-control"), "no-transform")) deflate = false;
   if (deflate && response.has("content-encoding") && !has_word(response.get("content-encoding"), "identity")) deflate = false;
   if (deflate && app_set_length && response.get("content-length") == "0") deflate = false;
+  bool vary_missing = false;
   if (deflate) {
-    // `Vary: Accept-Encoding`, added to an existing header in place.
+    // `Vary: Accept-Encoding`: added to an existing header in place. Without one, it goes after the tail.
     if (response.has("vary")) {
       std::string_view value = response.get("vary");
       std::vector<std::string> tokens;
@@ -211,6 +212,8 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
         for (std::size_t i = 0; i < tokens.size(); ++i) joined += (i != 0 ? "," : "") + tokens[i];
         replace_or_add(response, "vary", rq.arena().copy(joined));
       }
+    } else {
+      vary_missing = true;
     }
     if (wants_gzip(rq.request)) {
       std::shared_ptr<const std::string> gz;
@@ -221,7 +224,8 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
       } else {
         gz = std::make_shared<const std::string>(gzip_compress(gather_body(response)));
       }
-      // The new header goes where `content-length` was (HeaderMap::insert, then remove).
+      // The new header goes where `content-length` was (HeaderMap::insert, then remove). With no
+      // `content-length`, it goes before the tail, as the Rust port does.
       bool placed = false;
       for (net::Header& h : response.headers) {
         if (net::iequals(h.name, "content-length")) {
@@ -236,6 +240,7 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
     }
   }
   add_rails_tail(rq.ctx, response);
+  if (vary_missing) response.add("vary", "Accept-Encoding");
   if (rq.app.proxy.force_ssl && rq.info.ssl()) {
     response.add_copy("strict-transport-security", rq.app.proxy.hsts);
     for (net::Header& h : response.headers) {

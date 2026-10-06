@@ -39,6 +39,8 @@ campfire::Task<net::Response> not_found(net::Ctx& ctx) {
     response.body_view(data::f_404_html);
   }
   add_rails_tail(ctx, response);
+  // Rack::Deflater adds Vary to a body that it may compress (not to the empty body of HEAD).
+  if (!head) response.add("vary", "Accept-Encoding");
   co_return response;
 }
 

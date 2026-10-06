@@ -1,6 +1,7 @@
 // Headers of the front server. Rust: crates/kit/src/front/handler.rs, compression.rs (add_vary), conn.rs (Date).
 #include "net/front.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <string>
 #include <vector>
@@ -82,7 +83,22 @@ void apply_front_headers(const Request& request, Response& response) {
     for (const Header& h : response.headers) {
       if (iequals(h.name, "vary")) existing.push_back(h.value);
     }
-    response.erase("vary");
+    // Rust: `headers.remove(VARY)` (http::HeaderMap) moves the last header into the slot of the first
+    // "vary", so "x-cache" lands there when the app set a "vary" before it.
+    {
+      auto& headers = response.headers;
+      const auto first = std::find_if(headers.begin(), headers.end(), [](const Header& h) { return iequals(h.name, "vary"); });
+      if (first != headers.end()) {
+        headers.erase(std::remove_if(first + 1, headers.end(), [](const Header& h) { return iequals(h.name, "vary"); }),
+                      headers.end());
+      }
+    }
+    for (std::size_t i = 0; i < response.headers.size(); ++i) {
+      if (!iequals(response.headers[i].name, "vary")) continue;
+      response.headers[i] = response.headers.back();
+      response.headers.pop_back();
+      break;
+    }
     response.add("vary", "Accept-Encoding");
     for (const std::string_view value : existing) response.add("vary", value);
   } else {

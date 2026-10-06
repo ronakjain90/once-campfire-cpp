@@ -271,15 +271,21 @@ void convert(Dom& dom, Node* parent, const GumboNode* gumbo) {
 
 }  // namespace
 
-std::expected<Dom, ParseError> parse_fragment(std::string_view html) {
+std::expected<void, ParseError> parse_into(Dom& dom, Node* parent, std::string_view html,
+                                           const FragmentContext& context) {
   // The options Nokogiri::HTML5::DocumentFragment passes: max_attributes 400, max_errors 0,
-  // max_tree_depth 400 plus one for the html element of a fragment, a "body" context.
+  // max_tree_depth 400 plus one for the html element of a fragment.
+  const std::string context_name(context.name);
   GumboOptions options = kGumboDefaultOptions;
   options.max_attributes = kMaxAttributes;
   options.max_errors = 0;
   options.max_tree_depth = kMaxTreeDepth + 1;
-  options.fragment_context = "body";
-  options.fragment_namespace = GUMBO_NAMESPACE_HTML;
+  options.fragment_context = context_name.c_str();
+  switch (context.ns) {
+    case Ns::Html: options.fragment_namespace = GUMBO_NAMESPACE_HTML; break;
+    case Ns::Svg: options.fragment_namespace = GUMBO_NAMESPACE_SVG; break;
+    case Ns::MathMl: options.fragment_namespace = GUMBO_NAMESPACE_MATHML; break;
+  }
   options.fragment_encoding = nullptr;
   options.quirks_mode = GUMBO_DOCTYPE_NO_QUIRKS;
   options.fragment_context_has_form_ancestor = false;
@@ -292,8 +298,16 @@ std::expected<Dom, ParseError> parse_fragment(std::string_view html) {
     case GUMBO_STATUS_TREE_TOO_DEEP:
     case GUMBO_STATUS_OUT_OF_MEMORY: return std::unexpected(ParseError::TreeTooDeep);
   }
+  convert(dom, parent, output->root);
+  return {};
+}
+
+std::expected<Dom, ParseError> parse_fragment(std::string_view html) {
   Dom dom;
-  convert(dom, dom.root(), output->root);
+  auto parsed = parse_into(dom, dom.root(), html);
+  if (!parsed) {
+    return std::unexpected(parsed.error());
+  }
   return dom;
 }
 
@@ -315,7 +329,7 @@ bool is_unescaped_text_element(std::string_view name) {
 }
 
 // Nokogiri's output_escaped_string. U+00A0 (C2 A0 in UTF-8) becomes &nbsp;.
-void escape(std::string_view text, bool attribute, std::string& out) {
+void escape(std::string_view text, bool attribute, std::string& out, bool brackets = false) {
   std::size_t start = 0;
   const std::size_t size = text.size();
   for (std::size_t i = 0; i < size; ++i) {
@@ -329,9 +343,9 @@ void escape(std::string_view text, bool attribute, std::string& out) {
       skip = 2;
     } else if (attribute && c == '"') {
       replacement = "&quot;";
-    } else if (!attribute && c == '<') {
+    } else if (c == '<' && (!attribute || brackets)) {
       replacement = "&lt;";
-    } else if (!attribute && c == '>') {
+    } else if (c == '>' && (!attribute || brackets)) {
       replacement = "&gt;";
     } else {
       continue;
@@ -344,7 +358,7 @@ void escape(std::string_view text, bool attribute, std::string& out) {
   out.append(text.substr(start));
 }
 
-void serialize_node(const Node* node, std::string& out) {
+void serialize_node(const Node* node, std::string& out, bool brackets) {
   switch (node->type) {
     case NodeType::Element: {
       out.push_back('<');
@@ -363,7 +377,7 @@ void serialize_node(const Node* node, std::string& out) {
         }
         out.append(attr.name);
         out.append("=\"");
-        escape(attr.value, true, out);
+        escape(attr.value, true, out, brackets);
         out.push_back('"');
       }
       out.push_back('>');
@@ -371,7 +385,7 @@ void serialize_node(const Node* node, std::string& out) {
         return;
       }
       for (const Node* child = node->first_child; child != nullptr; child = child->next) {
-        serialize_node(child, out);
+        serialize_node(child, out, brackets);
       }
       out.append("</");
       out.append(node->name);
@@ -398,7 +412,7 @@ void serialize_node(const Node* node, std::string& out) {
       return;
     case NodeType::Fragment:
       for (const Node* child = node->first_child; child != nullptr; child = child->next) {
-        serialize_node(child, out);
+        serialize_node(child, out, brackets);
       }
       return;
   }
@@ -407,12 +421,22 @@ void serialize_node(const Node* node, std::string& out) {
 }  // namespace
 
 void serialize(const Node* node, std::string& out) {
-  serialize_node(node, out);
+  serialize_node(node, out, false);
+}
+
+void serialize(const Node* node, std::string& out, AttrBrackets brackets) {
+  serialize_node(node, out, brackets == AttrBrackets::Escaped);
 }
 
 std::string to_html(const Node* node) {
   std::string out;
-  serialize_node(node, out);
+  serialize_node(node, out, false);
+  return out;
+}
+
+std::string to_html(const Node* node, AttrBrackets brackets) {
+  std::string out;
+  serialize_node(node, out, brackets == AttrBrackets::Escaped);
   return out;
 }
 

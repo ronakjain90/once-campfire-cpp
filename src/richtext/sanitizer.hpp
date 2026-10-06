@@ -62,6 +62,11 @@ void scrub(Dom& dom, const SafeList& list);
 // without a parse.
 [[nodiscard]] std::expected<std::string, ParseError> sanitize(std::string_view html, const SafeList& list);
 
+// `sanitize`, serialized with `<` and `>` escaped in attribute values (Rust: the deliberate difference
+// for autolink). The DOM is the same as the one `sanitize` writes.
+[[nodiscard]] std::expected<std::string, ParseError> sanitize_with_escaped_attribute_brackets(std::string_view html,
+                                                                                              const SafeList& list);
+
 // Loofah::HTML5::Scrub.allowed_uri?
 [[nodiscard]] bool allowed_uri(std::string_view uri);
 

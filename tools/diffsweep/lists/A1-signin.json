@@ -1,0 +1,352 @@
+{
+ "area": "A1",
+ "source": "a0",
+ "scenarios": [
+  {
+   "name": "sign-in page",
+   "seed": "default",
+   "steps": [
+    {
+     "name": "form",
+     "path": "/session/new"
+    },
+    {
+     "name": "form with email",
+     "path": "/session/new?email_address=david%40example.com%22%3E"
+    },
+    {
+     "name": "form gzip",
+     "path": "/session/new",
+     "accept_encoding": "gzip"
+    },
+    {
+     "name": "form revisit",
+     "path": "/session/new",
+     "revisit": true
+    },
+    {
+     "name": "form head",
+     "method": "HEAD",
+     "path": "/session/new"
+    },
+    {
+     "name": "form json",
+     "path": "/session/new",
+     "accept": "application/json"
+    },
+    {
+     "name": "form turbo frame",
+     "path": "/session/new",
+     "headers": {
+      "Turbo-Frame": "main"
+     }
+    },
+    {
+     "name": "form bad utf8",
+     "path": "/session/new?email_address=%FF"
+    }
+   ]
+  },
+  {
+   "name": "unauthenticated redirect",
+   "seed": "default",
+   "steps": [
+    {
+     "name": "root",
+     "path": "/"
+    },
+    {
+     "name": "root with query",
+     "path": "/?a=1&b=2"
+    },
+    {
+     "name": "root gzip",
+     "path": "/",
+     "accept_encoding": "gzip"
+    },
+    {
+     "name": "root post",
+     "method": "POST",
+     "path": "/",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    }
+   ]
+  },
+  {
+   "name": "sign in then out",
+   "seed": "default",
+   "mutates": true,
+   "steps": [
+    {
+     "op": "login",
+     "actor": "david"
+    },
+    {
+     "name": "sign out",
+     "actor": "david",
+     "method": "DELETE",
+     "path": "/session",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "form after sign out",
+     "actor": "david",
+     "path": "/session/new"
+    },
+    {
+     "name": "sign out again",
+     "actor": "david",
+     "method": "DELETE",
+     "path": "/session",
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    }
+   ]
+  },
+  {
+   "name": "forged sign in",
+   "seed": "default",
+   "mutates": true,
+   "steps": [
+    {
+     "name": "cross site",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "secret123456"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "cross-site"
+     }
+    },
+    {
+     "name": "bad origin",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "secret123456"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin",
+      "Origin": "http://evil.example"
+     }
+    }
+   ]
+  },
+  {
+   "name": "sign in failures",
+   "seed": "default",
+   "mutates": true,
+   "steps": [
+    {
+     "name": "form",
+     "actor": "visitor",
+     "method": "GET",
+     "path": "/session/new"
+    },
+    {
+     "name": "bad password 1",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 2",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 3",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 4",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 5",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 6",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 7",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 8",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 9",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 10",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 11",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "bad password 12",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "david@37signals.com",
+      "password": "wrong"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    }
+   ]
+  },
+  {
+   "name": "sign in with a bad email",
+   "seed": "default",
+   "mutates": true,
+   "steps": [
+    {
+     "name": "form",
+     "actor": "visitor",
+     "method": "GET",
+     "path": "/session/new"
+    },
+    {
+     "name": "unknown email",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "nobody@example.com",
+      "password": "x"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    },
+    {
+     "name": "banned user",
+     "actor": "visitor",
+     "method": "POST",
+     "path": "/session",
+     "form": {
+      "email_address": "{{emails.mallory}}",
+      "password": "{{passwords.all}}"
+     },
+     "headers": {
+      "Sec-Fetch-Site": "same-origin"
+     }
+    }
+   ]
+  }
+ ]
+}

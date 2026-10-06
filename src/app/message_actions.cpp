@@ -426,7 +426,7 @@ Flow<std::string> broadcast_create(Rq& rq, const models::RoomRef& room, const mo
   MessagePresenter presenter(rq.db(), rq.arena(), rq.app, std::string(rq.info.host()));
   auto view = presenter.message(message);
   if (!view) return db_failure(view.error());
-  const std::string html = render_string([&](Out& out) { views::messages::message(out, *ctx, *view); });
+  std::string html = render_string([&](Out& out) { views::messages::message(out, *ctx, *view); });
   broadcasts::message_append(rq.app, room, html);
   auto members = models::room_refs::member_user_ids(rq.db(), rq.arena(), room.id);
   if (!members) return db_failure(members.error());

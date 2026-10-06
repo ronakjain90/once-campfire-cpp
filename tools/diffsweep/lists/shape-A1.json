@@ -1,0 +1,7 @@
+{
+ "area": "A1",
+ "source": "shape",
+ "scenarios": [
+  {"name": "http_shape requests", "seed": "default", "steps": [{"op": "login", "actor": "david"}, {"name": "root", "actor": "david", "path": "/"}, {"name": "anon root", "path": "/", "cookies": false}, {"name": "anon sign in", "path": "/session/new", "revisit": true, "cookies": false}, {"name": "anon join bad", "path": "/join/nope", "cookies": false}, {"name": "401 bad sign in", "actor": "visitor", "method": "POST", "path": "/session", "headers": {"Content-Type": "application/x-www-form-urlencoded", "Sec-Fetch-Site": "same-origin"}, "body": "email_address=nobody%40example.com&password=x"}]}
+ ]
+}

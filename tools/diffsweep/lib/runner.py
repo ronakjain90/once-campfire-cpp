@@ -90,6 +90,9 @@ class Run:
                         raise StepError(f"capture {var}: json path {how['json']} not found on side {side}")
                 if "regex" in how:
                     m = re.search(how["regex"], text, re.S)
+                    if not m and how.get("optional"):
+                        self.vars[side][var] = ""
+                        continue
                     if not m:
                         raise StepError(f"capture {var}: regex {how['regex']!r} not found on "
                                         f"{'expected' if side == 0 else 'actual'} (status {resp.status})")

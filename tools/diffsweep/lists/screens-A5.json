@@ -1,0 +1,8 @@
+{
+ "area": "A5",
+ "source": "screens",
+ "scenarios": [
+  {"name": "screens default david", "seed": "default", "steps": [{"op": "login", "actor": "david"}, {"path": "/searches", "name": "search/recent", "actor": "david"}, {"path": "/searches?q=Borgias", "name": "search/results", "actor": "david"}, {"path": "/searches?q=wifi", "name": "search/results/many", "actor": "david"}, {"path": "/searches?q=zebra", "name": "search/no_results", "actor": "david"}]},
+  {"name": "screens default kevin", "seed": "default", "steps": [{"op": "login", "actor": "kevin"}, {"path": "/searches", "name": "search/empty", "actor": "kevin"}]}
+ ]
+}

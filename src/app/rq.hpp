@@ -96,6 +96,9 @@ class Rq {
   // The wire method after nothing overrides it (`_method` override is not wired: see README).
   [[nodiscard]] std::string_view method_name() const noexcept { return request.method_text; }
 
+  // `request.raw_post`: the body as it came (empty for multipart). Added by A3 for `RawRequestBody`.
+  [[nodiscard]] std::string_view raw_post() const noexcept { return raw_post_; }
+
   // Cookies, session and flash.
   [[nodiscard]] req::CookieJar& cookies() { return *cookies_; }
   [[nodiscard]] req::Session& session();

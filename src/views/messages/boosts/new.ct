@@ -1,0 +1,29 @@
+{# reference/app/views/messages/boosts/new.html.erb #}
+{% include views/messages/support.hpp %}
+{% include views/messages/types.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const MessageView& message, const UserView& user %}
+{% wrap turbo_frame_tag(message.dom_id("new_boost"), attrs()) %}
+  <div class="boost flex-inline postion--relative max-width fill-white" style="--column-gap: var(--inline-space-half)">
+    {% wrap form_with(helpers::form_with_url(campfire::routes::message_boosts(message.id)).model("boost").cls("boost__form flex align-center gap expanded").data("controller", "form scroll-into-view").data("turbo_frame", message.dom_id("boosting")).data("action", "keydown.esc->form#cancel")) %}
+      <label class="boost__form-label flex gap" style="--column-gap: 0.7ch;" role="button" tabindex="0" aria-label="Add a boost">
+        <figure class="avatar boost__avatar flex-item-no-shrink">
+          {% call avatar_tag(ctx, user.id, user.title, user.avatar_url) %}
+          <span class="for-screen-reader">{{ user.name }}</span>
+        </figure>
+
+        <input autofocus="autofocus" autocomplete="off" autocorrect="off" maxlength="16" required="required" pattern="\S+.*" data-boost-form-target="input" class="input input--boost txt-small" size="16" type="text" name="boost[content]" />
+      </label>
+
+      {% wrap button_tag(attrs().cls("btn btn--reversed").type("submit")) %}
+        {% call image_tag(ctx, "check.svg", attrs().aria_hidden()) %}
+        <span class="for-screen-reader">Submit</span>
+      {% end %}
+
+      {% wrap link_to(campfire::routes::message_boosts(message.id), attrs().data("turbo_frame", message.dom_id("boosts")).data("form_target", "cancel").cls("btn btn--negative")) %}
+        {% call image_tag(ctx, "minus.svg", attrs().aria_hidden()) %}
+        <span class="for-screen-reader">Cancel</span>
+      {% end %}
+    {% end %}
+  </div>
+{% end %}

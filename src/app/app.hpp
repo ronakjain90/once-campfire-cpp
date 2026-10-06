@@ -3,6 +3,7 @@
 // state is in worker_state.hpp. Rails: Rails.application. Rust: crates/campfire/src/app.rs.
 #pragma once
 
+#include <atomic>
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -21,6 +22,16 @@
 #include "core/error.hpp"
 #include "db/database.hpp"
 #include "net/thread_pool.hpp"
+
+namespace campfire::cable {
+class Hub;
+}
+namespace campfire::models {
+class JobSink;
+}
+namespace campfire::storage {
+class Storage;
+}
 
 namespace campfire::app {
 
@@ -45,6 +56,13 @@ struct App {
   mutable net::ThreadPool jobs;        // blocking work: bcrypt
   assets::StylesheetTags stylesheets;  // `stylesheet_link_tag :all`, fixed at build time
   std::string preload_link_header;     // the `link` header of a page in the application layout
+  // Active Storage on the disk service (storage/files). The upload flows of the message area use it.
+  std::unique_ptr<storage::Storage> storage;
+  // Where the model callbacks enqueue jobs (push, bot webhook). A9 replaces the default, which drops them.
+  std::shared_ptr<models::JobSink> job_sink;
+  // The Action Cable hub that broadcasts go to. Set once at boot by the cable setup, before the workers start. With
+  // no hub a broadcast does nothing.
+  std::atomic<cable::Hub*> hub{nullptr};
   // `ActionCable.server.broadcast(stream, html)` for the Turbo Stream broadcasts of the controllers. The cable
   // (A7) sets it. Without it a broadcast goes nowhere.
   std::function<void(std::string_view stream, std::string_view html)> turbo_broadcast;

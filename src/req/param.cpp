@@ -89,7 +89,9 @@ const Param* ParamMap::get(std::string_view key) const {
   return nullptr;
 }
 
-Param* ParamMap::get_mut(std::string_view key) { return const_cast<Param*>(std::as_const(*this).get(key)); }
+Param* ParamMap::get_mut(std::string_view key) {
+  return const_cast<Param*>(std::as_const(*this).get(key));
+}
 
 std::optional<std::string_view> ParamMap::str(std::string_view key) const {
   const Param* p = get(key);
@@ -119,11 +121,19 @@ void ParamMap::remove(std::string_view key) {
   }
 }
 
-std::size_t ParamMap::size() const { return entries_.size(); }
+std::size_t ParamMap::size() const {
+  return entries_.size();
+}
 
-std::string_view ParamMap::key_at(std::size_t index) const { return entries_[index].key; }
-const Param& ParamMap::value_at(std::size_t index) const { return entries_[index].value; }
-Param& ParamMap::value_at(std::size_t index) { return entries_[index].value; }
+std::string_view ParamMap::key_at(std::size_t index) const {
+  return entries_[index].key;
+}
+const Param& ParamMap::value_at(std::size_t index) const {
+  return entries_[index].value;
+}
+Param& ParamMap::value_at(std::size_t index) {
+  return entries_[index].value;
+}
 
 ParamMap ParamMap::clone(std::pmr::memory_resource* mr) const {
   ParamMap out(mr);
@@ -206,7 +216,8 @@ ParamMap ParamMap::permit(const std::vector<Permit>& filters, std::pmr::memory_r
         if (v != nullptr && v->is_permitted_scalar()) out.insert(f.name, v->clone(mr));
         // Multi-parameter attributes, such as born_on(1i).
         for (const Entry& e : entries_) {
-          if (is_multi_parameter_key(e.key, f.name) && e.value.is_permitted_scalar()) out.insert(e.key, e.value.clone(mr));
+          if (is_multi_parameter_key(e.key, f.name) && e.value.is_permitted_scalar())
+            out.insert(e.key, e.value.clone(mr));
         }
         break;
       }
@@ -239,7 +250,8 @@ ParamMap ParamMap::permit(const std::vector<Permit>& filters, std::pmr::memory_r
         } else if (const ParamArray* items = v->as_array()) {
           Param hashes = Param::array(mr);
           for (const Param& item : *items) {
-            if (const ParamMap* inner = item.as_hash()) hashes.as_array_mut()->push_back(Param::hash(inner->permit(f.nested, mr)));
+            if (const ParamMap* inner = item.as_hash())
+              hashes.as_array_mut()->push_back(Param::hash(inner->permit(f.nested, mr)));
           }
           out.insert(f.name, std::move(hashes));
         }
@@ -252,16 +264,30 @@ ParamMap ParamMap::permit(const std::vector<Permit>& filters, std::pmr::memory_r
 
 // ---- Param ----
 
-Param Param::boolean(bool b) { return Param(Data(b)); }
-Param Param::integer(std::int64_t n) { return Param(Data(n)); }
-Param Param::unsigned_integer(std::uint64_t n) { return Param(Data(n)); }
-Param Param::real(double d) { return Param(Data(d)); }
+Param Param::boolean(bool b) {
+  return Param(Data(b));
+}
+Param Param::integer(std::int64_t n) {
+  return Param(Data(n));
+}
+Param Param::unsigned_integer(std::uint64_t n) {
+  return Param(Data(n));
+}
+Param Param::real(double d) {
+  return Param(Data(d));
+}
 Param Param::string(std::pmr::memory_resource* mr, std::string_view s) {
   return Param(Data(std::in_place_type<std::pmr::string>, s, mr));
 }
-Param Param::file(std::shared_ptr<UploadedFile> f) { return Param(Data(std::move(f))); }
-Param Param::array(std::pmr::memory_resource* mr) { return Param(Data(std::in_place_type<ParamArray>, mr)); }
-Param Param::hash(ParamMap m) { return Param(Data(std::move(m))); }
+Param Param::file(std::shared_ptr<UploadedFile> f) {
+  return Param(Data(std::move(f)));
+}
+Param Param::array(std::pmr::memory_resource* mr) {
+  return Param(Data(std::in_place_type<ParamArray>, mr));
+}
+Param Param::hash(ParamMap m) {
+  return Param(Data(std::move(m)));
+}
 
 Param Param::from_json(std::pmr::memory_resource* mr, const compat::json::Value& v) {
   if (v.is_null()) return {};
@@ -300,11 +326,21 @@ std::optional<std::string_view> Param::as_str() const {
   if (auto* s = std::get_if<std::pmr::string>(&data_)) return std::string_view(*s);
   return std::nullopt;
 }
-const ParamMap* Param::as_hash() const { return std::get_if<ParamMap>(&data_); }
-ParamMap* Param::as_hash_mut() { return std::get_if<ParamMap>(&data_); }
-const ParamArray* Param::as_array() const { return std::get_if<ParamArray>(&data_); }
-ParamArray* Param::as_array_mut() { return std::get_if<ParamArray>(&data_); }
-const std::shared_ptr<UploadedFile>* Param::as_file() const { return std::get_if<std::shared_ptr<UploadedFile>>(&data_); }
+const ParamMap* Param::as_hash() const {
+  return std::get_if<ParamMap>(&data_);
+}
+ParamMap* Param::as_hash_mut() {
+  return std::get_if<ParamMap>(&data_);
+}
+const ParamArray* Param::as_array() const {
+  return std::get_if<ParamArray>(&data_);
+}
+ParamArray* Param::as_array_mut() {
+  return std::get_if<ParamArray>(&data_);
+}
+const std::shared_ptr<UploadedFile>* Param::as_file() const {
+  return std::get_if<std::shared_ptr<UploadedFile>>(&data_);
+}
 
 const Param* Param::get(std::string_view key) const {
   const ParamMap* m = as_hash();
@@ -335,7 +371,8 @@ bool Param::is_blank() const {
         auto c = static_cast<unsigned char>(s[i]);
         if (c == ' ' || (c >= 9 && c <= 13)) {
           ++i;
-        } else if (c == 0xC2 && i + 1 < s.size() && (static_cast<unsigned char>(s[i + 1]) == 0x85 || static_cast<unsigned char>(s[i + 1]) == 0xA0)) {
+        } else if (c == 0xC2 && i + 1 < s.size() &&
+                   (static_cast<unsigned char>(s[i + 1]) == 0x85 || static_cast<unsigned char>(s[i + 1]) == 0xA0)) {
           i += 2;
         } else if (c == 0xE2 && i + 2 < s.size() && static_cast<unsigned char>(s[i + 1]) == 0x80 &&
                    ((static_cast<unsigned char>(s[i + 2]) >= 0x80 && static_cast<unsigned char>(s[i + 2]) <= 0x8A) ||
@@ -363,7 +400,9 @@ bool Param::is_blank() const {
   }
 }
 
-bool Param::is_permitted_scalar() const { return kind() != ParamKind::Array && kind() != ParamKind::Hash; }
+bool Param::is_permitted_scalar() const {
+  return kind() != ParamKind::Array && kind() != ParamKind::Hash;
+}
 
 Param Param::clone(std::pmr::memory_resource* mr) const {
   switch (kind()) {

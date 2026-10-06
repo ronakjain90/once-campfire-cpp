@@ -26,7 +26,9 @@ inline const json::Value& at(const json::Value& v, std::string_view key) {
   return m ? *m : null_value();
 }
 
-inline const json::Value::Array& items(const json::Value& v) { return v.as_array(); }
+inline const json::Value::Array& items(const json::Value& v) {
+  return v.as_array();
+}
 
 inline std::optional<std::string_view> opt_str(const json::Value& v) {
   if (const std::string* s = v.get_string()) return std::string_view(*s);
@@ -67,8 +69,10 @@ class Group {
 
   void check(bool ok, const std::string& label) {
     ++total_;
-    if (ok) ++pass_;
-    else if (failures_.size() < 10) failures_.push_back(label);
+    if (ok)
+      ++pass_;
+    else if (failures_.size() < 10)
+      failures_.push_back(label);
   }
 
   void finish() {

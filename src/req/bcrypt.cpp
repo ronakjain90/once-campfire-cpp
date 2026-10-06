@@ -18,7 +18,9 @@ constexpr int kHashSize = 64;  // BCRYPT_HASHSIZE in the gem
 constexpr std::size_t kDigestLength = 60;
 
 // The gem passes the password as a C string: bytes after a NUL byte do not count.
-std::string c_string(std::string_view s) { return std::string(s.substr(0, s.find('\0'))); }
+std::string c_string(std::string_view s) {
+  return std::string(s.substr(0, s.find('\0')));
+}
 
 }  // namespace
 

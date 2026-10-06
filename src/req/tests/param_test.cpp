@@ -15,7 +15,9 @@ namespace json = campfire::compat::json;
 
 namespace {
 
-std::pmr::memory_resource* mr() { return std::pmr::get_default_resource(); }
+std::pmr::memory_resource* mr() {
+  return std::pmr::get_default_resource();
+}
 
 json::Value parse(std::string_view qs) {
   auto r = from_query_string(qs, mr());
@@ -128,18 +130,16 @@ TEST_CASE("params: require and permit") {
   const ParamMap* hash = (*user)->as_hash();
   REQUIRE(hash != nullptr);
   auto permitted = hash->permit({"name", "date", Permit::scalar_array("tags"), Permit::any_hash("settings"), "bad"});
-  CHECK(permitted.to_json() ==
-        J(R"j({"name":"Jo","date(1i)":"2024","tags":["a"],"settings":{"x":{"y":"1"}}})j"));
+  CHECK(permitted.to_json() == J(R"j({"name":"Jo","date(1i)":"2024","tags":["a"],"settings":{"x":{"y":"1"}}})j"));
 }
 
 TEST_CASE("params: permit nested") {
   auto params = from_query_string("a[b][c]=1&a[b][d]=2&list[][c]=1&list[][d]=2&ff[0][c]=1&ff[1][c]=2", mr());
   REQUIRE(params.has_value());
   const std::vector<Permit> c = {"c"};
-  auto permitted = params->permit(
-      {Permit::nest("a", {Permit::nest("b", c)}), Permit::nest("list", c), Permit::nest("ff", c)});
-  CHECK(permitted.to_json() ==
-        J(R"({"a":{"b":{"c":"1"}},"list":[{"c":"1"}],"ff":{"0":{"c":"1"},"1":{"c":"2"}}})"));
+  auto permitted =
+      params->permit({Permit::nest("a", {Permit::nest("b", c)}), Permit::nest("list", c), Permit::nest("ff", c)});
+  CHECK(permitted.to_json() == J(R"({"a":{"b":{"c":"1"}},"list":[{"c":"1"}],"ff":{"0":{"c":"1"},"1":{"c":"2"}}})"));
 }
 
 TEST_CASE("params: many keys build in linear time") {

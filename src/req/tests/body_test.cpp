@@ -1,18 +1,23 @@
 // Tests of whole request bodies. The cases come from the tests of crates/kit/src/body.rs.
+#include "req/body.hpp"
+
 #include <doctest.h>
 
 #include <filesystem>
 #include <memory_resource>
 
 #include "compat/json.hpp"
-#include "req/body.hpp"
 
 using namespace campfire::req;
 namespace json = campfire::compat::json;
 
 namespace {
-std::pmr::memory_resource* mr() { return std::pmr::get_default_resource(); }
-json::Value J(std::string_view text) { return *json::parse(text); }
+std::pmr::memory_resource* mr() {
+  return std::pmr::get_default_resource();
+}
+json::Value J(std::string_view text) {
+  return *json::parse(text);
+}
 const std::filesystem::path kTmp = std::filesystem::temp_directory_path();
 }  // namespace
 
@@ -43,11 +48,11 @@ TEST_CASE("body: a POST with no content type is a form") {
 
 TEST_CASE("body: a body over the limit") {
   CHECK_FALSE(parse_body("POST", std::nullopt, std::string(20, 'x'), kTmp, mr(), 10).has_value());
-  CHECK_FALSE(
-      parse_body("POST", "multipart/form-data; boundary=B",
-                 "--B\r\nContent-Disposition: form-data; name=\"f\"; filename=\"x\"\r\n\r\nxxxxxxxxxxxxxxxxxxxxxx\r\n--B--\r\n", kTmp,
-                 mr(), 50)
-          .has_value());
+  CHECK_FALSE(parse_body("POST", "multipart/form-data; boundary=B",
+                         "--B\r\nContent-Disposition: form-data; name=\"f\"; "
+                         "filename=\"x\"\r\n\r\nxxxxxxxxxxxxxxxxxxxxxx\r\n--B--\r\n",
+                         kTmp, mr(), 50)
+                  .has_value());
 }
 
 TEST_CASE("body: multipart") {

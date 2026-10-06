@@ -12,10 +12,16 @@ using namespace testing_support;
 using namespace campfire::req;
 
 namespace {
-const json::Value& csrf() { return at(load_vectors("rails_compat.json"), "csrf"); }
-const json::Value& passwords() { return at(load_vectors("rails_compat.json"), "passwords"); }
+const json::Value& csrf() {
+  return at(load_vectors("rails_compat.json"), "csrf");
+}
+const json::Value& passwords() {
+  return at(load_vectors("rails_compat.json"), "passwords");
+}
 
-std::optional<std::string_view> opt(const json::Value& v) { return opt_str(v); }
+std::optional<std::string_view> opt(const json::Value& v) {
+  return opt_str(v);
+}
 }  // namespace
 
 TEST_CASE("csrf vectors: masked, per-form and unmasked tokens") {
@@ -70,7 +76,7 @@ TEST_CASE("forgery: Sec-Fetch-Site rules") {
   in.sec_fetch_site = "none";
   CHECK(verify_authenticity_token(in).has_value());
   in.sec_fetch_site = std::nullopt;
-  CHECK(verify_authenticity_token(in).has_value());   // missing over HTTPS
+  CHECK(verify_authenticity_token(in).has_value());  // missing over HTTPS
   in.ssl = false;
   CHECK_FALSE(verify_authenticity_token(in).has_value());  // missing over plain HTTP
   in.force_ssl = true;

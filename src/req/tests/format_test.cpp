@@ -1,10 +1,10 @@
 // Tests of format negotiation. The cases come from the tests of crates/kit/src/format.rs.
+#include "req/format.hpp"
+
 #include <doctest.h>
 
 #include <string>
 #include <vector>
-
-#include "req/format.hpp"
 
 using namespace campfire::req;
 

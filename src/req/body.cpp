@@ -21,9 +21,9 @@ std::optional<std::string> media_type(std::optional<std::string_view> content_ty
 }
 
 std::expected<ParsedBody, BodyTooLarge> parse_body(std::string_view original_method,
-                                                   std::optional<std::string_view> content_type,
-                                                   std::string_view body, const std::filesystem::path& tmp_dir,
-                                                   std::pmr::memory_resource* mr, std::optional<std::size_t> limit) {
+                                                   std::optional<std::string_view> content_type, std::string_view body,
+                                                   const std::filesystem::path& tmp_dir, std::pmr::memory_resource* mr,
+                                                   std::optional<std::size_t> limit) {
   if (content_type && content_type->empty()) content_type = std::nullopt;
   const auto media = media_type(content_type);
   const bool multipart_media =
@@ -55,8 +55,8 @@ std::expected<ParsedBody, BodyTooLarge> parse_body(std::string_view original_met
   ParamResult<ParamMap> params = ParamMap(mr);
   if (is_json && !body.empty()) {
     params = from_json_body(body, mr);
-  } else if ((media && *media == "application/x-www-form-urlencoded") ||
-             (!content_type && original_method == "POST") || multipart_media) {
+  } else if ((media && *media == "application/x-www-form-urlencoded") || (!content_type && original_method == "POST") ||
+             multipart_media) {
     params = from_form_body(body, mr);
   }
   return ParsedBody{std::string(body), std::move(params)};

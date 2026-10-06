@@ -19,12 +19,12 @@
 
 namespace campfire::req {
 
-inline constexpr std::size_t kMultipartPartLimit = 4096;       // Rack multipart_total_part_limit
-inline constexpr std::size_t kMultipartFileLimit = 128;        // Rack multipart_file_limit
-inline constexpr std::size_t kMultipartTextLimit = 16U << 20;  // text fields together: 413 above
+inline constexpr std::size_t kMultipartPartLimit = 4096;               // Rack multipart_total_part_limit
+inline constexpr std::size_t kMultipartFileLimit = 128;                // Rack multipart_file_limit
+inline constexpr std::size_t kMultipartTextLimit = 16U << 20;          // text fields together: 413 above
 inline constexpr std::uint64_t kMultipartBytesizeLimit = 10ULL << 30;  // Rack PARSER_BYTESIZE_LIMIT
 inline constexpr std::size_t kMultipartHeaderLimit = 64U << 10;        // the head of one part
-inline constexpr std::size_t kMaxBufferedBody = 16U << 20;  // other bodies: 413 above
+inline constexpr std::size_t kMaxBufferedBody = 16U << 20;             // other bodies: 413 above
 
 // The `boundary` of a multipart Content-Type (multer::parse_boundary), or nothing.
 [[nodiscard]] std::optional<std::string> parse_boundary(std::string_view content_type);

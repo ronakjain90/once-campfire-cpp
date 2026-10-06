@@ -27,7 +27,9 @@ Session& Session::load(const CookieJar& jar) {
   return *this;
 }
 
-std::optional<std::string_view> Session::id() const { return get_str("session_id"); }
+std::optional<std::string_view> Session::id() const {
+  return get_str("session_id");
+}
 
 const Value* Session::get(std::string_view key) const {
   const Value* v = data_.find(key);
@@ -40,7 +42,9 @@ std::optional<std::string_view> Session::get_str(std::string_view key) const {
   return std::string_view(v->as_string());
 }
 
-bool Session::contains_key(std::string_view key) const { return data_.find(key) != nullptr; }
+bool Session::contains_key(std::string_view key) const {
+  return data_.find(key) != nullptr;
+}
 
 void Session::insert(std::string_view key, Value value) {
   const Value* old = data_.find(key);

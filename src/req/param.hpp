@@ -21,12 +21,12 @@ namespace campfire::req {
 
 // Why a request cannot make params. `Missing` is ActionController::ParameterMissing.
 enum class ParamErrc : std::uint8_t {
-  Type,     // ParameterTypeError: a=1&a[b]=2
-  Invalid,  // InvalidParameterError: bad %-encoding or invalid UTF-8
-  TooDeep,  // ParamsTooDeepError
-  Limit,    // QueryLimitError
-  Parse,    // Http::Parameters::ParseError: malformed JSON or multipart
-  Missing,  // ParameterMissing
+  Type,      // ParameterTypeError: a=1&a[b]=2
+  Invalid,   // InvalidParameterError: bad %-encoding or invalid UTF-8
+  TooDeep,   // ParamsTooDeepError
+  Limit,     // QueryLimitError
+  Parse,     // Http::Parameters::ParseError: malformed JSON or multipart
+  Missing,   // ParameterMissing
   TooLarge,  // a body over a limit: the server answers 413
 };
 

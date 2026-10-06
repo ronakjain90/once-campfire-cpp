@@ -19,7 +19,9 @@ compat::Timestamp to_compat(Timestamp t) {
   return compat::Timestamp(std::chrono::nanoseconds(t.seconds * 1'000'000'000LL + t.nanos));
 }
 
-Timestamp from_compat(compat::Timestamp t) { return Timestamp::from_nanos(t.time_since_epoch().count()); }
+Timestamp from_compat(compat::Timestamp t) {
+  return Timestamp::from_nanos(t.time_since_epoch().count());
+}
 
 std::string_view same_site_attribute(std::optional<SameSite> same_site) {
   if (!same_site) return "";

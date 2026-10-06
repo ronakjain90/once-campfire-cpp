@@ -1,4 +1,6 @@
 // Tests of multipart parsing. The cases come from the tests of crates/kit/src/body.rs.
+#include "req/multipart.hpp"
+
 #include <doctest.h>
 
 #include <filesystem>
@@ -8,14 +10,15 @@
 
 #include "compat/json.hpp"
 #include "req/body.hpp"
-#include "req/multipart.hpp"
 
 using namespace campfire::req;
 namespace json = campfire::compat::json;
 
 namespace {
 
-std::pmr::memory_resource* mr() { return std::pmr::get_default_resource(); }
+std::pmr::memory_resource* mr() {
+  return std::pmr::get_default_resource();
+}
 
 std::filesystem::path tmp() {
   auto dir = std::filesystem::temp_directory_path() / "cf_req_test";
@@ -37,10 +40,13 @@ std::string body_of(std::string_view boundary, const std::vector<std::pair<std::
   return body + "--" + std::string(boundary) + "--\r\n";
 }
 
-json::Value J(std::string_view text) { return *json::parse(text); }
+json::Value J(std::string_view text) {
+  return *json::parse(text);
+}
 
-
-std::string field(const std::string& name) { return "Content-Disposition: form-data; name=\"" + name + "\""; }
+std::string field(const std::string& name) {
+  return "Content-Disposition: form-data; name=\"" + name + "\"";
+}
 
 }  // namespace
 
@@ -76,7 +82,8 @@ TEST_CASE("multipart: fields and files") {
               {field("tags[]"), "b"}});
   MultipartParser parser("XyZ", dir, mr());
   // Feed in small pieces to test the streaming.
-  for (std::size_t i = 0; i < body.size(); i += 7) REQUIRE(parser.feed(std::string_view(body).substr(i, 7)).has_value());
+  for (std::size_t i = 0; i < body.size(); i += 7)
+    REQUIRE(parser.feed(std::string_view(body).substr(i, 7)).has_value());
   auto params = parser.finish();
   REQUIRE(params.has_value());
   CHECK(params->str("_method") == "patch");

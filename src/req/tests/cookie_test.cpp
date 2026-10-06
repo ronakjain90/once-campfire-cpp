@@ -1,5 +1,7 @@
 // Tests of the cookie jar, the session and the flash. The cases come from crates/kit/src/cookies.rs
 // and session.rs.
+#include "req/cookie.hpp"
+
 #include <doctest.h>
 
 #include <chrono>
@@ -8,7 +10,6 @@
 
 #include "compat/cookies.hpp"
 #include "core/time_format.hpp"
-#include "req/cookie.hpp"
 #include "req/session.hpp"
 
 using namespace campfire;

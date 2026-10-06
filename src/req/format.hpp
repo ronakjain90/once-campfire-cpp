@@ -22,8 +22,8 @@ using Format = const Mime*;  // nullptr is "no format"
 
 namespace mime {
 extern const Mime HTML, TEXT, JS, CSS, ICS, CSV, VCF, VTT, MD, PNG, JPEG, GIF, BMP, TIFF, SVG, WEBP, MPEG, MP3, OGG,
-    M4A, WEBM, MP4, OTF, TTF, WOFF, WOFF2, XML, RSS, ATOM, YAML, MULTIPART_FORM, URL_ENCODED_FORM, JSON, PDF, ZIP,
-    GZIP, TURBO_STREAM, ALL;
+    M4A, WEBM, MP4, OTF, TTF, WOFF, WOFF2, XML, RSS, ATOM, YAML, MULTIPART_FORM, URL_ENCODED_FORM, JSON, PDF, ZIP, GZIP,
+    TURBO_STREAM, ALL;
 // Every registered type, in registration order (the order matters for text/* expansion).
 [[nodiscard]] std::span<const Mime* const> registered();
 }  // namespace mime

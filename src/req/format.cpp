@@ -50,17 +50,52 @@ const Mime TURBO_STREAM{"turbo_stream", "text/vnd.turbo-stream.html", {}, {}};
 const Mime ALL{"*/*", "*/*", {}, {}};
 
 std::span<const Mime* const> registered() {
-  static const Mime* const kAll[] = {&HTML, &TEXT, &JS, &CSS, &ICS, &CSV, &VCF, &VTT, &MD, &PNG, &JPEG, &GIF, &BMP,
-                                     &TIFF, &SVG, &WEBP, &MPEG, &MP3, &OGG, &M4A, &WEBM, &MP4, &OTF, &TTF, &WOFF,
-                                     &WOFF2, &XML, &RSS, &ATOM, &YAML, &MULTIPART_FORM, &URL_ENCODED_FORM, &JSON,
-                                     &PDF, &ZIP, &GZIP, &TURBO_STREAM};
+  static const Mime* const kAll[] = {&HTML,
+                                     &TEXT,
+                                     &JS,
+                                     &CSS,
+                                     &ICS,
+                                     &CSV,
+                                     &VCF,
+                                     &VTT,
+                                     &MD,
+                                     &PNG,
+                                     &JPEG,
+                                     &GIF,
+                                     &BMP,
+                                     &TIFF,
+                                     &SVG,
+                                     &WEBP,
+                                     &MPEG,
+                                     &MP3,
+                                     &OGG,
+                                     &M4A,
+                                     &WEBM,
+                                     &MP4,
+                                     &OTF,
+                                     &TTF,
+                                     &WOFF,
+                                     &WOFF2,
+                                     &XML,
+                                     &RSS,
+                                     &ATOM,
+                                     &YAML,
+                                     &MULTIPART_FORM,
+                                     &URL_ENCODED_FORM,
+                                     &JSON,
+                                     &PDF,
+                                     &ZIP,
+                                     &GZIP,
+                                     &TURBO_STREAM};
   return kAll;
 }
 }  // namespace mime
 
 namespace {
 
-bool contains(const std::vector<std::string_view>& v, std::string_view s) { return std::ranges::find(v, s) != v.end(); }
+bool contains(const std::vector<std::string_view>& v, std::string_view s) {
+  return std::ranges::find(v, s) != v.end();
+}
 
 // Mime::Type#match?: the pattern appears in the type or in a synonym.
 bool matches(const Mime& m, std::string_view pattern) {
@@ -80,20 +115,26 @@ std::string_view rtrim(std::string_view s) {
   return s;
 }
 std::string_view ltrim(std::string_view s) {
-  while (!s.empty() && (s.front() == ' ' || (s.front() >= 9 && s.front() <= 13) || s.front() == '\0')) s.remove_prefix(1);
+  while (!s.empty() && (s.front() == ' ' || (s.front() >= 9 && s.front() <= 13) || s.front() == '\0'))
+    s.remove_prefix(1);
   return s;
 }
-std::string_view trim(std::string_view s) { return rtrim(ltrim(s)); }
+std::string_view trim(std::string_view s) {
+  return rtrim(ltrim(s));
+}
 
-bool alnum(char c) { return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
+bool alnum(char c) {
+  return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
 
 // Loosely Mime::Type::MIME_REGEXP: type/subtype of name characters with optional parameters.
 bool valid_mime_type(std::string_view string) {
   std::string_view base = rtrim(string.substr(0, string.find(';')));
   if (base == "*/*") return true;
   auto name_ok = [](std::string_view s) {
-    return !s.empty() && s.size() <= 127 && alnum(s[0]) &&
-           std::ranges::all_of(s, [](char c) { return alnum(c) || std::string_view("!#$&-^_.+").find(c) != std::string_view::npos; });
+    return !s.empty() && s.size() <= 127 && alnum(s[0]) && std::ranges::all_of(s, [](char c) {
+      return alnum(c) || std::string_view("!#$&-^_.+").find(c) != std::string_view::npos;
+    });
   };
   std::size_t slash = base.find('/');
   if (slash == std::string_view::npos) return false;
@@ -165,9 +206,12 @@ std::vector<std::string_view> scan_accept_items(std::string_view h) {
 // TRAILING_STAR_REGEXP = /^(text|application)\/\*/
 bool trailing_star(std::string_view accept, std::vector<Format>& out) {
   std::string_view prefix;
-  if (accept.starts_with("text/*")) prefix = "text/";
-  else if (accept.starts_with("application/*")) prefix = "application/";
-  else return false;
+  if (accept.starts_with("text/*"))
+    prefix = "text/";
+  else if (accept.starts_with("application/*"))
+    prefix = "application/";
+  else
+    return false;
   for (const Mime* m : mime::registered()) {
     if (matches(*m, prefix)) out.push_back(m);
   }
@@ -300,7 +344,8 @@ std::expected<Format, InvalidMimeType> content_mime_type(std::string_view conten
   if (content_type.empty()) return nullptr;
   std::size_t cut = content_type.find_first_of(",;");
   std::string base(trim(content_type.substr(0, cut)));
-  std::ranges::transform(base, base.begin(), [](char c) { return (c >= 'A' && c <= 'Z') ? static_cast<char>(c + 32) : c; });
+  std::ranges::transform(base, base.begin(),
+                         [](char c) { return (c >= 'A' && c <= 'Z') ? static_cast<char>(c + 32) : c; });
   if (base.empty()) return nullptr;
   return lookup(base);
 }
@@ -326,7 +371,9 @@ std::expected<std::vector<Format>, InvalidMimeType> formats(const NegotiationInp
   return std::vector<Format>{input.xhr ? &mime::JS : &mime::HTML};
 }
 
-bool should_apply_vary_header(const NegotiationInput& input) { return !input.has_format_param && valid_accept_header(input); }
+bool should_apply_vary_header(const NegotiationInput& input) {
+  return !input.has_format_param && valid_accept_header(input);
+}
 
 Format negotiate(std::span<const Format> formats, std::span<const Format> order) {
   auto offers = [&](Format f) { return std::ranges::find(order, f) != order.end(); };

@@ -1,10 +1,11 @@
 // multipart/form-data (Rack: Rack::Multipart::Parser; Rust: crates/kit/src/body.rs).
 #include "req/multipart.hpp"
 
+#include <unistd.h>
+
 #include <algorithm>
 #include <cctype>
 #include <cerrno>
-#include <unistd.h>
 
 #include "compat/json.hpp"
 
@@ -55,8 +56,8 @@ int hex_value(char c) {
 std::string normalize_filename(std::string_view filename) {
   bool all_valid = true;
   for (std::size_t i = 0; i < filename.size(); ++i) {
-    if (filename[i] == '%' && !(i + 2 < filename.size() && hex_value(filename[i + 1]) >= 0 &&
-                                 hex_value(filename[i + 2]) >= 0)) {
+    if (filename[i] == '%' &&
+        !(i + 2 < filename.size() && hex_value(filename[i + 1]) >= 0 && hex_value(filename[i + 2]) >= 0)) {
       all_valid = false;
     }
   }
@@ -171,7 +172,6 @@ PartHead parse_disposition(std::string_view value) {
   return part;
 }
 
-
 MultipartParser::MultipartParser(std::string boundary, std::filesystem::path tmp_dir, std::pmr::memory_resource* mr,
                                  std::optional<std::uint64_t> size_limit)
     : delimiter_("\r\n--" + std::move(boundary)),
@@ -278,9 +278,7 @@ ParamResult<void> MultipartParser::run() {
         state_ = State::AfterBoundary;
         break;
       }
-      case State::Done:
-        buf_.clear();
-        return {};
+      case State::Done: buf_.clear(); return {};
     }
   }
 }

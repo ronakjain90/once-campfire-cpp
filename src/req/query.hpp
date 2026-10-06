@@ -13,17 +13,17 @@
 
 namespace campfire::req {
 
-inline constexpr std::size_t kDepthLimit = 100;           // ParamBuilder.default depth limit
+inline constexpr std::size_t kDepthLimit = 100;              // ParamBuilder.default depth limit
 inline constexpr std::size_t kFormBytesizeLimit = 4U << 20;  // Rack::QueryParser bytesize limit
-inline constexpr std::size_t kFormParamsLimit = 4096;       // Rack::QueryParser params limit
+inline constexpr std::size_t kFormParamsLimit = 4096;        // Rack::QueryParser params limit
 
 // A pair after %-decoding, before the UTF-8 check (Rails checks it in the builder, so a pair
 // with an empty top-level key is skipped without an error).
 struct RawPair {
   std::string key;
   bool has_value = false;
-  std::string value;                     // when `has_value` and `file` is null
-  std::shared_ptr<UploadedFile> file;    // a multipart file part
+  std::string value;                   // when `has_value` and `file` is null
+  std::shared_ptr<UploadedFile> file;  // a multipart file part
 };
 
 // URI.decode_www_form_component: "+" is a space, %XX is a byte. A bad "%" is an error.

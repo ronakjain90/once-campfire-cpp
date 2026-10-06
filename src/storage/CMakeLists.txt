@@ -20,3 +20,15 @@ campfire_library(storage
     vips.cpp
   PUBLIC_DEPS campfire_core campfire_compat PkgConfig::VIPS
   WERROR)
+
+# Golden vectors: spec/vectors/. Fixtures: read in place from the Rust repo (51 MB, not copied).
+set(CAMPFIRE_VECTORS_DIR "${PROJECT_SOURCE_DIR}/spec/vectors" CACHE PATH "Directory of the golden vector JSON files")
+set(CAMPFIRE_FIXTURES_DIR "${PROJECT_SOURCE_DIR}/../../once-campfire-rust/reference/test/fixtures/files" CACHE PATH "Directory of the media fixture files")
+
+campfire_test(storage
+  SOURCES
+    tests/test_vectors.cpp
+    tests/test_pipeline.cpp
+  WERROR)
+target_compile_definitions(test_storage PRIVATE
+  CAMPFIRE_VECTORS_DIR="${CAMPFIRE_VECTORS_DIR}" CAMPFIRE_FIXTURES_DIR="${CAMPFIRE_FIXTURES_DIR}")

@@ -225,8 +225,8 @@ void Front::finish(FrontState& state, const Request& request, Response& response
         const std::shared_ptr<const CachedResponse> shared = entry;
         if (cache_->set(key, shared, now + *lifetime, now)) state.stored = shared;
       }
-      if (!response.has("vary")) response.add("vary", "Accept-Encoding");
       insert_header(response, "x-cache", "miss");
+      if (!response.has("vary")) response.add("vary", "Accept-Encoding");
       break;
     }
     case CacheStatus::Bypass: {
@@ -234,15 +234,10 @@ void Front::finish(FrontState& state, const Request& request, Response& response
       for (const Header& h : response.headers) {
         if (iequals(h.name, "vary")) existing.push_back(h.value);
       }
-      if (existing.empty()) {
-        response.add("vary", "Accept-Encoding");
-        insert_header(response, "x-cache", "bypass");
-      } else {
-        insert_header(response, "x-cache", "bypass");
-        remove_header(response, "vary");
-        response.add("vary", "Accept-Encoding");
-        for (const std::string_view value : existing) response.add("vary", value);
-      }
+      insert_header(response, "x-cache", "bypass");
+      remove_header(response, "vary");
+      response.add("vary", "Accept-Encoding");
+      for (const std::string_view value : existing) response.add("vary", value);
       break;
     }
   }

@@ -147,6 +147,9 @@ std::optional<Response> serve_static(Ctx& ctx) {
 
   Response response = ctx.response(served->status);
   for (const auto& [name, value] : served->headers) response.add(lower_copy(arena, name), arena.copy(value));
+  // The Rust app builds a 304 with a length header that the front drops at the end: the drop
+  // moves the last header into its place, which gives the order of the headers on the wire.
+  if (served->status == 304) response.add("content-length", "0");
   std::string_view body = served->body();
   const bool head = request.method == Method::Head;
   const std::string_view full_gzip = served->file && served->status == 200 ? served->file->gzip : std::string_view{};
@@ -193,8 +196,11 @@ std::optional<Response> serve_static(Ctx& ctx) {
   }
   response.add("content-encoding", "gzip");
   remove_header(response, "content-length");
+  if (head) {
+    response.unsized = true;
+    return response;
+  }
   response.chunked = true;
-  if (head) return response;
   if (!full_gzip.empty() && body.data() == served->file->identity.data() && body.size() == served->file->identity.size()) {
     response.body_view(full_gzip);
   } else {

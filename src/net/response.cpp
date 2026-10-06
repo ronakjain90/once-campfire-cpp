@@ -156,7 +156,7 @@ Wire::Wire(std::pmr::memory_resource* resource, const Response& response, const 
   const bool chunked = (response.chunked || response.framed) && !bodiless_status;
   if (chunked) {
     head_.append_raw("transfer-encoding: chunked\r\n");
-  } else if (!bodiless_status && !response.has("content-length")) {
+  } else if (!bodiless_status && !response.has("content-length") && !response.unsized) {
     // hyper writes the length of a body after the headers of the map (and after "connection").
     head_.append_raw("content-length: ");
     head_.append_uint(response.body_size());

@@ -34,6 +34,9 @@ class Response {
   // The body already has chunk framing (sizes, CRLF, the last chunk). Implies a chunked reply. Use it
   // to keep the exact chunk boundaries of the Rust port.
   bool framed = false;
+  // The length of the body is not known and not sent (a HEAD response to a request whose body is
+  // compressed on the fly: hyper writes neither "content-length" nor "transfer-encoding").
+  bool unsized = false;
 
   [[nodiscard]] std::pmr::memory_resource* resource() const noexcept { return resource_; }
 

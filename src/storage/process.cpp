@@ -15,6 +15,7 @@
 
 #include "storage/content_types.hpp"
 #include "storage/errors.hpp"
+#include "storage/tempfile.hpp"
 
 extern char** environ;
 

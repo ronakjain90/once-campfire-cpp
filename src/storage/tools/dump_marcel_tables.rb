@@ -25,6 +25,7 @@ def emit_matches(matches)
     value_code = value ? "true, #{cpp_bytes(value)}" : "false, std::string_view()"
     "  {#{range_start}, #{range_end}, #{value_code}, #{child_code}},"
   end
+  return nil if parts.empty?
   name = "kMatches#{$counter += 1}"
   $arrays << "constexpr Match #{name}[] = {\n#{parts.join("\n")}\n};"
   name
@@ -46,7 +47,7 @@ end
 
 magic = Marcel::MAGIC.map do |type, matches|
   name = emit_matches(matches)
-  "  {#{cpp_bytes(type)}, std::span<const Match>(#{name})},"
+  "  {#{cpp_bytes(type)}, #{name ? "std::span<const Match>(#{name})" : "std::span<const Match>()"}},"
 end.join("\n")
 type_exts = lists(Marcel::TYPE_EXTS)
 type_parents = lists(Marcel::TYPE_PARENTS)

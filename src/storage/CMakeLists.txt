@@ -11,5 +11,6 @@ campfire_library(storage
     marcel.cpp
     marcel_tables.cpp
     process.cpp
+    vips.cpp
   PUBLIC_DEPS campfire_core campfire_compat PkgConfig::VIPS
   WERROR)

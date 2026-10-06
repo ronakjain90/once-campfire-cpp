@@ -71,7 +71,7 @@ NewBlob build(Filename filename, std::optional<std::string> content_type, std::s
 NewBlob NewBlob::unfurl(std::string_view data, Filename filename, std::optional<std::string_view> declared_type,
                         std::string_view service_name, bool identify) {
   auto type = identify_type(data, filename, declared_type, identify);
-  return build(std::move(filename), std::move(type), service_name, static_cast<int64_t>(data.size()), checksum(data));
+  return build(std::move(filename), std::move(type), service_name, static_cast<int64_t>(data.size()), storage::checksum(data));
 }
 
 Result<NewBlob> NewBlob::unfurl_file(const std::filesystem::path& path, Filename filename,

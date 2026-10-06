@@ -65,7 +65,9 @@ void Response::body_shared(std::shared_ptr<const void> owner, std::string_view b
   owner_ = std::move(owner);
 }
 
-std::size_t Response::body_size() const noexcept { return out_ ? out_->size() : view_.size(); }
+std::size_t Response::body_size() const noexcept {
+  return out_ ? out_->size() : view_.size();
+}
 
 std::size_t Response::body_iovecs(std::span<iovec> out, std::size_t skip) const noexcept {
   if (out.empty()) return 0;
@@ -127,7 +129,12 @@ Wire::Wire(std::pmr::memory_resource* resource, const Response& response, const 
   head_.append_char(' ');
   head_.append_raw(reason_phrase(status));
   head_.append_raw("\r\n");
+  // hyper writes an app-set Content-Length at the end when the body is empty (a GET with nothing
+  // to send), but keeps it in place for HEAD and for a body with bytes.
+  const bool move_length =
+      !options.head_only && !bodiless_status && response.body_size() == 0 && response.has("content-length");
   for (const Header& h : response.headers) {
+    if (move_length && iequals(h.name, "content-length")) continue;
     head_.append_raw(h.name);
     head_.append_raw(": ");
     head_.append_raw(h.value);
@@ -138,17 +145,22 @@ Wire::Wire(std::pmr::memory_resource* resource, const Response& response, const 
   } else if (options.keep_alive_header) {
     head_.append_raw("connection: keep-alive\r\n");
   }
-  const bool chunked = (response.chunked || response.framed) && !bodiless_status;
-  if (chunked) {
+  const bool streamed = (response.chunked || response.framed) && !bodiless_status;
+  if (streamed && !options.head_only) {
     head_.append_raw("transfer-encoding: chunked\r\n");
-  } else if (!bodiless_status && !response.has("content-length")) {
+  } else if (!bodiless_status && !streamed && !response.has("content-length")) {
     // hyper writes the length of a body after the headers of the map (and after "connection").
     head_.append_raw("content-length: ");
     head_.append_uint(response.body_size());
     head_.append_raw("\r\n");
   }
+  if (move_length) {
+    head_.append_raw("content-length: ");
+    head_.append_uint(response.body_size());
+    head_.append_raw("\r\n");
+  }
   head_.append_raw("\r\n");
-  if (chunked && send_body_ && !response.framed) {
+  if (streamed && send_body_ && !response.framed) {
     if (body_size_ != 0) {
       char hex[24];
       char* end = hex + sizeof hex;

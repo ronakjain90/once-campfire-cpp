@@ -244,6 +244,11 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
       response.body_shared(gz, *gz);
     }
   }
+  // `into_axum` gives the Rust 304 an empty body with a `content-length: 0` before the request id
+  // and the runtime. `apply_front_headers` then removes it (`HeaderMap::remove`), which moves the
+  // last header ("vary") into its slot. Add it here so the front can do the same. The wire drops
+  // it for a bodiless status (see `net::Wire`).
+  if (response.status == 304 && !response.has("content-length")) response.add("content-length", "0");
   add_rails_tail(rq.ctx, response);
   if (vary_missing) response.add("vary", "Accept-Encoding");
   if (rq.app.proxy.force_ssl && rq.info.ssl()) {

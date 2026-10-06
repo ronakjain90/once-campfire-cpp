@@ -1,5 +1,6 @@
 // End to end tests of the area A4: accounts, users, profiles, avatars, bots, bans, push subscriptions, QR codes.
-// Rails: accounts, users, users/*, qr_code controllers. Rust: crates/campfire/src/controllers/{accounts*,users*,qr_code*}.
+// Rails: accounts, users, users/*, qr_code controllers. Rust:
+// crates/campfire/src/controllers/{accounts*,users*,qr_code*}.
 #include <doctest.h>
 
 #include "app/tests/fixture.hpp"
@@ -20,7 +21,8 @@ std::string cookie_pair(const Reply& reply, const std::string& name) {
 
 // The cookie of a signed in user.
 std::string sign_in(Client& c, const std::string& email) {
-  const Reply r = c.request("POST", "/session", kSameOrigin + kForm, "email_address=" + email + "&password=" + kPassword);
+  const Reply r =
+      c.request("POST", "/session", kSameOrigin + kForm, "email_address=" + email + "&password=" + kPassword);
   REQUIRE(r.status == 302);
   return "Cookie: " + cookie_pair(r, "session_token") + "\r\n";
 }
@@ -38,8 +40,7 @@ void add_user(Fixture& f, const std::string& name, const std::string& email, std
 }
 
 std::string avatar_path(Fixture& f, std::int64_t user_id) {
-  const std::string token =
-      compat::signed_id::generate(f.state->secrets, "User", user_id, "avatar", std::nullopt);
+  const std::string token = compat::signed_id::generate(f.state->secrets, "User", user_id, "avatar", std::nullopt);
   return "/users/" + token + "/avatar";
 }
 

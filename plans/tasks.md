@@ -62,7 +62,7 @@ its requests in the diff sweep pass.
 | ID | Area | Rails sources (`reference/app/`) |
 |---|---|---|
 | A0 | merged (verified by Opus) | `task/A0` | Written by DeepSeek; layout region fix by Sonnet. Sign-in sweep 36/36 equal to Rust. /up 2.0x Rust at c=16, 3.3x at c=64. |
-| A1 | Sign-in, sessions, transfers, first run, join, welcome, bans, the authentication concerns, platform and user agent detection | `controllers/sessions*`, `first_runs`, `users#new/create`, `welcome`, `concerns/*` |
+| A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
 | A2 | Rooms: show, index, open, closed and direct rooms, involvements, refreshes, settings, the sidebar, the room page cache | `controllers/rooms*`, `users/sidebars` |
 | A3 | Messages: create, edit, delete, pages, boosts, the bot API, attachments, broadcasts, unread state, mentions, user autocomplete | `controllers/messages*`, `autocompletable` |
 | A4 | Accounts, users, profiles, avatars, bots and keys, join codes, logo, custom styles, push subscriptions, QR codes | `controllers/accounts*`, `users/*`, `qr_code` |
@@ -127,4 +127,5 @@ agent brief, and "continue from the commits and files in the worktree". Do not r
 whose transcript is long.
 | A0 | merged (verified by Opus) | `task/A0` | Written by DeepSeek; layout region fix by Sonnet. Sign-in sweep 36/36 equal to Rust. /up 2.0x Rust at c=16, 3.3x at c=64. |
 | A8 | paused (DeepSeek work, unfinished) | `task/A8` | Last commit 810109b builds and tests pass. Uncommitted HTTP/2 work does not compile. Runtime image lacks `libnghttp2.so.14`. No acceptance check has passed yet. |
-| A1 | in progress (Sonnet) | `task/A1` | |
+| A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
+| A2 | in progress (Sonnet) | `task/A2` | |

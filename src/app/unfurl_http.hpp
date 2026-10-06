@@ -22,6 +22,11 @@ namespace campfire::app::unfurl {
 
 using Clock = std::chrono::steady_clock;
 
+struct Timeouts {
+  std::chrono::milliseconds open{5000};
+  std::chrono::milliseconds read{5000};
+};
+
 // What the unfurl uses of the network. The tests replace the parts: fixed DNS answers, a dialer that sends a fake
 // public address to a local server, and the CA of a test certificate.
 struct Network {
@@ -29,6 +34,7 @@ struct Network {
   // Changes the address and the port that the client connects to, after the guard checked them.
   std::function<void(std::string& ip, std::uint16_t& port)> dial_override;
   std::string ca_file;  // empty: the default store of OpenSSL
+  Timeouts timeouts;    // each connect and each read: 5 seconds. Rails leaves the 60 seconds of Net::HTTP.
 };
 
 struct Endpoint {
@@ -36,11 +42,6 @@ struct Endpoint {
   std::string host;  // as `URI#host` gives it: the TLS server name
   std::uint16_t port = 80;
   std::string pinned_ip;  // connect here
-};
-
-struct Timeouts {
-  std::chrono::milliseconds open{5000};
-  std::chrono::milliseconds read{5000};
 };
 
 struct Request {

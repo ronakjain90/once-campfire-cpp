@@ -26,7 +26,6 @@ constexpr std::string_view kFxTwitterHost = "fxtwitter.com";
 constexpr std::array<std::string_view, 4> kAllowedImageContentTypes = {"image/jpeg", "image/png", "image/gif",
                                                                        "image/webp"};
 constexpr std::string_view kAllowedDocumentContentType = "text/html";
-const unfurl::Timeouts kTimeouts{std::chrono::milliseconds(5000), std::chrono::milliseconds(5000)};
 
 bool is_blank(std::string_view text) { return richtext::is_blank(text); }
 
@@ -138,7 +137,7 @@ Result<unfurl::Response> send(const Context& context, const Uri& url, const std:
   const auto port = static_cast<std::uint16_t>(*url.port);
   const unfurl::Endpoint endpoint{https, *url.host, port, ip};
   const unfurl::Request request{std::string(method), request_uri(url), host_header(*url.host, port, https)};
-  return unfurl::exchange(context.network, endpoint, request, kTimeouts, context.deadline);
+  return unfurl::exchange(context.network, endpoint, request, context.network.timeouts, context.deadline);
 }
 
 struct Target {

@@ -344,18 +344,36 @@ Result<Body> inflate(const std::string& packed, std::size_t limit) {
   } decompressor;
   Body body;
   body.bytes.resize(limit + 1);
-  std::size_t actual = 0;
-  const bool gzip = packed.size() >= 2 && static_cast<unsigned char>(packed[0]) == 0x1F &&
-                    static_cast<unsigned char>(packed[1]) == 0x8B;
-  const libdeflate_result result =
-      gzip ? libdeflate_gzip_decompress(decompressor.d, packed.data(), packed.size(), body.bytes.data(),
-                                        body.bytes.size(), &actual)
-           : libdeflate_zlib_decompress(decompressor.d, packed.data(), packed.size(), body.bytes.data(),
-                                        body.bytes.size(), &actual);
-  if (result == LIBDEFLATE_INSUFFICIENT_SPACE) return Body{{}, true};
-  if (result != LIBDEFLATE_SUCCESS) return fail(Errc::Parse, "incorrect header check");
-  if (actual > limit) return Body{{}, true};
-  body.bytes.resize(actual);
+  std::size_t total = 0;
+  const auto is_gzip = [&](std::size_t at) {
+    return packed.size() >= at + 2 && static_cast<unsigned char>(packed[at]) == 0x1F &&
+           static_cast<unsigned char>(packed[at + 1]) == 0x8B;
+  };
+  if (!is_gzip(0)) {
+    std::size_t actual = 0;
+    const auto result = libdeflate_zlib_decompress(decompressor.d, packed.data(), packed.size(), body.bytes.data(),
+                                                   body.bytes.size(), &actual);
+    if (result == LIBDEFLATE_INSUFFICIENT_SPACE) return Body{{}, true};
+    if (result != LIBDEFLATE_SUCCESS) return fail(Errc::Parse, "incorrect header check");
+    total = actual;
+  } else {
+    // `Zlib::GzipReader` style: the members one after the other.
+    std::size_t at = 0;
+    while (at < packed.size()) {
+      if (!is_gzip(at)) return fail(Errc::Parse, "not in gzip format");
+      std::size_t used = 0;
+      std::size_t made = 0;
+      const auto result = libdeflate_gzip_decompress_ex(decompressor.d, packed.data() + at, packed.size() - at,
+                                                        body.bytes.data() + total, body.bytes.size() - total, &used,
+                                                        &made);
+      if (result == LIBDEFLATE_INSUFFICIENT_SPACE) return Body{{}, true};
+      if (result != LIBDEFLATE_SUCCESS) return fail(Errc::Parse, "invalid compressed data");
+      at += used;
+      total += made;
+    }
+  }
+  if (total > limit) return Body{{}, true};
+  body.bytes.resize(total);
   return body;
 }
 
@@ -397,7 +415,7 @@ Result<Response> exchange(const Network& network, const Endpoint& endpoint, cons
   response.decode_content_ = !response.head_;
   // `Net::HTTP::Get.new(uri)`, then `request` on a connection that was not started.
   std::string text = request.method + " " + request.target + " HTTP/1.1\r\n";
-  if (!response.head_) text += "Accept-Encoding: " + std::string(kAcceptEncoding) + "\r\n";
+  text += "Accept-Encoding: " + std::string(kAcceptEncoding) + "\r\n";
   text += "Accept: */*\r\nUser-Agent: Ruby\r\nHost: " + request.host_header + "\r\nConnection: close\r\n\r\n";
   if (auto sent = c.write_all(text); !sent) return std::unexpected(sent.error());
   std::size_t end;

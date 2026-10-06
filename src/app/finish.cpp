@@ -195,6 +195,8 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
   if (deflate && response.has("content-encoding") && !has_word(response.get("content-encoding"), "identity"))
     deflate = false;
   if (deflate && app_set_length && response.get("content-length") == "0") deflate = false;
+  // Rack::Deflater: a client that refuses gzip and identity gets a 406 in place of the response.
+  if (deflate && refuses_every_encoding(rq.request)) return not_acceptable(rq.ctx);
   bool vary_missing = false;
   if (deflate) {
     // `Vary: Accept-Encoding`: added to an existing header in place. Without one, it goes after the tail.
@@ -250,7 +252,8 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
   // it for a bodiless status (see `net::Wire`).
   if (response.status == 304 && !response.has("content-length")) response.add("content-length", "0");
   add_rails_tail(rq.ctx, response);
-  if (vary_missing) response.add("vary", "Accept-Encoding");
+  // ActionDispatch::SSL is inside Rack::Deflater: its HSTS header comes before a "vary" that the
+  // deflater adds at the end.
   if (rq.app.proxy.force_ssl && rq.info.ssl()) {
     response.add_copy("strict-transport-security", rq.app.proxy.hsts);
     for (net::Header& h : response.headers) {
@@ -272,6 +275,7 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
       if (!secure) h.value = rq.arena().copy(std::string(h.value) + "; secure");
     }
   }
+  if (vary_missing) response.add("vary", "Accept-Encoding");
   return response;
 }
 

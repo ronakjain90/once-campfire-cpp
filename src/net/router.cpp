@@ -25,8 +25,11 @@ bool split_path(std::string_view path, Split& out) noexcept {
   while (true) {
     const std::size_t slash = path.find('/');
     const std::string_view part = path.substr(0, slash);
-    if (part.empty() || out.count == kMaxSegments) return false;
-    out.segments[out.count++] = part;
+    // Journey squeezes repeated slashes ("//rooms" is "/rooms").
+    if (!part.empty()) {
+      if (out.count == kMaxSegments) return false;
+      out.segments[out.count++] = part;
+    }
     if (slash == std::string_view::npos) return true;
     path.remove_prefix(slash + 1);
   }

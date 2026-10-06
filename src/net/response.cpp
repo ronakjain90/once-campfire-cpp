@@ -78,6 +78,21 @@ std::size_t Response::body_iovecs(std::span<iovec> out, std::size_t skip) const 
   return 1;
 }
 
+void Response::body_append_to(std::string& out) const {
+  const std::size_t total = body_size();
+  out.reserve(out.size() + total);
+  std::size_t skip = 0;
+  while (skip < total) {
+    iovec iov[16];
+    const std::size_t n = body_iovecs(iov, skip);
+    if (n == 0) break;
+    for (std::size_t i = 0; i < n; ++i) {
+      out.append(static_cast<const char*>(iov[i].iov_base), iov[i].iov_len);
+      skip += iov[i].iov_len;
+    }
+  }
+}
+
 std::string_view reason_phrase(int status) noexcept {
   switch (status) {
     case 100: return "Continue";
@@ -148,7 +163,8 @@ Wire::Wire(std::pmr::memory_resource* resource, const Response& response, const 
   const bool streamed = (response.chunked || response.framed) && !bodiless_status;
   if (streamed && !options.head_only) {
     head_.append_raw("transfer-encoding: chunked\r\n");
-  } else if (!bodiless_status && !streamed && !response.has("content-length")) {
+  } else if (!bodiless_status && !streamed && !response.has("content-length") &&
+             !response.unsized) {
     // hyper writes the length of a body after the headers of the map (and after "connection").
     head_.append_raw("content-length: ");
     head_.append_uint(response.body_size());

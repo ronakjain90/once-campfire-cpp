@@ -29,6 +29,7 @@ class Server {
 
   // The ports that the server uses (useful when an option is 0). Valid after `start`.
   [[nodiscard]] std::uint16_t http_port() const noexcept { return http_port_; }
+  [[nodiscard]] std::uint16_t https_port() const noexcept { return https_port_; }
   [[nodiscard]] std::uint16_t target_port() const noexcept { return target_port_; }
   [[nodiscard]] std::size_t worker_count() const noexcept { return workers_.size(); }
   [[nodiscard]] std::size_t connection_count() const noexcept;
@@ -38,6 +39,7 @@ class Server {
   App app_;
   std::vector<std::unique_ptr<Worker>> workers_;
   std::uint16_t http_port_ = 0;
+  std::uint16_t https_port_ = 0;
   std::uint16_t target_port_ = 0;
 };
 

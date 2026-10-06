@@ -10,7 +10,17 @@ namespace campfire::app {
 // Adds "x-request-id" and "x-runtime" at the end of the headers.
 void add_rails_tail(net::Ctx& ctx, net::Response& response);
 
+// `ActionDispatch::SSL`: with `force_ssl`, a request that is SSL gets the HSTS header, for every response
+// (a page, `/up`, an error page, a file of the asset table).
+void add_hsts(const net::Request& request, net::Response& response);
+
 // True if Rack::Deflater would choose gzip for this request.
 [[nodiscard]] bool wants_gzip(const net::Request& request) noexcept;
+
+// True if the client refuses both gzip and identity: Rack::Deflater answers 406 (for a response
+// that it may compress).
+[[nodiscard]] bool refuses_every_encoding(const net::Request& request);
+// That 406: "text/plain" with the message, and nothing else (the middleware replaces the response).
+[[nodiscard]] net::Response not_acceptable(net::Ctx& ctx);
 
 }  // namespace campfire::app

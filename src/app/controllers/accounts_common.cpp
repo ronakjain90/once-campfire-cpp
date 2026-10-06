@@ -15,7 +15,7 @@ compat::Timestamp to_compat(Timestamp t) {
 
 std::string transfer_id(Rq& rq, std::int64_t user_id) {
   // `User::Transferable::TRANSFER_LINK_EXPIRY_DURATION`: 4 hours.
-  constexpr std::int64_t kExpirySeconds = 4 * 60 * 60;
+  constexpr std::int64_t kExpirySeconds = std::int64_t{4} * 60 * 60;
   return compat::signed_id::generate(rq.app.secrets, "User", user_id, "transfer",
                                      to_compat(rq.now().plus_seconds(kExpirySeconds)));
 }

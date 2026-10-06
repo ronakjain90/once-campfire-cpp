@@ -130,9 +130,9 @@ Task<Flow<std::optional<storage::Blob>>> processed_variant(Rq& rq, models::attac
   if (!variation) co_return fail_internal(variation.error().message);
   auto existing = storage.existing_variant(reader, blob, *variation);
   if (!existing) co_return fail_internal(existing.error().message);
-  if (*existing) co_return std::optional<storage::Blob>(std::move(**existing));
+  if (*existing) co_return std::move(*existing);
   // `VariantWithRecord#process`: the file work off the writer, then the rows.
-  const storage::Variation wanted = *variation;
+  const storage::Variation& wanted = *variation;
   auto image = co_await rq.ctx.offload(rq.app.jobs,
                                        [&storage, blob, wanted] { return storage.transform_variant(blob, wanted); });
   if (!image) co_return fail_internal(image.error().message);
@@ -151,13 +151,13 @@ Task<Flow<std::optional<storage::Blob>>> processed_variant(Rq& rq, models::attac
   if (!written) co_return fail_internal(written.error().message);
   if (recorded) {
     image->keep();
-    co_return std::optional<storage::Blob>(std::move(*recorded));
+    co_return std::move(recorded);
   }
   // Another request recorded the variant first.
   auto winner = storage.existing_variant(reader, blob, wanted);
   if (!winner) co_return fail_internal(winner.error().message);
   if (!*winner) co_return fail_internal("variant record is gone");
-  co_return std::optional<storage::Blob>(std::move(**winner));
+  co_return std::move(*winner);
 }
 
 }  // namespace campfire::app::active_storage

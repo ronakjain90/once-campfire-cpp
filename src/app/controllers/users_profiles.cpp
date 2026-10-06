@@ -119,11 +119,11 @@ Task<Flow<net::Response>> profiles_update(Rq& rq) {
   };
   models::UserChanges changes;
   changes.name = present("name");
-  if (const auto email = present("email_address")) changes.email_address = std::optional<std::string>(*email);
+  if (const auto email = present("email_address")) changes.email_address = email;
   auto digest = co_await concerns::password_digest(rq, present("password"));
   if (!digest) co_return std::unexpected(std::move(digest.error()));
   changes.password_digest = std::move(*digest);
-  if (const auto bio = present("bio")) changes.bio = std::optional<std::string>(*bio);
+  if (const auto bio = present("bio")) changes.bio = bio;
 
   active_storage::Assignment avatar = active_storage::assignment_from(params, "avatar");
   // `.compact` drops a nil avatar before it is assigned.

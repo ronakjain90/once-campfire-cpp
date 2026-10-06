@@ -16,7 +16,7 @@ namespace campfire::app::rqrcode {
 
 namespace {
 
-enum class Mode : std::uint32_t { Number = 1, AlphaNumeric = 2, Byte = 4 };
+enum class Mode : std::uint8_t { Number = 1, AlphaNumeric = 2, Byte = 4 };
 
 constexpr std::string_view kAlphanumeric = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
 constexpr std::uint32_t kLevelH = 2;
@@ -300,6 +300,7 @@ std::vector<std::uint8_t> create_data(std::size_t version, const Segment& segmen
   for (const auto& [total, data_count] : blocks) {
     const std::size_t ec_count = total - data_count;
     std::vector<std::uint32_t> dc;
+    dc.reserve(data_count);
     for (std::size_t i = 0; i < data_count; ++i) dc.push_back(buffer.buffer[offset + i]);
     offset += data_count;
     const Polynomial rs_poly = error_correct_polynomial(ec_count, gf);
@@ -393,7 +394,8 @@ void place_position_adjust_pattern(Grid& grid, std::size_t version) {
       for (int r = -2; r <= 2; ++r) {
         for (int c = -2; c <= 2; ++c) {
           const bool part = std::abs(r) == 2 || std::abs(c) == 2 || (r == 0 && c == 0);
-          grid[static_cast<std::size_t>(row + r)][static_cast<std::size_t>(col + c)] = part ? 1 : 0;
+          grid[static_cast<std::size_t>(std::int64_t{row} + r)][static_cast<std::size_t>(std::int64_t{col} + c)] =
+              part ? 1 : 0;
         }
       }
     }

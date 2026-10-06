@@ -32,8 +32,8 @@ namespace {
 constexpr std::string_view kTemplateDigest = "d500db55e2a67222018ef0156839c3c9";
 
 // `expires_in 30.minutes, public: true, stale_while_revalidate: 1.week`
-constexpr std::uint64_t kMaxAge = 30 * 60;
-constexpr std::uint64_t kStaleWhileRevalidate = 7 * 24 * 60 * 60;
+constexpr std::uint64_t kMaxAge = std::uint64_t{30} * 60;
+constexpr std::uint64_t kStaleWhileRevalidate = std::uint64_t{7} * 24 * 60 * 60;
 
 // What a response of this user is made of, until a row of `users` changes.
 struct AvatarEntry {

@@ -15,8 +15,8 @@ namespace campfire::app::controllers {
 namespace {
 
 // `expires_in 5.minutes, public: true, stale_while_revalidate: 1.week`
-constexpr std::uint64_t kMaxAge = 5 * 60;
-constexpr std::uint64_t kStaleWhileRevalidate = 7 * 24 * 60 * 60;
+constexpr std::uint64_t kMaxAge = std::uint64_t{5} * 60;
+constexpr std::uint64_t kStaleWhileRevalidate = std::uint64_t{7} * 24 * 60 * 60;
 
 // `allow_unauthenticated_access only: :show`
 Task<Flow<net::Response>> logos_show(Rq& rq) {

@@ -105,6 +105,7 @@ Task<Flow<net::Response>> accounts_update(Rq& rq) {
   if (const req::Param* settings = params.get("settings"); settings != nullptr) {
     if (const req::ParamMap* map = settings->as_hash()) {
       std::vector<std::pair<std::string, std::string>> items;
+      items.reserve(map->size());
       for (std::size_t i = 0; i < map->size(); ++i) {
         items.emplace_back(std::string(map->key_at(i)), map->value_at(i).to_s().value_or(""));
       }

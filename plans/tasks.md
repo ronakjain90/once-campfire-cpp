@@ -61,6 +61,7 @@ its requests in the diff sweep pass.
 
 | ID | Area | Rails sources (`reference/app/`) |
 |---|---|---|
+| A0 | App framework: app state, session cache, concerns, responses, fragment and page caches, errors, and the sign-in flow as proof. Spec `plans/specs/A0.md`. Runs before A1 to A9. | `controllers/concerns/*`, `sessions_controller` |
 | A1 | Sign-in, sessions, transfers, first run, join, welcome, bans, the authentication concerns, platform and user agent detection | `controllers/sessions*`, `first_runs`, `users#new/create`, `welcome`, `concerns/*` |
 | A2 | Rooms: show, index, open, closed and direct rooms, involvements, refreshes, settings, the sidebar, the room page cache | `controllers/rooms*`, `users/sidebars` |
 | A3 | Messages: create, edit, delete, pages, boosts, the bot API, attachments, broadcasts, unread state, mentions, user autocomplete | `controllers/messages*`, `autocompletable` |
@@ -124,3 +125,4 @@ A resumed agent sends its whole transcript again on each step. A long transcript
 limit fast. To restart a paused task, start a **new** agent with a short prompt: the task row, the
 agent brief, and "continue from the commits and files in the worktree". Do not resume an agent
 whose transcript is long.
+| A0 | in progress (Sonnet) | `task/A0` | |

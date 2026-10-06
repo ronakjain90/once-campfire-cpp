@@ -52,7 +52,8 @@ struct SidebarDirect {
   }
   // `[ "direct", "unread": membership.unread? ]`.
   [[nodiscard]] std::string_view class_names() const { return unread ? "direct unread" : "direct"; }
-  // `members.map { |m| m.name.split(' ')[0, 3].map { |s| s[0].capitalize }.join }.to_sentence(two_words_connector: '+')`.
+  // `members.map { |m| m.name.split(' ')[0, 3].map { |s| s[0].capitalize }.join }.to_sentence(two_words_connector:
+  // '+')`.
   [[nodiscard]] std::string member_initials() const {
     std::vector<std::string> initials;
     for (const UserSummary& member : members) {

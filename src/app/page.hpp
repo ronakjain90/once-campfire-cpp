@@ -16,6 +16,7 @@
 
 #include "app/flow.hpp"
 #include "app/rq.hpp"
+#include "models/user.hpp"
 #include "views/context.hpp"
 #include "views/layout.hpp"
 
@@ -28,6 +29,9 @@ struct LayoutData {
   std::optional<std::string> custom_styles;
   std::optional<std::int64_t> last_room_visited_id;  // `last_room_visited` (rooms: a later task fills it)
 };
+
+// `fresh_user_avatar_path(user)`: the signed avatar token and the `v` cache buster.
+[[nodiscard]] std::string user_avatar_path(const Rq& rq, const models::User& user);
 
 // `Current.account`, `Current.user`. With no account yet (first run) the account summary is blank.
 [[nodiscard]] Flow<LayoutData> load_layout(Rq& rq);

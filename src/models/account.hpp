@@ -19,6 +19,8 @@ struct Account {
   std::optional<std::string> custom_styles;
   std::string updated_at;
   bool has_logo = false;  // `account.logo.attached?`
+  // `settings.restrict_room_creation_to_administrators?`
+  bool restrict_room_creation_to_administrators = false;
 };
 
 namespace accounts {

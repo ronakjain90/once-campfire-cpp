@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include "core/arena.hpp"
 #include "core/error.hpp"
@@ -68,6 +69,12 @@ namespace users {
 // The password half of `User.active.authenticate_by`. A missing user costs the same time as a
 // wrong password. Blocks: call it on a job thread. A blank password gives nothing.
 [[nodiscard]] std::optional<User> authenticated(std::optional<User> candidate, std::string_view password);
+// `room.users`: the members of a room, in the order of the query.
+[[nodiscard]] Result<std::vector<User>> of_room(db::Connection& conn, Arena& arena, std::int64_t room_id);
+// `find_direct_placeholder_users` of `Users::SidebarsController`: active users that share no direct room with
+// `user_id`, oldest first, at most `kDirectPlaceholders` minus the number of excluded ids.
+inline constexpr std::int64_t kDirectPlaceholders = 20;
+[[nodiscard]] Result<std::vector<User>> direct_placeholders(db::Connection& conn, Arena& arena, std::int64_t user_id);
 // `User.none?`
 [[nodiscard]] Result<bool> none(db::Connection& conn, Arena& arena);
 

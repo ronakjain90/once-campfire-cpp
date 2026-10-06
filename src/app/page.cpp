@@ -24,6 +24,11 @@ std::string to_fs_number(const std::string& db_text) {
 
 }  // namespace
 
+std::string user_avatar_path(const Rq& rq, const models::User& user) {
+  const std::string token = compat::signed_id::generate(rq.app.secrets, "User", user.id, "avatar", std::nullopt);
+  return campfire::routes::fresh_user_avatar(token, to_fs_number(user.updated_at));
+}
+
 Flow<LayoutData> load_layout(Rq& rq) {
   LayoutData data;
   auto account = models::accounts::first(rq.db(), rq.arena());
@@ -43,8 +48,7 @@ Flow<LayoutData> load_layout(Rq& rq) {
     current.name = user->name;
     current.administrator = user->can_administer();
     current.bot = user->is_bot();
-    const std::string token = compat::signed_id::generate(rq.app.secrets, "User", user->id, "avatar", std::nullopt);
-    current.avatar_url = campfire::routes::fresh_user_avatar(token, to_fs_number(user->updated_at));
+    current.avatar_url = user_avatar_path(rq, *user);
     data.current_user = std::move(current);
     // `last_room_visited`: `Current.user.rooms.find_by(id: cookies[:last_room]) || Current.user.rooms.original`
     std::optional<models::Room> visited;

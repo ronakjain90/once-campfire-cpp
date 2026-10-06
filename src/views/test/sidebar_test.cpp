@@ -1,6 +1,8 @@
 // The sidebar against the golden frame page of the reference app (test/golden/sidebar_frame.html, made by Rails).
 // The data of the page is read from the page itself. Only the CSRF tokens of the `button_to` forms are not in our
 // output: the test removes them from the golden page first (Rust "Known differences").
+#include "views/users/sidebar.hpp"
+
 #include <doctest.h>
 
 #include <fstream>
@@ -10,7 +12,6 @@
 #include <vector>
 
 #include "views/templates.gen.hpp"
-#include "views/users/sidebar.hpp"
 
 namespace {
 
@@ -42,7 +43,8 @@ TEST_CASE("users/sidebars/show equals the page of Rails") {
   REQUIRE(a != std::string::npos);
   REQUIRE(b != std::string::npos);
   std::string expected = golden.substr(a, b - a);
-  expected = std::regex_replace(expected, std::regex(R"re(<input type="hidden" name="authenticity_token" value="[^"]*" />)re"), "");
+  expected = std::regex_replace(
+      expected, std::regex(R"re(<input type="hidden" name="authenticity_token" value="[^"]*" />)re"), "");
 
   std::vector<std::string> avatars;
   const std::regex avatar_re(R"re(src="(/users/[^"]*)")re");

@@ -12,6 +12,7 @@
 #include "core/arena.hpp"
 #include "core/scheduler.hpp"
 #include "net/conn.hpp"
+#include "net/h2.hpp"
 #include "net/options.hpp"
 #include "net/timer_wheel.hpp"
 
@@ -22,7 +23,7 @@ namespace campfire::net {
 class Worker final : public Scheduler {
  public:
   // The worker takes the ownership of the listener descriptors (-1 for none).
-  Worker(const ServerOptions& options, const App& app, int http_listener, int target_listener);
+  Worker(const ServerOptions& options, const App& app, int http_listener, int target_listener, int https_listener = -1);
   ~Worker() override;
   Worker(const Worker&) = delete;
   Worker& operator=(const Worker&) = delete;
@@ -44,7 +45,7 @@ class Worker final : public Scheduler {
 
   void run();
   void handle_event(void* tag, std::uint32_t events);
-  void on_accept(int listener_fd, bool via_front);
+  void on_accept(int listener_fd, bool via_front, bool tls);
   void run_posted();
   void drain_finished();
   void sweep();
@@ -55,6 +56,7 @@ class Worker final : public Scheduler {
   bool step_body(Conn& c);
   bool step_write(Conn& c);
   bool step_linger(Conn& c);
+  bool step_handshake(Conn& c);
   bool fill(Conn& c);  // reads from the socket; false if the connection ended or has no data
   void begin_wait(Conn& c);
   void dispatch(Conn& c);
@@ -67,7 +69,36 @@ class Worker final : public Scheduler {
   void abort_conn(Conn& c);
   Task<void> serve(Conn& c);
   void handler_finished(Conn& c, Response&& response);
+  // The same two steps for one HTTP/2 stream.
+  Task<void> h2_serve(Conn& c, H2Stream& stream);
+  // Arms a timer only when its due time is earlier than the one that is armed.
+  void arm_earlier(Conn& c, std::uint64_t due_ms, TimerKind kind);
 
+ public:
+  // Transport: plain or TLS (worker_io.cpp).
+  enum class Io : std::uint8_t { Ok, WouldBlock, Closed };
+  // Reads up to `size` bytes. `got` is the number read. Closed: the peer ended, or an error.
+  Io io_read(Conn& c, char* buffer, std::size_t size, std::size_t& got);
+  // Writes some of `data`. `wrote` is the number written.
+  Io io_write(Conn& c, const char* data, std::size_t size, std::size_t& wrote);
+  // Writes all of a small text now if the socket takes it (best effort). For 100-continue and errors.
+  void send_text(Conn& c, std::string_view text);
+  void shutdown_write(Conn& c);
+
+  // The HTTP/2 code (worker_h2.cpp) calls these.
+  void h2_start(Conn& c);
+  bool h2_step(Conn& c);
+  void h2_on_timer(Conn& c);
+  void h2_begin_request(Conn& c, H2Stream& stream);
+  void h2_handler_finished(Conn& c, H2Stream& stream, Response&& response);
+  [[nodiscard]] const ServerOptions& options() const noexcept { return options_; }
+  [[nodiscard]] bool stopping() const noexcept { return stopping_.load(); }
+  [[nodiscard]] std::uint64_t now_ms_public() const noexcept { return now_ms_; }
+  [[nodiscard]] std::unique_ptr<Arena> take_arena_public() { return take_arena(); }
+  void give_arena_public(std::unique_ptr<Arena> arena) { give_arena(std::move(arena)); }
+  void post_finished(Conn& c) { finished_.push_back(&c); }
+
+ private:
   std::unique_ptr<Arena> take_arena();
   void give_arena(std::unique_ptr<Arena> arena);
   void discard(Conn& c);
@@ -81,6 +112,7 @@ class Worker final : public Scheduler {
   int wake_fd_ = -1;
   int http_listener_ = -1;
   int target_listener_ = -1;
+  int https_listener_ = -1;
   std::thread thread_;
   std::atomic<std::thread::id> owner_;
   std::atomic<bool> stopping_{false};

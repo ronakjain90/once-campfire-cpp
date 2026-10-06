@@ -4,17 +4,23 @@ campfire_library(models
   SOURCES
     account.cpp
     ban.cpp
+    boost.cpp
     first_run.cpp
     membership.cpp
+    message.cpp
     room.cpp
+    room_ref.cpp
     session.cpp
+    sound.cpp
+    storage_records.cpp
     user.cpp
     user_rooms.cpp
-  PUBLIC_DEPS campfire_core campfire_db campfire_req
+  PUBLIC_DEPS campfire_core campfire_db campfire_req campfire_storage campfire_compat
   WERROR)
 
 campfire_test(models
   SOURCES
+    tests/message_test.cpp
     tests/models_test.cpp
   WERROR)
 target_compile_definitions(test_models PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")

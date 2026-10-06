@@ -1,0 +1,39 @@
+{# reference/app/views/sessions/new.html.erb: the content of the page. The title, the head part and the layout come from the controller. #}
+{% include views/helpers/forms.hpp %}
+{% include views/sessions/helpers.hpp %}
+{% params const ViewContext& ctx, const helpers::FormWith& form, std::optional<std::string_view> email_address, const std::optional<HelpContact>& help_contact %}
+
+<section class="txt-align-center">
+  <div class="panel {{ ctx.flash_alert ? "shake" : "" }}">
+    {% call account_logo_tag(ctx, "center margin-block-end txt-xx-large") %}
+
+    {% wrap form_with(form) %}
+      <fieldset class="flex flex-column gap center-block upad">
+        <legend class="txt-large txt-align-center"><strong>{{ ctx.account.name }}</strong></legend>
+
+        <div class="flex align-center gap">
+          {% call translation_button(ctx, "email_address") %}
+          <label class="flex align-center gap input input--actor txt-large">
+            {% call form.email_field("email_address", std::nullopt, attrs().required(true).cls("input").autofocus().autocomplete("username").placeholder("Enter your email address").attr_opt("value", email_address)) %}
+            {% call image_tag(ctx, "email.svg", attrs().aria_hidden().size(24).cls("colorize--black")) %}
+          </label>
+        </div>
+
+        <div class="flex align-center gap">
+          {% call translation_button(ctx, "password") %}
+          <label class="flex align-center gap input input--actor txt-large">
+            {% call form.password_field("password", attrs().required(true).cls("input").autocomplete("current-password").placeholder("Enter your password").maxlength(72)) %}
+            {% call image_tag(ctx, "password.svg", attrs().aria_hidden().size(24).cls("colorize--black")) %}
+          </label>
+        </div>
+
+        {% wrap button_tag(attrs().cls("btn btn--reversed center txt-large").type("submit").name("log_in")) %}
+          {% call image_tag(ctx, "arrow-right.svg", attrs().aria_hidden()) %}
+          <span class="for-screen-reader">Go</span>
+        {% end %}
+      </fieldset>
+    {% end %}
+  </div>
+
+  {% render accounts/help_contact(ctx, help_contact) %}
+</section>

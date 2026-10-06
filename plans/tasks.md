@@ -99,12 +99,12 @@ its requests in the diff sweep pass.
 |---|---|---|---|
 | T1 | merged (verified by Opus) | `task/T1` | `test_core` and `test_compat` pass in release, asan and tsan. `bin/dev` needs `seccomp=unconfined` for TSan. |
 | T2 | merged (verified by Opus) | `task/T2` | All vector groups pass in release and ASan. `passwords` (bcrypt) and `csrf` groups moved to T6. Needs T1's doctest wiring. |
-| T3 | paused (usage limit, 2026-10-06 02:45) | `task/T3` | 3 commits. Library compiles. Fuzz run was starting. |
+| T3 | in progress (fresh Sonnet agent, 09:35) | `task/T3` | 3 commits. Library compiles. Fuzz run was starting. |
 | T4 | merged (verified by Opus) | `task/T4` | Media libraries byte-identical to `campfire-rust:app`. App build step waits for T1's preset names. |
-| T5 | paused (usage limit, 2026-10-06 02:45) | `task/T5` | 3 commits. Response builder in progress. |
-| T6 | paused (usage limit, 2026-10-06 02:45) | `task/T6` | No commits. `param.hpp`/`param.cpp` written, not built. |
-| T7 | paused (usage limit, 2026-10-06 02:45) | `task/T7` | 3 commits. Dependency scope written. Typed statements next. |
-| T8 | paused (usage limit, 2026-10-06 02:45) | `task/T8` | No commits yet. |
+| T5 | in progress (fresh Sonnet agent, 09:35) | `task/T5` | 3 commits. Response builder in progress. |
+| T6 | in progress (fresh Sonnet agent, 09:35) | `task/T6` | No commits. `param.hpp`/`param.cpp` written, not built. |
+| T7 | in progress (fresh Sonnet agent, 09:35) | `task/T7` | 3 commits. Dependency scope written. Typed statements next. |
+| T8 | in progress (fresh Sonnet agent, 09:35) | `task/T8` | No commits yet. |
 | T9 | paused (usage limit, 2026-10-06 02:45) | `task/T9` | 1 commit. Load path code in progress. |
 | T11 | paused (usage limit, 2026-10-06 02:45) | `task/T11` | 1 commit, uncommitted work. |
 | T12 | paused (usage limit, 2026-10-06 02:45) | `task/T12` | 1 commit. libvips wrapper in progress. |

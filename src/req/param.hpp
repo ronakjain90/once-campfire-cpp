@@ -27,6 +27,7 @@ enum class ParamErrc : std::uint8_t {
   Limit,    // QueryLimitError
   Parse,    // Http::Parameters::ParseError: malformed JSON or multipart
   Missing,  // ParameterMissing
+  TooLarge,  // a body over a limit: the server answers 413
 };
 
 struct ParamError {

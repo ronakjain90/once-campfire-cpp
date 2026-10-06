@@ -1,4 +1,40 @@
-# Rooms. Rails: config/routes.rb `resources :rooms`, `namespace :rooms`. The `show` of a room needs messages (A3).
-GET /rooms                rooms::index
-GET /rooms/opens/:id      rooms_opens::show
-GET /rooms/closeds/:id    rooms_closeds::show
+# Rooms. Rails: config/routes.rb `resources :rooms { scope module: "rooms" ... }` and `namespace :rooms`. The order is
+# the order of the Rails routes: `/rooms/:id` comes before `/rooms/opens`, so `GET /rooms/opens` is `rooms#show` with
+# the id "opens". An action that Rails does not have is `rooms::action_not_found`.
+GET    /rooms/:room_id/refresh(.:format)        rooms_refreshes::show
+GET    /rooms/:room_id/settings(.:format)       rooms::action_not_found
+GET    /rooms/:room_id/involvement(.:format)    rooms_involvements::show
+PATCH  /rooms/:room_id/involvement(.:format)    rooms_involvements::update
+PUT    /rooms/:room_id/involvement(.:format)    rooms_involvements::update
+GET    /rooms(.:format)                         rooms::index
+POST   /rooms(.:format)                         rooms::action_not_found
+GET    /rooms/new(.:format)                     rooms::action_not_found
+GET    /rooms/:id/edit(.:format)                rooms::action_not_found
+GET    /rooms/:id(.:format)                     rooms::show
+PATCH  /rooms/:id(.:format)                     rooms::action_not_found
+PUT    /rooms/:id(.:format)                     rooms::action_not_found
+DELETE /rooms/:id(.:format)                     rooms::destroy
+GET    /rooms/opens(.:format)                   rooms::index
+POST   /rooms/opens(.:format)                   rooms_opens::create
+GET    /rooms/opens/new(.:format)               rooms_opens::new_
+GET    /rooms/opens/:id/edit(.:format)          rooms_opens::edit
+GET    /rooms/opens/:id(.:format)               rooms_opens::show
+PATCH  /rooms/opens/:id(.:format)               rooms_opens::update
+PUT    /rooms/opens/:id(.:format)               rooms_opens::update
+DELETE /rooms/opens/:id(.:format)               rooms::destroy_without_room
+GET    /rooms/closeds(.:format)                 rooms::index
+POST   /rooms/closeds(.:format)                 rooms_closeds::create
+GET    /rooms/closeds/new(.:format)             rooms_closeds::new_
+GET    /rooms/closeds/:id/edit(.:format)        rooms_closeds::edit
+GET    /rooms/closeds/:id(.:format)             rooms_closeds::show
+PATCH  /rooms/closeds/:id(.:format)             rooms_closeds::update
+PUT    /rooms/closeds/:id(.:format)             rooms_closeds::update
+DELETE /rooms/closeds/:id(.:format)             rooms::destroy_without_room
+GET    /rooms/directs(.:format)                 rooms::index
+POST   /rooms/directs(.:format)                 rooms_directs::create
+GET    /rooms/directs/new(.:format)             rooms_directs::new_
+GET    /rooms/directs/:id/edit(.:format)        rooms_directs::edit
+GET    /rooms/directs/:id(.:format)             rooms_directs::show
+PATCH  /rooms/directs/:id(.:format)             rooms::action_not_found
+PUT    /rooms/directs/:id(.:format)             rooms::action_not_found
+DELETE /rooms/directs/:id(.:format)             rooms_directs::destroy

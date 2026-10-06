@@ -50,6 +50,19 @@ std::string first_character(std::string_view text) {
   return std::string(text.substr(0, n));
 }
 
+std::string user_title(std::string_view name, const std::optional<std::string>& bio) {
+  const auto blank = [](std::string_view text) {
+    return text.find_first_not_of(" \t\n\v\f\r") == std::string_view::npos;
+  };
+  std::string out;
+  if (!blank(name)) out = std::string(name);
+  if (bio && !blank(*bio)) {
+    if (!out.empty()) out += " \xE2\x80\x93 ";
+    out += *bio;
+  }
+  return out;
+}
+
 std::string initials(std::string_view name) {
   // `name.scan(/\b[[:alnum:]]/)`: an ASCII letter or digit that does not follow a word character.
   std::string out;

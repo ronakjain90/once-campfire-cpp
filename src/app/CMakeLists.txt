@@ -31,12 +31,15 @@ campfire_library(app
   SOURCES
     allow_browser.cpp
     app.cpp
+    broadcasts.cpp
     compress.cpp
     concerns.cpp
     controllers/action_not_found.cpp
     controllers/common.cpp
     controllers/first_runs.cpp
     controllers/session_transfers.cpp
+    controllers/directs.cpp
+    controllers/involvements.cpp
     controllers/rooms.cpp
     controllers/sessions.cpp
     controllers/users.cpp

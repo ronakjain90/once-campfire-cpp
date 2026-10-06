@@ -68,6 +68,13 @@ const db::Query<db::schema::UserRow(std::string_view, std::int64_t)> kPlaceholde
     " FROM \"users\" WHERE \"users\".\"status\" = 0 AND \"users\".\"id\" NOT IN (SELECT value FROM "
     "json_each(?)) ORDER BY \"users\".\"created_at\" ASC LIMIT ?"};
 
+const db::Query<db::schema::UserRow()> kActiveOrdered{
+    "SELECT " CF_USER_COLUMNS " FROM \"users\" WHERE \"users\".\"status\" = 0 ORDER BY LOWER(name)"};
+
+const db::Query<std::int64_t(std::string_view)> kExistingIds{
+    "SELECT \"users\".\"id\" FROM \"users\" WHERE \"users\".\"id\" IN (SELECT value FROM json_each(?)) ORDER BY "
+    "\"users\".\"id\""};
+
 // `BCrypt::Password.create("dummy", cost: 12)`: same cost as real digests (Rust: DUMMY_DIGEST).
 constexpr std::string_view kDummyDigest = "$2a$12$FiKmSp4UhLvSB4Sd/ZUjQunyKP6.NjDRHdr5LnKUVk.BUn4Mq12WS";
 
@@ -180,6 +187,27 @@ Result<std::vector<User>> direct_placeholders(db::Connection& conn, Arena& arena
   out.reserve(rows->size());
   for (const db::schema::UserRow& row : *rows) out.push_back(User::from_row(row));
   return out;
+}
+
+Result<std::vector<User>> active_ordered(db::Connection& conn, Arena& arena) {
+  auto rows = conn.all(kActiveOrdered, arena);
+  if (!rows) return std::unexpected(rows.error());
+  std::vector<User> out;
+  out.reserve(rows->size());
+  for (const db::schema::UserRow& row : *rows) out.push_back(User::from_row(row));
+  return out;
+}
+
+Result<std::vector<std::int64_t>> existing_ids(db::Connection& conn, Arena& arena, std::span<const std::int64_t> ids) {
+  std::string json = "[";
+  for (std::size_t i = 0; i < ids.size(); ++i) {
+    if (i > 0) json += ',';
+    json += std::to_string(ids[i]);
+  }
+  json += ']';
+  auto rows = conn.all(kExistingIds, arena, json);
+  if (!rows) return std::unexpected(rows.error());
+  return std::vector<std::int64_t>(rows->begin(), rows->end());
 }
 
 Result<bool> none(db::Connection& conn, Arena& arena) {

@@ -103,6 +103,21 @@ void render_in_layout(Rq& rq, const LayoutData& data, const views::LayoutParts& 
   views::layouts::application(out, ctx, parts);
 }
 
+void add_page_facets(Rq& rq, db::DependencyScope& deps, std::string_view page) {
+  deps.facet("page", page);
+  deps.facet("base_url", rq.info.base_url());
+  deps.facet("frame", static_cast<std::uint64_t>(rq.is_turbo_frame_request()));
+  if (const models::User* user = rq.current_user()) {
+    deps.facet("user", static_cast<std::uint64_t>(user->id));
+    deps.facet("user_updated_at", user->updated_at);
+    deps.facet("user_role", static_cast<std::uint64_t>(user->role));
+  }
+  const auto notice = rq.flash().notice();
+  const auto alert = rq.flash().alert();
+  deps.facet("notice", notice.value_or(""));
+  deps.facet("alert", alert.value_or(""));
+}
+
 net::Response layout_response(Rq& rq, int status, Out&& body) {
   if (!rq.is_turbo_frame_request()) {
     rq.set_header("link", assets::append_preload_links(rq.staged_header("link"), rq.app.stylesheets.preload_links));

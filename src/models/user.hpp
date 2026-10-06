@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -38,6 +39,10 @@ struct User {
     return role == static_cast<std::int64_t>(Role::Administrator);
   }
   [[nodiscard]] bool is_bot() const noexcept { return role == static_cast<std::int64_t>(Role::Bot); }
+  // `can_administer?(room)`: administrators, and the creator of the record.
+  [[nodiscard]] bool can_administer(std::int64_t creator_id) const noexcept {
+    return is_administrator() || id == creator_id;
+  }
   // `can_administer?` with no record: administrators only.
   [[nodiscard]] bool can_administer() const noexcept { return is_administrator(); }
   // `has_secure_password#authenticate`. Blocks about 250 ms: call it on a job thread.
@@ -75,6 +80,11 @@ namespace users {
 // `user_id`, oldest first, at most `kDirectPlaceholders` minus the number of excluded ids.
 inline constexpr std::int64_t kDirectPlaceholders = 20;
 [[nodiscard]] Result<std::vector<User>> direct_placeholders(db::Connection& conn, Arena& arena, std::int64_t user_id);
+// `User.active.ordered`: `LOWER(name)`.
+[[nodiscard]] Result<std::vector<User>> active_ordered(db::Connection& conn, Arena& arena);
+// `User.where(id: ids)`: the ids of the users that exist, in the order of the table.
+[[nodiscard]] Result<std::vector<std::int64_t>> existing_ids(db::Connection& conn, Arena& arena,
+                                                             std::span<const std::int64_t> ids);
 // `User.none?`
 [[nodiscard]] Result<bool> none(db::Connection& conn, Arena& arena);
 

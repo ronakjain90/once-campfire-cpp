@@ -1,0 +1,30 @@
+{# reference/app/views/users/sidebars/rooms/_direct.html.erb. The reference wraps this in `cache membership do` and assigns `members` on lines Erubi drops, leaving the blank line and the indentation below. #}
+{% include views/users/sidebar.hpp %}
+{% params const ViewContext& ctx, const SidebarDirect& membership %}
+
+  {% wrap link_to_room(membership.room_id, attrs().cls(membership.class_names()).id(dom_id("rooms_direct", std::to_string(membership.room_id), "list")).data("sorted_list_number", membership.updated_at_epoch)) %}
+    {% if membership.members.size() > 1 %}
+      <div class="avatar__group">
+        {% for member : membership.first_members() %}
+          <span class="avatar">
+            {% call image_tag(ctx, member.avatar_path, attrs().aria_hidden().size(20)) %}
+          </span>
+        {% end %}
+      </div>
+    {% else %}
+      <span class="avatar">
+        {% call image_tag(ctx, membership.members[0].avatar_path, attrs().aria_hidden().size(48)) %}
+      </span>
+    {% end %}
+
+    <span class="direct__author flex align-center gap max-width min-width border-radius txt-small">
+      <span class="txt-nowrap overflow-ellipsis">
+        <span class="for-screen-reader">Ping with</span>
+        {% if membership.members.size() > 1 %}
+          {{ membership.member_initials() }}
+        {% else %}
+          {{ membership.members[0].first_name() }}
+        {% end %}
+      </span>
+    </span>
+  {% end %}

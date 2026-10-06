@@ -31,14 +31,19 @@ campfire_library(app
   SOURCES
     allow_browser.cpp
     app.cpp
+    broadcasts.cpp
     compress.cpp
     concerns.cpp
     controllers/action_not_found.cpp
     controllers/common.cpp
     controllers/first_runs.cpp
     controllers/session_transfers.cpp
+    controllers/directs.cpp
+    controllers/involvements.cpp
+    controllers/rooms.cpp
     controllers/sessions.cpp
     controllers/users.cpp
+    controllers/sidebars.cpp
     controllers/welcome.cpp
     dispatch.cpp
     errors.cpp
@@ -72,6 +77,7 @@ campfire_test(app
     tests/finish_test.cpp
     tests/signin_area_test.cpp
     tests/user_agent_test.cpp
+    tests/rooms_test.cpp
   WERROR)
 target_compile_definitions(test_app PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")
 

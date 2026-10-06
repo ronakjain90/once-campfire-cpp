@@ -16,6 +16,7 @@
 
 #include "app/flow.hpp"
 #include "app/rq.hpp"
+#include "models/user.hpp"
 #include "views/context.hpp"
 #include "views/layout.hpp"
 
@@ -29,6 +30,9 @@ struct LayoutData {
   std::optional<std::int64_t> last_room_visited_id;  // `last_room_visited` (rooms: a later task fills it)
 };
 
+// `fresh_user_avatar_path(user)`: the signed avatar token and the `v` cache buster.
+[[nodiscard]] std::string user_avatar_path(const Rq& rq, const models::User& user);
+
 // `Current.account`, `Current.user`. With no account yet (first run) the account summary is blank.
 [[nodiscard]] Flow<LayoutData> load_layout(Rq& rq);
 
@@ -37,6 +41,10 @@ struct LayoutData {
 
 // Renders `parts` in the application layout, or in turbo-rails' frame layout for a Turbo-Frame request.
 void render_in_layout(Rq& rq, const LayoutData& data, const views::LayoutParts& parts, Out& out);
+
+// The facets that every page in the layout prints and that are not SQL: the page name, the base URL, the frame
+// flag, the current user (the layout shows the avatar) and the flash. It reads the flash.
+void add_page_facets(Rq& rq, db::DependencyScope& deps, std::string_view page);
 
 // A page in the layout, with the `Link` preload header of `stylesheet_link_tag`. Not cached.
 [[nodiscard]] net::Response layout_response(Rq& rq, int status, Out&& body);

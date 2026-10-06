@@ -1,0 +1,20 @@
+{# reference/app/views/rooms/directs/edit.html.erb: the content of the page. #}
+{% include views/rooms/helpers.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const DirectEditView& edit %}
+
+<div class="panel txt-align-center">
+  <section class="directs--edit margin-block-end">{% for user : edit.users %}
+      <div class="member flex flex-column gap fill-shade pad border-radius">
+        <figure class="avatar center" style="--avatar-border-radius: 10ch; --avatar-size: 10ch;" >
+          {% call avatar_tag(ctx, user.id, user.title, user.avatar_path, attrs().attr("loading", "lazy")) %}
+        </figure>
+
+        <strong>{{ user.name }}</strong>
+      </div>{% end %}
+  </section>
+
+  {% wrap button_to(ctx.url(routes::rooms_direct(edit.room_id)), attrs().method("delete").cls("btn btn--negative center").aria("label", "Delete Ping").data("turbo_confirm", "Are you sure you want to delete this ping and all messages in it? This can’t be undone.")) %}
+    {% call image_tag(ctx, "trash.svg", attrs().aria_hidden()) %}
+    Ping
+{% end %}</div>

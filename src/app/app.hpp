@@ -4,6 +4,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -44,6 +45,9 @@ struct App {
   mutable net::ThreadPool jobs;        // blocking work: bcrypt
   assets::StylesheetTags stylesheets;  // `stylesheet_link_tag :all`, fixed at build time
   std::string preload_link_header;     // the `link` header of a page in the application layout
+  // `ActionCable.server.broadcast(stream, html)` for the Turbo Stream broadcasts of the controllers. The cable
+  // (A7) sets it. Without it a broadcast goes nowhere.
+  std::function<void(std::string_view stream, std::string_view html)> turbo_broadcast;
 
   App(Config c, SharedClock k, std::size_t job_threads, PageCache::Options page_options);
   App(const App&) = delete;

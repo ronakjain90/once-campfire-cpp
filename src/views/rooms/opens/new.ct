@@ -1,0 +1,8 @@
+{# reference/app/views/rooms/opens/new.html.erb in rooms/layouts/_new.html.erb: the content of the page. #}
+{% include views/rooms/helpers.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const OpenFormView& form %}
+
+<section class="panel txt-align-center" style="view-transition-name: new-room">
+  {% render rooms/opens/form(ctx, form, routes::new_rooms_closed()) %}
+</section>

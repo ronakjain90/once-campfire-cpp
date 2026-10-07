@@ -54,10 +54,9 @@ class DetachedRunner final : public Scheduler {
   DetachedRunner& operator=(const DetachedRunner&) = delete;
 
   void post(std::coroutine_handle<> handle) override {
-    {
-      const std::lock_guard lock(mutex_);
-      queue_.push_back(handle);
-    }
+    // Notify with the lock held: the owner can destroy this object as soon as it runs the handle.
+    const std::lock_guard lock(mutex_);
+    queue_.push_back(handle);
     changed_.notify_all();
   }
   [[nodiscard]] bool on_owner_thread() const noexcept override {
@@ -84,10 +83,8 @@ class DetachedRunner final : public Scheduler {
   struct Done {
     DetachedRunner* runner;
     ~Done() {
-      {
-        const std::lock_guard lock(runner->mutex_);
-        --runner->active_;
-      }
+      const std::lock_guard lock(runner->mutex_);
+      --runner->active_;
       runner->changed_.notify_all();
     }
   };

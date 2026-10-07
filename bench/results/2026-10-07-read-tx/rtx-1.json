@@ -1,0 +1,248 @@
+{
+ "app": "rtx",
+ "image": "campfire-cpp:rtx",
+ "rep": 1,
+ "http": [
+  {
+   "avg_bytes": 20658,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 9.983,
+    "mean_ms": 0.17,
+    "n": 743163,
+    "p50_ms": 0.16,
+    "p90_ms": 0.245,
+    "p99_ms": 0.308
+   },
+   "ok": 743163,
+   "path": "/rooms/486777696",
+   "rps": 92891.4,
+   "secs": 8.0,
+   "statuses": {
+    "200": 743163
+   },
+   "route": "room_show",
+   "app_cpu_usec": 25792421,
+   "requests": 743163
+  },
+  {
+   "avg_bytes": 20658,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 8.847,
+    "mean_ms": 0.48,
+    "n": 1063265,
+    "p50_ms": 0.439,
+    "p90_ms": 0.592,
+    "p99_ms": 1.18
+   },
+   "ok": 1063265,
+   "path": "/rooms/486777696",
+   "rps": 132868.2,
+   "secs": 8.0,
+   "statuses": {
+    "200": 1063265
+   },
+   "route": "room_show",
+   "app_cpu_usec": 31570457,
+   "requests": 1063265
+  },
+  {
+   "avg_bytes": 12065,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 2.657,
+    "mean_ms": 0.13,
+    "n": 966077,
+    "p50_ms": 0.123,
+    "p90_ms": 0.178,
+    "p99_ms": 0.318
+   },
+   "ok": 966077,
+   "path": "/rooms/486777696/messages?before=933434569",
+   "rps": 120754.7,
+   "secs": 8.0,
+   "statuses": {
+    "200": 966077
+   },
+   "route": "messages_page",
+   "app_cpu_usec": 29764726,
+   "requests": 966077
+  },
+  {
+   "avg_bytes": 12065,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 4.271,
+    "mean_ms": 0.45,
+    "n": 1137445,
+    "p50_ms": 0.437,
+    "p90_ms": 0.543,
+    "p99_ms": 1.111
+   },
+   "ok": 1137445,
+   "path": "/rooms/486777696/messages?before=933434569",
+   "rps": 142149.7,
+   "secs": 8.0,
+   "statuses": {
+    "200": 1137445
+   },
+   "route": "messages_page",
+   "app_cpu_usec": 31523567,
+   "requests": 1137445
+  },
+  {
+   "avg_bytes": 5826,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 2.135,
+    "mean_ms": 0.14,
+    "n": 900852,
+    "p50_ms": 0.128,
+    "p90_ms": 0.21,
+    "p99_ms": 0.34
+   },
+   "ok": 900852,
+   "path": "/users/me/sidebar",
+   "rps": 112601.6,
+   "secs": 8.0,
+   "statuses": {
+    "200": 900852
+   },
+   "route": "sidebar",
+   "app_cpu_usec": 30592975,
+   "requests": 900852
+  },
+  {
+   "avg_bytes": 5826,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 2.951,
+    "mean_ms": 0.49,
+    "n": 1044726,
+    "p50_ms": 0.47,
+    "p90_ms": 0.63,
+    "p99_ms": 1.157
+   },
+   "ok": 1044726,
+   "path": "/users/me/sidebar",
+   "rps": 130569.9,
+   "secs": 8.0,
+   "statuses": {
+    "200": 1044726
+   },
+   "route": "sidebar",
+   "app_cpu_usec": 31528648,
+   "requests": 1044726
+  },
+  {
+   "avg_bytes": 9357,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 1.067,
+    "mean_ms": 0.14,
+    "n": 917023,
+    "p50_ms": 0.135,
+    "p90_ms": 0.19,
+    "p99_ms": 0.313
+   },
+   "ok": 917023,
+   "path": "/searches?q=coffee",
+   "rps": 114622.7,
+   "secs": 8.0,
+   "statuses": {
+    "200": 917023
+   },
+   "route": "search",
+   "app_cpu_usec": 29323725,
+   "requests": 917023
+  },
+  {
+   "avg_bytes": 9357,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 3.337,
+    "mean_ms": 0.43,
+    "n": 1171228,
+    "p50_ms": 0.403,
+    "p90_ms": 0.537,
+    "p99_ms": 1.024
+   },
+   "ok": 1171228,
+   "path": "/searches?q=coffee",
+   "rps": 146379.7,
+   "secs": 8.0,
+   "statuses": {
+    "200": 1171228
+   },
+   "route": "search",
+   "app_cpu_usec": 31670917,
+   "requests": 1171228
+  },
+  {
+   "avg_bytes": 2097,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 11.975,
+    "mean_ms": 1.08,
+    "n": 117714,
+    "p50_ms": 0.984,
+    "p90_ms": 1.55,
+    "p99_ms": 3.399
+   },
+   "ok": 117714,
+   "path": "POST /rooms/201306877/messages",
+   "rps": 14711.8,
+   "secs": 8.0,
+   "statuses": {
+    "200": 117714
+   },
+   "route": "post_message",
+   "app_cpu_usec": 26651533,
+   "requests": 117714
+  },
+  {
+   "avg_bytes": 2097,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 20.191,
+    "mean_ms": 3.42,
+    "n": 149237,
+    "p50_ms": 3.223,
+    "p90_ms": 4.835,
+    "p99_ms": 10.463
+   },
+   "ok": 149237,
+   "path": "POST /rooms/201306877/messages",
+   "rps": 18645.8,
+   "secs": 8.0,
+   "statuses": {
+    "200": 149237
+   },
+   "route": "post_message",
+   "app_cpu_usec": 27428573,
+   "requests": 149237
+  }
+ ],
+ "cable": []
+}

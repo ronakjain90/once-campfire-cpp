@@ -46,11 +46,16 @@ HttpError param_failure(const req::ParamError& error) {
 
 }  // namespace
 
+// The reads of a request use one read transaction. The suspend hook of the worker ends it when the
+// handler waits (a write, a job), so the handler sees its own writes when it continues.
 Rq::Rq(net::Ctx& c)
-    : ctx(c), app(app::app()), worker(worker_state()), request(c.request()), info(c.request(), app.proxy) {}
+    : ctx(c), app(app::app()), worker(worker_state()), request(c.request()), info(c.request(), app.proxy) {
+  worker.reader().set_read_transactions(true);
+}
 
 Rq::~Rq() {
   worker.reader().set_scope(nullptr);
+  worker.reader().set_read_transactions(false);
 }
 
 Flow<void> Rq::init() {

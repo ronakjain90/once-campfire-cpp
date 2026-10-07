@@ -70,6 +70,24 @@ class Connection {
   void set_scope(DependencyScope* scope) noexcept { scope_ = scope; }
   [[nodiscard]] DependencyScope* scope() const noexcept { return scope_; }
 
+  // Read transactions. When they are on, the first statement starts a transaction (`BEGIN`), and
+  // the statements after it read the same snapshot. SQLite then takes the WAL read lock one time,
+  // not one time for each statement. `end_read_transaction` ends the transaction and the next
+  // statement starts a new one. Turn them off to end the transaction and to go back to autocommit.
+  // A reader connection uses them for one request (src/app/rq.cpp).
+  void set_read_transactions(bool on) noexcept {
+    if (!on) {
+      end_read_transaction();
+    }
+    read_transactions_ = on;
+  }
+  [[nodiscard]] bool read_transactions() const noexcept { return read_transactions_; }
+  void end_read_transaction() noexcept {
+    if (in_read_transaction_) {
+      finish_read_transaction();
+    }
+  }
+
   // The first row, or nothing.
   template <class Row, class... A>
   [[nodiscard]] Result<std::optional<Row>> first(const Query<Row(A...)>& q, Arena& arena,
@@ -202,11 +220,16 @@ class Connection {
       }
       st = *prepared;
     }
+    if (read_transactions_ && !in_read_transaction_) {
+      start_read_transaction();
+    }
     if (scope_ != nullptr) {
       scope_->begin_statement(i);
     }
     return st;
   }
+  void start_read_transaction() noexcept;
+  void finish_read_transaction() noexcept;
   void fold(sqlite3_stmt* st) noexcept {
     if (scope_ != nullptr) {
       scope_->fold_row(st);
@@ -239,6 +262,10 @@ class Connection {
   DependencyScope* scope_ = nullptr;
   std::vector<sqlite3_stmt*> stmts_;
   std::uint64_t prepares_ = 0;
+  bool read_transactions_ = false;
+  bool in_read_transaction_ = false;
+  sqlite3_stmt* begin_ = nullptr;   // `BEGIN`, prepared at the first use
+  sqlite3_stmt* commit_ = nullptr;  // `COMMIT`, prepared at the first use
 };
 
 // Makes the error of a failed SQLite call. A constraint failure is `InvalidArgument`, a busy

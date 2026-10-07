@@ -87,6 +87,13 @@ accept → parse (picohttpparser / nghttp2) → route (compile-time table) → C
     write. That worker runs it after the commit: broadcasts, pushes, jobs.
   - `tx.changed(table, id)` records a change. After the commit, the writer publishes the changes
     to all workers. The workers use them to clear the session cache and the user cache.
+- **Read transactions.** The reads of a request use one read transaction on the reader connection
+  of the worker. The first statement starts it (`BEGIN`), and the end of the request ends it.
+  - Before a handler waits (`Completion`, `Yield`), the suspend hook of the worker ends the
+    transaction. When the handler continues, the next statement starts a new one. Thus a handler
+    sees its own writes, and other work on the worker never reads the snapshot of the request.
+  - When the session cache applies changes from the writer, it ends the transaction first. Thus
+    the cache loads the new rows.
 - **Callbacks.** Rails model callbacks run in a fixed order. Put each model's callbacks in its
   model file, and call them in the same order as Rails does. Cite the Rails file.
 - **Checkpoints.** The checkpointer thread runs `PASSIVE` checkpoints when the WAL grows, as the

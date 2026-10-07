@@ -115,7 +115,11 @@ Connection::Connection(Connection&& other) noexcept
       role_(other.role_),
       scope_(other.scope_),
       stmts_(std::move(other.stmts_)),
-      prepares_(other.prepares_) {
+      prepares_(other.prepares_),
+      read_transactions_(std::exchange(other.read_transactions_, false)),
+      in_read_transaction_(std::exchange(other.in_read_transaction_, false)),
+      begin_(std::exchange(other.begin_, nullptr)),
+      commit_(std::exchange(other.commit_, nullptr)) {
   other.stmts_.clear();
 }
 
@@ -124,6 +128,8 @@ Connection& Connection::operator=(Connection&& other) noexcept {
     for (sqlite3_stmt* st : stmts_) {
       sqlite3_finalize(st);
     }
+    sqlite3_finalize(begin_);
+    sqlite3_finalize(commit_);
     Closer{}(db_);
     db_ = std::exchange(other.db_, nullptr);
     role_ = other.role_;
@@ -131,6 +137,10 @@ Connection& Connection::operator=(Connection&& other) noexcept {
     stmts_ = std::move(other.stmts_);
     other.stmts_.clear();
     prepares_ = other.prepares_;
+    read_transactions_ = std::exchange(other.read_transactions_, false);
+    in_read_transaction_ = std::exchange(other.in_read_transaction_, false);
+    begin_ = std::exchange(other.begin_, nullptr);
+    commit_ = std::exchange(other.commit_, nullptr);
   }
   return *this;
 }
@@ -139,7 +149,43 @@ Connection::~Connection() {
   for (sqlite3_stmt* st : stmts_) {
     sqlite3_finalize(st);
   }
+  sqlite3_finalize(begin_);
+  sqlite3_finalize(commit_);
   Closer{}(db_);
+}
+
+namespace {
+// Runs a statement that has no parameters and no result rows, and resets it. Prepares it at the first use.
+int step_plain(sqlite3* db, sqlite3_stmt*& st, const char* sql) noexcept {
+  if (st == nullptr) {
+    const int rc = sqlite3_prepare_v3(db, sql, -1, SQLITE_PREPARE_PERSISTENT, &st, nullptr);
+    if (rc != SQLITE_OK) {
+      return rc;
+    }
+  }
+  const int rc = sqlite3_step(st);
+  sqlite3_reset(st);
+  return rc;
+}
+}  // namespace
+
+void Connection::start_read_transaction() noexcept {
+  // A deferred `BEGIN` takes no lock: the first statement takes the WAL read lock. If `BEGIN` fails, the
+  // statements run in autocommit, as they do with read transactions off.
+  if (sqlite3_get_autocommit(db_) != 0 && step_plain(db_, begin_, "BEGIN") == SQLITE_DONE) {
+    in_read_transaction_ = true;
+  }
+}
+
+void Connection::finish_read_transaction() noexcept {
+  in_read_transaction_ = false;
+  // An error can end the transaction before this call: then SQLite is in autocommit again.
+  if (sqlite3_get_autocommit(db_) != 0) {
+    return;
+  }
+  if (step_plain(db_, commit_, "COMMIT") != SQLITE_DONE) {
+    sqlite3_exec(db_, "ROLLBACK", nullptr, nullptr, nullptr);
+  }
 }
 
 Status Connection::exec_sql(const std::string& sql) {

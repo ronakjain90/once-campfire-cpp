@@ -1,0 +1,30 @@
+app main rep 1
+db dir: /var/lib/campfire-bench/main-1-2390809/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 2391027, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app rtx rep 1
+db dir: /var/lib/campfire-bench/rtx-1-2390809/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 3053816, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app rtx rep 2
+db dir: /var/lib/campfire-bench/rtx-2-2390809/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 3733315, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app main rep 2
+db dir: /var/lib/campfire-bench/main-2-2390809/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 240953, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app main rep 3
+db dir: /var/lib/campfire-bench/main-3-2390809/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 930677, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app rtx rep 3
+db dir: /var/lib/campfire-bench/rtx-3-2390809/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 1596152, loadgen http --base http://127.0.0.1:4390 --cookie session_t)

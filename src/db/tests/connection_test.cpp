@@ -108,4 +108,49 @@ TEST_CASE("errors come back as values") {
   CHECK(!missing);
 }
 
+TEST_CASE("a read transaction keeps one snapshot until it ends") {
+  const TempDir dir;
+  auto writer = Connection::open(dir.file("a.sqlite3"), Role::Writer);
+  REQUIRE(writer);
+  REQUIRE(writer->exec_sql("CREATE TABLE items (id INTEGER PRIMARY KEY, name TEXT NOT NULL, n INTEGER)"));
+  REQUIRE(writer->exec(InsertItem, "a", std::optional<std::int64_t>()));
+  auto reader = Connection::open(dir.file("a.sqlite3"), Role::Reader);
+  REQUIRE(reader);
+  Arena arena;
+
+  reader->set_read_transactions(true);
+  CHECK(sqlite3_get_autocommit(reader->handle()) != 0);  // the first statement starts it
+  CHECK(*reader->first(CountItems, arena) == std::optional<std::int64_t>(1));
+  CHECK(sqlite3_get_autocommit(reader->handle()) == 0);
+  REQUIRE(writer->exec(InsertItem, "b", std::optional<std::int64_t>()));
+  CHECK(*reader->first(CountItems, arena) == std::optional<std::int64_t>(1));  // the same snapshot
+
+  reader->end_read_transaction();
+  CHECK(sqlite3_get_autocommit(reader->handle()) != 0);
+  CHECK(*reader->first(CountItems, arena) == std::optional<std::int64_t>(2));  // a new snapshot
+  REQUIRE(writer->exec(InsertItem, "c", std::optional<std::int64_t>()));
+  CHECK(*reader->first(CountItems, arena) == std::optional<std::int64_t>(2));
+
+  reader->set_read_transactions(false);
+  CHECK(sqlite3_get_autocommit(reader->handle()) != 0);
+  CHECK(*reader->first(CountItems, arena) == std::optional<std::int64_t>(3));  // autocommit
+  CHECK(sqlite3_get_autocommit(reader->handle()) != 0);
+}
+
+TEST_CASE("a moved connection keeps its read transaction") {
+  const TempDir dir;
+  auto writer = Connection::open(dir.file("a.sqlite3"), Role::Writer);
+  REQUIRE(writer);
+  REQUIRE(writer->exec_sql("CREATE TABLE items (id INTEGER PRIMARY KEY, name TEXT NOT NULL, n INTEGER)"));
+  auto reader = Connection::open(dir.file("a.sqlite3"), Role::Reader);
+  REQUIRE(reader);
+  Arena arena;
+  reader->set_read_transactions(true);
+  CHECK(*reader->first(CountItems, arena) == std::optional<std::int64_t>(0));
+  Connection moved = std::move(*reader);
+  CHECK(moved.read_transactions());
+  moved.set_read_transactions(false);
+  CHECK(sqlite3_get_autocommit(moved.handle()) != 0);
+}
+
 }  // namespace campfire::db

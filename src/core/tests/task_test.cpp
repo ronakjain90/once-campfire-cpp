@@ -252,3 +252,43 @@ TEST_CASE("Yield resumes from the queue") {
   CHECK(step == 2);
   CHECK(t.done());
 }
+
+TEST_CASE("the suspend hook runs around a suspension on the owner thread") {
+  QueueScheduler scheduler;
+  struct Log {
+    int suspends = 0;
+    int resumes = 0;
+    bool resumed_with = false;
+  } log;
+  suspend_hook = SuspendHook{&log,
+                             [](void* self) noexcept {
+                               ++static_cast<Log*>(self)->suspends;
+                               return true;
+                             },
+                             [](void* self, bool state) noexcept {
+                               ++static_cast<Log*>(self)->resumes;
+                               static_cast<Log*>(self)->resumed_with = state;
+                             }};
+  auto [ready, ready_setter] = make_completion<int>(scheduler);
+  ready_setter.set_value(1);
+  auto [later, later_setter] = make_completion<int>(scheduler);
+  const auto run = [&]() -> Task<int> {
+    int sum = co_await std::move(ready);  // ready: no suspension, no hook
+    co_await Yield(scheduler);
+    sum += co_await std::move(later);
+    co_return sum;
+  };
+  Task<int> t = run();
+  t.start();
+  CHECK(log.suspends == 1);
+  CHECK(log.resumes == 0);
+  CHECK(scheduler.run_pending() == 1);  // the Yield
+  CHECK(log.resumes == 1);
+  CHECK(log.suspends == 2);  // the Completion that is not ready
+  later_setter.set_value(2);
+  CHECK(scheduler.run_pending() == 1);
+  CHECK(log.resumes == 2);
+  CHECK(log.resumed_with);
+  CHECK(t.result() == 3);
+  suspend_hook = SuspendHook{};
+}

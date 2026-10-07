@@ -133,8 +133,8 @@ start_app() {
   chown -R "$APP_USER" "$dir"
   local args=(); mapfile -t args < <(env_args)
   # BENCH_APP_ENV="NAME=value;NAME=value": more environment for the app (options of a sanitizer image).
-  local kv
-  for kv in ${BENCH_APP_ENV//;/ }; do args+=(-e "$kv"); done
+  local kv app_env=${BENCH_APP_ENV:-}
+  for kv in ${app_env//;/ }; do args+=(-e "$kv"); done
   sync
   # BENCH_SECCOMP_UNCONFINED=1: a TSan image needs the personality system call.
   docker run -d --name "$CONTAINER" --cpuset-cpus "$SERVER_CPUS" --user "$APP_USER" --network host \

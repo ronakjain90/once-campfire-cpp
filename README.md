@@ -20,7 +20,8 @@ Open work:
 - Parity checks against Rails: the Playwright harness, and database and cookie compatibility in
   both directions.
 - A full benchmark of all routes on a quiet host.
-- Performance of the Action Cable fan-out with 1,000 clients.
+- Performance of the routes below 1.5 times Rust: the room page at 16 clients, search at 64
+  clients, and the Action Cable fan-out with 1,000 clients.
 
 ## Build and test
 
@@ -56,16 +57,23 @@ layout and entrypoint.
 
 ### HTTP routes
 
-Run: `bench/results/2026-10-07-b0-rep4/report.md` (2026-10-07, quiet host, 1 rep).
+Runs: `bench/results/2026-10-07-b0-rep4/report.md` and
+`bench/results/2026-10-07-messages-search/report.md` (2026-10-07, quiet host, 1 rep each).
 
 | Route | Clients | Rust req/s | C++ req/s | C++ / Rust |
 |---|---:|---:|---:|---:|
 | Room page | 1 | 6,387 | 11,876 | 1.86× |
 | Room page | 16 | 25,779 | 37,746 | **1.46×** |
 | Room page | 64 | 26,346 | 39,906 | 1.51× |
+| Messages page | 1 | 6,529 | 12,974 | 1.99× |
+| Messages page | 16 | 29,966 | 61,390 | 2.05× |
+| Messages page | 64 | 30,442 | 61,519 | 2.02× |
 | Sidebar | 1 | 5,640 | 12,158 | 2.16× |
 | Sidebar | 16 | 24,044 | 67,072 | 2.79× |
 | Sidebar | 64 | 21,684 | 67,677 | 3.12× |
+| Search | 1 | 5,301 | 12,443 | 2.35× |
+| Search | 16 | 25,547 | 46,075 | 1.80× |
+| Search | 64 | 31,138 | 41,792 | **1.34×** |
 | Post a message | 1 | 2,730 | 4,529 | 1.66× |
 | Post a message | 16 | 7,068 | 11,699 | 1.66× |
 | Post a message | 64 | 7,182 | 15,076 | 2.10× |
@@ -73,13 +81,15 @@ Run: `bench/results/2026-10-07-b0-rep4/report.md` (2026-10-07, quiet host, 1 rep
 The C++ app also uses less CPU for each request: 0.085 ms against 0.13 ms for the room page at 16
 clients.
 
-This run has 1 rep, not 3. It used the same images as the run in
+These runs have 1 rep, not 3. They used the same images as the run in
 `bench/results/2026-10-07-b0-final`. Do not use that earlier run: fuzz runs used the host at that
 time, and its numbers are too low for both apps. For example, Rust did between 5,296 and 17,702
 req/s on the room page at 16 clients, and 25,779 req/s on a quiet host.
 
-The room page from the C++ app has an average of 20,658 bytes, and from the Rust app 24,231 bytes.
-The cause of this difference is not known yet. Thus the room page ratios can change.
+The pages from the C++ app are smaller than the pages from the Rust app. The room page has an
+average of 20,658 bytes against 24,231 bytes. The messages page has an average of 12,065 bytes
+against 16,158 bytes. The cause of this difference is not known yet. Thus the ratios of these two
+routes can change.
 
 ### Action Cable fan-out
 

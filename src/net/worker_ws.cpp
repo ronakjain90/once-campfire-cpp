@@ -56,16 +56,19 @@ void Worker::ws_start(Conn& c, Response& response) {
   WsAccept accept = std::move(response.ws_accept);
   WireOptions wire_options;
   wire_options.http_minor = c.head.request.minor_version;
-  const Wire wire(c.arena->resource(), response, wire_options);
   std::string head;
-  head.reserve(wire.total());
-  iovec iov[kMaxIov];
-  std::size_t at = 0;
-  while (at < wire.total()) {
-    const std::size_t count = wire.fill_iovecs(iov, at);
-    for (std::size_t i = 0; i < count; ++i) {
-      head.append(static_cast<const char*>(iov[i].iov_base), iov[i].iov_len);
-      at += iov[i].iov_len;
+  {
+    // The wire holds memory of the request arena. It must end before release_request gives the arena back.
+    const Wire wire(c.arena->resource(), response, wire_options);
+    head.reserve(wire.total());
+    iovec iov[kMaxIov];
+    std::size_t at = 0;
+    while (at < wire.total()) {
+      const std::size_t count = wire.fill_iovecs(iov, at);
+      for (std::size_t i = 0; i < count; ++i) {
+        head.append(static_cast<const char*>(iov[i].iov_base), iov[i].iov_len);
+        at += iov[i].iov_len;
+      }
     }
   }
   const std::size_t consumed = c.consumed;

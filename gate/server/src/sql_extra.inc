@@ -1,2 +1,0 @@
-X(UserByEmail, R"SQL(SELECT "users"."id", "users"."name", "users"."email_address", "users"."password_digest", "users"."role", "users"."status", "users"."bio", "users"."bot_token", "users"."created_at", "users"."updated_at" FROM "users" WHERE "users"."status" = 0 AND "users"."email_address" = ? LIMIT 1)SQL")
-X(InsertSession, R"SQL(INSERT INTO "sessions" ("created_at", "ip_address", "last_active_at", "token", "updated_at", "user_agent", "user_id") VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING "id")SQL")

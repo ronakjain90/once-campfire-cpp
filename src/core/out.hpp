@@ -1,4 +1,4 @@
-// Chunked output buffer of a response body. Matches the "Out" object in plans/architecture.md
+// Chunked output buffer of a response body. Matches the "Out" object in docs/architecture.md
 // section 7.1.
 #pragma once
 

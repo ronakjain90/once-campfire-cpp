@@ -12,5 +12,5 @@ extern const std::string_view f_up_html_gz;
 extern const std::string_view f_422_html;
 extern const std::string_view f_500_html;
 extern const std::string_view f_502_html;
-extern const std::string_view f_schema_sql;  // spec/schema.sql: the database schema of a new install
+extern const std::string_view f_schema_sql;  // data/schema.sql: the database schema of a new install
 }  // namespace campfire::app::data

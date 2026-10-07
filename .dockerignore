@@ -1,15 +1,12 @@
-# Build context for docker/Dockerfile: CMakeLists.txt, CMakePresets.json, src/, vendor/, tools/,
-# third_party/ and docker/placeholder. Keep the rest out.
+# Build context for docker/Dockerfile: CMakeLists.txt, CMakePresets.json, src/, vendor/, tools/
+# and docker/placeholder. Keep the rest out.
 /.git
 /.gitignore
 /.gitattributes
 /.claude
 /build
-/plans
-/gate
 /bench
 /tests
-/fuzz
 /docs
 /docker/dev.Dockerfile
 /docker/README.md

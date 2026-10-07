@@ -1,6 +1,6 @@
 // The database: one writer thread with group commit, one checkpointer thread, reader connections.
 // Rails: config/database.yml (immediate transactions, 5000 ms timeout), ActiveRecord after_commit.
-// Rust: crates/db/src/database.rs. Design: plans/architecture.md section 5.
+// Rust: crates/db/src/database.rs. Design: docs/architecture.md section 5.
 #pragma once
 
 #include <atomic>

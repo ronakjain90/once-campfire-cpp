@@ -1,5 +1,5 @@
 // Tests of forgery protection and bcrypt. The vectors are the csrf and passwords groups of
-// spec/vectors/rails_compat.json, made by the Rails reference.
+// tests/vectors/rails_compat.json, made by the Rails reference.
 #include <doctest.h>
 
 #include <string>

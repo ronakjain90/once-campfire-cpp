@@ -30,10 +30,10 @@ constexpr std::string_view kVapidPublic =
 constexpr std::string_view kVapidPrivate = "qfXLHghuG1rSHZUVo9SscNRI-0EIHRbIrfeGCqbAwak=";
 constexpr const char* kPublicIp = "142.250.185.206";
 
-const std::string kTlsDir = std::string(CAMPFIRE_SPEC_DIR) + "/vectors/tls/";
+const std::string kTlsDir = std::string(CAMPFIRE_TESTS_DIR) + "/vectors/tls/";
 
 Value read_json(const std::string& name) {
-  std::ifstream file(std::string(CAMPFIRE_SPEC_DIR) + "/vectors/" + name);
+  std::ifstream file(std::string(CAMPFIRE_TESTS_DIR) + "/vectors/" + name);
   REQUIRE(file.good());
   std::stringstream text;
   text << file.rdbuf();

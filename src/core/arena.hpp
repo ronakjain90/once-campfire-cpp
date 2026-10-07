@@ -1,4 +1,4 @@
-// Per-request memory arena. Matches the "Ctx" arena in plans/architecture.md section 4.
+// Per-request memory arena. Matches the "Ctx" arena in docs/architecture.md section 4.
 #pragma once
 
 #include <cstddef>

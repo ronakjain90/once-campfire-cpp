@@ -85,20 +85,19 @@ page). The cause is the compressor: the C++ app uses libdeflate. The decoded pag
 
 ## Status
 
-The goal is 1.5 times the throughput of the Rust port on each route. The open work is:
+The open work is:
 
-- The Action Cable fan-out with 1,000 clients.
+- The Action Cable fan-out with 1,000 clients. It is 0.88 times the Rust port.
 - Parity checks against Rails: the Playwright harness, and database and cookie compatibility in
   both directions.
 - A full benchmark of all routes with three interleaved runs.
 
-The plan is in [`plans/cpp-port.md`](plans/cpp-port.md). The status of each task is in
-[`plans/tasks.md`](plans/tasks.md).
-
 ## Development
 
 Run all commands through `bin/dev`. It runs them in the `campfire-cpp-dev` Docker image, with
-clang 19, CMake and Ninja.
+clang 19, CMake and Ninja. The diff sweep and the benchmark also need a clone of the
+[Rust port](https://github.com/basecamp/once-campfire-rust) in `../once-campfire-rust`. To use a
+different parent folder, set `CAMPFIRE_WORKSPACE`.
 
 ```sh
 bin/dev build release
@@ -107,16 +106,26 @@ bin/dev test asan
 bin/dev test tsan
 bin/dev format --check
 tools/diffsweep/diffsweep --expected campfire-rust:app --actual campfire-cpp
-gate/bench/run --apps rust=campfire-rust:app,cpp=campfire-cpp --routes room_show,sidebar,post_message
+bench/run --apps rust=campfire-rust:app,cpp=campfire-cpp --routes room_show,sidebar,post_message
 ```
 
 - The presets are `release`, `asan` (ASan and UBSan) and `tsan`. All warnings are errors.
 - The diff sweep starts both images on the same seed and compares each response byte for byte.
   See [`tools/diffsweep/README.md`](tools/diffsweep/README.md).
 - The benchmark takes `--cable "100 1000"` for the Action Cable fan-out. See
-  [`gate/bench/README.md`](gate/bench/README.md). Stop all other work on the host before a run.
-- See [`AGENTS.md`](AGENTS.md) for the repository layout and the working rules, and
-  [`plans/security-review.md`](plans/security-review.md) for the security review.
+  [`bench/README.md`](bench/README.md). Stop all other work on the host before a run.
+- See [`AGENTS.md`](AGENTS.md) for the build rules, [`docs/architecture.md`](docs/architecture.md)
+  for the design and [`docs/security-review.md`](docs/security-review.md) for the security review.
+
+| Folder | Contents |
+|---|---|
+| `src/` | The app, one library for each folder |
+| `tests/` | Shared test code, golden vectors and fuzz seeds. The unit tests are in `src/*/tests/`. |
+| `tools/` | Code generators, the diff sweep and the fuzz scripts |
+| `bench/` | The benchmark harness and the reports |
+| `vendor/` | SQLite, picohttpparser, xxHash, crypt_blowfish, doctest and the frontend assets |
+| `docker/` | The production image and the development image |
+| `docs/` | The design, the known differences and the security review |
 
 ## Known differences
 
@@ -132,7 +141,7 @@ port.
 - **Static files:** `last-modified` is the time when the image was built, as in the Rust app. Thus
   the value is different for each build.
 
-[`plans/divergences.md`](plans/divergences.md) lists each difference and how the diff sweep
+[`docs/divergences.md`](docs/divergences.md) lists each difference and how the diff sweep
 accepts it.
 
 </details>

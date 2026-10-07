@@ -1,9 +1,11 @@
 """Runs the scenarios of a request list against the expected and the actual app, in lockstep."""
 import json
+import os
 import re
 import urllib.parse
 
 import compare
+import harness
 from httpx import Client, multipart, urlencode
 from ws import CableSession
 
@@ -126,7 +128,7 @@ class Run:
             m = self.interp(step["multipart"], side)
             files = []
             for f in m.get("files", []):
-                data = f["text"].encode() if "text" in f else open(f["path"], "rb").read()
+                data = f["text"].encode() if "text" in f else open(os.path.join(harness.WORKSPACE, f["path"]), "rb").read()
                 files.append({"name": f["name"], "filename": f["filename"],
                               "content_type": f.get("content_type", "application/octet-stream"), "data": data})
             body, ctype = multipart(m.get("fields", {}), files)

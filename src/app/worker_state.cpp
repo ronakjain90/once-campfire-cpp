@@ -1,4 +1,4 @@
-// Per-worker state. Design: plans/architecture.md sections 3 and 6.
+// Per-worker state. Design: docs/architecture.md sections 3 and 6.
 #include "app/worker_state.hpp"
 
 #include <cstdlib>

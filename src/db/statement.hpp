@@ -1,4 +1,4 @@
-// Typed SQL statements. Design: plans/architecture.md section 5.
+// Typed SQL statements. Design: docs/architecture.md section 5.
 // Rust: crates/db/src/sql.rs (statements with a fixed text).
 #pragma once
 

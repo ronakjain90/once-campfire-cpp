@@ -1,5 +1,5 @@
 // State that one worker owns: its read connection, its session cache and its fragment cache adapter.
-// Design: plans/architecture.md section 3 ("Worker" row) and section 6.
+// Design: docs/architecture.md section 3 ("Worker" row) and section 6.
 #pragma once
 
 #include <functional>

@@ -1,4 +1,4 @@
-// The tracked dependency scope of a request. Design: plans/architecture.md section 6.1.
+// The tracked dependency scope of a request. Design: docs/architecture.md section 6.1.
 // A cacheable page key comes from the data that the page read: this scope folds it into XXH3-128.
 #pragma once
 

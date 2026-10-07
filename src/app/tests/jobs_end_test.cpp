@@ -23,7 +23,7 @@ constexpr std::string_view kVapidPublic =
     "BEYXTBB5_jNhNzXDmx5KEU55Vbbd-u--Lk9rM5OFQvUkPIBwZJ9QzAq0zdEzFw6yTV8cTriz_qYBVicY02_VxTQ=";
 constexpr std::string_view kVapidPrivate = "qfXLHghuG1rSHZUVo9SscNRI-0EIHRbIrfeGCqbAwak=";
 constexpr const char* kPublicIp = "142.250.185.206";
-const std::string kTlsDir = std::string(CAMPFIRE_SPEC_DIR) + "/vectors/tls/";
+const std::string kTlsDir = std::string(CAMPFIRE_TESTS_DIR) + "/vectors/tls/";
 
 std::string cookie_pair(const Reply& reply, const std::string& name) {
   for (const auto& [k, v] : reply.headers) {

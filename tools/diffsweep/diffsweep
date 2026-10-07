@@ -4,12 +4,13 @@
 #   tools/diffsweep/diffsweep gen                  regenerate lists/ (gen_lists.py, runs on the host)
 set -euo pipefail
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-WORKSPACE=/Volumes/ExternalHD/Code/AI/once-campfire
+# The folder that holds this repo and once-campfire-rust.
+WORKSPACE=${CAMPFIRE_WORKSPACE:-$(cd "$HERE/../../.." && pwd)}
 BENCH_DIR=/var/lib/campfire-bench
 if [ "${1:-}" = gen ]; then shift; exec python3 "$HERE/gen_lists.py" "$@"; fi
 if ! docker image inspect campfire-diffsweep >/dev/null 2>&1; then
   docker image inspect campfire-bench-runner >/dev/null 2>&1 || \
-    docker build -t campfire-bench-runner -f "$WORKSPACE/once-campfire-cpp/gate/bench/Dockerfile" "$WORKSPACE/once-campfire-rust/bench/loadgen" >&2
+    docker build -t campfire-bench-runner -f "$HERE/../../bench/Dockerfile" "$WORKSPACE/once-campfire-rust/bench/loadgen" >&2
   docker build -t campfire-diffsweep "$HERE" >&2
 fi
 args=(); prev=

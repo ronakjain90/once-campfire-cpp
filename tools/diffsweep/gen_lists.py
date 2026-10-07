@@ -16,7 +16,8 @@ import yaml
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-RUST = "/Volumes/ExternalHD/Code/AI/once-campfire/once-campfire-rust"
+WORKSPACE = os.environ.get("CAMPFIRE_WORKSPACE") or os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+RUST = os.path.join(WORKSPACE, "once-campfire-rust")
 SEED_ROOT = f"{RUST}/parity/.seed"
 OUT = os.path.join(HERE, "lists")
 AREAS = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"]
@@ -29,7 +30,7 @@ def labels(seed):
 
 
 def area_of(path):
-    """Maps a request path to the area of plans/tasks.md wave 3."""
+    """Maps a request path to its sweep area (A1 to A9)."""
     p = path.split("?")[0]
     if re.match(r"^/(session|first_run|join|users/new)", p) or p == "/":
         return "A1"

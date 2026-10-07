@@ -1,4 +1,4 @@
-// Tests of the link unfurl: the cases that the Rails reference answered (spec/vectors/opengraph_*.json: fake DNS and a
+// Tests of the link unfurl: the cases that the Rails reference answered (tests/vectors/opengraph_*.json: fake DNS and a
 // fake server for the fake public addresses), and the limits of the outbound policy. Rust: crates/campfire/src/
 // integrations/opengraph/tests.rs.
 #include <arpa/inet.h>
@@ -23,7 +23,7 @@ using compat::json::Value;
 using unfurl::Clock;
 
 Value read_json(const std::string& name) {
-  std::ifstream file(std::string(CAMPFIRE_SPEC_DIR) + "/vectors/" + name);
+  std::ifstream file(std::string(CAMPFIRE_TESTS_DIR) + "/vectors/" + name);
   REQUIRE(file.good());
   std::stringstream text;
   text << file.rdbuf();

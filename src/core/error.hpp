@@ -1,4 +1,4 @@
-// Error type and std::expected aliases. Matches the "Errors" rules in plans/architecture.md
+// Error type and std::expected aliases. Matches the "Errors" rules in docs/architecture.md
 // section 4 and section 14.
 #pragma once
 

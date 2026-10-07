@@ -18,7 +18,7 @@ namespace {
 std::unique_ptr<db::Database> open_app_db(const TempDir& dir, db::DatabaseOptions options = {}) {
   const std::string path = dir.file("app.sqlite3");
   {
-    std::ifstream in(CAMPFIRE_SPEC_DIR "/schema.sql");
+    std::ifstream in(CAMPFIRE_SCHEMA_SQL);
     REQUIRE(in.good());
     std::stringstream sql;
     sql << in.rdbuf();

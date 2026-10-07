@@ -1,4 +1,4 @@
-// Per-worker session cache and the change hub. Design: plans/architecture.md section 6.
+// Per-worker session cache and the change hub. Design: docs/architecture.md section 6.
 #include "app/session_cache.hpp"
 
 #include <algorithm>

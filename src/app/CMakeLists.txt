@@ -135,7 +135,7 @@ campfire_test(app
     tests/unfurl_raw_test.cpp
     tests/unfurl_test.cpp
   WERROR)
-target_compile_definitions(test_app PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")
+target_compile_definitions(test_app PRIVATE CAMPFIRE_TESTS_DIR="${PROJECT_SOURCE_DIR}/tests")
 
 # Fuzz targets (architecture section 14): built only with -DCAMPFIRE_FUZZ=ON.
 if(CAMPFIRE_FUZZ)

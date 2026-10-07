@@ -1,4 +1,4 @@
-// XXH3 128-bit hash (vendored xxhash 0.8.3). Used for the page cache keys (plans/architecture.md section 6.1).
+// XXH3 128-bit hash (vendored xxhash 0.8.3). Used for the page cache keys (docs/architecture.md section 6.1).
 #pragma once
 
 #include <cstdint>

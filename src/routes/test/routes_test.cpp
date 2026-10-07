@@ -1,5 +1,5 @@
 // Tests of the path helpers against the reference app (Rails) and the vectors.
-//   spec/vectors/campfire_routes.json   routes and recognitions of config/routes.rb
+//   tests/vectors/campfire_routes.json   routes and recognitions of config/routes.rb
 //   test/named_routes.json              named routes (dump_named_routes.rb, run in campfire-reference)
 //   test/path_cases.json                what the Rails *_path helpers return (dump_path_cases.rb)
 #include "routes/routes.hpp"

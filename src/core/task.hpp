@@ -1,4 +1,4 @@
-// Task<T>: the coroutine type of request handlers. Design: plans/architecture.md section 4.
+// Task<T>: the coroutine type of request handlers. Design: docs/architecture.md section 4.
 #pragma once
 
 #include <atomic>

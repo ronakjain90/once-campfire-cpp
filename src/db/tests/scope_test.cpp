@@ -1,4 +1,4 @@
-// Tests of the dependency scope. Design: plans/architecture.md section 6.1.
+// Tests of the dependency scope. Design: docs/architecture.md section 6.1.
 #include "db/tests/test_util.hpp"
 
 namespace campfire::db {

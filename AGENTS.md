@@ -1,6 +1,6 @@
 # Campfire C++ port: guide for agents
 
-Design: `plans/architecture.md`. Tasks: `plans/tasks.md`. Rules for agents: `plans/agent-brief.md`.
+Design: `docs/architecture.md`. Known differences: `docs/divergences.md`.
 
 ## Build and test
 
@@ -56,14 +56,14 @@ campfire_executable(<name> SOURCES main.cpp [DEPS ...])
   executable with `ctest`.
 - `campfire_executable` links jemalloc in the release build.
 - Vendored libraries are INTERFACE targets in `vendor/CMakeLists.txt`: `campfire_xxhash`,
-  `campfire_doctest`. A task that vendors code adds its own target in its own `src/<dir>` or
+  `campfire_doctest`. Code that you vendor gets its own target in its own `src/<dir>` or
   `vendor/<name>/` and keeps the include path `SYSTEM`.
 - Library order: name a dependency in `PUBLIC_DEPS` or `DEPS`. CMake does the rest.
-- Test files use doctest: `#include <doctest.h>`. Vectors are in `spec/vectors/`.
+- Test files use doctest: `#include <doctest.h>`. Vectors are in `tests/vectors/`.
 
 ## Code rules
 
-- Follow `plans/architecture.md` section 14.
+- Follow `docs/architecture.md` section 14.
 - `clang-format` (`.clang-format`) and `clang-tidy` (`.clang-tidy`) must be clean:
   `bin/dev format --check` and `bin/dev tidy <paths>`.
 - Put a one-line comment at the top of each file that names the Rails file (and the Rust file).
@@ -91,4 +91,4 @@ campfire_executable(<name> SOURCES main.cpp [DEPS ...])
   `CompletionSetter` to the other thread, and `co_await` the `Completion`. The setter posts the
   coroutine back to the scheduler. The scheduler resumes it on its own thread.
 - Do not destroy a `Task` while it waits for a `Completion` that is not done.
-- T5 gives the real `Scheduler` (epoll). `QueueScheduler` is for tests and tools.
+- The worker event loop is the real `Scheduler` (epoll). `QueueScheduler` is for tests and tools.

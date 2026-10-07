@@ -1,4 +1,4 @@
-// The page cache. Design: plans/architecture.md section 6.1.
+// The page cache. Design: docs/architecture.md section 6.1.
 #include "app/page_cache.hpp"
 
 #include <openssl/evp.h>

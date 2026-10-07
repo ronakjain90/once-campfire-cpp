@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ctc: the Campfire template compiler (plans/architecture.md section 7.1).
+"""ctc: the Campfire template compiler (docs/architecture.md section 7.1).
 
 Turns each `.ct` file under a root directory into one C++ function, and writes one header that
 declares all of the functions.

@@ -1,5 +1,5 @@
 // Scheduler interface for coroutines, and a queue scheduler for tests and tools.
-// Design: plans/architecture.md section 4 ("Handlers are coroutines").
+// Design: docs/architecture.md section 4 ("Handlers are coroutines").
 #pragma once
 
 #include <chrono>

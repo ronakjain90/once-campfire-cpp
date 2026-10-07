@@ -1,5 +1,5 @@
 # Request parts (architecture section 4): params, multipart, cookies, session, forgery, formats, bcrypt.
-# Library: campfire_req. Tests: test_req. Fuzz targets: fuzz/ (only with -fsanitize=fuzzer).
+# Library: campfire_req. Tests: test_req. Fuzz targets: fuzz/ (seeds and dictionaries: tests/fuzz/) (only with -fsanitize=fuzzer).
 add_subdirectory("${PROJECT_SOURCE_DIR}/vendor/crypt_blowfish" "${CMAKE_BINARY_DIR}/vendor/crypt_blowfish")
 
 campfire_library(req
@@ -17,7 +17,7 @@ campfire_library(req
   DEPS campfire_crypt_blowfish
   WERROR)
 
-set(CAMPFIRE_VECTORS_DIR "${PROJECT_SOURCE_DIR}/spec/vectors" CACHE PATH "Directory of the golden vector JSON files")
+set(CAMPFIRE_VECTORS_DIR "${PROJECT_SOURCE_DIR}/tests/vectors" CACHE PATH "Directory of the golden vector JSON files")
 
 campfire_test(req
   SOURCES

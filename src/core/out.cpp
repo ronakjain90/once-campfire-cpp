@@ -1,4 +1,4 @@
-// Matches the "Out" object in plans/architecture.md section 7.1.
+// Matches the "Out" object in docs/architecture.md section 7.1.
 #include "core/out.hpp"
 
 #include <algorithm>

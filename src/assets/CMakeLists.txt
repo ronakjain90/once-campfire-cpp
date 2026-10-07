@@ -22,7 +22,7 @@ campfire_executable(campfire_assets_gen
   WERROR)
 target_include_directories(campfire_assets_gen PRIVATE "${PROJECT_SOURCE_DIR}/src")
 
-set(CAMPFIRE_RAILS_ASSETS_DIR "${PROJECT_SOURCE_DIR}/third_party/rails-assets")
+set(CAMPFIRE_RAILS_ASSETS_DIR "${PROJECT_SOURCE_DIR}/vendor/rails-assets")
 set(CAMPFIRE_ASSETS_GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/gen")
 file(GLOB_RECURSE campfire_asset_inputs CONFIGURE_DEPENDS "${CAMPFIRE_RAILS_ASSETS_DIR}/*")
 add_custom_command(

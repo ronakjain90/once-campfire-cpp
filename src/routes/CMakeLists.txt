@@ -4,7 +4,7 @@ campfire_library(routes
   PUBLIC_DEPS campfire_compat
   WERROR)
 
-set(CAMPFIRE_VECTORS_DIR "${PROJECT_SOURCE_DIR}/spec/vectors" CACHE PATH "Directory of the golden vector JSON files")
+set(CAMPFIRE_VECTORS_DIR "${PROJECT_SOURCE_DIR}/tests/vectors" CACHE PATH "Directory of the golden vector JSON files")
 
 campfire_test(routes
   SOURCES test/routes_test.cpp

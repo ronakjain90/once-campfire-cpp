@@ -1,5 +1,0 @@
-app rust rep 1
-db dir: /var/lib/campfire-bench/rust-1-10951/db
-db fs: ext2/ext3
-app: Cpus_allowed_list:	0-3
-loadgen: Cpus_allowed_list:	4-7 (pid 11220, loadgen http --base http://127.0.0.1:4390 --cookie session_t)

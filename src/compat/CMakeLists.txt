@@ -23,8 +23,8 @@ campfire_library(compat
   PUBLIC_DEPS OpenSSL::Crypto
   WERROR)
 
-# Golden vectors: the Rust repo's vectors/, copied to spec/vectors/.
-set(CAMPFIRE_VECTORS_DIR "${PROJECT_SOURCE_DIR}/spec/vectors" CACHE PATH "Directory of the golden vector JSON files")
+# Golden vectors: the Rust repo's vectors/, copied to tests/vectors/.
+set(CAMPFIRE_VECTORS_DIR "${PROJECT_SOURCE_DIR}/tests/vectors" CACHE PATH "Directory of the golden vector JSON files")
 
 campfire_test(compat
   SOURCES

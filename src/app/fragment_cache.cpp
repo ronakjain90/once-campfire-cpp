@@ -1,4 +1,4 @@
-// Shared fragment cache. Design: plans/architecture.md section 6.
+// Shared fragment cache. Design: docs/architecture.md section 6.
 #include "app/fragment_cache.hpp"
 
 #include <functional>

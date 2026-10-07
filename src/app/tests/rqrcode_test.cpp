@@ -1,5 +1,5 @@
 // Tests of the QR code port against the vectors that the Rust port made with the rqrcode gem
-// (spec/vectors/rqrcode.json).
+// (tests/vectors/rqrcode.json).
 #include "app/rqrcode.hpp"
 
 #include <doctest.h>
@@ -13,7 +13,7 @@
 namespace campfire::app {
 
 TEST_CASE("rqrcode: modules and SVG equal the gem") {
-  std::ifstream file(std::string(CAMPFIRE_SPEC_DIR) + "/vectors/rqrcode.json");
+  std::ifstream file(std::string(CAMPFIRE_TESTS_DIR) + "/vectors/rqrcode.json");
   REQUIRE(file.good());
   std::stringstream text;
   text << file.rdbuf();

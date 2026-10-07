@@ -33,4 +33,5 @@ campfire_test(models
     tests/models_test.cpp
     tests/search_test.cpp
   WERROR)
-target_compile_definitions(test_models PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")
+target_compile_definitions(test_models PRIVATE CAMPFIRE_TESTS_DIR="${PROJECT_SOURCE_DIR}/tests"
+  CAMPFIRE_SCHEMA_SQL="${PROJECT_SOURCE_DIR}/src/app/data/schema.sql")

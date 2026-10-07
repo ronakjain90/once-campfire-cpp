@@ -115,13 +115,13 @@ def compare_responses(exp, act, opts):
     # A body with a random token also has a random ETag (a digest of the body).
     if "etag" not in ignored and (nb or na):
         ignored = ignored | {"etag"}
-    # Deliberate difference (plans/divergences.md): the two apps use different deflate encoders, so
+    # Deliberate difference (docs/divergences.md): the two apps use different deflate encoders, so
     # the compressed bytes and their length can differ. Accept a different content-length only when
     # both sides use the same content encoding and the decoded bodies are equal.
     ce = (exp.get("content-encoding") or "").strip().lower()
     if ce and ce != "identity" and ce == (act.get("content-encoding") or "").strip().lower() and eb == ab:
         ignored = ignored | {"content-length"}
-    # Build artifact (plans/divergences.md): a static file's last-modified is the time its image was
+    # Build artifact (docs/divergences.md): a static file's last-modified is the time its image was
     # built. Accept a different value only on publicly cacheable responses with equal bodies.
     def public(r):
         return "public" in (r.get("cache-control") or "").lower()

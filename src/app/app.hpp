@@ -1,4 +1,4 @@
-// The app: one object built at boot and shared read only (design: plans/architecture.md section 3).
+// The app: one object built at boot and shared read only (design: docs/architecture.md section 3).
 // It holds the config, the secrets, the database, the shared caches and the job pool. Per-worker
 // state is in worker_state.hpp. Rails: Rails.application. Rust: crates/campfire/src/app.rs.
 #pragma once

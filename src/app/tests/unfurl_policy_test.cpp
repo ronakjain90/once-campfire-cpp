@@ -165,7 +165,7 @@ TEST_CASE("unfurl policy: a page that trickles in does not outlast the deadline"
 }
 
 TEST_CASE("unfurl policy: over TLS the certificate is checked against the host name") {
-  const std::string dir = std::string(CAMPFIRE_SPEC_DIR) + "/vectors/tls/";
+  const std::string dir = std::string(CAMPFIRE_TESTS_DIR) + "/vectors/tls/";
   test::FakeServer server({{"GET", "www.example.com", "/", 200, {{"Content-Type", "text/html"}}, kPage},
                            {"HEAD", "example.com", "/image.png", 200, {{"Content-Type", "image/png"}}, ""}},
                           dir + "server.pem", dir + "server.key");
@@ -178,7 +178,7 @@ TEST_CASE("unfurl policy: over TLS the certificate is checked against the host n
   REQUIRE(!dialed.empty());
   CHECK(dialed[0] == "93.184.216.34:443");
   // A certificate that does not verify is a failed fetch.
-  network.ca_file = std::string(CAMPFIRE_SPEC_DIR) + "/vectors/tls/server.key";
+  network.ca_file = std::string(CAMPFIRE_TESTS_DIR) + "/vectors/tls/server.key";
   CHECK_FALSE(run(network, "https://www.example.com/")->has_content);
 }
 

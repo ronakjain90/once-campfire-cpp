@@ -34,7 +34,7 @@ Run your own list:
 
 ## What the tool does
 
-1. It copies the seed from `once-campfire-rust/parity/.seed/NAME` to `/var/lib/campfire-bench/t13/` for each app.
+1. It copies the seed from `once-campfire-rust/parity/.seed/NAME` to `/var/lib/campfire-bench/diffsweep/` for each app.
    Build a missing seed with `parity/bin/seed build NAME` (GNU `realpath` and bash 4 are required on macOS).
 2. It points push endpoints and webhook URLs at a closed local port.
 3. It starts both apps with the variables of `parity/.env.reference` and `CAMPFIRE_FROZEN_TIME` set to `clock.now` of the seed.
@@ -132,7 +132,7 @@ sanitizer image as the actual app.
 
 | Variable | Meaning |
 |---|---|
-| `DIFFSWEEP_PREFIX` | Prefix of the container names (default `t13`). Use a different prefix and `--port` for each user. |
+| `DIFFSWEEP_PREFIX` | Prefix of the container names (default `diffsweep`). Use a different prefix and `--port` for each user. |
 | `DIFFSWEEP_ACTUAL_ENV` | `NAME=value;NAME=value`: more environment for the actual app (for example `ASAN_OPTIONS`). |
 | `DIFFSWEEP_SANITIZER_RUN` | Any value: start the actual app with `seccomp=unconfined`. A TSan image needs this. |
 | `DIFFSWEEP_SAVE_LOGS` | A directory. The tool keeps the container log of each actual app there (sanitizer reports are in it). |

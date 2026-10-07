@@ -8,11 +8,13 @@ import sys
 import time
 import urllib.request
 
-WORKSPACE = "/Volumes/ExternalHD/Code/AI/once-campfire"
+# The folder that holds this repo and once-campfire-rust.
+WORKSPACE = os.environ.get("CAMPFIRE_WORKSPACE") or os.path.abspath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
 SEED_ROOT = f"{WORKSPACE}/once-campfire-rust/parity/.seed"
 ENV_FILE = f"{WORKSPACE}/once-campfire-rust/parity/.env.reference"
 BENCH_DIR = "/var/lib/campfire-bench"
-CONTAINER_PREFIX = os.environ.get("DIFFSWEEP_PREFIX", "t13")  # one prefix for each agent: names must not collide
+CONTAINER_PREFIX = os.environ.get("DIFFSWEEP_PREFIX", "diffsweep")  # one prefix for each user: names must not collide
 APP_USER = "1000:1000"
 FAKETIME_LIB = "/usr/local/lib/faketime/libfaketime.so.1"
 
@@ -45,7 +47,7 @@ def env_file_vars():
 
 
 def neuter_deliveries(db_path):
-    """Push endpoints and webhook URLs point at a closed local port (as in gate/bench/run)."""
+    """Push endpoints and webhook URLs point at a closed local port (as in bench/run)."""
     db = sqlite3.connect(db_path)
     db.execute("UPDATE push_subscriptions SET endpoint = 'https://127.0.0.1:9/push/' || id")
     db.execute("UPDATE webhooks SET url = 'http://127.0.0.1:9/hook/' || id")
@@ -61,7 +63,7 @@ class App:
     def __init__(self, role, image, port, tag):
         self.role, self.image, self.port = role, image, port
         self.container = f"{CONTAINER_PREFIX}-{tag}-{role}"
-        self.dir = f"{BENCH_DIR}/t13/{CONTAINER_PREFIX}-{tag}-{role}-{os.getpid()}"  # the PID is 1 in each sweep container
+        self.dir = f"{BENCH_DIR}/diffsweep/{CONTAINER_PREFIX}-{tag}-{role}-{os.getpid()}"  # the PID is 1 in each sweep container
         self.faketime = image_has_faketime(image)
 
     def start(self, seed, extra_env=()):

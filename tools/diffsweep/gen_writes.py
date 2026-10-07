@@ -2,8 +2,9 @@
 
 FORM = "application/x-www-form-urlencoded"
 TURBO = {"Accept": "text/vnd.turbo-stream.html, text/html, application/xhtml+xml"}
-MOON = "/Volumes/ExternalHD/Code/AI/once-campfire/once-campfire-rust/reference/test/fixtures/files/moon.jpg"
-PIXEL = "/Volumes/ExternalHD/Code/AI/once-campfire/once-campfire-rust/reference/test/fixtures/files/pixel.bmp"
+# File paths are relative to the workspace (the folder that holds this repo and once-campfire-rust).
+MOON = "once-campfire-rust/reference/test/fixtures/files/moon.jpg"
+PIXEL = "once-campfire-rust/reference/test/fixtures/files/pixel.bmp"
 LOGIN = lambda a: {"op": "login", "actor": a}
 
 

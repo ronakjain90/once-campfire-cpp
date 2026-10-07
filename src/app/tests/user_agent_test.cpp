@@ -1,4 +1,4 @@
-// Vectors of the useragent gem and of ApplicationPlatform (spec/vectors/campfire_user_agents.json).
+// Vectors of the useragent gem and of ApplicationPlatform (tests/vectors/campfire_user_agents.json).
 // Rust: the tests of crates/campfire/src/concerns/{user_agent,platform}.rs.
 #include "app/user_agent.hpp"
 
@@ -18,7 +18,7 @@ namespace json = compat::json;
 
 const json::Value& vectors() {
   static const json::Value value = [] {
-    std::ifstream in(CAMPFIRE_SPEC_DIR "/vectors/campfire_user_agents.json", std::ios::binary);
+    std::ifstream in(CAMPFIRE_TESTS_DIR "/vectors/campfire_user_agents.json", std::ios::binary);
     REQUIRE(in.good());
     std::stringstream buffer;
     buffer << in.rdbuf();

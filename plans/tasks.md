@@ -135,3 +135,4 @@ whose transcript is long.
 | A4 | merged (verified by Opus) | `task/A4` | 131/140 equal; rest: rooms/webmanifest routes, and gzip content-length of compressed cache hits (decision pending). Avatar 1.7x Rust at c=16, 2.8x at c=64. |
 | A2b | paused (usage limit) | `task/A2b` | 9 commits; it was formatting its files before the acceptance run. |
 | A6 | merged (verified by Opus) | `task/A6` | Blob and representation endpoints match Rust. Rest waits for the room page; static-file last-modified is a build artifact; gzip sizes pending a decision. |
+| A9 | in progress (Sonnet) | `task/A9` | |

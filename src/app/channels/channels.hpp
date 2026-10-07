@@ -12,6 +12,8 @@
 
 namespace campfire::app::channels {
 
+class DetachedRunner;
+
 // `identified_by :current_user`: the user as loaded when the connection opened.
 struct CableUser {
   std::int64_t id = 0;
@@ -28,8 +30,8 @@ struct WorkerContext {
 // `connection_gid`: the connection identifier of a user, which `remote_connections.where(current_user:)` matches.
 [[nodiscard]] std::string connection_identifier(std::int64_t user_id);
 
-// The channels under their Ruby class names. `app` must outlive the registry.
-[[nodiscard]] cable::ChannelRegistry make_registry(const App& app);
+// The channels under their Ruby class names. `app` and `runner` must outlive the registry.
+[[nodiscard]] cable::ChannelRegistry make_registry(const App& app, DetachedRunner& runner);
 
 // `ReadRoomsChannel.stream_name_for`: `user_<id>_reads`.
 [[nodiscard]] std::string read_rooms_stream(std::int64_t user_id);

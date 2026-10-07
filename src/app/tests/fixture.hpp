@@ -44,7 +44,8 @@ inline Config test_config(const std::filesystem::path& dir) {
 
 struct Fixture {
   // `seeded` false: an empty database, as before the first run.
-  explicit Fixture(AppOptions options = {}, bool seeded = true) {
+  explicit Fixture(AppOptions options = {}, bool seeded = true,
+                   const std::function<void(net::ServerOptions&)>& tweak = {}) {
     options.job_threads = 2;
     clock = TestClock::frozen_at(*from_civil(2026, 3, 2, 16, 0, 0));
     auto created = App::create(test_config(dir.file("storage")), clock, options);
@@ -56,6 +57,7 @@ struct Fixture {
     server_options.http_port = 0;
     server_options.target_port = 0;
     server_options.workers = 2;
+    if (tweak) tweak(server_options);
     server = std::make_unique<net::Server>(server_options, net::App{&routes(), &not_found});
     REQUIRE(server->start().has_value());
   }
@@ -68,6 +70,7 @@ struct Fixture {
   void write(const std::function<Status(db::Tx&)>& fn) {
     QueueScheduler scheduler;
     auto wrote = db::testing::run_task(scheduler, state->db->write(scheduler, fn));
+    if (!wrote) MESSAGE("write failed: ", wrote.error().message);
     REQUIRE(wrote.has_value());
   }
 

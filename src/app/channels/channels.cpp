@@ -187,7 +187,7 @@ class RoomChannel : public Channel {
 // room is read.
 class PresenceChannel final : public RoomChannel {
  public:
-  explicit PresenceChannel(const App& app) : app_(app) {}
+  PresenceChannel(const App& app, DetachedRunner& runner) : app_(app), runner_(runner) {}
 
   Status subscribed(Subscription& sub) override {
     if (auto done = subscribe_room(sub); !done) return done;
@@ -221,16 +221,14 @@ class PresenceChannel final : public RoomChannel {
 
   enum class Change { Present, Absent, Refresh };
 
-  // The membership changes through the writer. The client does not wait for it: the write runs as a task of the worker,
+  // The membership changes through the writer. The client does not wait for it: the write runs as a detached task,
   // and `present` tells the user's windows when it is done.
   Status write(const Subscription& sub, Change change) {
     // `@room` is nil only after a rejection, when these callbacks do not run.
     if (!room_) return std::unexpected(Error{Errc::Internal, "undefined method 'memberships' for nil"});
     const std::int64_t room_id = room_->id;
     const std::int64_t user_id = current_user(sub).id;
-    Scheduler* scheduler = worker_context().scheduler;
-    if (scheduler == nullptr) return std::unexpected(Error{Errc::Internal, "the worker has no scheduler"});
-    run_detached(apply(app_, *scheduler, change, room_id, user_id));
+    runner_.run(apply(app_, runner_, change, room_id, user_id));
     return {};
   }
 
@@ -254,6 +252,7 @@ class PresenceChannel final : public RoomChannel {
   }
 
   const App& app_;
+  DetachedRunner& runner_;
 };
 
 // `TypingNotificationsChannel`: `start` and `stop` go to everyone who streams the room.
@@ -370,11 +369,11 @@ class TurboStreamsChannel final : public Channel {
 
 }  // namespace
 
-cable::ChannelRegistry make_registry(const App& app) {
+cable::ChannelRegistry make_registry(const App& app, DetachedRunner& runner) {
   cable::ChannelRegistry registry;
   registry.add("ApplicationCable::Channel", [] { return std::make_unique<cable::EmptyChannel>(); });
   registry.add("HeartbeatChannel", [] { return std::make_unique<cable::EmptyChannel>(); });
-  registry.add("PresenceChannel", [&app] { return std::make_unique<PresenceChannel>(app); });
+  registry.add("PresenceChannel", [&app, &runner] { return std::make_unique<PresenceChannel>(app, runner); });
   registry.add("ReadRoomsChannel", [] { return std::make_unique<UserStreamChannel>(&read_rooms_stream); });
   registry.add("RoomChannel", [] { return std::make_unique<RoomChannel>(); });
   registry.add("RoomMessagesChannel", [&app] { return std::make_unique<RoomMessagesChannel>(app); });

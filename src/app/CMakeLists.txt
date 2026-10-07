@@ -118,6 +118,7 @@ campfire_test(app
     tests/accounts_area_test.cpp
     tests/active_storage_test.cpp
     tests/app_test.cpp
+    tests/cable_revoke_test.cpp
     tests/cable_test.cpp
     tests/cache_test.cpp
     tests/finish_test.cpp

@@ -11,6 +11,7 @@
 
 #include "app/app.hpp"
 #include "app/channels/channels.hpp"
+#include "app/channels/detached.hpp"
 #include "cable/hub.hpp"
 
 namespace campfire::app::channels {
@@ -52,6 +53,7 @@ class CableServer {
  private:
   App& app_;
   CableConfig config_;
+  DetachedRunner runner_;  // declared first: it ends last
   cable::Hub hub_;
   cable::ChannelRegistry registry_;
   std::function<void(unsigned)> wake_;

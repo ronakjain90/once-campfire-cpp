@@ -25,7 +25,7 @@ CableServer::CableServer(App& app, unsigned workers, std::function<void(unsigned
     : app_(app),
       config_(std::move(config)),
       hub_(workers, wake),
-      registry_(make_registry(app)),
+      registry_(make_registry(app, runner_)),
       wake_(std::move(wake)) {
   for (unsigned i = 0; i < workers; ++i) restart_requested_.push_back(std::make_unique<std::atomic<bool>>(false));
   app_.hub.store(&hub_, std::memory_order_release);
@@ -33,6 +33,7 @@ CableServer::CableServer(App& app, unsigned workers, std::function<void(unsigned
 }
 
 CableServer::~CableServer() {
+  runner_.drain();
   g_server.store(nullptr, std::memory_order_release);
   app_.hub.store(nullptr, std::memory_order_release);
 }

@@ -134,4 +134,4 @@ whose transcript is long.
 | A3 | merged (verified by Opus) | `task/A3` | Sweep 63/91 equal; the rest wait for A2b's partial or other areas. DB rows equal to Rust. Broadcasts unified with A2's. |
 | A4 | merged (verified by Opus) | `task/A4` | 131/140 equal; rest: rooms/webmanifest routes, and gzip content-length of compressed cache hits (decision pending). Avatar 1.7x Rust at c=16, 2.8x at c=64. |
 | A2b | paused (usage limit) | `task/A2b` | 9 commits; it was formatting its files before the acceptance run. |
-| A6 | paused (usage limit) | `task/A6` | 14 commits; Active Storage endpoints were in progress. |
+| A6 | merged (verified by Opus) | `task/A6` | Blob and representation endpoints match Rust. Rest waits for the room page; static-file last-modified is a build artifact; gzip sizes pending a decision. |

@@ -37,7 +37,7 @@ Read this before you start. Then read `plans/architecture.md` and your task in `
    to learn the exact bytes and the deliberate differences. Then write the C++ the way
    `plans/architecture.md` says. Do not translate Rust line by line.
 2. Follow the code rules in `plans/architecture.md`, section 14.
-3. Work only in your worktree. Commit on your branch, in small commits with clear messages. End
+3. Work only in your worktree. Commit on your branch, in small commits with clear messages. Do not put task IDs (A2b, T5 and so on) in commit messages: describe the change. End
    each commit message with `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`. Do not
    merge, rebase or push.
 4. Do not edit a directory that belongs to another task. If you need a change there, describe it

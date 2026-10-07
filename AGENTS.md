@@ -82,7 +82,7 @@ campfire_executable(<name> SOURCES main.cpp [DEPS ...])
 | `timestamp.hpp`, `time_format.hpp` | `Timestamp`, Rails time formats |
 | `clock.hpp` | `Clock`, `SystemClock`, `TestClock`, `CAMPFIRE_FROZEN_TIME` |
 | `xxh3.hpp` | XXH3 128-bit hash |
-| `scheduler.hpp`, `task.hpp` | `Scheduler`, `QueueScheduler`, `Task<T>`, `Completion<T>`, `Yield` |
+| `scheduler.hpp`, `task.hpp` | `Scheduler`, `QueueScheduler`, `Task<T>`, `Completion<T>`, `Yield`, `SuspendHook` |
 
 ### Task and thread rules
 
@@ -92,3 +92,6 @@ campfire_executable(<name> SOURCES main.cpp [DEPS ...])
   coroutine back to the scheduler. The scheduler resumes it on its own thread.
 - Do not destroy a `Task` while it waits for a `Completion` that is not done.
 - The worker event loop is the real `Scheduler` (epoll). `QueueScheduler` is for tests and tools.
+- `Completion` and `Yield` call the `SuspendHook` of the thread before a coroutine waits. The worker
+  uses it to end the read transaction of the request (`docs/architecture.md` section 5). A new
+  awaiter that gives the thread back to the scheduler must call the hook too.

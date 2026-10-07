@@ -115,6 +115,12 @@ def compare_responses(exp, act, opts):
     # A body with a random token also has a random ETag (a digest of the body).
     if "etag" not in ignored and (nb or na):
         ignored = ignored | {"etag"}
+    # Deliberate difference (plans/divergences.md): the two apps use different deflate encoders, so
+    # the compressed bytes and their length can differ. Accept a different content-length only when
+    # both sides use the same content encoding and the decoded bodies are equal.
+    ce = (exp.get("content-encoding") or "").strip().lower()
+    if ce and ce != "identity" and ce == (act.get("content-encoding") or "").strip().lower() and eb == ab:
+        ignored = ignored | {"content-length"}
     eh, ah = header_lines(exp, ignored, rc), header_lines(act, ignored, rc)
     if en != an:
         problems.append("header names/order")

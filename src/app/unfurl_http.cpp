@@ -26,6 +26,7 @@ namespace {
 // The `Accept-Encoding` that `Net::HTTP` adds to a request whose response has a body, and then decodes itself.
 constexpr std::string_view kAcceptEncoding = "gzip;q=1.0,deflate;q=0.6,identity;q=0.3";
 constexpr std::size_t kMaxHead = std::size_t{64} * 1024;
+constexpr std::size_t kMaxChunkLine = 4096;
 
 Error timeout_error(std::string message) {
   return Error{Errc::Timeout, std::move(message)};
@@ -299,6 +300,8 @@ Result<Body> read_framed(Connection& c, bool chunked, std::optional<std::uint64_
     for (;;) {
       std::size_t eol;
       while ((eol = c.buffer.find("\r\n")) == std::string::npos) {
+        // A chunk size line is short. Without a limit, a reply with no line end fills the memory until the deadline.
+        if (c.buffer.size() > kMaxChunkLine) return fail(Errc::Parse, "wrong chunk size line");
         auto got = c.fill();
         if (!got) return std::unexpected(got.error());
         if (*got == 0) return fail(Errc::Parse, "end of file reached");
@@ -461,9 +464,12 @@ Result<Response> exchange(const Network& network, const Endpoint& endpoint, cons
   c.buffer.erase(0, end + 4);
   std::size_t line_end = head.find("\r\n");
   const std::string status_line = head.substr(0, line_end);
-  if (status_line.size() < 12 || status_line.compare(0, 5, "HTTP/") != 0) return fail(Errc::Parse, "wrong status line");
-  response.status = std::atoi(status_line.c_str() + status_line.find(' ') + 1);
-  if (const std::size_t second = status_line.find(' ', status_line.find(' ') + 1); second != std::string::npos) {
+  const std::size_t first_space = status_line.find(' ');
+  if (status_line.size() < 12 || status_line.compare(0, 5, "HTTP/") != 0 || first_space == std::string::npos) {
+    return fail(Errc::Parse, "wrong status line");
+  }
+  response.status = std::atoi(status_line.c_str() + first_space + 1);
+  if (const std::size_t second = status_line.find(' ', first_space + 1); second != std::string::npos) {
     response.reason = status_line.substr(second + 1);
   }
   while (line_end != std::string::npos) {

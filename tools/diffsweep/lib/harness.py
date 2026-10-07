@@ -12,6 +12,7 @@ WORKSPACE = "/Volumes/ExternalHD/Code/AI/once-campfire"
 SEED_ROOT = f"{WORKSPACE}/once-campfire-rust/parity/.seed"
 ENV_FILE = f"{WORKSPACE}/once-campfire-rust/parity/.env.reference"
 BENCH_DIR = "/var/lib/campfire-bench"
+CONTAINER_PREFIX = os.environ.get("DIFFSWEEP_PREFIX", "t13")  # one prefix for each agent: names must not collide
 APP_USER = "1000:1000"
 FAKETIME_LIB = "/usr/local/lib/faketime/libfaketime.so.1"
 
@@ -59,8 +60,8 @@ def image_has_faketime(image):
 class App:
     def __init__(self, role, image, port, tag):
         self.role, self.image, self.port = role, image, port
-        self.container = f"t13-ds-{tag}-{role}"
-        self.dir = f"{BENCH_DIR}/t13/{tag}-{role}-{os.getpid()}"
+        self.container = f"{CONTAINER_PREFIX}-{tag}-{role}"
+        self.dir = f"{BENCH_DIR}/t13/{CONTAINER_PREFIX}-{tag}-{role}-{os.getpid()}"  # the PID is 1 in each sweep container
         self.faketime = image_has_faketime(image)
 
     def start(self, seed, extra_env=()):
@@ -82,8 +83,14 @@ class App:
         for kv in extra_env:
             k, v = kv.split("=", 1)
             env[k] = v
+        if self.role == "actual":  # DIFFSWEEP_ACTUAL_ENV="A=b;C=d": options of a sanitizer image
+            for kv in filter(None, os.environ.get("DIFFSWEEP_ACTUAL_ENV", "").split(";")):
+                k, v = kv.split("=", 1)
+                env[k] = v
         args = ["docker", "run", "-d", "--name", self.container, "--user", APP_USER, "--network", "host",
                 "--label", "t13.diffsweep=1"]
+        if self.role == "actual" and os.environ.get("DIFFSWEEP_SANITIZER_RUN"):
+            args += ["--security-opt", "seccomp=unconfined"]  # TSan needs the personality system call
         for k, v in env.items():
             args += ["-e", f"{k}={v}"]
         args += ["-v", f"{self.dir}/db:/rails/storage/db", "-v", f"{self.dir}/storage:/rails/storage/files",
@@ -103,6 +110,13 @@ class App:
         raise RuntimeError(f"{self.container} ({self.image}) did not come up:\n{logs.stdout}{logs.stderr}")
 
     def stop(self, keep_dir=False):
+        save = os.environ.get("DIFFSWEEP_SAVE_LOGS")  # a directory: keep the log of each actual app
+        if save and self.role == "actual":
+            log = sh("docker", "logs", self.container, check=False)
+            if log.stdout or log.stderr:
+                os.makedirs(save, exist_ok=True)
+                with open(f"{save}/{self.container}-{os.getpid()}.log", "a") as out:
+                    out.write(log.stdout + log.stderr)
         sh("docker", "rm", "-f", self.container, check=False)
         if not keep_dir:
             shutil.rmtree(self.dir, ignore_errors=True)

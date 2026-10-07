@@ -25,8 +25,6 @@ campfire_test(cable
 campfire_executable(bench_cable_broadcast SOURCES bench/bench_broadcast.cpp DEPS campfire_cable)
 
 # Fuzz targets (architecture section 14): built only with -DCAMPFIRE_FUZZ=ON.
-option(CAMPFIRE_FUZZ "Build the libFuzzer targets" OFF)
 if(CAMPFIRE_FUZZ)
-  target_compile_options(campfire_cable PRIVATE -fsanitize=fuzzer-no-link)
   add_subdirectory(fuzz)
 endif()

@@ -2,3 +2,4 @@
 add_library(campfire_picohttpparser STATIC picohttpparser.c)
 target_include_directories(campfire_picohttpparser SYSTEM PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_compile_options(campfire_picohttpparser PRIVATE -w)
+target_link_libraries(campfire_picohttpparser PRIVATE campfire_options)

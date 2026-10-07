@@ -418,3 +418,19 @@ TEST_CASE("an HTTP/2 connection closes after the idle timeout") {
   CHECK(waited >= 1500ms);
   CHECK(waited < 5000ms);
 }
+TEST_CASE("an HTTP/2 request body above the limit gets 413 and the connection stays usable") {
+  const auto storage = cached_certificate(std::filesystem::temp_directory_path() / "campfire-h2-bigbody");
+  ServerOptions options;
+  options.tls = tls_server(storage);
+  options.max_request_body = 1000;
+  Fixture f(options);
+  H2Client client(f.https(), true);
+  client.request("/upload", std::string(300000, 'a'), f.https());
+  H2Reply reply;
+  REQUIRE(client.receive(reply));
+  CHECK(reply.status == 413);
+  client.request("/upload", "small", f.https());
+  H2Reply next;
+  REQUIRE(client.receive(next));
+  CHECK(next.status == 200);
+}

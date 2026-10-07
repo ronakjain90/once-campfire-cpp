@@ -18,6 +18,7 @@ for a in "$@"; do
   if [ -e "$a" ] && [ "${a:0:1}" != / ]; then a=$PWD/$a; fi
   args+=("$a"); prev=$a
 done
-exec docker run --rm --name "t13-diffsweep-$$" --network host \
+exec docker run --rm --name "${DIFFSWEEP_PREFIX:-t13}-diffsweep-$$" --network host \
+  -e DIFFSWEEP_PREFIX -e DIFFSWEEP_ACTUAL_ENV -e DIFFSWEEP_SAVE_LOGS -e DIFFSWEEP_SANITIZER_RUN \
   -v /var/run/docker.sock:/var/run/docker.sock -v "$WORKSPACE:$WORKSPACE" -v "$BENCH_DIR:$BENCH_DIR" \
   "campfire-diffsweep" python3 "$HERE/sweep.py" ${args[@]+"${args[@]}"}

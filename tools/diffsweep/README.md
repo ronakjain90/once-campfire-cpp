@@ -124,3 +124,15 @@ A failed step ends its scenario and counts as a difference.
 - The Rust app emits no CSRF token. The tool compares the bodies as they are.
   Against Rails, every page differs by the two CSRF meta tags.
 - `screens.yml` states with browser steps (clicks, typing) are covered as GETs and by the write flows. The tool has no browser.
+
+## Sanitizer images and parallel runs
+
+Two environment variables let more than one agent run the tool at the same time, and let it run a
+sanitizer image as the actual app.
+
+| Variable | Meaning |
+|---|---|
+| `DIFFSWEEP_PREFIX` | Prefix of the container names (default `t13`). Use a different prefix and `--port` for each user. |
+| `DIFFSWEEP_ACTUAL_ENV` | `NAME=value;NAME=value`: more environment for the actual app (for example `ASAN_OPTIONS`). |
+| `DIFFSWEEP_SANITIZER_RUN` | Any value: start the actual app with `seccomp=unconfined`. A TSan image needs this. |
+| `DIFFSWEEP_SAVE_LOGS` | A directory. The tool keeps the container log of each actual app there (sanitizer reports are in it). |

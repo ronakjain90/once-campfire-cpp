@@ -92,6 +92,8 @@ bool Worker::fill(Conn& c) {
 bool Worker::fill_body(Conn& c) {
   const char* before = c.rbuf.data();
   const bool more = fill(c);
+  // A closed connection has no arena and no buffer left: there is no head to parse again.
+  if (c.closed) return false;
   if (c.rbuf.data() != before && c.state == ConnState::Body) {
     // The views of the request (method, path, headers) pointed into the old buffer.
     c.arena->reset();

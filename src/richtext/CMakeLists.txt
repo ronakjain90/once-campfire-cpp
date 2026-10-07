@@ -17,3 +17,10 @@ campfire_test(richtext
   SOURCES tests/dom_test.cpp tests/sanitizer_test.cpp tests/corpus_test.cpp tests/attachments_test.cpp tests/attachments_unit_test.cpp)
 target_compile_definitions(test_richtext PRIVATE
   RICHTEXT_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/data")
+
+# Fuzz target (architecture section 14): built only with -DCAMPFIRE_FUZZ=ON.
+if(CAMPFIRE_FUZZ)
+  add_executable(fuzz_richtext_sanitize fuzz/fuzz_richtext_sanitize.cpp)
+  target_link_libraries(fuzz_richtext_sanitize PRIVATE campfire_options campfire_richtext)
+  target_link_options(fuzz_richtext_sanitize PRIVATE -fsanitize=fuzzer)
+endif()

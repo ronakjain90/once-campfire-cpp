@@ -218,12 +218,16 @@ int H2Session::on_header(const std::uint8_t* name, std::size_t name_len, const s
 int H2Session::on_data_chunk(std::int32_t id, const std::uint8_t* bytes, std::size_t length) {
   H2Stream* stream = find(id);
   if (stream == nullptr || length == 0) return 0;
-  // nghttp2 gives the DATA of a frame without its padding.
-  stream->body.append(reinterpret_cast<const char*>(bytes), length);
-  const ServerOptions& options = worker_.options();
-  if (stream->body.size() > options.max_buffered_body ||
-      (options.max_request_body != 0 && stream->body.size() > options.max_request_body)) {
-    stream->too_large = true;
+  // nghttp2 gives the DATA of a frame without its padding. A body that is too large is not kept: the
+  // peer may send DATA until it stops, and the answer (413) goes out at the end of the stream.
+  if (!stream->too_large) {
+    stream->body.append(reinterpret_cast<const char*>(bytes), length);
+    const ServerOptions& options = worker_.options();
+    if (stream->body.size() > options.max_buffered_body ||
+        (options.max_request_body != 0 && stream->body.size() > options.max_request_body)) {
+      stream->too_large = true;
+      std::string().swap(stream->body);
+    }
   }
   // The window opens again, so the peer may send the next frame of a long body.
   [[maybe_unused]] const int consumed = nghttp2_session_consume(session_, id, length);

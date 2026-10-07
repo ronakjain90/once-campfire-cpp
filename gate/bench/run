@@ -29,6 +29,7 @@ if [ "${CAMPFIRE_BENCH_INNER:-}" != 1 ]; then
   fi
   exec docker run --rm --name "g2-runner-$$" --network host --pid host --cgroupns host \
     -e CAMPFIRE_BENCH_INNER=1 -e "HOST_UID=$(id -u)" -e "HOST_GID=$(id -g)" \
+    -e PORT -e SERVER_CPUS -e LOADGEN_CPUS -e BENCH_APP_ENV -e BENCH_SECCOMP_UNCONFINED \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v "$WORKSPACE:$WORKSPACE" -v "$BENCH_DIR:$BENCH_DIR" -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
     "$RUNNER_IMAGE" bash "$HERE/run" ${args[@]+"${args[@]}"}
@@ -131,8 +132,13 @@ start_app() {
   neuter_deliveries "$dir/db/production.sqlite3"
   chown -R "$APP_USER" "$dir"
   local args=(); mapfile -t args < <(env_args)
+  # BENCH_APP_ENV="NAME=value;NAME=value": more environment for the app (options of a sanitizer image).
+  local kv
+  for kv in ${BENCH_APP_ENV//;/ }; do args+=(-e "$kv"); done
   sync
+  # BENCH_SECCOMP_UNCONFINED=1: a TSan image needs the personality system call.
   docker run -d --name "$CONTAINER" --cpuset-cpus "$SERVER_CPUS" --user "$APP_USER" --network host \
+    ${BENCH_SECCOMP_UNCONFINED:+--security-opt seccomp=unconfined} \
     -e "HTTP_PORT=$PORT" -e "TARGET_PORT=$((PORT + 1))" "${args[@]}" \
     -v "$dir/db:/rails/storage/db" -v "$dir/storage:/rails/storage/files" "$image" >/dev/null
   local i
@@ -215,6 +221,8 @@ f, app, image, rep, http, cable = sys.argv[1:]
 json.dump({"app": app, "image": image, "rep": int(rep), "http": json.loads(http), "cable": json.loads(cable)},
           open(f, "w"), indent=1)
 PY
+  # The log of the app has the reports of a sanitizer image.
+  docker logs "$CONTAINER" > "$OUT/$app-$rep.applog" 2>&1 || true
   docker rm -f "$CONTAINER" >/dev/null
   rm -rf "$dir"
   log "$app rep $rep: done -> $f"

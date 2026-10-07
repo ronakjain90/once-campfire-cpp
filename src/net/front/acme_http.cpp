@@ -107,6 +107,9 @@ Result<Socket> connect_to(const Url& url, int timeout_seconds) {
   return fail(Errc::Io, "cannot connect to " + url.host + ":" + url.port + ": " + last_error);
 }
 
+// The most bytes that the client reads from an ACME server for one request.
+constexpr std::size_t kMaxResponse = std::size_t{8} << 20;
+
 std::string dechunk(std::string_view data) {
   std::string out;
   while (!data.empty()) {
@@ -177,6 +180,7 @@ Result<HttpResult> http_request(std::string_view method, std::string_view url_te
                       : static_cast<int>(::recv(socket->get(), buffer, sizeof buffer, 0));
     if (n <= 0) break;
     raw.append(buffer, static_cast<std::size_t>(n));
+    if (raw.size() > kMaxResponse) return fail(Errc::Io, "the answer of " + url->host + " is too large");
   }
   const std::size_t head_end = raw.find("\r\n\r\n");
   if (head_end == std::string::npos) return fail(Errc::Io, "no answer from " + url->host);
@@ -224,6 +228,9 @@ class JsonParser {
     while (pos_ < text_.size() && std::isspace(static_cast<unsigned char>(text_[pos_])) != 0) ++pos_;
   }
   Result<Json> value_() {
+    // An answer of the ACME server has a few levels. Deep nesting would use all of the stack.
+    if (depth_ >= kMaxDepth) return fail(Errc::Parse, "JSON is nested too deep");
+    const DepthGuard guard(depth_);
     skip();
     if (pos_ >= text_.size()) return fail(Errc::Parse, "unexpected end of JSON");
     const char c = text_[pos_];
@@ -346,8 +353,18 @@ class JsonParser {
     return out;
   }
 
+  static constexpr std::size_t kMaxDepth = 64;
+  struct DepthGuard {
+    explicit DepthGuard(std::size_t& depth) : depth_(depth) { ++depth_; }
+    ~DepthGuard() { --depth_; }
+    DepthGuard(const DepthGuard&) = delete;
+    DepthGuard& operator=(const DepthGuard&) = delete;
+    std::size_t& depth_;
+  };
+
   std::string_view text_;
   std::size_t pos_ = 0;
+  std::size_t depth_ = 0;
 };
 
 Result<Json> Json::parse(std::string_view text) {

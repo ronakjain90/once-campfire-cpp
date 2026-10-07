@@ -1,0 +1,1 @@
+{"status":"valid","url":"https://x/y","challenges":[{"type":"http-01","url":"u","token":"t"}],"n":-1.5e3,"b":true,"z":null}

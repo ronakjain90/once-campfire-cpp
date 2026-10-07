@@ -6,6 +6,7 @@
 
 #include "core/arena.hpp"
 #include "net/front.hpp"
+#include "net/front/acme_http.hpp"
 #include "net/response.hpp"
 #include "net/thread_pool.hpp"
 #include "net/timer_wheel.hpp"
@@ -111,4 +112,15 @@ TEST_CASE("front helpers") {
   apply_front_headers(post, posted);
   CHECK(posted.get("x-cache") == "bypass");
   CHECK(posted.headers[0].name == "x-cache");
+}
+
+TEST_CASE("the JSON reader of the ACME client stops at a deep nesting") {
+  using campfire::net::front::Json;
+  const std::string deep = std::string(100000, '[') + std::string(100000, ']');
+  CHECK_FALSE(Json::parse(deep));
+  const std::string fine = std::string(32, '[') + std::string(32, ']');
+  CHECK(Json::parse(fine));
+  const auto order = Json::parse(R"({"status":"valid","challenges":[{"type":"http-01","token":"t"}]})");
+  REQUIRE(order);
+  CHECK(order->str("status") == "valid");
 }

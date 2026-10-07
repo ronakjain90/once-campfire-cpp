@@ -2,3 +2,4 @@ gate/capture/raw/** -text
 gate/server/fixtures/** -text
 tests/net/golden/* -text
 src/app/data/* -text
+fuzz/seeds/** -text

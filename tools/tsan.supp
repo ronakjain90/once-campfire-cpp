@@ -1,0 +1,33 @@
+# TSan suppressions for the system libraries that the app calls (libvips, GLib, ffmpeg).
+# They are not built with TSan, and GLib uses futex calls that TSan cannot see. The races that TSan
+# reports in the memcpy and memset of these libraries are false: the report has no frame of Campfire code.
+called_from_lib:libglib-2.0.so.0
+called_from_lib:libgobject-2.0.so.0
+called_from_lib:libvips.so.42
+called_from_lib:libavcodec.so.61
+called_from_lib:libavformat.so.61
+called_from_lib:libswscale.so.8
+called_from_lib:libswresample.so.5
+called_from_lib:libjpeg.so.62
+called_from_lib:libwebp.so.7
+called_from_lib:libwebpmux.so.3
+called_from_lib:libwebpdemux.so.2
+called_from_lib:libpng16.so.16
+called_from_lib:libtiff.so.6
+called_from_lib:libheif.so.1
+called_from_lib:libhwy.so.1
+called_from_lib:libexif.so.12
+called_from_lib:libz.so.1
+called_from_lib:libspng.so.0
+called_from_lib:libcgif.so.0
+called_from_lib:libimagequant.so.0
+called_from_lib:liblcms2.so.2
+called_from_lib:libopenjp2.so.7
+called_from_lib:libjxl.so.0.11
+called_from_lib:libfftw3.so.3
+called_from_lib:libgdk_pixbuf-2.0.so.0
+called_from_lib:librsvg-2.so.2
+called_from_lib:libcairo.so.2
+called_from_lib:libpixman-1.so.0
+called_from_lib:libpango-1.0.so.0
+called_from_lib:liborc-0.4.so.0

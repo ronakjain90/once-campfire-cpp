@@ -51,6 +51,7 @@ bool blocked_v4(std::uint32_t a) {
   return std::any_of(kRanges.begin(), kRanges.end(), [&](const Range& r) { return in_v4(a, r.network, r.prefix); });
 }
 
+// The order of the branches is the order of surfguard `blocked_ipaddr?`.
 bool blocked_v6(const unsigned char* b) {
   const auto prefix_is = [&](std::initializer_list<unsigned char> bytes) {
     std::size_t i = 0;
@@ -59,16 +60,25 @@ bool blocked_v6(const unsigned char* b) {
     }
     return true;
   };
-  const bool all_zero_to_15 = std::all_of(b, b + 15, [](unsigned char c) { return c == 0; });
-  if (all_zero_to_15 && (b[15] == 0 || b[15] == 1)) return true;  // :: and ::1
-  // An IPv4 mapped address: the rules of the IPv4 address.
-  if (prefix_is({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF})) return blocked_v4(v4_value(b + 12));
-  if (prefix_is({0x00, 0x64, 0xFF, 0x9B, 0, 0, 0, 0, 0, 0, 0, 0})) return blocked_v4(v4_value(b + 12));  // NAT64
-  if (prefix_is({0x01, 0x00, 0, 0, 0, 0, 0, 0})) return true;  // 100::/64 discard
-  if (prefix_is({0x20, 0x01, 0x0D, 0xB8})) return true;        // documentation
-  if ((b[0] & 0xFE) == 0xFC) return true;                      // fc00::/7
-  if (b[0] == 0xFE && (b[1] & 0xC0) == 0x80) return true;      // fe80::/10
-  if (b[0] == 0xFF) return true;                               // multicast
+  // An IPv4 mapped address (::ffff:0:0/96) and an IPv4 compatible address (::/96) are always blocked. The
+  // addresses :: and ::1 are in the compatible range.
+  if (prefix_is({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF})) return true;
+  if (prefix_is({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})) return true;
+  if (prefix_is({0x00, 0x64, 0xFF, 0x9B, 0x00, 0x01})) return true;  // 64:ff9b:1::/48 NAT64, local use
+  // NAT64 (64:ff9b::/96) and SIIT (::ffff:0:0:0/96) carry an IPv4 address in the last four bytes.
+  if (prefix_is({0x00, 0x64, 0xFF, 0x9B, 0, 0, 0, 0, 0, 0, 0, 0}) ||
+      prefix_is({0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0})) {
+    return blocked_v4(v4_value(b + 12));
+  }
+  if (prefix_is({0x01, 0x00, 0, 0, 0, 0, 0, 0})) return true;        // 100::/64 discard
+  if (prefix_is({0x20, 0x01, 0x00, 0x00})) return true;              // 2001::/32 Teredo
+  if (prefix_is({0x20, 0x01, 0x00, 0x02, 0x00, 0x00})) return true;  // 2001:2::/48 benchmarking
+  if (prefix_is({0x20, 0x01, 0x0D, 0xB8})) return true;              // 2001:db8::/32 documentation
+  if (prefix_is({0x20, 0x02})) return true;                          // 2002::/16 6to4
+  if ((b[0] & 0xFE) == 0xFC) return true;                            // fc00::/7
+  if (b[0] == 0xFE && (b[1] & 0xC0) == 0x80) return true;            // fe80::/10
+  if (b[0] == 0xFE && (b[1] & 0xC0) == 0xC0) return true;            // fec0::/10 site local
+  if (b[0] == 0xFF) return true;                                     // multicast
   return false;
 }
 

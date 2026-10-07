@@ -34,3 +34,8 @@ campfire_test(compat
     test/test_units.cpp
   WERROR)
 target_compile_definitions(test_compat PRIVATE CAMPFIRE_VECTORS_DIR="${CAMPFIRE_VECTORS_DIR}")
+
+# Fuzz targets (architecture section 14): built only with -DCAMPFIRE_FUZZ=ON.
+if(CAMPFIRE_FUZZ)
+  add_subdirectory(fuzz)
+endif()

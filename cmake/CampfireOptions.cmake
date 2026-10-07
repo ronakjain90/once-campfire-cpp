@@ -20,6 +20,12 @@ elseif(CAMPFIRE_SANITIZER STREQUAL "thread")
 elseif(NOT CAMPFIRE_SANITIZER STREQUAL "")
   message(FATAL_ERROR "CAMPFIRE_SANITIZER must be address, thread, or empty")
 endif()
+# Fuzz builds: every library gets coverage counters (libFuzzer needs them to guide the input).
+# A fuzz target adds -fsanitize=fuzzer at the link step. Use it with the asan preset.
+option(CAMPFIRE_FUZZ "Build the libFuzzer targets and instrument the libraries" OFF)
+if(CAMPFIRE_FUZZ)
+  target_compile_options(campfire_options INTERFACE -fsanitize=fuzzer-no-link)
+endif()
 if(_san)
   target_compile_options(campfire_options INTERFACE ${_san})
   target_link_options(campfire_options INTERFACE ${_san})

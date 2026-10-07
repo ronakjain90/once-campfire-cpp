@@ -11,6 +11,9 @@
 # rust:trixie (same Debian release and the same gcc).
 #
 # The cpp-build stage runs `cmake --preset release` (binary /build/release/campfire).
+# Sanitizer images: --build-arg CMAKE_PRESET=asan (ASan and UBSan) or tsan, for example
+#   docker build -t campfire-cpp:asan --build-arg CMAKE_PRESET=asan -f docker/Dockerfile .
+# The image then has llvm-symbolizer (set ASAN_OPTIONS or TSAN_OPTIONS when you run it).
 
 ARG DEBIAN_RELEASE=trixie
 ARG LIBVIPS_VERSION=8.16.1-1+deb13u1
@@ -108,11 +111,13 @@ RUN test "$(pkg-config --modversion vips)" = "8.16.1" && \
     test "$(pkg-config --modversion libavcodec)" = "61.19.101" || \
     { pkg-config --modversion vips libavcodec; exit 1; }
 
+ARG CMAKE_PRESET=release
 WORKDIR /src
 COPY . .
 RUN mkdir -p /out && \
-    cmake --preset release && cmake --build --preset release --target campfire && \
-    install -D -m 755 /build/release/campfire /out/campfire
+    cmake --preset "${CMAKE_PRESET}" && cmake --build --preset "${CMAKE_PRESET}" --target campfire && \
+    install -D -m 755 "/build/${CMAKE_PRESET}/campfire" /out/campfire && \
+    if [ "${CMAKE_PRESET}" != release ]; then install -D -m 755 /usr/lib/llvm-19/bin/llvm-symbolizer /out/llvm-symbolizer; fi
 
 
 FROM docker.io/library/debian:${DEBIAN_RELEASE}-slim
@@ -142,7 +147,8 @@ RUN groupadd --system --gid 1000 rails && \
 
 WORKDIR /rails
 
-COPY --from=cpp-build /out/campfire /usr/local/bin/campfire
+# The wildcard also takes llvm-symbolizer, which only a sanitizer build has (it prints file and line).
+COPY --from=cpp-build /out/campfire /out/llvm-symbolizer* /usr/local/bin/
 
 # bin/boot: starts the server.
 COPY --chmod=755 <<'EOF2' /rails/bin/boot

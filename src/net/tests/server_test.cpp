@@ -339,3 +339,22 @@ TEST_CASE("server stops with connections open") {
   f.server->stop();
   CHECK(c.read_reply().closed);
 }
+
+TEST_CASE("server survives a client that closes the connection in the middle of a body") {
+  Fixture f;
+  for (const char* head : {"POST /u HTTP/1.1\r\nHost: x\r\nContent-Length: 100000\r\n\r\n",
+                           "POST /u HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked\r\n\r\n"}) {
+    for (const std::size_t extra : {std::size_t{0}, std::size_t{3}, std::size_t{70000}}) {
+      {
+        Client c(f.http());
+        c.send(head);
+        if (extra != 0) c.send(std::string(extra, 'a'));
+        std::this_thread::sleep_for(20ms);
+      }
+      std::this_thread::sleep_for(50ms);
+      Client alive(f.http());
+      alive.send(kGet);
+      CHECK(alive.read_reply().status == 200);
+    }
+  }
+}

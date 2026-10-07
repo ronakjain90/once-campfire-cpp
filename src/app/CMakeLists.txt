@@ -131,12 +131,13 @@ campfire_test(app
     tests/rooms_test.cpp
     tests/room_pages_test.cpp
     tests/unfurl_policy_test.cpp
+    tests/network_guard_test.cpp
+    tests/unfurl_raw_test.cpp
     tests/unfurl_test.cpp
   WERROR)
 target_compile_definitions(test_app PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")
 
 # Fuzz targets (architecture section 14): built only with -DCAMPFIRE_FUZZ=ON.
-option(CAMPFIRE_FUZZ "Build the libFuzzer targets" OFF)
 if(CAMPFIRE_FUZZ)
   add_subdirectory(fuzz)
 endif()

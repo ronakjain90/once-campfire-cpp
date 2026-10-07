@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -47,6 +48,12 @@ struct ServerOptions {
   // Runs on each response that the asset table gave (the app adds what its middleware adds to all
   // responses, e.g. HSTS). Null: nothing.
   void (*after_static)(Ctx&, Response&) = nullptr;
+
+  // Called on the worker thread when something asked it to wake (`Server::wake`). The hub of Action Cable drains the
+  // queue of the worker here. Null: nothing.
+  std::function<void(unsigned worker)> on_wake;
+  // Called on each worker thread every 3 seconds (the Action Cable heartbeat). Null: no timer.
+  std::function<void(unsigned worker)> on_beat;
 
   [[nodiscard]] static ServerOptions from_config(const FrontConfig& config);
 };

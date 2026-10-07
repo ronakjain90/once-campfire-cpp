@@ -49,6 +49,7 @@ void Worker::pump(Conn& c) {
         break;
       case ConnState::Writing: progress = step_write(c); break;
       case ConnState::Linger: progress = step_linger(c); break;
+      case ConnState::WebSocket: progress = ws_step(c); break;
     }
     if (!progress) return;
   }
@@ -279,6 +280,10 @@ void Worker::begin_write(Conn& c) {
   } else {
     suppress_bodiless_headers(response);
   }
+  if (response.ws_accept) {
+    ws_start(c, response);
+    return;
+  }
   WireOptions wire_options;
   wire_options.head_only = request.method == Method::Head;
   wire_options.close = c.close_after;
@@ -411,6 +416,11 @@ bool Worker::step_linger(Conn& c) {
 }
 
 void Worker::on_timer(TimerNode& node) {
+  if (node.kind == kTimerBeat) {
+    if (options_.on_beat) options_.on_beat(index_);
+    if (!stopping_.load()) wheel_.arm(node, now_ms_, kBeatIntervalMs, kTimerBeat);
+    return;
+  }
   Conn& c = *static_cast<Conn*>(node.owner);
   if (c.closed) return;
   switch (node.kind) {
@@ -443,6 +453,8 @@ void Worker::on_timer(TimerNode& node) {
         pump(c);
       }
       break;
+    case kTimerWsStall:
+    case kTimerWsClose: ws_on_timer(c, node); break;
     case kTimerH2:
       // The HTTP/2 idle timeout: no stream open for that long ends the session.
       if (c.state == ConnState::Http2) h2_on_timer(c);
@@ -451,6 +463,7 @@ void Worker::on_timer(TimerNode& node) {
 }
 
 void Worker::close_conn(Conn& c) {
+  if (c.ws) ws_notify_closed(c);
   if (c.fd >= 0) {
     epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, c.fd, nullptr);
     ::close(c.fd);

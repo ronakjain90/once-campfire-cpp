@@ -176,7 +176,8 @@ Status Server::start() {
       https = std::move(*fd);
       if (i == 0) https_port = bound_port(https.get());
     }
-    workers.push_back(std::make_unique<Worker>(options_, app_, http.release(), target.release(), https.release()));
+    workers.push_back(std::make_unique<Worker>(options_, app_, http.release(), target.release(), https.release(),
+                                               static_cast<unsigned>(i)));
   }
   http_port_ = options_.listen_http ? http_port : 0;
   https_port_ = options_.listen_https ? https_port : 0;
@@ -190,6 +191,10 @@ void Server::stop() {
   for (const std::unique_ptr<Worker>& worker : workers_) worker->stop();
   for (const std::unique_ptr<Worker>& worker : workers_) worker->join();
   workers_.clear();
+}
+
+void Server::wake(unsigned worker) noexcept {
+  if (worker < workers_.size()) workers_[worker]->request_wake();
 }
 
 std::size_t Server::connection_count() const noexcept {

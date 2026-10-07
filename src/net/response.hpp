@@ -14,6 +14,7 @@
 
 #include "core/out.hpp"
 #include "net/http.hpp"
+#include "net/ws.hpp"
 
 namespace campfire::net {
 
@@ -37,6 +38,8 @@ class Response {
   // The length of the body is not known and not sent (a HEAD response to a request whose body is
   // compressed on the fly: hyper writes neither "content-length" nor "transfer-encoding").
   bool unsized = false;
+  // A 101 response of an upgrade: the worker calls this after it wrote the response (see net/ws.hpp).
+  WsAccept ws_accept;
 
   [[nodiscard]] std::pmr::memory_resource* resource() const noexcept { return resource_; }
 

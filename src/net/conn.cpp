@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "net/h2.hpp"
+#include "net/ws_state.hpp"
 
 namespace campfire::net {
 

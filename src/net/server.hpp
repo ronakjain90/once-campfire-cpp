@@ -33,6 +33,9 @@ class Server {
   [[nodiscard]] std::uint16_t target_port() const noexcept { return target_port_; }
   [[nodiscard]] std::size_t worker_count() const noexcept { return workers_.size(); }
   [[nodiscard]] std::size_t connection_count() const noexcept;
+  // Wakes one worker: it runs `ServerOptions::on_wake` on its own thread. Any thread may call it. A number that is
+  // not a worker is ignored.
+  void wake(unsigned worker) noexcept;
 
  private:
   ServerOptions options_;

@@ -3,3 +3,5 @@ gate/capture/bin/
 __pycache__/
 *.pyc
 .idea/
+# App logs of benchmark runs can be hundreds of MB.
+bench/results/**/*.applog

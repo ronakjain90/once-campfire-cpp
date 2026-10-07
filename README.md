@@ -41,37 +41,37 @@ Production images, the same seed data and four pinned CPUs for each app, on an A
 (10 cores, 32 GB). Docker runs in a Colima VM with 8 vCPUs and 16 GB. The load generator of the
 Rust repo runs on the other four CPUs. All runs were on October 7, 2026, on a quiet host. The
 reports record the settings and the ranges:
-[room page, sidebar and post](bench/results/2026-10-07-b0-rep4/report.md),
-[messages page and search](bench/results/2026-10-07-messages-search/report.md) and
+[page routes](bench/results/2026-10-07-sqlite-flags/report.md),
+[post](bench/results/2026-10-07-sqlite-flags-post/report.md) and
 [Action Cable](bench/results/2026-10-07-cable/report.md).
 
 ### HTTP throughput (16 concurrent clients)
 
 | Route | Rust | C++ | C++ advantage |
 |---|---|---|---|
-| Room page | 25,779 req/s | 37,746 req/s | **1.46×** |
-| Messages page | 29,966 req/s | 61,390 req/s | **2.05×** |
-| Sidebar | 24,044 req/s | 67,072 req/s | **2.79×** |
-| Search | 25,547 req/s | 46,075 req/s | **1.80×** |
-| Post a message | 7,068 req/s | 11,699 req/s | **1.66×** |
+| Room page | 27,705 req/s | 81,402 req/s | **2.94×** |
+| Messages page | 28,914 req/s | 99,760 req/s | **3.45×** |
+| Sidebar | 25,364 req/s | 84,403 req/s | **3.33×** |
+| Search | 25,034 req/s | 99,387 req/s | **3.97×** |
+| Post a message | 6,748 req/s | 13,732 req/s | **2.03×** |
 
-At 64 clients, the advantage is 1.51× for the room page, 2.02× for the messages page, 3.12× for
-the sidebar, 1.34× for search and 2.10× for a post. The C++ app also uses less CPU: 0.085 ms for
-each room page, against 0.13 ms.
+At 64 clients, the advantage is 3.33× for the room page, 3.91× for the messages page, 3.80× for
+the sidebar, 3.37× for search and 2.42× for a post. The C++ app also uses less CPU: 0.041 ms for
+each room page, against 0.12 ms.
 
 ### Latency and real time
 
 | Measurement | Rust | C++ | C++ advantage |
 |---|---|---|---|
-| Room page p99, 64 clients | 4.5 ms | 2.9 ms | **1.56×** |
-| Post a message p99, 64 clients | 14.3 ms | 8.1 ms | **1.76×** |
+| Room page p99, 64 clients | 4.3 ms | 1.3 ms | **3.33×** |
+| Post a message p99, 64 clients | 19.5 ms | 11.6 ms | **1.68×** |
 | Posts per second to all of 100 clients in one room | 3,098 | 3,592 | **1.16×** |
 | Posts per second to all of 1,000 clients in one room | 546 | 479 | 0.88× |
 | Post to all 1,000 clients received, p50 | 15.9 ms | 14.1 ms | **1.13×** |
 | Post to all 1,000 clients received, p99 | 20.3 ms | 18.2 ms | **1.12×** |
 
 Every client subscribed and received every broadcast. The Action Cable numbers are medians of three
-interleaved runs. The HTTP numbers come from one run for each app.
+interleaved runs. The HTTP numbers are medians of two interleaved runs.
 
 ### Image size
 
@@ -87,8 +87,7 @@ page). The cause is the compressor: the C++ app uses libdeflate. The decoded pag
 
 The goal is 1.5 times the throughput of the Rust port on each route. The open work is:
 
-- The room page at 16 clients, search at 64 clients, and the Action Cable fan-out with 1,000
-  clients.
+- The Action Cable fan-out with 1,000 clients.
 - Parity checks against Rails: the Playwright harness, and database and cookie compatibility in
   both directions.
 - A full benchmark of all routes with three interleaved runs.

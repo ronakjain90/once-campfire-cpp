@@ -145,7 +145,8 @@ Flow<views::ViewContext> detached_context(Rq& rq) {
   if (*account) {
     const models::Account& a = **account;
     ctx.account.name = a.name;
-    ctx.account.logo_url = campfire::routes::fresh_account_logo(parse_db(a.updated_at) ? format_to_fs_number(*parse_db(a.updated_at)) : std::string{});
+    ctx.account.logo_url = campfire::routes::fresh_account_logo(
+        parse_db(a.updated_at) ? format_to_fs_number(*parse_db(a.updated_at)) : std::string{});
     ctx.account.has_logo = a.has_logo;
   } else {
     ctx.account.logo_url = campfire::routes::fresh_account_logo();

@@ -21,9 +21,9 @@ namespace campfire::compat {
 // every case (MessageVerifier#decode retries with the other one, and GlobalID::Verifier uses
 // urlsafe_decode64).
 enum class Base64Encoding {
-  Strict,          // Base64.strict_encode64 (the default)
-  UrlSafe,         // url_safe: true. URL-safe alphabet, no padding
-  UrlSafePadded,   // GlobalID::Verifier. URL-safe alphabet with padding
+  Strict,         // Base64.strict_encode64 (the default)
+  UrlSafe,        // url_safe: true. URL-safe alphabet, no padding
+  UrlSafePadded,  // GlobalID::Verifier. URL-safe alphabet with padding
 };
 
 class MessageVerifier {

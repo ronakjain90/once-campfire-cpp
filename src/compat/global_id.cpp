@@ -27,9 +27,13 @@ std::optional<GlobalId> GlobalId::parse(std::string_view gid) {
   return GlobalId{std::string(app), std::string(model), std::string(id)};
 }
 
-std::string GlobalId::to_string() const { return "gid://" + app + "/" + model_name + "/" + id; }
+std::string GlobalId::to_string() const {
+  return "gid://" + app + "/" + model_name + "/" + id;
+}
 
-std::string GlobalId::to_param() const { return base64::urlsafe_encode_unpadded(to_string()); }
+std::string GlobalId::to_param() const {
+  return base64::urlsafe_encode_unpadded(to_string());
+}
 
 std::optional<GlobalId> GlobalId::from_param(std::string_view param) {
   auto decoded = base64::urlsafe_decode(param);
@@ -72,8 +76,10 @@ std::optional<GlobalId> locate_signed(const Secrets& secrets, std::string_view s
                                       Timestamp now) {
   const MessageVerifier& verifier = secrets.global_id_verifier();
   std::optional<json::Value> data;
-  if (auto verified = verifier.verify(sgid, purpose, now)) data = std::move(*verified);
-  else data = verify_legacy_self_validated(verifier, sgid, purpose, now);
+  if (auto verified = verifier.verify(sgid, purpose, now))
+    data = std::move(*verified);
+  else
+    data = verify_legacy_self_validated(verifier, sgid, purpose, now);
   if (!data) return std::nullopt;
   const std::string* uri = data->get_string();
   if (uri == nullptr) return std::nullopt;
@@ -134,7 +140,9 @@ std::optional<std::string> match_marshaled_gid(std::string_view bytes) {
   }
 }
 
-bool truthy(const json::Value* v) { return v != nullptr && !v->is_null() && !(v->is_bool() && !v->as_bool()); }
+bool truthy(const json::Value* v) {
+  return v != nullptr && !v->is_null() && !(v->is_bool() && !v->as_bool());
+}
 
 }  // namespace
 

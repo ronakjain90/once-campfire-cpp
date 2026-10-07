@@ -20,8 +20,8 @@ struct HelpContact {
   std::string email_address;
 };
 
-// `AllowBrowser::VERSIONS` without the browsers that it blocks outright (`ie: false`). Ruby prints the versions 17.2 and
-// 120 as "17.2" and "120".
+// `AllowBrowser::VERSIONS` without the browsers that it blocks outright (`ie: false`). Ruby prints the versions 17.2
+// and 120 as "17.2" and "120".
 struct AllowedBrowser {
   std::string_view name;
   std::string_view title;  // `browser.capitalize`

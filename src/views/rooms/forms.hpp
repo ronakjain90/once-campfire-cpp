@@ -18,12 +18,9 @@ enum class RoomKind : std::uint8_t { Open, Closed, Direct };
 // `model_name.param_key`, the stem of `dom_id(room)`.
 [[nodiscard]] inline std::string_view room_param_key(RoomKind kind) {
   switch (kind) {
-    case RoomKind::Open:
-      return "rooms_open";
-    case RoomKind::Closed:
-      return "rooms_closed";
-    case RoomKind::Direct:
-      return "rooms_direct";
+    case RoomKind::Open: return "rooms_open";
+    case RoomKind::Closed: return "rooms_closed";
+    case RoomKind::Direct: return "rooms_direct";
   }
   return {};
 }

@@ -18,8 +18,12 @@ struct CtxDeleter {
 };
 using CipherCtx = std::unique_ptr<EVP_CIPHER_CTX, CtxDeleter>;
 
-const unsigned char* bytes(std::string_view s) { return reinterpret_cast<const unsigned char*>(s.data()); }
-unsigned char* bytes(std::string& s) { return reinterpret_cast<unsigned char*>(s.data()); }
+const unsigned char* bytes(std::string_view s) {
+  return reinterpret_cast<const unsigned char*>(s.data());
+}
+unsigned char* bytes(std::string& s) {
+  return reinterpret_cast<unsigned char*>(s.data());
+}
 
 }  // namespace
 
@@ -124,7 +128,8 @@ std::optional<std::string> aes256_gcm_decrypt(std::string_view key, std::string_
   }
   int total = len;
   std::string tag_copy(tag);
-  if (EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_TAG, int(kGcmTagLength), tag_copy.data()) != 1) return std::nullopt;
+  if (EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_GCM_SET_TAG, int(kGcmTagLength), tag_copy.data()) != 1)
+    return std::nullopt;
   unsigned char final_block[16];
   if (EVP_DecryptFinal_ex(ctx.get(), final_block, &len) != 1) return std::nullopt;
   plaintext.resize(size_t(total));

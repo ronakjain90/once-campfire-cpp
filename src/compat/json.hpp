@@ -34,8 +34,10 @@ class Value {
 
   static Value from_unsigned(uint64_t n) {
     Value v;
-    if (n <= uint64_t(INT64_MAX)) v.data_ = int64_t(n);
-    else v.data_ = n;
+    if (n <= uint64_t(INT64_MAX))
+      v.data_ = int64_t(n);
+    else
+      v.data_ = n;
     return v;
   }
 

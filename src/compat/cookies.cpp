@@ -4,7 +4,9 @@
 namespace campfire::compat::cookies {
 namespace {
 
-std::string purpose(std::string_view name) { return "cookie." + std::string(name); }
+std::string purpose(std::string_view name) {
+  return "cookie." + std::string(name);
+}
 
 // SerializerWithFallback[:json].load: Marshal payloads are not allowed for cookies.
 std::optional<json::Value> load(const json::Value& dumped) {

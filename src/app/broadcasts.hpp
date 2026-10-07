@@ -1,6 +1,7 @@
-// The Turbo Stream broadcasts of the room area (A2) and of the message area (A3). Rails: Turbo::Streams::Broadcasts (broadcast_*_to), app/models/message/
-// broadcasts.rb, app/controllers/messages/boosts_controller.rb. Rust: crates/campfire/src/channels/broadcasts.rs and
-// crates/cable/src/turbo.rs. The frame bytes are the bytes of the Rust port.
+// The Turbo Stream broadcasts of the room area (A2) and of the message area (A3). Rails: Turbo::Streams::Broadcasts
+// (broadcast_*_to), app/models/message/ broadcasts.rb, app/controllers/messages/boosts_controller.rb. Rust:
+// crates/campfire/src/channels/broadcasts.rs and crates/cable/src/turbo.rs. The frame bytes are the bytes of the Rust
+// port.
 //
 // Rails of the room area: `broadcast_*_to` of the room controllers. Rust: crates/campfire/src/channels/broadcasts.rs.
 //
@@ -63,7 +64,6 @@ void boost_append(const App& app, const models::RoomRef& room, std::string_view 
                   std::string_view boost_html);
 // `@boost.broadcast_remove_to room, :messages`: the target is `dom_id(boost)`.
 void boost_remove(const App& app, const models::RoomRef& room, std::int64_t boost_id);
-
 
 // The room controllers.
 // `broadcast_remove_to :rooms, target: [ @room, :list ]` (RoomsController#destroy).

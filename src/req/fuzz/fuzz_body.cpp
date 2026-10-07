@@ -18,13 +18,13 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size
     return dir;
   }();
   static constexpr std::string_view kTypes[] = {
-      "application/x-www-form-urlencoded", "application/json", "text/json",
-      "multipart/form-data; boundary=xyz", "multipart/form-data; boundary=\"a b\"", "text/plain", ""};
+      "application/x-www-form-urlencoded",     "application/json", "text/json", "multipart/form-data; boundary=xyz",
+      "multipart/form-data; boundary=\"a b\"", "text/plain",       ""};
   const std::string_view type = kTypes[data[0] % std::size(kTypes)];
   const std::string_view body(reinterpret_cast<const char*>(data) + 1, size - 1);
   std::pmr::monotonic_buffer_resource arena;
-  const auto parsed = parse_body("POST", type.empty() ? std::nullopt : std::optional<std::string_view>(type), body,
-                                 tmp, &arena, 1U << 20);
+  const auto parsed = parse_body("POST", type.empty() ? std::nullopt : std::optional<std::string_view>(type), body, tmp,
+                                 &arena, 1U << 20);
   if (parsed && parsed->params) (void)parsed->params->to_json();
   (void)media_type(body);
   return 0;

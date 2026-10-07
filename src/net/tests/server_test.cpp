@@ -1,6 +1,8 @@
 // In-process server tests. Rust: crates/kit/tests/front.rs and http.rs.
-#include <doctest.h>
+#include "net/server.hpp"
+
 #include <arpa/inet.h>
+#include <doctest.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -9,8 +11,6 @@
 #include <cstring>
 #include <string>
 #include <thread>
-
-#include "net/server.hpp"
 
 using namespace campfire;
 using namespace campfire::net;
@@ -188,7 +188,8 @@ TEST_CASE("server answers pipelined requests in order") {
   Fixture f;
   Client c(f.http());
   std::string all;
-  for (int i = 0; i < 5; ++i) all += "POST /p" + std::to_string(i) + " HTTP/1.1\r\nHost: x\r\nContent-Length: 2\r\n\r\nb" + std::to_string(i);
+  for (int i = 0; i < 5; ++i)
+    all += "POST /p" + std::to_string(i) + " HTTP/1.1\r\nHost: x\r\nContent-Length: 2\r\n\r\nb" + std::to_string(i);
   c.send(all);
   for (int i = 0; i < 5; ++i) {
     const Reply r = c.read_reply();

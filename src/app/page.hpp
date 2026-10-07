@@ -27,7 +27,7 @@ struct LayoutData {
   std::optional<views::CurrentUser> current_user;
   views::AccountSummary account;
   std::optional<std::string> custom_styles;
-  std::optional<std::int64_t> last_room_visited_id;  // `last_room_visited` (rooms: a later task fills it)
+  std::optional<std::int64_t> last_room_visited_id;       // `last_room_visited` (rooms: a later task fills it)
   bool restrict_room_creation_to_administrators = false;  // from the account row that `load_layout` read
 };
 

@@ -58,7 +58,9 @@ std::optional<marshal::Value> from_json(const json::Value& json) {
   return marshal::Value::hash(std::move(entries));
 }
 
-marshal::Value as_hash(const Variation::Transformations& t) { return marshal::Value::hash(t); }
+marshal::Value as_hash(const Variation::Transformations& t) {
+  return marshal::Value::hash(t);
+}
 
 }  // namespace
 
@@ -70,9 +72,13 @@ Variation Variation::resize_to_limit(int64_t width, int64_t height, std::optiona
   return Variation(std::move(t));
 }
 
-std::string Variation::marshal() const { return marshal::dump(as_hash(transformations_)); }
+std::string Variation::marshal() const {
+  return marshal::dump(as_hash(transformations_));
+}
 
-std::string Variation::digest() const { return base64::strict_encode(crypto::sha1(marshal())); }
+std::string Variation::digest() const {
+  return base64::strict_encode(crypto::sha1(marshal()));
+}
 
 std::string Variation::key(const MessageVerifier& verifier) const {
   return verifier.generate_raw(json::encode(to_json(as_hash(transformations_))), "variation");

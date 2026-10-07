@@ -12,7 +12,9 @@ namespace gid = campfire::compat::global_id;
 
 namespace {
 
-const json::Value& rails() { return load_vectors("rails_compat.json"); }
+const json::Value& rails() {
+  return load_vectors("rails_compat.json");
+}
 const json::Value& section(const char* a, const char* b = nullptr) {
   const json::Value& v = at(rails(), a);
   return b ? at(v, b) : v;
@@ -21,12 +23,18 @@ const compat::Secrets& secrets() {
   static const compat::Secrets s(at(rails(), "secret_key_base").as_string());
   return s;
 }
-compat::Timestamp now() { return time_of(at(rails(), "now")); }
+compat::Timestamp now() {
+  return time_of(at(rails(), "now"));
+}
 
 // A vector's "expected" for a possibly missing result.
-bool same(const std::optional<json::Value>& got, const json::Value& want) { return (got ? *got : json::Value()) == want; }
+bool same(const std::optional<json::Value>& got, const json::Value& want) {
+  return (got ? *got : json::Value()) == want;
+}
 
-std::string label(const json::Value& c) { return at(c, "case").is_string() ? at(c, "case").as_string() : "?"; }
+std::string label(const json::Value& c) {
+  return at(c, "case").is_string() ? at(c, "case").as_string() : "?";
+}
 
 }  // namespace
 
@@ -43,7 +51,8 @@ TEST_CASE("rails_compat cookie_escaping") {
   Group g("rails_compat.json", "cookie_escaping");
   for (const auto& c : items(section("cookie_escaping"))) {
     bool ok = compat::cookies::unescape(at(c, "wire").as_string()) == at(c, "parsed").as_string();
-    if (at(c, "raw").is_string()) ok = ok && compat::cookies::escape(at(c, "raw").as_string()) == at(c, "wire").as_string();
+    if (at(c, "raw").is_string())
+      ok = ok && compat::cookies::escape(at(c, "raw").as_string()) == at(c, "wire").as_string();
     g.check(ok, at(c, "wire").as_string());
   }
   g.finish();
@@ -73,8 +82,8 @@ TEST_CASE("rails_compat signed_cookies.verify") {
                                                       time_of(at(c, "now")));
     auto str = compat::cookies::verify_signed(secrets(), at(c, "name").as_string(), at(c, "raw").as_string(),
                                               time_of(at(c, "now")));
-    bool ok = same(value, at(c, "expected")) &&
-              (str ? json::Value(*str) : json::Value()) == (at(c, "expected").is_string() ? at(c, "expected") : json::Value());
+    bool ok = same(value, at(c, "expected")) && (str ? json::Value(*str) : json::Value()) ==
+                                                    (at(c, "expected").is_string() ? at(c, "expected") : json::Value());
     g.check(ok, label(c));
   }
   g.finish();
@@ -83,8 +92,8 @@ TEST_CASE("rails_compat signed_cookies.verify") {
 TEST_CASE("rails_compat encrypted_cookies.verify") {
   Group g("rails_compat.json", "encrypted_cookies.verify");
   for (const auto& c : items(section("encrypted_cookies", "verify"))) {
-    auto value = compat::cookies::decrypt(secrets(), at(c, "name").as_string(), at(c, "raw").as_string(),
-                                          time_of(at(c, "now")));
+    auto value =
+        compat::cookies::decrypt(secrets(), at(c, "name").as_string(), at(c, "raw").as_string(), time_of(at(c, "now")));
     g.check(same(value, at(c, "expected")), label(c));
   }
   g.finish();
@@ -96,11 +105,11 @@ TEST_CASE("rails_compat encrypted_cookies.generate") {
   for (const auto& c : items(section("encrypted_cookies", "generate"))) {
     auto plaintext = encryptor.decrypt(at(c, "raw").as_string());
     // Our plaintext is byte-identical to Rails'.
-    std::string ours = compat::serialize_with_metadata(
-        compat::Serializer::null(), json::Value(json::encode(at(c, "value"))),
-        "cookie." + at(c, "name").as_string(), opt_time(at(c, "expires_at")));
-    std::string raw = compat::cookies::encrypt(secrets(), at(c, "name").as_string(), at(c, "value"),
-                                               opt_time(at(c, "expires_at")));
+    std::string ours =
+        compat::serialize_with_metadata(compat::Serializer::null(), json::Value(json::encode(at(c, "value"))),
+                                        "cookie." + at(c, "name").as_string(), opt_time(at(c, "expires_at")));
+    std::string raw =
+        compat::cookies::encrypt(secrets(), at(c, "name").as_string(), at(c, "value"), opt_time(at(c, "expires_at")));
     auto back = compat::cookies::decrypt(secrets(), at(c, "name").as_string(), raw, now());
     g.check(plaintext && *plaintext == at(c, "plaintext").as_string() && ours == at(c, "plaintext").as_string() &&
                 back && *back == at(c, "value") && raw != at(c, "raw").as_string(),
@@ -116,12 +125,14 @@ TEST_CASE("rails_compat session") {
   auto hash = compat::cookies::decrypt(secrets(), "_campfire_session", at(s, "session_cookie_raw").as_string(), now());
   g.check(hash && *hash == at(s, "session"), "session cookie decrypts");
   const std::string& token = at(s, "session_token_value").as_string();
-  g.check(compat::cookies::verify_signed(secrets(), "session_token", at(s, "session_token_raw").as_string(), now()) == token,
+  g.check(compat::cookies::verify_signed(secrets(), "session_token", at(s, "session_token_raw").as_string(), now()) ==
+              token,
           "session_token verifies");
   g.check(compat::cookies::sign(secrets(), "session_token", token, compat::permanent_expires_at(now())) ==
               at(s, "session_token_raw").as_string(),
           "session_token signs");
-  auto after = compat::cookies::decrypt(secrets(), "_campfire_session", at(s, "session_after_login_raw").as_string(), now());
+  auto after =
+      compat::cookies::decrypt(secrets(), "_campfire_session", at(s, "session_after_login_raw").as_string(), now());
   g.check(after && *after == at(s, "session_after_login"), "session after login");
   g.finish();
 }
@@ -142,8 +153,10 @@ TEST_CASE("rails_compat signed_ids.verify") {
     auto id = compat::signed_id::verify(secrets(), at(c, "model").as_string(), at(c, "signed_id").as_string(),
                                         opt_str(at(c, "purpose")), time_of(at(c, "now")));
     std::optional<int64_t> want;
-    if (at(c, "expected").is_string()) want = std::stoll(at(c, "expected").as_string());
-    else want = at(c, "expected").to_int64();
+    if (at(c, "expected").is_string())
+      want = std::stoll(at(c, "expected").as_string());
+    else
+      want = at(c, "expected").to_int64();
     g.check(id == want, label(c));
   }
   g.finish();
@@ -178,7 +191,8 @@ TEST_CASE("rails_compat sgids.generate") {
 TEST_CASE("rails_compat sgids.verify") {
   Group g("rails_compat.json", "sgids.verify");
   for (const auto& c : items(section("sgids", "verify"))) {
-    auto got = gid::locate_signed(secrets(), at(c, "sgid").as_string(), at(c, "purpose").as_string(), time_of(at(c, "now")));
+    auto got =
+        gid::locate_signed(secrets(), at(c, "sgid").as_string(), at(c, "purpose").as_string(), time_of(at(c, "now")));
     std::optional<gid::GlobalId> want;
     if (at(c, "expected").is_string()) want = gid::GlobalId::parse(at(c, "expected").as_string());
     g.check(got == want, label(c));
@@ -222,14 +236,17 @@ TEST_CASE("rails_compat turbo_stream_names") {
     std::vector<std::string> parts;
     for (const auto& p : items(at(c, "parts"))) parts.push_back(p.as_string());
     std::vector<std::string_view> views(parts.begin(), parts.end());
-    g.check(compat::turbo::signed_stream_name(secrets(), views) == at(c, "signed").as_string(), at(c, "stream_name").as_string());
+    g.check(compat::turbo::signed_stream_name(secrets(), views) == at(c, "signed").as_string(),
+            at(c, "stream_name").as_string());
   }
   for (const auto& c : items(section("turbo_stream_names", "verify"))) {
     auto got = compat::turbo::verified_stream_name(secrets(), at(c, "signed").as_string());
     const auto& want = at(c, "expected");
     std::optional<std::string> expected;
-    if (want.is_string()) expected = want.as_string();
-    else if (want.is_number()) expected = json::generate(want);
+    if (want.is_string())
+      expected = want.as_string();
+    else if (want.is_number())
+      expected = json::generate(want);
     g.check(got == expected, label(c));
   }
   g.finish();
@@ -239,15 +256,16 @@ TEST_CASE("rails_compat app_verifiers") {
   Group g("rails_compat.json", "app_verifiers");
   for (const auto& c : items(section("app_verifiers", "generate"))) {
     auto verifier = secrets().app_verifier(at(c, "name").as_string());
-    g.check(verifier.generate_raw(at(c, "data_json").as_string(), opt_str(at(c, "purpose")), opt_time(at(c, "expires_at"))) ==
-                at(c, "message").as_string(),
+    g.check(verifier.generate_raw(at(c, "data_json").as_string(), opt_str(at(c, "purpose")),
+                                  opt_time(at(c, "expires_at"))) == at(c, "message").as_string(),
             at(c, "data_json").as_string());
   }
   for (const auto& c : items(section("app_verifiers", "verify"))) {
     auto verifier = secrets().app_verifier(at(c, "name").as_string());
     auto got = verifier.verify_raw(at(c, "message").as_string(), opt_str(at(c, "purpose")), time_of(at(c, "now")));
     g.check((got ? std::optional<std::string>(*got) : std::nullopt) ==
-                (at(c, "expected_json").is_string() ? std::optional<std::string>(at(c, "expected_json").as_string()) : std::nullopt),
+                (at(c, "expected_json").is_string() ? std::optional<std::string>(at(c, "expected_json").as_string())
+                                                    : std::nullopt),
             label(c));
   }
   g.finish();
@@ -262,12 +280,14 @@ TEST_CASE("campfire_sessions") {
                 at(s, "token").as_string(),
             "session cookie");
     std::string header = at(s, "cookie_header").as_string();
-    g.check(compat::cookies::unescape(header.substr(header.find('=') + 1)) == at(s, "cookie_value").as_string(), "cookie header");
+    g.check(compat::cookies::unescape(header.substr(header.find('=') + 1)) == at(s, "cookie_value").as_string(),
+            "cookie header");
   }
   for (const auto& b : items(at(v, "blobs"))) {
     int64_t id = *at(b, "blob_id").to_int64();
     g.check(compat::signed_id::blob_signed_id(secrets(), id) == at(b, "signed_id").as_string(), "blob signed id");
-    g.check(compat::signed_id::verify_blob_signed_id(secrets(), at(b, "signed_id").as_string(), when) == id, "blob verify");
+    g.check(compat::signed_id::verify_blob_signed_id(secrets(), at(b, "signed_id").as_string(), when) == id,
+            "blob verify");
   }
   const auto& forged = at(v, "forged");
   // The forged cookie carries a valid signature over a token that is in no session row, so
@@ -275,8 +295,8 @@ TEST_CASE("campfire_sessions") {
   g.check(compat::cookies::verify_signed(secrets(), "session_token", at(forged, "cookie_value").as_string(), when) ==
               "not-a-session-token",
           "forged cookie reads as unknown token");
-  g.check(!compat::cookies::verify_signed(compat::Secrets(at(rails(), "rotated_secret_key_base").as_string()), "session_token",
-                                          at(forged, "cookie_value").as_string(), when),
+  g.check(!compat::cookies::verify_signed(compat::Secrets(at(rails(), "rotated_secret_key_base").as_string()),
+                                          "session_token", at(forged, "cookie_value").as_string(), when),
           "forged cookie rejected under another secret");
   g.finish();
 }

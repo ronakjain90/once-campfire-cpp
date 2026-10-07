@@ -99,9 +99,9 @@ Page cut(const std::string& page) {
   p.nav = between(page, "<nav id=\"nav\">\n", "    </nav>", &pos);
   p.content = between(page, "<main id=\"main-content\">\n", "\n      <footer id=\"footer\">", &pos);
   p.footer = between(page, "\n", "      </footer>", &pos);
-  p.sidebar = between(
-      page, "<aside id=\"sidebar\" data-controller=\"toggle-class\" data-toggle-class-toggle-class=\"open\">\n",
-      "    </aside>", &pos);
+  p.sidebar =
+      between(page, "<aside id=\"sidebar\" data-controller=\"toggle-class\" data-toggle-class-toggle-class=\"open\">\n",
+              "    </aside>", &pos);
   const std::size_t flash = page.find("<span class=\"for-screen-reader\" role=\"alert\"");
   if (flash != std::string::npos) {
     const std::string text = str_match(page.substr(flash), R"re(aria-atomic="true">([^<]*)</span>)re");

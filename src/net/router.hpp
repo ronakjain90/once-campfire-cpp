@@ -14,10 +14,10 @@ namespace campfire::net {
 
 // One part of a route pattern between slashes.
 enum class SegmentKind : std::uint8_t {
-  Literal,  // "messages": text must be equal
-  Param,    // ":room_id": one or more characters, no "." and no "/"
-  Prefixed, // "@:message_id": the text "@", then a Param
-  Glob,     // "*path": the rest of the path (last segment only)
+  Literal,   // "messages": text must be equal
+  Param,     // ":room_id": one or more characters, no "." and no "/"
+  Prefixed,  // "@:message_id": the text "@", then a Param
+  Glob,      // "*path": the rest of the path (last segment only)
 };
 
 struct Segment {
@@ -37,7 +37,7 @@ struct Route {
   std::string_view name;     // "messages::index", for logs
   std::string_view pattern;  // as in the .inc file
   std::span<const Segment> segments;
-  bool format;               // the pattern ends with "(.:format)"
+  bool format;  // the pattern ends with "(.:format)"
   std::span<const RouteDefault> defaults;
 };
 
@@ -48,9 +48,9 @@ struct Bucket {
 };
 
 struct MethodIndex {
-  std::span<const Bucket> buckets;            // sorted by key
-  std::span<const std::uint16_t> fallback;    // for a first segment with no bucket
-  std::span<const std::uint16_t> root;        // for the path "/"
+  std::span<const Bucket> buckets;          // sorted by key
+  std::span<const std::uint16_t> fallback;  // for a first segment with no bucket
+  std::span<const std::uint16_t> root;      // for the path "/"
 };
 
 struct RouteTable {

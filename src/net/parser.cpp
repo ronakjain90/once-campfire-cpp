@@ -153,7 +153,9 @@ HeadResult parse_head(std::string_view data, std::size_t scanned, Arena& arena, 
   return {HeadStatus::Ok, 0};
 }
 
-ChunkedBody::ChunkedBody(std::uint64_t max_decoded) : max_decoded_(max_decoded) { decoder_.consume_trailer = 1; }
+ChunkedBody::ChunkedBody(std::uint64_t max_decoded) : max_decoded_(max_decoded) {
+  decoder_.consume_trailer = 1;
+}
 
 ChunkedBody::Status ChunkedBody::feed(char* region, std::size_t& have) {
   std::size_t size = have - decoded_;

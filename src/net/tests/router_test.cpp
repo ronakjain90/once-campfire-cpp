@@ -1,24 +1,39 @@
 // Tests of net/router.hpp. Rails: config/routes.rb matching.
-#include <doctest.h>
-
 #include "net/router.hpp"
+
+#include <doctest.h>
 
 namespace campfire::app_test {
 const net::RouteTable& routes();
 }
 
 namespace campfire::routes::test {
-#define H(name) \
-  Task<net::Response> name(net::Ctx& ctx) { co_return ctx.response(200); }
-H(root) H(rooms_index) H(rooms_create) H(rooms_opens) H(rooms_show) H(messages_index) H(at_message)
-H(bot_messages) H(manifest) H(asset) H(profile)
+#define H(name)                             \
+  Task<net::Response> name(net::Ctx& ctx) { \
+    co_return ctx.response(200);            \
+  }
+// clang-format off
+H(root)
+H(rooms_index)
+H(rooms_create)
+H(rooms_opens)
+H(rooms_show)
+H(messages_index)
+H(at_message)
+H(bot_messages)
+H(manifest)
+H(asset)
+H(profile)
+// clang-format on
 #undef H
 }  // namespace campfire::routes::test
 
 using namespace campfire::net;
 
 namespace {
-Match find(Method m, std::string_view path) { return match_route(campfire::app_test::routes(), m, path); }
+Match find(Method m, std::string_view path) {
+  return match_route(campfire::app_test::routes(), m, path);
+}
 }  // namespace
 
 TEST_CASE("router matches literals, order and trailing slash") {

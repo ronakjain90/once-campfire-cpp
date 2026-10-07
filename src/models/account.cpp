@@ -4,6 +4,7 @@
 #include <sys/random.h>
 
 #include <cstdlib>
+
 #include "compat/json.hpp"
 
 namespace campfire::models {

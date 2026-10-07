@@ -27,8 +27,7 @@ class MessageEncryptor {
   std::string encrypt_with_iv(std::string_view plaintext, std::string_view iv) const;
 
   std::expected<json::Value, Error> decrypt_and_verify(std::string_view message,
-                                                       std::optional<std::string_view> purpose,
-                                                       Timestamp now) const;
+                                                       std::optional<std::string_view> purpose, Timestamp now) const;
 
   // The decrypted bytes, before any envelope handling.
   std::optional<std::string> decrypt(std::string_view message) const;

@@ -211,7 +211,9 @@ std::string escape_html_entities(std::string_view json) {
   return out;
 }
 
-std::string encode(const Value& value) { return escape_html_entities(generate(value)); }
+std::string encode(const Value& value) {
+  return escape_html_entities(generate(value));
+}
 
 // ---- parsing --------------------------------------------------------------------------------
 
@@ -374,10 +376,14 @@ class Parser {
     for (int i = 0; i < 4; ++i) {
       char c = s_[pos_ + size_t(i)];
       int d;
-      if (c >= '0' && c <= '9') d = c - '0';
-      else if (c >= 'a' && c <= 'f') d = c - 'a' + 10;
-      else if (c >= 'A' && c <= 'F') d = c - 'A' + 10;
-      else return std::nullopt;
+      if (c >= '0' && c <= '9')
+        d = c - '0';
+      else if (c >= 'a' && c <= 'f')
+        d = c - 'a' + 10;
+      else if (c >= 'A' && c <= 'F')
+        d = c - 'A' + 10;
+      else
+        return std::nullopt;
       v = v * 16 + uint32_t(d);
     }
     pos_ += 4;
@@ -502,6 +508,8 @@ class Parser {
 
 }  // namespace
 
-std::optional<Value> parse(std::string_view text, ParseOptions options) { return Parser(text, options).run(); }
+std::optional<Value> parse(std::string_view text, ParseOptions options) {
+  return Parser(text, options).run();
+}
 
 }  // namespace campfire::compat::json

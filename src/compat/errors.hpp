@@ -15,6 +15,8 @@ enum class Error {
 
 // ActiveSupport::Messages::Rotator falls back to the next rotation only on format and
 // serialization errors. An expired or mismatched message stops at the first verifier.
-constexpr bool rotates(Error e) { return e == Error::InvalidSignature || e == Error::InvalidMessage; }
+constexpr bool rotates(Error e) {
+  return e == Error::InvalidSignature || e == Error::InvalidMessage;
+}
 
 }  // namespace campfire::compat

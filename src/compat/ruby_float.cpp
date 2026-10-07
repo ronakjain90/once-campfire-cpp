@@ -1,9 +1,9 @@
 // String#to_f and Float#to_s as Ruby 3.4 does them. Rust: crates/ruby/src/float.rs.
 #include <algorithm>
 #include <charconv>
-#include <cstdio>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <limits>
 
 #include "compat/float_digits.hpp"
@@ -14,21 +14,36 @@ namespace {
 
 using Bytes = std::string_view;
 
-bool is_space(unsigned char c) { return c == ' ' || (c >= '\t' && c <= '\r'); }
-bool is_digit10(unsigned char c) { return c >= '0' && c <= '9'; }
+bool is_space(unsigned char c) {
+  return c == ' ' || (c >= '\t' && c <= '\r');
+}
+bool is_digit10(unsigned char c) {
+  return c >= '0' && c <= '9';
+}
 int digit_value(unsigned char c, int base) {
   int v = -1;
-  if (c >= '0' && c <= '9') v = c - '0';
-  else if (c >= 'a' && c <= 'f') v = c - 'a' + 10;
-  else if (c >= 'A' && c <= 'F') v = c - 'A' + 10;
+  if (c >= '0' && c <= '9')
+    v = c - '0';
+  else if (c >= 'a' && c <= 'f')
+    v = c - 'a' + 10;
+  else if (c >= 'A' && c <= 'F')
+    v = c - 'A' + 10;
   return v >= 0 && v < base ? v : -1;
 }
-bool is_digit(unsigned char c, int base) { return digit_value(c, base) >= 0; }
-unsigned char lower(unsigned char c) { return (c >= 'A' && c <= 'Z') ? c + 32 : c; }
+bool is_digit(unsigned char c, int base) {
+  return digit_value(c, base) >= 0;
+}
+unsigned char lower(unsigned char c) {
+  return (c >= 'A' && c <= 'Z') ? c + 32 : c;
+}
 
-unsigned char at(Bytes s, size_t i) { return i < s.size() ? static_cast<unsigned char>(s[i]) : 0; }
+unsigned char at(Bytes s, size_t i) {
+  return i < s.size() ? static_cast<unsigned char>(s[i]) : 0;
+}
 
-bool is_hex(Bytes s) { return at(s, 0) == '0' && (at(s, 1) == 'x' || at(s, 1) == 'X'); }
+bool is_hex(Bytes s) {
+  return at(s, 0) == '0' && (at(s, 1) == 'x' || at(s, 1) == 'X');
+}
 
 constexpr size_t kSignificandWidth = 60;
 constexpr size_t kBufferWidth = 69;
@@ -164,8 +179,10 @@ Parsed hex_strtod(Bytes s, size_t start, bool negative) {
   if (at(s, i) == 'p' || at(s, i) == 'P') {
     ++i;
     int sign = 0;
-    if (at(s, i) == '-') sign = -1;
-    else if (at(s, i) == '+') sign = 1;
+    if (at(s, i) == '-')
+      sign = -1;
+    else if (at(s, i) == '+')
+      sign = 1;
     if (sign != 0) ++i;
     if (sign == 0) sign = 1;
     if (!is_digit10(at(s, i))) return {0.0, 0};

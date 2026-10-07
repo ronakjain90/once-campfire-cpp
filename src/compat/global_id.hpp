@@ -15,9 +15,9 @@
 
 namespace campfire::compat::global_id {
 
-inline constexpr std::string_view kApp = "campfire";             // GlobalID.app
+inline constexpr std::string_view kApp = "campfire";                  // GlobalID.app
 inline constexpr std::string_view kAttachablePurpose = "attachable";  // ActionText::Attachable::LOCATOR_NAME
-inline constexpr std::string_view kDefaultPurpose = "default";   // SignedGlobalID::DEFAULT_PURPOSE
+inline constexpr std::string_view kDefaultPurpose = "default";        // SignedGlobalID::DEFAULT_PURPOSE
 
 // A parsed gid://<app>/<Model>/<id>. Query parameters (Rails writes "?expires_in" into
 // attachable SGIDs) are dropped: the locator ignores them.

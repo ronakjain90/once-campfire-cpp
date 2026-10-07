@@ -1,9 +1,9 @@
 // Tests of net/parser.hpp. Rust: hyper request parsing as used by crates/kit/src/front/conn.rs.
+#include "net/parser.hpp"
+
 #include <doctest.h>
 
 #include <string>
-
-#include "net/parser.hpp"
 
 using namespace campfire::net;
 
@@ -41,7 +41,8 @@ TEST_CASE("parse_head asks for more bytes and rejects bad input") {
   CHECK(parse("BAD\r\n\r\n", arena, head).error_status == 400);
   CHECK(parse("GET x HTTP/1.1\r\n\r\n", arena, head).error_status == 400);
   CHECK(parse("POST / HTTP/1.1\r\nContent-Length: 1\r\nContent-Length: 2\r\n\r\n", arena, head).error_status == 400);
-  CHECK(parse("POST / HTTP/1.1\r\nContent-Length: 1\r\nTransfer-Encoding: chunked\r\n\r\n", arena, head).error_status == 400);
+  CHECK(parse("POST / HTTP/1.1\r\nContent-Length: 1\r\nTransfer-Encoding: chunked\r\n\r\n", arena, head).error_status ==
+        400);
   CHECK(parse("POST / HTTP/1.1\r\nContent-Length: +1\r\n\r\n", arena, head).error_status == 400);
   CHECK(parse("POST / HTTP/1.1\r\nTransfer-Encoding: gzip\r\n\r\n", arena, head).error_status == 400);
   const std::string big = "GET / HTTP/1.1\r\nX: " + std::string(70000, 'a');

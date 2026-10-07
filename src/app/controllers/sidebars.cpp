@@ -101,8 +101,9 @@ Task<Flow<net::Response>> sidebars_show(Rq& rq) {
   if (!members) co_return fail_internal(members.error().message);
   for (const models::MembershipWithRoom* item : directs) {
     std::vector<const models::User*> room_members;
-    const auto first = std::lower_bound(members->begin(), members->end(), item->room.id,
-                                        [](const models::users::RoomMember& m, std::int64_t id) { return m.room_id < id; });
+    const auto first =
+        std::lower_bound(members->begin(), members->end(), item->room.id,
+                         [](const models::users::RoomMember& m, std::int64_t id) { return m.room_id < id; });
     for (auto it = first; it != members->end() && it->room_id == item->room.id; ++it) room_members.push_back(&it->user);
     auto direct = direct_locals(rq, item->membership, item->room, room_members);
     if (!direct) co_return std::unexpected(std::move(direct.error()));

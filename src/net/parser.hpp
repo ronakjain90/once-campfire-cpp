@@ -1,12 +1,12 @@
 // HTTP/1.1 request head and body parser. Rust: crates/kit/src/front/conn.rs (hyper); Rails: Puma.
 #pragma once
 
+#include <picohttpparser.h>
+
 #include <cstddef>
 #include <cstdint>
 #include <span>
 #include <string_view>
-
-#include <picohttpparser.h>
 
 #include "core/arena.hpp"
 #include "net/http.hpp"
@@ -19,7 +19,7 @@ enum class BodyKind : std::uint8_t { None, Length, Chunked };
 
 // The result of the parse of one request head.
 struct ParsedHead {
-  Request request;           // views point into the buffer, and into the arena for the header list
+  Request request;            // views point into the buffer, and into the arena for the header list
   std::size_t head_size = 0;  // bytes of the head, with the blank line
   BodyKind body_kind = BodyKind::None;
   std::uint64_t content_length = 0;
@@ -34,7 +34,7 @@ struct HeadResult {
 };
 
 struct ParserLimits {
-  std::size_t max_head_bytes = 64 * 1024;  // 431 above this
+  std::size_t max_head_bytes = 64 * 1024;    // 431 above this
   std::size_t max_target_bytes = 16 * 1024;  // 414 above this
 };
 

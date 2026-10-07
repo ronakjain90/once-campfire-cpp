@@ -34,7 +34,7 @@ struct Request {
   std::span<const Header> headers;
   std::string_view body;
   bool keep_alive = true;
-  bool via_front = false;     // came in on HTTP_PORT (the front), not TARGET_PORT
+  bool via_front = false;      // came in on HTTP_PORT (the front), not TARGET_PORT
   std::string_view remote_ip;  // text of the client address, canonical form
 
   // First header with this name (`lower_name` must be lowercase), or an empty view.

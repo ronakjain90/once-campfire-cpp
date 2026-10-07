@@ -47,9 +47,15 @@ constexpr auto kDecode = make_decode_table();
 
 }  // namespace
 
-std::string strict_encode(std::string_view data) { return encode(data, kStandard, true); }
-std::string urlsafe_encode_unpadded(std::string_view data) { return encode(data, kUrlSafe, false); }
-std::string urlsafe_encode_padded(std::string_view data) { return encode(data, kUrlSafe, true); }
+std::string strict_encode(std::string_view data) {
+  return encode(data, kStandard, true);
+}
+std::string urlsafe_encode_unpadded(std::string_view data) {
+  return encode(data, kUrlSafe, false);
+}
+std::string urlsafe_encode_padded(std::string_view data) {
+  return encode(data, kUrlSafe, true);
+}
 
 std::optional<std::string> strict_decode(std::string_view encoded) {
   if (encoded.size() % 4 != 0) return std::nullopt;
@@ -87,8 +93,10 @@ std::optional<std::string> strict_decode(std::string_view encoded) {
 std::optional<std::string> urlsafe_decode(std::string_view encoded) {
   std::string translated(encoded);
   for (auto& c : translated) {
-    if (c == '-') c = '+';
-    else if (c == '_') c = '/';
+    if (c == '-')
+      c = '+';
+    else if (c == '_')
+      c = '/';
   }
   if (!encoded.empty() && encoded.back() != '=' && encoded.size() % 4 != 0) {
     while (translated.size() % 4 != 0) translated += '=';

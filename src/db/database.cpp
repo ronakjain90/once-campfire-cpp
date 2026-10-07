@@ -33,7 +33,8 @@ class PlainStatements {
       if (entry.sql == sql) stmt = entry.stmt;
     }
     if (stmt == nullptr) {
-      if (sqlite3_prepare_v3(conn_.handle(), sql, -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr) != SQLITE_OK) return false;
+      if (sqlite3_prepare_v3(conn_.handle(), sql, -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr) != SQLITE_OK)
+        return false;
       entries_.push_back({sql, stmt});
     }
     int rc = sqlite3_step(stmt);

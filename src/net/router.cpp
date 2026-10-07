@@ -79,7 +79,8 @@ bool try_route(const Route& route, const Split& split, Match& match) noexcept {
         if (!params.add(segment.name, value)) return false;
         break;
       case SegmentKind::Glob:
-        if (!params.add(segment.name, std::string_view(part.data(), static_cast<std::size_t>(split.end - part.data())))) {
+        if (!params.add(segment.name,
+                        std::string_view(part.data(), static_cast<std::size_t>(split.end - part.data())))) {
           return false;
         }
         break;
@@ -93,7 +94,9 @@ bool try_route(const Route& route, const Split& split, Match& match) noexcept {
   return true;
 }
 
-std::string_view bucket_key(std::string_view first) noexcept { return first.substr(0, first.find('.')); }
+std::string_view bucket_key(std::string_view first) noexcept {
+  return first.substr(0, first.find('.'));
+}
 
 Match search(const RouteTable& table, const MethodIndex& index, const Split& split) noexcept {
   Match match;

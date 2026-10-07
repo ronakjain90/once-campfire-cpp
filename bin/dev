@@ -100,9 +100,11 @@ case "$cmd" in
     in_container '
       set -e
       mode=$1; shift
-      if [ $# -eq 0 ]; then set -- src tests fuzz tools; fi
-      files=$(find "$@" -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.h" -o -name "*.cc" -o -name "*.inc" \) \
-                -not -path "*/vendor/*" -not -path "*/generated/*" -not -name "*.gen.*" 2>/dev/null | sort)
+      if [ $# -eq 0 ]; then set -- src tests tools; fi
+      # The .inc files are tables and route lists, not C++ code. translations_table.hpp is generated.
+      files=$(find "$@" -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.h" -o -name "*.cc" \) \
+                -not -path "*/vendor/*" -not -path "*/generated/*" -not -name "*.gen.*" \
+                -not -name translations_table.hpp 2>/dev/null | sort)
       [ -n "$files" ] || { echo "no files"; exit 0; }
       if [ "$mode" = check ]; then
         echo "$files" | xargs clang-format --dry-run -Werror

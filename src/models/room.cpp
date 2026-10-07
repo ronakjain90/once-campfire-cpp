@@ -3,6 +3,8 @@
 
 #include <set>
 
+#include "models/hooks.hpp"
+
 namespace campfire::models {
 
 namespace {
@@ -160,6 +162,8 @@ Status revoke_from(db::Tx& tx, const Room& room, std::span<const std::int64_t> i
   for (const std::int64_t user_id : ids) {
     auto done = tx.conn().exec(kRevoke, room.id, user_id);
     if (!done) return std::unexpected(done.error());
+    // Membership `after_destroy_commit { user.reset_remote_connections }`.
+    tx.after_commit([user_id] { hooks::disconnect_user(user_id, true); });
   }
   tx.changed(db::schema::Table::Memberships, room.id);
   return {};

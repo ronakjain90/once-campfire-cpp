@@ -5,6 +5,7 @@
 #include <atomic>
 
 #include "models/ban.hpp"
+#include "models/hooks.hpp"
 #include "models/session.hpp"
 #include "models/user.hpp"
 #include "req/bcrypt.hpp"
@@ -260,6 +261,8 @@ Task<Flow<void>> start_new_session_for(Rq& rq, models::User user) {
 }
 
 Task<Flow<void>> terminate_current_session(Rq& rq) {
+  const models::User* signed_in = rq.current_user();
+  const std::int64_t user_id = signed_in != nullptr ? signed_in->id : 0;
   if (const models::Session* current = rq.current_session(); current != nullptr) {
     const models::Session session = *current;
     auto destroyed = co_await rq.app.db->write(
@@ -268,7 +271,8 @@ Task<Flow<void>> terminate_current_session(Rq& rq) {
   }
   rq.reset_session();
   rq.cookies().remove("session_token");
-  // Rails also closes the user's Action Cable sockets (`reset_remote_connections`). The hub is a later task (A7).
+  // Rails also closes the user's Action Cable sockets (`reset_remote_connections`).
+  if (user_id != 0) models::hooks::disconnect_user(user_id, true);
   co_return Flow<void>{};
 }
 

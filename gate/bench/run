@@ -2,7 +2,7 @@
 # Benchmark app images with the Rust load generator, in the Colima VM.
 #
 #   gate/bench/run [--apps name=image,name=image] [--reps 3] [--routes room_show,post_message]
-#                  [--secs 8] [--concs "1 16 64"] [--out DIR] [--rebuild]
+#                  [--secs 8] [--concs "1 16 64"] [--cable "100 1000"] [--out DIR] [--rebuild]
 #
 # On the host, this script starts the runner container (campfire-bench-runner) and runs itself
 # inside it. Inside the runner it does the work for each rep and each app (the order of the apps
@@ -45,7 +45,9 @@ PORT=${PORT:-4390}
 BASE=http://127.0.0.1:$PORT
 APP_USER=1000:1000   # the user the app images declare
 
-APPS=rust=campfire-rust:app REPS=3 ROUTES=room_show,post_message SECS=8 CONCS="1 16 64" OUT=""
+APPS=rust=campfire-rust:app REPS=3 ROUTES=room_show,post_message SECS=8 CONCS="1 16 64" CABLE="" OUT=""
+CABLE_TPUT_SECS=${CABLE_TPUT_SECS:-15}
+CABLE_POSTERS=${CABLE_POSTERS:-4}
 while [ $# -gt 0 ]; do
   case "$1" in
     --apps) APPS=$2; shift 2 ;;
@@ -53,6 +55,7 @@ while [ $# -gt 0 ]; do
     --routes) ROUTES=$2; shift 2 ;;
     --secs) SECS=$2; shift 2 ;;
     --concs) CONCS=${2//,/ }; shift 2 ;;
+    --cable) CABLE=${2//,/ }; shift 2 ;;
     --out) OUT=$2; shift 2 ;;
     *) echo "unknown option $1" >&2; exit 2 ;;
   esac
@@ -155,11 +158,12 @@ run_rep() {
     echo "app: $(docker exec "$CONTAINER" grep Cpus_allowed_list /proc/1/status 2>&1 || grep Cpus_allowed_list "/proc/$(docker inspect -f '{{.State.Pid}}' "$CONTAINER")/status")"
   } >> "$OUT/pin.log"
 
-  local cookie scrape csrf css
+  local cookie scrape csrf css streams
   cookie=$(jget "$(lg login --base "$BASE" --email "$EMAIL" --password "$PASSWORD")" cookie)
   scrape=$(lg scrape --base "$BASE" --cookie "$cookie" --room "$ROOM")
   csrf=$(jget "$scrape" csrf)
   CSS=$(jget "$scrape" css)
+  streams=$(python3 -c 'import json,sys; print(",".join(json.loads(sys.argv[1])["streams"]))' "$scrape")
 
   local http_json="[]" name path args res c lgpid lgproc cpu0 cpu1 first=1
   for name in ${ROUTES//,/ }; do
@@ -190,10 +194,26 @@ a.append(r); print(json.dumps(a))' "$http_json" "$res" "$name" "$cpu1" "$cpu0")
     done
   done
 
-  python3 - "$f" "$app" "$image" "$rep" "$http_json" <<'PY'
+  # The Action Cable fan-out: the same command and arguments as once-campfire-rust/bench/run.
+  local cable_json="[]" n
+  for n in $CABLE; do
+    cpu0=$(cpu_usec "$cg")
+    res=$(lg cable --base "$BASE" --cookie "$cookie" --room "$ROOM" --csrf "$csrf" --streams "$streams" \
+      --clients "$n" --tput-secs "$CABLE_TPUT_SECS" --posters "$CABLE_POSTERS")
+    cpu1=$(cpu_usec "$cg")
+    cable_json=$(python3 -c '
+import json,sys
+a=json.loads(sys.argv[1]); r=json.loads(sys.argv[2]); r["app_cpu_usec"]=int(sys.argv[3])-int(sys.argv[4])
+a.append(r); print(json.dumps(a))' "$cable_json" "$res" "$cpu1" "$cpu0")
+    log "$app rep $rep: cable $n clients $(python3 -c 'import json,sys; r=json.loads(sys.argv[1]); print("ready", r["ready"], "lat all p50", r["latency"]["all_clients"].get("p50_ms"), "p99", r["latency"]["all_clients"].get("p99_ms"), "tput", r["throughput"]["delivered_msgs_per_sec"], "msg/s", r["throughput"]["complete"], "/", r["throughput"]["posted"])' "$res")"
+    sleep 2
+  done
+
+  python3 - "$f" "$app" "$image" "$rep" "$http_json" "$cable_json" <<'PY'
 import json, sys
-f, app, image, rep, http = sys.argv[1:]
-json.dump({"app": app, "image": image, "rep": int(rep), "http": json.loads(http)}, open(f, "w"), indent=1)
+f, app, image, rep, http, cable = sys.argv[1:]
+json.dump({"app": app, "image": image, "rep": int(rep), "http": json.loads(http), "cable": json.loads(cable)},
+          open(f, "w"), indent=1)
 PY
   docker rm -f "$CONTAINER" >/dev/null
   rm -rf "$dir"
@@ -203,7 +223,7 @@ PY
 {
   echo "date: $(date -Is)"
   echo "kernel: $(uname -r), $(nproc) cpus; server cpus $SERVER_CPUS, loadgen cpus $LOADGEN_CPUS"
-  echo "routes: $ROUTES; secs: $SECS; concs: $CONCS; reps: $REPS"
+  echo "routes: $ROUTES; secs: $SECS; concs: $CONCS; cable clients: ${CABLE:-none}; reps: $REPS"
   for pair in ${APPS//,/ }; do echo "${pair%%=*}: ${pair#*=} $(docker image inspect -f '{{.Id}}' "${pair#*=}")"; done
 } | tee "$OUT/env.txt" >&2
 : > "$OUT/pin.log"

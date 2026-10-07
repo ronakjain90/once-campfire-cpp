@@ -10,7 +10,10 @@ CPUs 0-3. The load generator runs on CPUs 4-7.
 
 Options: `--apps name=image,...` (default `rust=campfire-rust:app`), `--reps` (default 3),
 `--routes` (default `room_show,post_message`), `--secs` (default 8), `--concs` (default `"1 16 64"`),
+`--cable "100 1000"` (run the Action Cable fan-out with these client counts; default none),
 `--out DIR` (default `gate/bench/results/<time>`), `--rebuild` (build the runner image again).
+Set `--routes ""` to run only the fan-out. `CABLE_TPUT_SECS` (15) and `CABLE_POSTERS` (4) set the
+throughput phase of the fan-out, as in `once-campfire-rust/bench/run`.
 
 Routes: `room_show`, `messages_page`, `sidebar`, `search`, `avatar`, `static_css`, `up`,
 `post_message`. They are the routes of `once-campfire-rust/bench/run`.

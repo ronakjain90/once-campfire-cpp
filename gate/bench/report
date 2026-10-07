@@ -60,3 +60,25 @@ for app in apps:
     print(f"- {app}: " + ("; ".join(bad) if bad else "none"))
 print("\nAverage response bytes (first rep): " + "; ".join(
     f"{app} {h['route']} c={h['conc']}: {h['avg_bytes']}" for app in apps for h in runs[app][0]["http"] if h["conc"] == min(x["conc"] for x in runs[app][0]["http"])))
+
+cable = {}  # clients -> app -> list of cable results
+for app, rs in runs.items():
+    for r in rs:
+        for c in r.get("cable", []):
+            cable.setdefault(c["clients"], {}).setdefault(app, []).append(c)
+if cable:
+    print("\nAction Cable fan-out (one post reaches every client):\n")
+    print("| clients | app | ready | deliveries/s | post-to-all p50 ms | post-to-all p99 ms | complete / posted |")
+    print("|---:|---|---:|---:|---:|---:|---|")
+    for n in sorted(cable):
+        for app in apps:
+            cs = cable[n].get(app, [])
+            if not cs:
+                continue
+            done = ", ".join(f"{c['throughput']['complete']}/{c['throughput']['posted']}" for c in cs)
+            print(f"| {n} | {app} | " + " | ".join([
+                cell([c["ready"] for c in cs]),
+                cell([c["throughput"]["delivered_msgs_per_sec"] for c in cs]),
+                cell([c["latency"]["all_clients"].get("p50_ms") for c in cs]),
+                cell([c["latency"]["all_clients"].get("p99_ms") for c in cs]),
+                done]) + " |")

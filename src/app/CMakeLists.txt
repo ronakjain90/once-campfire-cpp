@@ -61,6 +61,7 @@ campfire_library(app
     controllers/session_transfers.cpp
     controllers/directs.cpp
     controllers/involvements.cpp
+    controllers/room_pages.cpp
     controllers/rooms.cpp
     controllers/sessions.cpp
     controllers/users.cpp
@@ -79,7 +80,6 @@ campfire_library(app
     fragment_cache.cpp
     health.cpp
     message_actions.cpp
-    message_partial_stub.cpp
     message_presenter.cpp
     network_guard.cpp
     not_found.cpp
@@ -115,6 +115,7 @@ campfire_test(app
     tests/signin_area_test.cpp
     tests/user_agent_test.cpp
     tests/rooms_test.cpp
+    tests/room_pages_test.cpp
     tests/unfurl_policy_test.cpp
     tests/unfurl_test.cpp
   WERROR)

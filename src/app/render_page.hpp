@@ -27,6 +27,10 @@ struct PageSpec {
   PagePart content;
   PagePart footer;
   PagePart sidebar;
+  // Reads the data that only a render needs (it runs on a page cache miss, before the parts). A failure is the result.
+  std::function<Flow<void>()> prepare;
+  // The ETag of the page comes from its cached fragments (a room page), as in the Rust port.
+  bool parts_etag = false;
   // Called with the scope and the layout data, after the facets of the layout. Add the facets of the page here.
   std::function<void(db::DependencyScope&, const LayoutData&)> facets;
 };
@@ -34,6 +38,11 @@ struct PageSpec {
 // Reads the layout data (tracked), adds the facets, and sends the page from the page cache (or renders and stores it).
 // `status` is the status of the response.
 [[nodiscard]] Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec);
+
+// The same, for a handler that has read its data in the scope `deps` already (`rq.track()` was called before the
+// reads). `layout` is the result of `load_layout`, which ran in the same scope.
+[[nodiscard]] Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec, db::DependencyScope& deps,
+                                              const LayoutData& layout);
 
 // The facets of everything that the layouts print and that is not from tracked SQL: the host, the Turbo-Frame flag,
 // the flash and the current user.

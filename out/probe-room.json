@@ -1,0 +1,1 @@
+{"area": "P", "scenarios": [{"name": "probe", "seed": "default", "steps": [{"op": "login", "actor": "david"}, {"name": "room raw", "actor": "david", "path": "/rooms/{{rooms.designers}}", "normalize": [], "defaults": false}]}]}

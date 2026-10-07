@@ -3,8 +3,8 @@
 
 #include <stdexcept>
 
-#include "app/platform.hpp"
 #include "app/controllers/rooms.hpp"
+#include "app/platform.hpp"
 #include "assets/assets.hpp"
 #include "compat/signed_id.hpp"
 #include "core/time_format.hpp"
@@ -125,28 +125,67 @@ net::Response layout_response(Rq& rq, int status, Out&& body) {
   return rq.html(status, std::move(body));
 }
 
-net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps, const std::function<void(Out&)>& render) {
-  const auto make_body = [&] {
+namespace {
+
+// Notes where the templates put the cached fragments in the body of a page.
+class SpanRecorder final : public views::FragmentRecorder {
+ public:
+  void record(std::size_t offset, std::size_t size) override { spans.push_back({offset, size}); }
+  std::vector<FragmentSpan> spans;
+};
+
+}  // namespace
+
+Flow<net::Response> cached_page_checked(Rq& rq, int status, db::DependencyScope& deps,
+                                        const std::function<Flow<void>(Out&)>& render, bool preload_link,
+                                        bool parts_etag_wanted) {
+  SpanRecorder recorder;
+  const auto make_body = [&]() -> Flow<Out> {
     Out out(rq.ctx.resource());
-    render(out);
+    recorder.spans.clear();
+    if (parts_etag_wanted) views::set_fragment_recorder(&recorder);
+    auto done = render(out);
+    views::set_fragment_recorder(nullptr);
+    if (!done) return std::unexpected(std::move(done.error()));
     return out;
   };
-  if (!rq.is_turbo_frame_request()) {
+  if (preload_link && !rq.is_turbo_frame_request()) {
     rq.set_header("link", assets::append_preload_links(rq.staged_header("link"), rq.app.stylesheets.preload_links));
   }
-  if (!deps.cacheable()) return rq.html(status, make_body());
+  if (!deps.cacheable()) {
+    auto body = make_body();
+    if (!body) return std::unexpected(std::move(body.error()));
+    return rq.html(status, std::move(*body));
+  }
   PageCache& cache = rq.app.pages;
   const Hash128 key = deps.key();
   if (auto hit = cache.get(key)) {
     if (cache.audit_due()) {
-      const std::string fresh = make_body().to_string();
-      cache.audit_compare(key, *hit, fresh);
+      auto fresh = make_body();
+      if (!fresh) return std::unexpected(std::move(fresh.error()));
+      cache.audit_compare(key, *hit, fresh->to_string());
     }
     return rq.respond_page(std::move(hit), status);
   }
-  std::string body = make_body().to_string();
-  auto entry = cache.put(key, std::move(body), "text/html; charset=utf-8");
+  auto body = make_body();
+  if (!body) return std::unexpected(std::move(body.error()));
+  std::string text = body->to_string();
+  std::string etag;
+  if (parts_etag_wanted) etag = parts_etag(text, recorder.spans);
+  auto entry = cache.put(key, std::move(text), "text/html; charset=utf-8", std::move(etag));
   return rq.respond_page(std::move(entry), status);
+}
+
+net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps, const std::function<void(Out&)>& render,
+                          bool preload_link) {
+  auto response = cached_page_checked(
+      rq, status, deps,
+      [&](Out& out) -> Flow<void> {
+        render(out);
+        return {};
+      },
+      preload_link);
+  return std::move(*response);  // `render` cannot fail
 }
 
 }  // namespace campfire::app

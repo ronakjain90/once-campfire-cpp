@@ -66,6 +66,12 @@ namespace messages {
                                                        const Message& message);
 [[nodiscard]] Result<std::vector<Message>> page_after(db::Connection& conn, Arena& arena, std::int64_t room_id,
                                                       const Message& message);
+// `room.messages.page_created_since(time)` and `room.messages.without(that).page_updated_since(time)`. `time` is the
+// text of the database. The updated page is oldest first.
+[[nodiscard]] Result<std::vector<Message>> page_created_since(db::Connection& conn, Arena& arena, std::int64_t room_id,
+                                                              std::string_view time);
+[[nodiscard]] Result<std::vector<Message>> page_updated_since_without_new(db::Connection& conn, Arena& arena,
+                                                                          std::int64_t room_id, std::string_view time);
 // `room.messages.before(message).exists?` and `.after(message).exists?`
 [[nodiscard]] Result<bool> exists_before(db::Connection& conn, Arena& arena, std::int64_t room_id,
                                          const Message& message);

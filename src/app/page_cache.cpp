@@ -3,6 +3,8 @@
 
 #include <openssl/evp.h>
 
+#include <array>
+#include <cstdint>
 #include <cstdlib>
 
 #include "app/compress.hpp"
@@ -55,6 +57,70 @@ std::string body_etag(std::string_view body) {
   Sha256Etag sha;
   sha.update(body.data(), body.size());
   return sha.etag();
+}
+
+namespace {
+
+using Digest32 = std::array<unsigned char, 32>;
+
+Digest32 sha256(std::string_view data) {
+  Digest32 out{};
+  unsigned int length = 0;
+  EVP_Digest(data.data(), data.size(), out.data(), &length, EVP_sha256(), nullptr);
+  return out;
+}
+
+void put_u64_le(std::string& out, std::uint64_t value) {
+  for (int i = 0; i < 8; ++i) out.push_back(static_cast<char>((value >> (8 * i)) & 0xFF));
+}
+
+}  // namespace
+
+std::string parts_etag(std::string_view body, std::span<const FragmentSpan> fragments) {
+  // `MIN_FRAGMENT` and `MAX_GLUE` of the Rust port.
+  constexpr std::size_t kMinFragment = 1024;
+  constexpr std::size_t kMaxGlue = 256;
+  std::string stream;  // what the Rust port feeds to its hasher
+  bool follows_fragment = false;
+  bool any = false;
+  std::size_t position = 0;
+  const auto text_part = [&](std::string_view text) {
+    stream.push_back('T');
+    put_u64_le(stream, text.size());
+    const Digest32 sha = sha256(text);
+    stream.append(reinterpret_cast<const char*>(sha.data()), sha.size());
+  };
+  for (const FragmentSpan& span : fragments) {
+    if (span.size < kMinFragment) continue;  // it stays in the text around it
+    any = true;
+    const std::string_view gap = body.substr(position, span.offset - position);
+    std::string_view glue;
+    if (follows_fragment && gap.size() <= kMaxGlue) {
+      glue = gap;
+    } else if (!gap.empty()) {
+      text_part(gap);
+    }
+    const std::string_view fragment = body.substr(span.offset, span.size);
+    stream.push_back('F');
+    put_u64_le(stream, glue.size());
+    stream.append(glue);
+    put_u64_le(stream, fragment.size());
+    const Digest32 sha = sha256(fragment);
+    stream.append(reinterpret_cast<const char*>(sha.data()), sha.size());
+    follows_fragment = true;
+    position = span.offset + span.size;
+  }
+  if (!any) return body_etag(body);
+  if (position < body.size()) text_part(body.substr(position));
+  const Digest32 digest = sha256(stream);
+  static constexpr char kHex[] = "0123456789abcdef";
+  std::string out = "W/\"";
+  for (int i = 0; i < 16; ++i) {
+    out.push_back(kHex[digest[static_cast<std::size_t>(i)] >> 4]);
+    out.push_back(kHex[digest[static_cast<std::size_t>(i)] & 15]);
+  }
+  out.push_back('"');
+  return out;
 }
 
 std::string key_etag(const Hash128& key) {

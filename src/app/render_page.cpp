@@ -29,6 +29,12 @@ Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec) {
   db::DependencyScope& deps = rq.track();
   auto layout = load_layout(rq);
   if (!layout) return std::unexpected(std::move(layout.error()));
+  return render_page(rq, status, spec, deps, *layout);
+}
+
+Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec, db::DependencyScope& deps,
+                                const LayoutData& layout_data) {
+  const LayoutData* layout = &layout_data;
   deps.facet("page", spec.name);
   deps.facet("title", spec.title);
   deps.facet("body_class", spec.body_class.value_or(""));
@@ -36,7 +42,10 @@ Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec) {
   add_layout_facets(rq, deps, *layout);
   if (spec.facets) spec.facets(deps, *layout);
   const LayoutData& data = *layout;
-  const auto render = [&](Out& out) {
+  const auto render = [&](Out& out) -> Flow<void> {
+    if (spec.prepare) {
+      if (auto prepared = spec.prepare(); !prepared) return prepared;
+    }
     const views::ViewContext ctx = make_view_context(rq, data);
     const auto bind = [&](const PagePart& part) -> views::Region {
       if (!part) return {};
@@ -55,8 +64,9 @@ Flow<net::Response> render_page(Rq& rq, int status, const PageSpec& spec) {
     } else {
       views::layouts::application(out, ctx, parts);
     }
+    return {};
   };
-  return cached_page(rq, status, deps, render);
+  return cached_page_checked(rq, status, deps, render, true, spec.parts_etag);
 }
 
 }  // namespace campfire::app

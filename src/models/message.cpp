@@ -36,6 +36,15 @@ const db::Query<MessageRow(std::int64_t, std::string_view)> kPageBefore{
     CF_IN_ROOM " AND (created_at < ?) ORDER BY \"messages\".\"created_at\" DESC LIMIT 40"};
 const db::Query<MessageRow(std::int64_t, std::string_view)> kPageAfter{
     CF_IN_ROOM " AND (created_at > ?) ORDER BY \"messages\".\"created_at\" ASC LIMIT 40"};
+const db::Query<MessageRow(std::int64_t, std::string_view)> kCreatedSince{
+    CF_IN_ROOM " AND (created_at > ?) ORDER BY \"messages\".\"created_at\" ASC LIMIT 40"};
+// `room.messages.without(new_messages).page_updated_since(time)`: the new messages are the first page created since
+// `time`, so the subquery gives the list that Rails passes to `NOT IN`.
+const db::Query<MessageRow(std::int64_t, std::int64_t, std::string_view, std::string_view)> kUpdatedSince{
+    CF_IN_ROOM
+    " AND \"messages\".\"id\" NOT IN (SELECT \"messages\".\"id\" FROM \"messages\" WHERE \"messages\".\"room_id\" = ? "
+    "AND (created_at > ?) ORDER BY \"messages\".\"created_at\" ASC LIMIT 40) AND (updated_at > ?) ORDER BY "
+    "\"messages\".\"created_at\" DESC LIMIT 40"};
 const db::Query<std::int64_t(std::int64_t, std::string_view)> kExistsBefore{
     "SELECT 1 FROM \"messages\" WHERE \"messages\".\"room_id\" = ? AND (created_at < ?) LIMIT 1"};
 const db::Query<std::int64_t(std::int64_t, std::string_view)> kExistsAfter{
@@ -179,6 +188,16 @@ Result<std::vector<Message>> page_before(db::Connection& conn, Arena& arena, std
 Result<std::vector<Message>> page_after(db::Connection& conn, Arena& arena, std::int64_t room_id,
                                         const Message& message) {
   return collect(conn.all(kPageAfter, arena, room_id, std::string_view(message.created_at)), false);
+}
+
+Result<std::vector<Message>> page_created_since(db::Connection& conn, Arena& arena, std::int64_t room_id,
+                                                std::string_view time) {
+  return collect(conn.all(kCreatedSince, arena, room_id, time), false);
+}
+
+Result<std::vector<Message>> page_updated_since_without_new(db::Connection& conn, Arena& arena, std::int64_t room_id,
+                                                            std::string_view time) {
+  return collect(conn.all(kUpdatedSince, arena, room_id, room_id, time, time), true);
 }
 
 Result<bool> exists_before(db::Connection& conn, Arena& arena, std::int64_t room_id, const Message& message) {

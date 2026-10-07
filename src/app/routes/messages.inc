@@ -1,5 +1,6 @@
 # MessagesController, the write side. Rails: config/routes.rb `resources :rooms { resources :messages }` and
 # `resources :messages`. `index` is the route of the rooms area (A2). The bot routes have the default format json.
+GET    /rooms/:room_id/messages(.:format)                    messages_controller::index
 POST   /rooms/:room_id/messages(.:format)                    messages_controller::create
 GET    /rooms/:room_id/messages/new(.:format)                misc::action_not_found
 GET    /rooms/:room_id/messages/:id/edit(.:format)           messages_controller::edit
@@ -25,6 +26,7 @@ PATCH  /messages/:message_id/boosts/:id(.:format)            misc::action_not_fo
 PUT    /messages/:message_id/boosts/:id(.:format)            misc::action_not_found
 DELETE /messages/:message_id/boosts/:id(.:format)            messages_boosts::destroy
 # MessagesController without a room. `GET /messages` is `messages#index` of the rooms area (A2).
+GET    /messages(.:format)                                   messages_controller::index
 POST   /messages(.:format)                                   messages_controller::create
 GET    /messages/new(.:format)                               misc::action_not_found
 GET    /messages/:id/edit(.:format)                          messages_controller::edit

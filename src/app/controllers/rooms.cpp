@@ -57,9 +57,12 @@ Flow<models::Room> set_room(Rq& rq, models::RoomScope scope) {
   return halt(std::move(*redirect));
 }
 
+// Rails sets the cookie on every room page. The Rust port sets it only when the value changes: so does this code.
 void remember_last_room_visited(Rq& rq, const models::Room& room) {
+  const std::string value = std::to_string(room.id);
+  if (const auto current = rq.cookies().get("last_room"); current && *current == value) return;
   req::Cookie cookie;
-  cookie.value = std::to_string(room.id);
+  cookie.value = value;
   cookie.permanent = true;
   rq.cookies().set("last_room", std::move(cookie));
 }
@@ -502,17 +505,3 @@ Task<net::Response> update(net::Ctx& c) {
 }
 
 }  // namespace campfire::routes::rooms_closeds
-
-namespace campfire::app::controllers {
-
-// `show`, until the messages exist (A3): the checks and the cookie of the real action, then a 404.
-Task<Flow<net::Response>> rooms_show(Rq& rq) {
-  auto before = co_await concerns::before_actions(rq, concerns::Before{});
-  if (!before) co_return std::unexpected(std::move(before.error()));
-  auto room = set_room(rq, models::RoomScope::All);
-  if (!room) co_return std::unexpected(std::move(room.error()));
-  remember_last_room_visited(rq, *room);
-  co_return fail_with(ErrorKind::NotFound, "rooms#show waits for the messages (A3)");
-}
-
-}  // namespace campfire::app::controllers

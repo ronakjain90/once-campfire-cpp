@@ -9,7 +9,9 @@
 #include <variant>
 #include <vector>
 
+#include "core/out.hpp"
 #include "core/timestamp.hpp"
+#include "views/context.hpp"
 
 namespace campfire::views::messages {
 
@@ -100,6 +102,7 @@ struct MessageView {
   std::vector<BoostView> boosts;  // `message.boosts.ordered`
 
   [[nodiscard]] const AttachmentView* attachment() const { return std::get_if<AttachmentView>(&content); }
+  [[nodiscard]] bool is_unrenderable() const { return std::holds_alternative<UnrenderableContent>(content); }
   // `dom_id(message, prefix)`
   [[nodiscard]] std::string dom_id(std::string_view prefix = {}) const {
     std::string result;
@@ -112,5 +115,19 @@ struct MessageView {
     return result;
   }
 };
+
+// A message on its way into a list: the fragment that the cache holds already, or the view to render it from.
+struct MessageItem {
+  std::string html;  // the fragment, when the cache had this version
+  std::optional<MessageView> view;
+  std::string client_message_id;
+  std::string updated_at;
+  std::int64_t id = 0;
+  std::int64_t room_id = 0;
+  [[nodiscard]] std::string dom_id() const { return "message_" + client_message_id; }
+};
+
+// `render message` for an item: the fragment as it is, or the partial (which fills the cache).
+void render_message_item(Out& out, const ViewContext& ctx, const MessageItem& item);
 
 }  // namespace campfire::views::messages

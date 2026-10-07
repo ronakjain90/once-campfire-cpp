@@ -1,0 +1,20 @@
+app rust rep 1
+db dir: /var/lib/campfire-bench/rust-1-593511/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 593718, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app cpp rep 1
+db dir: /var/lib/campfire-bench/cpp-1-593511/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 594630, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app cpp rep 2
+db dir: /var/lib/campfire-bench/cpp-2-593511/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 596238, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app rust rep 2
+db dir: /var/lib/campfire-bench/rust-2-593511/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 599201, loadgen http --base http://127.0.0.1:4390 --cookie session_t)

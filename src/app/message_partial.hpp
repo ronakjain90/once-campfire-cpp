@@ -3,9 +3,8 @@
 // Messages::AttachmentPresentation (app/models/messages/attachment_presentation.rb). Rust:
 // crates/views/src/messages.rs.
 //
-// A3 writes the controllers and the broadcasts. A2 writes the partials. Until A2 merges, message_partial_stub.cpp gives
-// a temporary implementation of each function. When A2 merges, delete the stub and let the template functions of A2
-// take these names.
+// A3 writes the controllers and the broadcasts. The partials are templates in src/views/messages/ (the names that
+// tools/ctc.py gives them). This header declares them for the code of the app.
 #pragma once
 
 #include "core/out.hpp"

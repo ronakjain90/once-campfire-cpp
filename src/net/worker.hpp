@@ -58,6 +58,9 @@ class Worker final : public Scheduler {
   bool step_linger(Conn& c);
   bool step_handshake(Conn& c);
   bool fill(Conn& c);  // reads from the socket; false if the connection ended or has no data
+  // `fill` for a connection whose head is parsed: the request holds views into the read buffer, so if the buffer moves,
+  // the head is parsed again from the new place.
+  bool fill_body(Conn& c);
   void begin_wait(Conn& c);
   void dispatch(Conn& c);
   void begin_write(Conn& c);

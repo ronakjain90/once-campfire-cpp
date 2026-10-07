@@ -96,6 +96,8 @@ class MessagePresenter {
                                                                    const std::string& plain_text);
 
   std::unordered_map<std::int64_t, models::User> users_;
+  // `room_display_name(message.room, for_user: nil)` of the rooms that this presenter has seen.
+  std::unordered_map<std::int64_t, std::string> room_names_;
 };
 
 }  // namespace campfire::app

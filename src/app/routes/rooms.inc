@@ -14,6 +14,7 @@ GET    /rooms/:id(.:format)                     rooms::show
 PATCH  /rooms/:id(.:format)                     misc::action_not_found
 PUT    /rooms/:id(.:format)                     misc::action_not_found
 DELETE /rooms/:id(.:format)                     rooms::destroy
+GET    /rooms/:room_id/@:message_id(.:format)   rooms::show
 GET    /rooms/opens(.:format)                   rooms::index
 POST   /rooms/opens(.:format)                   rooms_opens::create
 GET    /rooms/opens/new(.:format)               rooms_opens::new_

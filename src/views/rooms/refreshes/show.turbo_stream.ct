@@ -1,0 +1,10 @@
+{# reference/app/views/rooms/refreshes/show.turbo_stream.erb, byte for byte as the Rust template prints it #}
+{% include views/rooms/show.hpp %}
+{% params const ViewContext& ctx, const RefreshView& refresh %}
+{% if !refresh.new_messages.empty() %}
+<turbo-stream action="append" target="{{ dom_id(room_param_key(refresh.kind), std::to_string(refresh.room_id), "messages") }}"><template>
+  {% for item : refresh.new_messages %}{% call messages::render_message_item(ctx, item) %}{% end %}
+</template></turbo-stream>{% end %}
+{% for item : refresh.updated_messages %}
+  <turbo-stream action="replace" target="{{ item.dom_id() }}"><template>{% call messages::render_message_item(ctx, item) %}</template></turbo-stream>
+{% end %}

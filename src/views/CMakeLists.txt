@@ -44,6 +44,7 @@ campfire_library(views
     helpers/tag.cpp
     helpers/turbo.cpp
     helpers/users.cpp
+    messages/presentation.cpp
     messages/support.cpp
     sessions/helpers.cpp
     ${CAMPFIRE_VIEWS_GENERATED}

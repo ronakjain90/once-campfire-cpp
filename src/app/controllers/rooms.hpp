@@ -46,6 +46,8 @@ void remember_last_room_visited(Rq& rq, const models::Room& room);
 
 [[nodiscard]] Task<Flow<net::Response>> rooms_index(Rq& rq);
 [[nodiscard]] Task<Flow<net::Response>> rooms_show(Rq& rq);
+// `GET /rooms/:room_id/messages` (MessagesController#index): the paged messages list.
+[[nodiscard]] Task<Flow<net::Response>> messages_index(Rq& rq);
 [[nodiscard]] Task<Flow<net::Response>> rooms_destroy(Rq& rq);
 // `GET /rooms/:room_id/settings`: the route has no controller (`uninitialized constant`): a 500.
 [[nodiscard]] Task<Flow<net::Response>> missing_controller(Rq& rq);

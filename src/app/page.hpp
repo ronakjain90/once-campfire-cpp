@@ -52,7 +52,14 @@ void add_page_facets(Rq& rq, db::DependencyScope& deps, std::string_view page);
 // The page cache path of architecture 6.1. `render` writes the page to `out`. The key is the hash of
 // `deps`. A hit sends the cached entry. On 1 hit in 16 in the sanitizer builds, the page is rendered
 // again and compared (a difference is fatal). A scope marked uncacheable renders each time.
+// `preload_link` adds the `Link` header of `stylesheet_link_tag`: false for a response without a layout.
 [[nodiscard]] net::Response cached_page(Rq& rq, int status, db::DependencyScope& deps,
-                                        const std::function<void(Out&)>& render);
+                                        const std::function<void(Out&)>& render, bool preload_link = true);
+// The same, for a `render` that reads data and can fail (it runs on a miss only). A failure goes to the caller and the
+// page is not stored.
+// `parts_etag` makes the ETag of the page from its cached fragments, as the Rust port does for a room page.
+[[nodiscard]] Flow<net::Response> cached_page_checked(Rq& rq, int status, db::DependencyScope& deps,
+                                                      const std::function<Flow<void>(Out&)>& render,
+                                                      bool preload_link = true, bool parts_etag = false);
 
 }  // namespace campfire::app

@@ -19,6 +19,10 @@ const db::Query<db::schema::RoomRow(std::int64_t)> kOriginal{
     "SELECT \"rooms\".\"id\", \"rooms\".\"created_at\", \"rooms\".\"creator_id\", \"rooms\".\"name\", "
     "\"rooms\".\"type\", \"rooms\".\"updated_at\"" CF_ROOM_JOIN " ORDER BY \"rooms\".\"created_at\" ASC LIMIT 1"};
 
+const db::Query<db::schema::RoomRow()> kOriginalRoom{
+    "SELECT \"rooms\".\"id\", \"rooms\".\"created_at\", \"rooms\".\"creator_id\", \"rooms\".\"name\", "
+    "\"rooms\".\"type\", \"rooms\".\"updated_at\" FROM \"rooms\" ORDER BY \"rooms\".\"created_at\" ASC LIMIT 1"};
+
 const db::Query<db::schema::RoomRow(std::int64_t, std::int64_t)> kFindAll{
     "SELECT \"rooms\".\"id\", \"rooms\".\"created_at\", \"rooms\".\"creator_id\", \"rooms\".\"name\", "
     "\"rooms\".\"type\", \"rooms\".\"updated_at\"" CF_ROOM_JOIN " AND \"rooms\".\"id\" = ? LIMIT 1"};
@@ -109,6 +113,10 @@ Result<std::optional<Room>> find_by_id(db::Connection& conn, Arena& arena, std::
 
 Result<std::optional<Room>> last_of_user(db::Connection& conn, Arena& arena, std::int64_t user_id) {
   return wrap(conn.first(kLast, arena, user_id));
+}
+
+Result<std::optional<Room>> original(db::Connection& conn, Arena& arena) {
+  return wrap(conn.first(kOriginalRoom, arena));
 }
 
 Result<std::optional<Room>> original_of_user(db::Connection& conn, Arena& arena, std::int64_t user_id) {

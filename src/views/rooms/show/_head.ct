@@ -1,0 +1,6 @@
+{# reference/app/views/rooms/show.html.erb (content_for :head): the page prints it with no final newline #}
+{% include views/rooms/show.hpp %}
+{% params const ViewContext& ctx, const RoomView& room %}
+{{= SafeHtml::literal("\n") -}}
+  <meta name="turbo-cache-control" content="no-preview">
+  <meta name="current-room-id" content="{{ room.id }}">

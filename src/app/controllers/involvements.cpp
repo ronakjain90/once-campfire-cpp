@@ -116,24 +116,3 @@ Task<net::Response> update(net::Ctx& c) {
 }
 
 }  // namespace campfire::routes::rooms_involvements
-
-namespace campfire::app::controllers {
-
-// `Rooms::RefreshesController#show`, until the messages exist (A3): the membership check of RoomScoped, then a 404.
-Task<Flow<net::Response>> refreshes_show(Rq& rq) {
-  auto before = co_await concerns::before_actions(rq, concerns::Before{});
-  if (!before) co_return std::unexpected(std::move(before.error()));
-  auto scoped = set_scoped_room(rq);
-  if (!scoped) co_return std::unexpected(std::move(scoped.error()));
-  co_return fail_with(ErrorKind::NotFound, "rooms/refreshes#show waits for the messages (A3)");
-}
-
-}  // namespace campfire::app::controllers
-
-namespace campfire::routes::rooms_refreshes {
-
-Task<net::Response> show(net::Ctx& c) {
-  return app::dispatch(c, &app::controllers::refreshes_show);
-}
-
-}  // namespace campfire::routes::rooms_refreshes

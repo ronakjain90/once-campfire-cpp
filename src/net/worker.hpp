@@ -55,6 +55,8 @@ class Worker final : public Scheduler {
   void run();
   void handle_event(void* tag, std::uint32_t events);
   void on_accept(int listener_fd, bool via_front, bool tls);
+  void watch_listeners(bool on);
+  void pause_accept();
   void run_posted();
   void drain_finished();
   void sweep();
@@ -138,6 +140,7 @@ class Worker final : public Scheduler {
   unsigned index_ = 0;
   std::atomic<bool> wake_pending_{false};
   TimerNode beat_node_;
+  std::uint64_t accept_resume_ms_ = 0;  // not 0: the listeners are out of epoll until this time
 
   std::mutex post_mutex_;
   std::vector<std::coroutine_handle<>> posted_;

@@ -49,4 +49,9 @@ class Server {
 // The number of CPUs in the cpuset of the process (at least 1).
 [[nodiscard]] std::size_t cpuset_size() noexcept;
 
+// Raises the soft limit on open files to the hard limit and returns the new limit (0 if getrlimit fails).
+// Each WebSocket is a file descriptor, and a container often starts a process with a soft limit of 1,024.
+// Rust: kit server.rs `raise_open_file_limit`.
+std::uint64_t raise_open_file_limit() noexcept;
+
 }  // namespace campfire::net

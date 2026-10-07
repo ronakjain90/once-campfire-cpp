@@ -13,6 +13,7 @@
 #include <cerrno>
 #include <cstring>
 #include <ctime>
+#include <utility>
 
 #include "core/log.hpp"
 
@@ -27,6 +28,8 @@ constexpr std::uint64_t kTagHttps = 4;
 constexpr std::uint64_t kStopGraceMs = 5000;
 constexpr int kMaxEvents = 256;
 constexpr int kAcceptBatch = 128;
+// After an accept fails for lack of descriptors or memory, as Rust does (front conn.rs `accept_loop`).
+constexpr std::uint64_t kAcceptPauseMs = 10;
 
 std::uint64_t monotonic_ms() noexcept {
   timespec ts{};
@@ -81,9 +84,29 @@ Worker::Worker(const ServerOptions& options, const App& app, int http_listener, 
   epoll_fd_ = epoll_create1(EPOLL_CLOEXEC);
   wake_fd_ = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
   add_to_epoll(epoll_fd_, wake_fd_, EPOLLIN, kTagWake);
-  if (http_listener_ >= 0) add_to_epoll(epoll_fd_, http_listener_, EPOLLIN, kTagHttp);
-  if (target_listener_ >= 0) add_to_epoll(epoll_fd_, target_listener_, EPOLLIN, kTagTarget);
-  if (https_listener_ >= 0) add_to_epoll(epoll_fd_, https_listener_, EPOLLIN, kTagHttps);
+  watch_listeners(true);
+}
+
+void Worker::watch_listeners(bool on) {
+  const std::pair<int, std::uint64_t> listeners[] = {
+      {http_listener_, kTagHttp}, {target_listener_, kTagTarget}, {https_listener_, kTagHttps}};
+  for (const auto& [fd, tag] : listeners) {
+    if (fd < 0) continue;
+    if (on) {
+      add_to_epoll(epoll_fd_, fd, EPOLLIN, tag);
+    } else {
+      epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, fd, nullptr);
+    }
+  }
+}
+
+// The listener stays readable while accept fails, so a level-triggered epoll returns at once: wait in place of a
+// busy loop.
+void Worker::pause_accept() {
+  if (accept_resume_ms_ != 0) return;
+  log_debug("http: accept failed: {}", std::strerror(errno));
+  watch_listeners(false);
+  accept_resume_ms_ = now_ms_ + kAcceptPauseMs;
 }
 
 Worker::~Worker() {
@@ -152,12 +175,15 @@ void Worker::run() {
   while (true) {
     now_ms_ = monotonic_ms();
     wheel_.advance(now_ms_, [this](TimerNode& node) { on_timer(node); });
+    if (accept_resume_ms_ != 0 && now_ms_ >= accept_resume_ms_ && !stopping_.load()) {
+      accept_resume_ms_ = 0;
+      watch_listeners(true);
+    }
     if (stopping_.load() && !stop_begun) {
       stop_begun = true;
       stop_deadline = now_ms_ + kStopGraceMs;
-      for (const int fd : {http_listener_, target_listener_, https_listener_}) {
-        if (fd >= 0) epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, fd, nullptr);
-      }
+      if (accept_resume_ms_ == 0) watch_listeners(false);
+      accept_resume_ms_ = 0;
       // Idle connections close now. The others close when their response is written.
       for (std::size_t i = conns_.size(); i-- > 0;) {
         Conn& c = *conns_[i];
@@ -170,6 +196,10 @@ void Worker::run() {
     if (stop_begun && (conns_.empty() || now_ms_ >= stop_deadline)) break;
     int timeout = posted_count_.load(std::memory_order_acquire) != 0 ? 0 : wheel_.next_wait_ms(now_ms_);
     if (stop_begun && (timeout < 0 || timeout > 50)) timeout = 50;
+    if (accept_resume_ms_ != 0) {
+      const int left = static_cast<int>(accept_resume_ms_ > now_ms_ ? accept_resume_ms_ - now_ms_ : 0);
+      if (timeout < 0 || timeout > left) timeout = left;
+    }
     const int n = epoll_wait(epoll_fd_, events, kMaxEvents, timeout);
     now_ms_ = monotonic_ms();
     for (int i = 0; i < n; ++i) {
@@ -217,7 +247,8 @@ void Worker::on_accept(int listener_fd, bool via_front, bool tls) {
     const int fd = accept4(listener_fd, reinterpret_cast<sockaddr*>(&address), &length, SOCK_NONBLOCK | SOCK_CLOEXEC);
     if (fd < 0) {
       if (errno == EINTR || errno == ECONNABORTED) continue;
-      return;  // EAGAIN, or a limit of descriptors: try at the next event
+      if (errno == EMFILE || errno == ENFILE || errno == ENOBUFS || errno == ENOMEM) pause_accept();
+      return;  // EAGAIN: try at the next event
     }
     const int one = 1;
     setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof one);

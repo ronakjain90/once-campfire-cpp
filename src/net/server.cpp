@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sched.h>
+#include <sys/resource.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -131,6 +132,16 @@ std::size_t cpuset_size() noexcept {
     if (count > 0) return static_cast<std::size_t>(count);
   }
   return 1;
+}
+
+std::uint64_t raise_open_file_limit() noexcept {
+  rlimit limit{};
+  if (getrlimit(RLIMIT_NOFILE, &limit) != 0) return 0;
+  if (limit.rlim_cur < limit.rlim_max) {
+    const rlimit raised{limit.rlim_max, limit.rlim_max};
+    if (setrlimit(RLIMIT_NOFILE, &raised) == 0) return raised.rlim_cur;
+  }
+  return limit.rlim_cur;
 }
 
 Server::Server(ServerOptions options, App app) : options_(std::move(options)), app_(app) {

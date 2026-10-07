@@ -121,6 +121,12 @@ def compare_responses(exp, act, opts):
     ce = (exp.get("content-encoding") or "").strip().lower()
     if ce and ce != "identity" and ce == (act.get("content-encoding") or "").strip().lower() and eb == ab:
         ignored = ignored | {"content-length"}
+    # Build artifact (plans/divergences.md): a static file's last-modified is the time its image was
+    # built. Accept a different value only on publicly cacheable responses with equal bodies.
+    def public(r):
+        return "public" in (r.get("cache-control") or "").lower()
+    if public(exp) and public(act) and eb == ab:
+        ignored = ignored | {"last-modified"}
     eh, ah = header_lines(exp, ignored, rc), header_lines(act, ignored, rc)
     if en != an:
         problems.append("header names/order")

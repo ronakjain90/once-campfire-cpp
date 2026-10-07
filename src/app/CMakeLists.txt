@@ -51,7 +51,13 @@ campfire_library(app
     controllers/message_boosts.cpp
     controllers/message_bots.cpp
     controllers/messages.cpp
+    controllers/pwa.cpp
+    controllers/active_storage.cpp
     controllers/qr_codes.cpp
+    controllers/unfurl_links.cpp
+    opengraph/html.cpp
+    opengraph/opengraph.cpp
+    unfurl_http.cpp
     controllers/session_transfers.cpp
     controllers/directs.cpp
     controllers/involvements.cpp
@@ -67,6 +73,7 @@ campfire_library(app
     controllers/sidebars.cpp
     controllers/welcome.cpp
     dispatch.cpp
+    file_server.cpp
     errors.cpp
     finish.cpp
     fragment_cache.cpp
@@ -99,6 +106,7 @@ campfire_library(app
 campfire_test(app
   SOURCES
     tests/accounts_area_test.cpp
+    tests/active_storage_test.cpp
     tests/app_test.cpp
     tests/cache_test.cpp
     tests/finish_test.cpp
@@ -107,8 +115,16 @@ campfire_test(app
     tests/signin_area_test.cpp
     tests/user_agent_test.cpp
     tests/rooms_test.cpp
+    tests/unfurl_policy_test.cpp
+    tests/unfurl_test.cpp
   WERROR)
 target_compile_definitions(test_app PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")
+
+# Fuzz targets (architecture section 14): built only with -DCAMPFIRE_FUZZ=ON.
+option(CAMPFIRE_FUZZ "Build the libFuzzer targets" OFF)
+if(CAMPFIRE_FUZZ)
+  add_subdirectory(fuzz)
+endif()
 
 campfire_executable(campfire SOURCES main.cpp DEPS campfire_app)
 set_target_properties(campfire PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")

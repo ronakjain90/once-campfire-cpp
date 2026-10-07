@@ -101,32 +101,44 @@ bool blocked_address(std::string_view bytes) {
   return true;
 }
 
-std::optional<std::string> resolve_public_address(std::string_view host) {
+std::optional<std::string> resolve_public_address(std::string_view host, const HostLookup& lookup) {
   if (!plain_host_name(host)) return std::nullopt;
-  addrinfo hints{};
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-  addrinfo* found = nullptr;
-  const std::string name(host);
-  if (getaddrinfo(name.c_str(), nullptr, &hints, &found) != 0 || found == nullptr) return std::nullopt;
   std::vector<std::string> v4;
   std::vector<std::string> v6;
-  for (const addrinfo* item = found; item != nullptr; item = item->ai_next) {
+  for (const std::string& bytes : lookup(std::string(host))) {
+    if (blocked_address(bytes)) continue;
     char text[INET6_ADDRSTRLEN] = {};
-    if (item->ai_family == AF_INET) {
-      const auto* sin = reinterpret_cast<const sockaddr_in*>(item->ai_addr);
-      if (blocked_address({reinterpret_cast<const char*>(&sin->sin_addr), 4})) continue;
-      if (inet_ntop(AF_INET, &sin->sin_addr, text, sizeof text) != nullptr) v4.emplace_back(text);
-    } else if (item->ai_family == AF_INET6) {
-      const auto* sin6 = reinterpret_cast<const sockaddr_in6*>(item->ai_addr);
-      if (blocked_address({reinterpret_cast<const char*>(&sin6->sin6_addr), 16})) continue;
-      if (inet_ntop(AF_INET6, &sin6->sin6_addr, text, sizeof text) != nullptr) v6.emplace_back(text);
+    if (bytes.size() == 4) {
+      if (inet_ntop(AF_INET, bytes.data(), text, sizeof text) != nullptr) v4.emplace_back(text);
+    } else if (bytes.size() == 16) {
+      if (inet_ntop(AF_INET6, bytes.data(), text, sizeof text) != nullptr) v6.emplace_back(text);
     }
   }
-  freeaddrinfo(found);
   if (!v4.empty()) return v4.front();
   if (!v6.empty()) return v6.front();
   return std::nullopt;
+}
+
+std::optional<std::string> resolve_public_address(std::string_view host) {
+  return resolve_public_address(host, [](const std::string& name) {
+    std::vector<std::string> out;
+    addrinfo hints{};
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    addrinfo* found = nullptr;
+    if (getaddrinfo(name.c_str(), nullptr, &hints, &found) != 0 || found == nullptr) return out;
+    for (const addrinfo* item = found; item != nullptr; item = item->ai_next) {
+      if (item->ai_family == AF_INET) {
+        const auto* sin = reinterpret_cast<const sockaddr_in*>(item->ai_addr);
+        out.emplace_back(reinterpret_cast<const char*>(&sin->sin_addr), 4);
+      } else if (item->ai_family == AF_INET6) {
+        const auto* sin6 = reinterpret_cast<const sockaddr_in6*>(item->ai_addr);
+        out.emplace_back(reinterpret_cast<const char*>(&sin6->sin6_addr), 16);
+      }
+    }
+    freeaddrinfo(found);
+    return out;
+  });
 }
 
 }  // namespace campfire::app

@@ -1,0 +1,15 @@
+{# reference/app/views/searches/index.html.erb (content_for :nav) #}
+{% include views/searches/index.hpp %}
+{% params const ViewContext& ctx, const IndexView& index %}
+{{= SafeHtml::literal("\n") -}}
+{% if index.query %}
+    <div class="searches__query flex align-center gap pad-block-start-half">
+      <div class="btn btn--reversed btn--faux align-center gap txt-nowrap">
+        <span class="overflow-ellipsis">“{{ *index.query }}”</span>
+        <span class="flex-item-no-shrink">{{ index.items.size() }}</span>
+</div>    </div>
+{% end %}
+
+  <div class="searches__recents align-center gap pad-block-half overflow-y overflow-hide-scrollbar">
+    {% render searches/recents(ctx, index) %}
+  </div>

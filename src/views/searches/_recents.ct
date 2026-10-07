@@ -1,0 +1,16 @@
+{# reference/app/views/searches/index.html.erb: the recent searches that the nav and the sidebar repeat #}
+{% include views/searches/index.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const IndexView& index %}
+{% if !index.recent_searches.empty() %}
+{{= SafeHtml::literal("\n") -}}
+{% for search : index.recent_searches %}
+      <a class="align-center gap room btn txt-nowrap" href="{{ search_path(search) }}">
+        <span class="overflow-ellipsis">“{{ search }}”</span>
+</a>
+{% end %}
+      <form class="button_to" method="post" action="{{ ctx.url(routes::clear_searches()) }}"><input type="hidden" name="_method" value="delete" /><button class="btn searches__btn" data-turbo-confirm="Are you sure you want to clear your recent searches?" type="submit">
+        <img aria-hidden="true" src="{{ ctx.asset("broom.svg") }}" />
+        <span class="for-screen-reader">Clear recent searches</span>
+</button></form>{{= SafeHtml::literal("") -}}
+{% end %}

@@ -1,0 +1,7 @@
+{# reference/app/views/searches/index.html.erb (content_for :sidebar) #}
+{% include views/searches/index.hpp %}
+{% params const ViewContext& ctx, const IndexView& index %}
+{{= SafeHtml::literal("\n") -}}
+  <div class="rooms position-relative flex flex-column gap overflow-y overflow-hide-scrollbar">
+    {% render searches/recents(ctx, index) %}
+  </div>

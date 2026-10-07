@@ -14,6 +14,9 @@ campfire_library(models
     push_subscription.cpp
     room.cpp
     room_ref.cpp
+    search.cpp
+    search_query.cpp
+    search_words.cpp
     session.cpp
     sound.cpp
     storage_records.cpp
@@ -27,5 +30,6 @@ campfire_test(models
   SOURCES
     tests/message_test.cpp
     tests/models_test.cpp
+    tests/search_test.cpp
   WERROR)
 target_compile_definitions(test_models PRIVATE CAMPFIRE_SPEC_DIR="${PROJECT_SOURCE_DIR}/spec")

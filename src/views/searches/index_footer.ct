@@ -1,0 +1,25 @@
+{# reference/app/views/searches/index.html.erb (content_for :footer) #}
+{% include views/searches/index.hpp %}
+{% include routes/routes.hpp %}
+{% params const ViewContext& ctx, const IndexView& index %}
+{{= SafeHtml::literal("\n") -}}
+  <div class="composer flex align-end gap">
+    <a class="btn flex-item-no-shrink margin-block-end" style="view-transition-name: input-switcher; --btn-border-radius: 0.5em" href="{{ routes::room(index.return_to_room_id) }}">
+      <img aria-hidden="true" src="{{ ctx.asset("arrow-left.svg") }}" />
+      <span class="for-screen-reader">Exit search </span>
+</a>
+    <form class="margin-block flex-item-grow contain flex align-center gap" data-controller="form" data-action="keydown.esc-&gt;form#cancel" action="{{ routes::searches() }}" accept-charset="UTF-8" method="post">
+      <div class="composer__input flex align-center flex-item-grow gap full-width input input--actor min-width">
+        <img aria-hidden="true" class="composer__input-hint colorize--black" style="view-transition-name: input-btn;" src="{{ ctx.asset("search.svg") }}" width="20" height="20" />
+
+        <input{% if index.q %} value="{{ *index.q }}"{% end %} class="searches__input input flex-item-grow" role="searchbox" aria-label="search" autofocus="autofocus" required="required" type="text" name="q" id="q" />
+
+        <a data-form-target="cancel" role="button" class="searches__reset" href="{{ routes::searches() }}">
+          <img aria-hidden="true" class="colorize--black" src="{{ ctx.asset("remove.svg") }}" width="14" height="14" />
+          <span class="for-screen-reader">Clear search field</span>
+</a>
+        <button name="button" type="submit" class="btn btn--reversed flex-item-no-shrink txt-small" style="--btn-border-radius: 0.5em">
+          <img aria-hidden="true" src="{{ ctx.asset("arrow-up.svg") }}" />
+          <span class="for-screen-reader">Search</span>
+</button>      </div>
+</form>  </div>

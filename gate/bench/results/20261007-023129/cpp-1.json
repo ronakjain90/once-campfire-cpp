@@ -1,0 +1,79 @@
+{
+ "app": "cpp",
+ "image": "campfire-cpp:a5",
+ "rep": 1,
+ "http": [
+  {
+   "avg_bytes": 9357,
+   "conc": 1,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 17.903,
+    "mean_ms": 0.09,
+    "n": 90101,
+    "p50_ms": 0.082,
+    "p90_ms": 0.092,
+    "p99_ms": 0.184
+   },
+   "ok": 90101,
+   "path": "/searches?q=coffee",
+   "rps": 11262.5,
+   "secs": 8.0,
+   "statuses": {
+    "200": 90101
+   },
+   "route": "search",
+   "app_cpu_usec": 4732745,
+   "requests": 90101
+  },
+  {
+   "avg_bytes": 9357,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 15.007,
+    "mean_ms": 0.49,
+    "n": 262311,
+    "p50_ms": 0.41,
+    "p90_ms": 0.734,
+    "p99_ms": 2.893
+   },
+   "ok": 262311,
+   "path": "/searches?q=coffee",
+   "rps": 32779.6,
+   "secs": 8.0,
+   "statuses": {
+    "200": 262311
+   },
+   "route": "search",
+   "app_cpu_usec": 21923747,
+   "requests": 262311
+  },
+  {
+   "avg_bytes": 9357,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 37.983,
+    "mean_ms": 2.36,
+    "n": 216902,
+    "p50_ms": 1.738,
+    "p90_ms": 4.807,
+    "p99_ms": 8.139
+   },
+   "ok": 216902,
+   "path": "/searches?q=coffee",
+   "rps": 27106.4,
+   "secs": 8.0,
+   "statuses": {
+    "200": 216902
+   },
+   "route": "search",
+   "app_cpu_usec": 16751605,
+   "requests": 216902
+  }
+ ]
+}

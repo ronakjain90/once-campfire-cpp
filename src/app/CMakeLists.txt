@@ -52,6 +52,7 @@ campfire_library(app
     controllers/message_bots.cpp
     controllers/messages.cpp
     controllers/pwa.cpp
+    controllers/searches.cpp
     controllers/active_storage.cpp
     controllers/qr_codes.cpp
     controllers/unfurl_links.cpp

@@ -10,6 +10,7 @@ campfire_library(models
     first_run.cpp
     hooks.cpp
     membership.cpp
+    membership_connect.cpp
     message.cpp
     push_subscription.cpp
     room.cpp

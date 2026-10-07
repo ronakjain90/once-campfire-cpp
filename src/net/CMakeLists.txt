@@ -33,6 +33,7 @@ campfire_library(net
     worker_conn.cpp
     worker_h2.cpp
     worker_io.cpp
+    worker_ws.cpp
   PUBLIC_DEPS campfire_core campfire_picohttpparser campfire_assets OpenSSL::SSL OpenSSL::Crypto
   DEPS campfire_compat PkgConfig::LIBDEFLATE PkgConfig::ZSTD PkgConfig::NGHTTP2
   WERROR)
@@ -55,6 +56,7 @@ campfire_test(net
     tests/parser_test.cpp
     tests/router_test.cpp
     tests/server_test.cpp
+    tests/ws_test.cpp
     "${net_test_routes_cpp}"
   WERROR)
 

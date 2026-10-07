@@ -1,17 +1,22 @@
 // Process entry. Rails: bin/boot (Thruster + Puma); Rust: crates/campfire/src/main.rs.
 #include <algorithm>
+#include <atomic>
+#include <chrono>
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string_view>
+#include <thread>
 
 #include "app/app.hpp"
+#include "app/channels/server.hpp"
 #include "app/not_found.hpp"
 #include "app/rails.hpp"
 #include "app/routes.hpp"
 #include "core/config.hpp"
 #include "core/log.hpp"
+#include "models/hooks.hpp"
 #include "net/server.hpp"
 
 int main(int argc, char** argv) {
@@ -58,7 +63,27 @@ int main(int argc, char** argv) {
   net::App routes_app{&app::routes(), &app::not_found};
   net::ServerOptions server_options = net::ServerOptions::from_config(front);
   server_options.after_static = [](net::Ctx& ctx, net::Response& response) { app::add_hsts(ctx.request(), response); };
+  // Action Cable: one hub for the process, one queue for each worker. A worker drains its queue when the hub wakes it,
+  // and sends the heartbeat of its sockets every 3 seconds.
+  const unsigned workers =
+      static_cast<unsigned>(server_options.workers != 0 ? server_options.workers : net::cpuset_size());
+  server_options.workers = workers;
+  std::atomic<net::Server*> running{nullptr};
+  app::channels::CableConfig cable_config;
+  cable_config.assume_ssl = !(*state)->config.disable_ssl;
+  app::channels::CableServer cable(
+      **state, workers,
+      [&running](unsigned worker) {
+        if (net::Server* server = running.load()) server->wake(worker);
+      },
+      cable_config);
+  server_options.on_wake = [&cable](unsigned worker) { cable.on_wake(worker); };
+  server_options.on_beat = [&cable](unsigned worker) { cable.on_beat(worker); };
+  // `User#close_remote_connections`, after the commit of the change that revokes a user.
+  models::hooks::set_disconnect_user(
+      [&cable](std::int64_t user_id, bool reconnect) { cable.disconnect_user(user_id, reconnect); });
   net::Server server(server_options, routes_app);
+  running.store(&server);
   if (auto started = server.start(); !started) {
     log_error("cannot start the server: {}", started.error().message);
     return 1;
@@ -73,6 +98,11 @@ int main(int argc, char** argv) {
   int signal_number = 0;
   sigwait(&signals, &signal_number);
   log_info("Stopping the server");
+  // Close every WebSocket with `server_restart`, so that the clients reconnect, then stop.
+  cable.restart();
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
+  models::hooks::set_disconnect_user(nullptr);
+  running.store(nullptr);
   server.stop();
   log_info("Server stopped");
   return 0;

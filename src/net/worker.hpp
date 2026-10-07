@@ -18,12 +18,16 @@
 
 namespace campfire::net {
 
+// ActionCable::Server::Connections::BEAT_INTERVAL: the heartbeat of the sockets.
+inline constexpr std::uint64_t kBeatIntervalMs = 3000;
+
 // One worker owns an epoll loop, its listeners and its connections. It is the `Scheduler` of the
 // handlers that run on its connections: a posted coroutine resumes on the thread of the worker.
 class Worker final : public Scheduler {
  public:
   // The worker takes the ownership of the listener descriptors (-1 for none).
-  Worker(const ServerOptions& options, const App& app, int http_listener, int target_listener, int https_listener = -1);
+  Worker(const ServerOptions& options, const App& app, int http_listener, int target_listener, int https_listener = -1,
+         unsigned index = 0);
   ~Worker() override;
   Worker(const Worker&) = delete;
   Worker& operator=(const Worker&) = delete;
@@ -36,6 +40,11 @@ class Worker final : public Scheduler {
   void start();
   void stop();
   void join();
+
+  // The index of this worker in the server: the hub of the app keeps one queue for each worker.
+  [[nodiscard]] unsigned index() const noexcept { return index_; }
+  // Asks the worker to run `ServerOptions::on_wake`. Any thread may call it.
+  void request_wake();
 
   // The number of connections now. For tests. Any thread may call it.
   [[nodiscard]] std::size_t connection_count() const noexcept { return connection_count_.load(); }
@@ -72,6 +81,12 @@ class Worker final : public Scheduler {
   void abort_conn(Conn& c);
   Task<void> serve(Conn& c);
   void handler_finished(Conn& c, Response&& response);
+  // WebSocket (worker_ws.cpp).
+  void ws_start(Conn& c, Response& response);
+  bool ws_step(Conn& c);
+  void ws_flush(Conn& c);
+  void ws_notify_closed(Conn& c);
+  void ws_on_timer(Conn& c, TimerNode& node);
   // The same two steps for one HTTP/2 stream.
   Task<void> h2_serve(Conn& c, H2Stream& stream);
   // Arms a timer only when its due time is earlier than the one that is armed.
@@ -100,6 +115,7 @@ class Worker final : public Scheduler {
   [[nodiscard]] std::unique_ptr<Arena> take_arena_public() { return take_arena(); }
   void give_arena_public(std::unique_ptr<Arena> arena) { give_arena(std::move(arena)); }
   void post_finished(Conn& c) { finished_.push_back(&c); }
+  friend struct WsState;
 
  private:
   std::unique_ptr<Arena> take_arena();
@@ -119,6 +135,9 @@ class Worker final : public Scheduler {
   std::thread thread_;
   std::atomic<std::thread::id> owner_;
   std::atomic<bool> stopping_{false};
+  unsigned index_ = 0;
+  std::atomic<bool> wake_pending_{false};
+  TimerNode beat_node_;
 
   std::mutex post_mutex_;
   std::vector<std::coroutine_handle<>> posted_;

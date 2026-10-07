@@ -33,6 +33,9 @@ campfire_library(app
     allow_browser.cpp
     app.cpp
     broadcasts.cpp
+    channels/channels.cpp
+    channels/endpoint.cpp
+    channels/server.cpp
     active_storage.cpp
     compress.cpp
     concerns.cpp
@@ -115,6 +118,7 @@ campfire_test(app
     tests/accounts_area_test.cpp
     tests/active_storage_test.cpp
     tests/app_test.cpp
+    tests/cable_test.cpp
     tests/cache_test.cpp
     tests/finish_test.cpp
     tests/jobs_end_test.cpp

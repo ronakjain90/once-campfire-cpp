@@ -14,6 +14,7 @@
 #include "net/parser.hpp"
 #include "net/response.hpp"
 #include "net/timer_wheel.hpp"
+#include "net/ws.hpp"
 
 namespace campfire::net {
 
@@ -56,12 +57,24 @@ enum class ConnState : std::uint8_t {
   Linger,     // the reply is written and the write side is shut: drain reads, then close
   Handshake,  // the TLS handshake runs (A8)
   Http2,      // an HTTP/2 session runs on the connection (A8)
+  WebSocket,  // a 101 reply is written: a `WsSession` owns the bytes
 };
 
-enum TimerKind : std::uint32_t { kTimerHead = 1, kTimerBody, kTimerWrite, kTimerLinger, kTimerHandshake, kTimerH2 };
+enum TimerKind : std::uint32_t {
+  kTimerHead = 1,
+  kTimerBody,
+  kTimerWrite,
+  kTimerLinger,
+  kTimerHandshake,
+  kTimerH2,
+  kTimerWsStall,
+  kTimerWsClose,
+  kTimerBeat
+};
 
 class Worker;
 class H2Session;
+struct WsState;
 
 struct Conn {
   Conn();
@@ -77,9 +90,10 @@ struct Conn {
   bool h2c = false;            // H2C_ENABLED: this plain connection may speak HTTP/2 (prior knowledge)
   std::uint64_t accepted_ms = 0;
   std::unique_ptr<H2Session> h2;
-  bool readable = false;  // edge-triggered: the socket may hold data
-  bool writable = true;   // edge-triggered: the socket may take data
-  bool closed = false;    // the descriptor is closed; the object waits for the end of the handler
+  std::unique_ptr<WsState> ws;  // the state of an upgraded connection
+  bool readable = false;        // edge-triggered: the socket may hold data
+  bool writable = true;         // edge-triggered: the socket may take data
+  bool closed = false;          // the descriptor is closed; the object waits for the end of the handler
   bool handler_active = false;
   bool close_after = false;  // close when the response is written
   bool continue_sent = false;

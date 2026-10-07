@@ -68,12 +68,14 @@ ServerOptions ServerOptions::from_config(const FrontConfig& config) {
   return options;
 }
 
-Worker::Worker(const ServerOptions& options, const App& app, int http_listener, int target_listener, int https_listener)
+Worker::Worker(const ServerOptions& options, const App& app, int http_listener, int target_listener, int https_listener,
+               unsigned index)
     : options_(options),
       app_(app),
       http_listener_(http_listener),
       target_listener_(target_listener),
       https_listener_(https_listener),
+      index_(index),
       now_ms_(monotonic_ms()),
       wheel_(now_ms_) {
   epoll_fd_ = epoll_create1(EPOLL_CLOEXEC);
@@ -116,6 +118,12 @@ bool Worker::on_owner_thread() const noexcept {
   return owner_.load() == std::this_thread::get_id();
 }
 
+void Worker::request_wake() {
+  wake_pending_.store(true, std::memory_order_release);
+  const std::uint64_t one = 1;
+  [[maybe_unused]] const ssize_t n = ::write(wake_fd_, &one, sizeof one);
+}
+
 void Worker::start() {
   thread_ = std::thread([this] {
     owner_.store(std::this_thread::get_id());
@@ -137,6 +145,10 @@ void Worker::run() {
   epoll_event events[kMaxEvents];
   bool stop_begun = false;
   std::uint64_t stop_deadline = 0;
+  if (options_.on_beat) {
+    beat_node_.owner = this;
+    wheel_.arm(beat_node_, now_ms_, kBeatIntervalMs, kTimerBeat);
+  }
   while (true) {
     now_ms_ = monotonic_ms();
     wheel_.advance(now_ms_, [this](TimerNode& node) { on_timer(node); });
@@ -150,7 +162,8 @@ void Worker::run() {
       for (std::size_t i = conns_.size(); i-- > 0;) {
         Conn& c = *conns_[i];
         const bool idle = (c.state == ConnState::Head && c.rbuf.empty()) || c.state == ConnState::Linger ||
-                          c.state == ConnState::Handshake || (c.state == ConnState::Http2 && (!c.h2 || c.h2->idle()));
+                          c.state == ConnState::Handshake || c.state == ConnState::WebSocket ||
+                          (c.state == ConnState::Http2 && (!c.h2 || c.h2->idle()));
         if (!c.closed && idle) close_conn(c);
       }
     }
@@ -177,6 +190,7 @@ void Worker::handle_event(void* tag, std::uint32_t events) {
   if (value == kTagWake) {
     std::uint64_t counter = 0;
     [[maybe_unused]] const ssize_t n = ::read(wake_fd_, &counter, sizeof counter);
+    if (wake_pending_.exchange(false, std::memory_order_acq_rel) && options_.on_wake) options_.on_wake(index_);
     return;
   }
   if (value == kTagHttp || value == kTagTarget || value == kTagHttps) {

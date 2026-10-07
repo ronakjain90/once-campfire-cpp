@@ -1,129 +1,139 @@
 # Campfire in C++
 
-This repository is a C++ port of [Campfire](https://github.com/basecamp/once-campfire). It has two
-goals:
+A C++ implementation of [ONCE Campfire](https://github.com/basecamp/once-campfire), and a drop-in
+replacement for the [Rust port](https://github.com/basecamp/once-campfire-rust). It uses the same
+SQLite database, storage layout and signed and encrypted cookies. Existing installs upgrade with no
+data migration, and no user has to sign in again.
 
-1. Feature parity with the Rust port (`once-campfire-rust`). The port uses the same database,
-   storage layout, cookies, URLs and environment variables, so an existing install upgrades with no
-   data migration.
-2. At least 1.5 times the throughput of the Rust port on the same host.
+One `campfire` executable serves the whole app, with libvips and ffmpeg for media. It includes TLS
+with automatic certificates, HTTP/2, Web Push, bot webhooks, search and Action Cable-compatible
+WebSockets. For each of the 689 requests of the diff sweep, the C++ app and the Rust app send the
+same response.
 
-The plan is in `plans/cpp-port.md`. The status of each task is in `plans/tasks.md`.
+## Running it
+
+Build the image:
+
+```sh
+docker build -t campfire-cpp -f docker/Dockerfile .
+```
+
+The image has the same user, ports, storage layout, entrypoint and environment variables as the
+Rust image. Run it as you run the Rust image:
+
+```sh
+docker run -d -p 80:80 -p 443:443 \
+  -e SECRET_KEY_BASE=... -e VAPID_PUBLIC_KEY=... -e VAPID_PRIVATE_KEY=... \
+  -e TLS_DOMAIN=chat.example.com \
+  -v campfire:/rails/storage \
+  campfire-cpp
+```
+
+- `TLS_DOMAIN` enables automatic Let's Encrypt certificates. `DISABLE_SSL` enables plain HTTP.
+- `/rails/storage` holds the database, uploads, backups and certificates. To move an install from
+  the Rust image, keep its storage volume and its secrets.
+- The other settings are the settings of the Rust port. The C++ app reads them in
+  [`src/core/config.cpp`](src/core/config.cpp).
+
+## Performance
+
+Production images, the same seed data and four pinned CPUs for each app, on an Apple M4 Mac
+(10 cores, 32 GB). Docker runs in a Colima VM with 8 vCPUs and 16 GB. The load generator of the
+Rust repo runs on the other four CPUs. All runs were on October 7, 2026, on a quiet host. The
+reports record the settings and the ranges:
+[room page, sidebar and post](bench/results/2026-10-07-b0-rep4/report.md),
+[messages page and search](bench/results/2026-10-07-messages-search/report.md) and
+[Action Cable](bench/results/2026-10-07-cable/report.md).
+
+### HTTP throughput (16 concurrent clients)
+
+| Route | Rust | C++ | C++ advantage |
+|---|---|---|---|
+| Room page | 25,779 req/s | 37,746 req/s | **1.46×** |
+| Messages page | 29,966 req/s | 61,390 req/s | **2.05×** |
+| Sidebar | 24,044 req/s | 67,072 req/s | **2.79×** |
+| Search | 25,547 req/s | 46,075 req/s | **1.80×** |
+| Post a message | 7,068 req/s | 11,699 req/s | **1.66×** |
+
+At 64 clients, the advantage is 1.51× for the room page, 2.02× for the messages page, 3.12× for
+the sidebar, 1.34× for search and 2.10× for a post. The C++ app also uses less CPU: 0.085 ms for
+each room page, against 0.13 ms.
+
+### Latency and real time
+
+| Measurement | Rust | C++ | C++ advantage |
+|---|---|---|---|
+| Room page p99, 64 clients | 4.5 ms | 2.9 ms | **1.56×** |
+| Post a message p99, 64 clients | 14.3 ms | 8.1 ms | **1.76×** |
+| Posts per second to all of 100 clients in one room | 3,098 | 3,592 | **1.16×** |
+| Posts per second to all of 1,000 clients in one room | 546 | 479 | 0.88× |
+| Post to all 1,000 clients received, p50 | 15.9 ms | 14.1 ms | **1.13×** |
+| Post to all 1,000 clients received, p99 | 20.3 ms | 18.2 ms | **1.12×** |
+
+Every client subscribed and received every broadcast. The Action Cable numbers are medians of three
+interleaved runs. The HTTP numbers come from one run for each app.
+
+### Image size
+
+| Measurement | Rust | C++ | C++ advantage |
+|---|---|---|---|
+| Image size, unpacked | 267 MB | 243 MB | **1.10×** |
+| Image size, compressed | 70 MB | 64 MB | **1.10×** |
+
+Pages from the C++ app are smaller on the network (for example, 20.7 KB against 24.2 KB for a room
+page). The cause is the compressor: the C++ app uses libdeflate. The decoded pages are the same.
 
 ## Status
 
-All feature areas are on `main`. The diff sweep sends 689 requests to the Rust app and to the C++
-app. All responses are equal, byte for byte, in all 9 areas.
+The goal is 1.5 times the throughput of the Rust port on each route. The open work is:
 
-Open work:
-
+- The room page at 16 clients, search at 64 clients, and the Action Cable fan-out with 1,000
+  clients.
 - Parity checks against Rails: the Playwright harness, and database and cookie compatibility in
   both directions.
-- A full benchmark of all routes on a quiet host.
-- Performance of the routes below 1.5 times Rust: the room page at 16 clients, search at 64
-  clients, and the Action Cable fan-out with 1,000 clients.
+- A full benchmark of all routes with three interleaved runs.
 
-## Build and test
+The plan is in [`plans/cpp-port.md`](plans/cpp-port.md). The status of each task is in
+[`plans/tasks.md`](plans/tasks.md).
 
-Run all commands through `bin/dev`. The script runs them in the `campfire-cpp-dev` Docker image.
+## Development
 
-```
+Run all commands through `bin/dev`. It runs them in the `campfire-cpp-dev` Docker image, with
+clang 19, CMake and Ninja.
+
+```sh
 bin/dev build release
 bin/dev test release
+bin/dev test asan
+bin/dev test tsan
+bin/dev format --check
+tools/diffsweep/diffsweep --expected campfire-rust:app --actual campfire-cpp
+gate/bench/run --apps rust=campfire-rust:app,cpp=campfire-cpp --routes room_show,sidebar,post_message
 ```
 
-The presets are `release`, `asan` and `tsan`. `AGENTS.md` lists all commands.
+- The presets are `release`, `asan` (ASan and UBSan) and `tsan`. All warnings are errors.
+- The diff sweep starts both images on the same seed and compares each response byte for byte.
+  See [`tools/diffsweep/README.md`](tools/diffsweep/README.md).
+- The benchmark takes `--cable "100 1000"` for the Action Cable fan-out. See
+  [`gate/bench/README.md`](gate/bench/README.md). Stop all other work on the host before a run.
+- See [`AGENTS.md`](AGENTS.md) for the repository layout and the working rules, and
+  [`plans/security-review.md`](plans/security-review.md) for the security review.
 
-Build the production image:
+## Known differences
 
-```
-docker build -t campfire-cpp:app -f docker/Dockerfile .
-```
+The C++ app copies the deliberate differences of the Rust port from Rails. See the
+[Known differences](https://github.com/basecamp/once-campfire-rust#known-differences) of the Rust
+port.
 
-The image is a drop-in replacement for `campfire-rust:app`: it has the same user, ports, storage
-layout and entrypoint.
+<details>
+<summary>Differences from the Rust port</summary>
 
-## Benchmarks
+- **Compression:** the C++ app compresses with libdeflate and zstd. Thus the compressed bytes and
+  `content-length` are different from the Rust app. The decoded bodies are the same.
+- **Static files:** `last-modified` is the time when the image was built, as in the Rust app. Thus
+  the value is different for each build.
 
-### Setup
+[`plans/divergences.md`](plans/divergences.md) lists each difference and how the diff sweep
+accepts it.
 
-- Host: Mac with Apple M4 (10 cores, 32 GB). Docker runs in a Colima VM: Ubuntu, kernel 6.8,
-  arm64, 8 vCPUs, 16 GB.
-- The app runs on CPUs 0–3 of the VM. The load generator (`loadgen` from the Rust repo) runs on
-  CPUs 4–7.
-- Each cell runs for 8 seconds. In a run with more than 1 rep, the order of the apps changes in
-  each rep, and the table shows the median. The report of each run shows the ranges.
-- No run had errors. All responses were 2xx or 3xx.
-
-### HTTP routes
-
-Runs: `bench/results/2026-10-07-b0-rep4/report.md` and
-`bench/results/2026-10-07-messages-search/report.md` (2026-10-07, quiet host, 1 rep each).
-
-| Route | Clients | Rust req/s | C++ req/s | C++ / Rust |
-|---|---:|---:|---:|---:|
-| Room page | 16 | 25,779 | 37,746 | **1.46×** |
-| Room page | 64 | 26,346 | 39,906 | 1.51× |
-| Messages page | 16 | 29,966 | 61,390 | 2.05× |
-| Messages page | 64 | 30,442 | 61,519 | 2.02× |
-| Sidebar | 16 | 24,044 | 67,072 | 2.79× |
-| Sidebar | 64 | 21,684 | 67,677 | 3.12× |
-| Search | 16 | 25,547 | 46,075 | 1.80× |
-| Search | 64 | 31,138 | 41,792 | **1.34×** |
-| Post a message | 16 | 7,068 | 11,699 | 1.66× |
-| Post a message | 64 | 7,182 | 15,076 | 2.10× |
-
-The C++ app also uses less CPU for each request: 0.085 ms against 0.13 ms for the room page at 16
-clients.
-
-These runs have 1 rep, not 3. They used the same images as the run in
-`bench/results/2026-10-07-b0-final`. Do not use that earlier run: fuzz runs used the host at that
-time, and its numbers are too low for both apps. For example, Rust did between 5,296 and 17,702
-req/s on the room page at 16 clients, and 25,779 req/s on a quiet host.
-
-The pages from the C++ app are smaller than the pages from the Rust app. The room page has an
-average of 20,658 bytes against 24,231 bytes. The messages page has an average of 12,065 bytes
-against 16,158 bytes. The cause of this difference is not known yet. Thus the ratios of these two
-routes can change.
-
-### Action Cable fan-out
-
-Run: `bench/results/2026-10-07-cable/report.md` (2026-10-07, quiet host).
-
-Each post goes to every connected client. "Deliveries/s" is the number of posts per second that
-reached all clients. "p50" is the median time from a post to its delivery to the last client.
-
-| Clients | Rust deliveries/s | C++ deliveries/s | C++ / Rust | Rust p50 | C++ p50 |
-|---:|---:|---:|---:|---:|---:|
-| 100 | 3,098 | 3,592 | 1.16× | 4.2 ms | 3.5 ms |
-| 1,000 | 546 | 479 | **0.88×** | 15.9 ms | 14.1 ms |
-
-With 1,000 clients, the C++ app has a lower throughput than the Rust app, but a lower latency.
-This is open work.
-
-### Phase 0 gate
-
-Run: `bench/results/gate/report.md` (2026-10-05, quiet host).
-
-Before the port started, a small C++ server did the same work as the Rust app for two routes. The
-result decided if the port could reach the goal.
-
-| Route | Clients | Rust req/s | Gate server req/s | Gate / Rust |
-|---|---:|---:|---:|---:|
-| Room page | 16 | 27,610 | 59,898 | 2.17× |
-| Post a message | 16 | 7,017 | 12,910 | 1.84× |
-
-The gate server is not the full app. These numbers show the best possible result, not the result
-of the port.
-
-### Run a benchmark
-
-```
-gate/bench/run --apps rust=campfire-rust:app,cpp=campfire-cpp:app \
-  --routes room_show,sidebar,post_message --reps 3 --out bench/results/<name>
-```
-
-Add `--cable "100 1000"` to run the Action Cable fan-out. Set `--routes ""` to run only the
-fan-out. `gate/bench/README.md` lists all options.
-
-Stop all other work on the host before a run. Other load changes the results.
+</details>

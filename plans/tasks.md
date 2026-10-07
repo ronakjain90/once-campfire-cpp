@@ -61,15 +61,15 @@ its requests in the diff sweep pass.
 
 | ID | Area | Rails sources (`reference/app/`) |
 |---|---|---|
-| A0 | merged (verified by Opus) | `task/A0` | Written by DeepSeek; layout region fix by Sonnet. Sign-in sweep 36/36 equal to Rust. /up 2.0x Rust at c=16, 3.3x at c=64. |
-| A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
-| A2 | partly merged (Claude cloud session) | `origin/main` | Sidebar, room forms, direct rooms, involvements. Sweep: 53/150 equal; room page, messages page and refresh are missing (404). Rest is A2b. |
-| A3 | merged (verified by Opus) | `task/A3` | Sweep 63/91 equal; the rest wait for A2b's partial or other areas. DB rows equal to Rust. Broadcasts unified with A2's. |
-| A4 | merged (verified by Opus) | `task/A4` | 131/140 equal; rest: rooms/webmanifest routes, and gzip content-length of compressed cache hits (decision pending). Avatar 1.7x Rust at c=16, 2.8x at c=64. |
+| A0 | App framework: app state, session cache, concerns, responses, fragment and page caches, errors, and the sign-in flow as proof. Spec `plans/specs/A0.md`. Runs before A1 to A9. | `controllers/concerns/*`, `sessions_controller` |
+| A1 | Sign-in, sessions, transfers, first run, join, welcome, bans, the authentication concerns, platform and user agent detection | `controllers/sessions*`, `first_runs`, `users#new/create`, `welcome`, `concerns/*` |
+| A2 | Rooms: show, index, open, closed and direct rooms, involvements, refreshes, settings, the sidebar, the room page cache | `controllers/rooms*`, `users/sidebars` |
+| A3 | Messages: create, edit, delete, pages, boosts, the bot API, attachments, broadcasts, unread state, mentions, user autocomplete | `controllers/messages*`, `autocompletable` |
+| A4 | Accounts, users, profiles, avatars, bots and keys, join codes, logo, custom styles, push subscriptions, QR codes | `controllers/accounts*`, `users/*`, `qr_code` |
 | A5 | Search | `controllers/searches` |
-| A6 | paused (usage limit) | `task/A6` | 14 commits; Active Storage endpoints were in progress. |
+| A6 | PWA, the service worker, link unfurl, `/up`, error pages, Active Storage endpoints | `pwa`, `unfurl_links`, Active Storage |
 | A7 | The 7 channels, `Turbo::StreamsChannel`, the room stream authorization patch | `channels/*` |
-| A8 | merged (verified by Opus) | `task/A8` | DeepSeek + Sonnet. Pebble TLS-ALPN-01 passes. A8 sweep: all 16 differences are /rooms pages (A2). Open: HTTP/2 position of `content-length: 0` on empty bodies; /up Accept and 304 rules (A0 gaps). |
+| A8 | Front server: TLS, ACME, HTTP/2, the front cache, timeouts | Rust `crates/kit/src/front/` |
 | A9 | Jobs and integrations: Web Push delivery, webhooks, unfurl fetch, banned content removal | `jobs/*`, `models/*` integrations |
 
 ## Wave 4: parity
@@ -96,6 +96,8 @@ its requests in the diff sweep pass.
 | H3 | Security review of all network input, the cookie and crypto code, the sanitizer, the outbound HTTP policies and ACME. |
 
 ## Status
+
+Update rows in this table only (match the row after the `## Status` heading).
 
 | ID | Status | Branch | Notes |
 |---|---|---|---|

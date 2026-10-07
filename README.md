@@ -62,19 +62,14 @@ Runs: `bench/results/2026-10-07-b0-rep4/report.md` and
 
 | Route | Clients | Rust req/s | C++ req/s | C++ / Rust |
 |---|---:|---:|---:|---:|
-| Room page | 1 | 6,387 | 11,876 | 1.86× |
 | Room page | 16 | 25,779 | 37,746 | **1.46×** |
 | Room page | 64 | 26,346 | 39,906 | 1.51× |
-| Messages page | 1 | 6,529 | 12,974 | 1.99× |
 | Messages page | 16 | 29,966 | 61,390 | 2.05× |
 | Messages page | 64 | 30,442 | 61,519 | 2.02× |
-| Sidebar | 1 | 5,640 | 12,158 | 2.16× |
 | Sidebar | 16 | 24,044 | 67,072 | 2.79× |
 | Sidebar | 64 | 21,684 | 67,677 | 3.12× |
-| Search | 1 | 5,301 | 12,443 | 2.35× |
 | Search | 16 | 25,547 | 46,075 | 1.80× |
 | Search | 64 | 31,138 | 41,792 | **1.34×** |
-| Post a message | 1 | 2,730 | 4,529 | 1.66× |
 | Post a message | 16 | 7,068 | 11,699 | 1.66× |
 | Post a message | 64 | 7,182 | 15,076 | 2.10× |
 

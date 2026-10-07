@@ -41,44 +41,64 @@ Production images, the same seed data and four pinned CPUs for each app, on an A
 (10 cores, 32 GB). Docker runs in a Colima VM with 8 vCPUs and 16 GB. The load generator of the
 Rust repo runs on the other four CPUs. All runs were on October 7, 2026, on a quiet host. The
 reports record the settings and the ranges:
-[HTTP](bench/results/2026-10-07-read-tx-rust/report.md) and
+[HTTP](bench/results/2026-10-07-page-cache-off/report.md) and
 [Action Cable](bench/results/2026-10-07-cable/report.md).
+
+### The page cache
+
+The C++ app has a page cache. The Rust port has no page cache. Both apps also have the response
+cache of Thruster, but it keeps only public responses, such as assets and avatars, and not the
+pages of a signed-in user. Thus the two apps do different work for each page:
+
+- **Rust** builds each page for each request. It keeps the HTML of each message in a fragment
+  cache, as Rails does.
+- **C++** runs the same SQL queries, and hashes the rows that they return. If it has a page with
+  the same hash, it sends that page again. If not, it builds the page and keeps it. Because the
+  key is a hash of the data, a page cannot be stale. See section 6.1 of
+  [`docs/architecture.md`](docs/architecture.md).
+
+The benchmark asks for the same pages again and again, so almost all C++ page requests use the
+page cache. The tables give the C++ app with the page cache off (`CAMPFIRE_PAGE_CACHE_MB=0`) and
+on. With the page cache off, the C++ app builds the room, messages and search pages more slowly
+than the Rust app. A post does not use the page cache.
 
 ### HTTP throughput (16 concurrent clients)
 
-| Route | Rust | C++ | C++ advantage |
+| Route | Rust | C++, page cache off | C++, page cache on |
 |---|---|---|---|
-| Room page | 27,754 req/s | 108,112 req/s | **3.90×** |
-| Messages page | 28,091 req/s | 113,318 req/s | **4.03×** |
-| Sidebar | 28,199 req/s | 108,719 req/s | **3.86×** |
-| Search | 26,288 req/s | 118,928 req/s | **4.52×** |
-| Post a message | 7,314 req/s | 15,240 req/s | **2.08×** |
+| Room page | 29,259 req/s | 4,376 req/s (0.15×) | 108,604 req/s (**3.71×**) |
+| Messages page | 29,315 req/s | 5,426 req/s (0.19×) | 119,770 req/s (**4.09×**) |
+| Sidebar | 27,100 req/s | 28,736 req/s (**1.06×**) | 109,097 req/s (**4.03×**) |
+| Search | 26,579 req/s | 10,952 req/s (0.41×) | 113,849 req/s (**4.28×**) |
+| Post a message | 6,971 req/s | 15,650 req/s (**2.25×**) | 15,060 req/s (**2.16×**) |
 
 ### HTTP throughput (100 concurrent clients)
 
-| Route | Rust | C++ | C++ advantage |
+| Route | Rust | C++, page cache off | C++, page cache on |
 |---|---|---|---|
-| Room page | 26,989 req/s | 132,240 req/s | **4.90×** |
-| Messages page | 30,805 req/s | 135,390 req/s | **4.40×** |
-| Sidebar | 28,709 req/s | 124,271 req/s | **4.33×** |
-| Search | 34,172 req/s | 144,563 req/s | **4.23×** |
-| Post a message | 7,320 req/s | 21,097 req/s | **2.88×** |
+| Room page | 29,464 req/s | 4,306 req/s (0.15×) | 133,318 req/s (**4.52×**) |
+| Messages page | 31,507 req/s | 5,454 req/s (0.17×) | 138,954 req/s (**4.41×**) |
+| Sidebar | 29,374 req/s | 27,543 req/s (0.94×) | 126,955 req/s (**4.32×**) |
+| Search | 31,569 req/s | 11,347 req/s (0.36×) | 141,327 req/s (**4.48×**) |
+| Post a message | 6,808 req/s | 20,844 req/s (**3.06×**) | 20,865 req/s (**3.06×**) |
 
-The C++ app also uses less CPU: 0.030 ms for each room page, against 0.13 ms.
+CPU time for each room page at 100 clients: 0.12 ms for Rust, 0.93 ms for C++ with the page cache
+off, and 0.030 ms for C++ with the page cache on.
 
 ### Latency and real time
 
 | Measurement | Rust | C++ | C++ advantage |
 |---|---|---|---|
-| Room page p99, 100 clients | 7.4 ms | 1.8 ms | **4.15×** |
-| Post a message p99, 100 clients | 20.7 ms | 11.8 ms | **1.75×** |
+| Room page p99, 100 clients, page cache on | 5.9 ms | 1.8 ms | **3.38×** |
+| Room page p99, 100 clients, page cache off | 5.9 ms | 43.2 ms | 0.14× |
+| Post a message p99, 100 clients | 29.1 ms | 12.1 ms | **2.40×** |
 | Posts per second to all of 100 clients in one room | 3,098 | 3,592 | **1.16×** |
 | Posts per second to all of 1,000 clients in one room | 546 | 479 | 0.88× |
 | Post to all 1,000 clients received, p50 | 15.9 ms | 14.1 ms | **1.13×** |
 | Post to all 1,000 clients received, p99 | 20.3 ms | 18.2 ms | **1.12×** |
 
 Every client subscribed and received every broadcast. All numbers are medians of three interleaved
-runs. The HTTP report also has the results for 64 clients.
+runs.
 
 ### Image size
 
@@ -94,6 +114,8 @@ page). The cause is the compressor: the C++ app uses libdeflate. The decoded pag
 
 The open work is:
 
+- The page build without the page cache. Today it is slower than the Rust port for the room,
+  messages and search pages.
 - The Action Cable fan-out with 1,000 clients. It is 0.88 times the Rust port.
 - Parity checks against Rails: the Playwright harness, and database and cookie compatibility in
   both directions.

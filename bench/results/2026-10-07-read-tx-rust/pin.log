@@ -1,0 +1,30 @@
+app rust rep 1
+db dir: /var/lib/campfire-bench/rust-1-1688/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 1900, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app cpp rep 1
+db dir: /var/lib/campfire-bench/cpp-1-1688/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 2342, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app cpp rep 2
+db dir: /var/lib/campfire-bench/cpp-2-1688/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 973142, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app rust rep 2
+db dir: /var/lib/campfire-bench/rust-2-1688/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 1879902, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app rust rep 3
+db dir: /var/lib/campfire-bench/rust-3-1688/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 1880331, loadgen http --base http://127.0.0.1:4390 --cookie session_t)
+app cpp rep 3
+db dir: /var/lib/campfire-bench/cpp-3-1688/db
+db fs: ext2/ext3
+app: Cpus_allowed_list:	0-3
+loadgen: Cpus_allowed_list:	4-7 (pid 1880764, loadgen http --base http://127.0.0.1:4390 --cookie session_t)

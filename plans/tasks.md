@@ -136,3 +136,4 @@ whose transcript is long.
 | A2b | merged (verified by Opus) | `task/A2b` | A1, A2, A3, A8 sweeps 0 differences on main. Room page 2.1-2.5x Rust, messages page 1.8-2.5x. Sidebar 0.63-0.92x and post 0.92x at c=64: performance follow-up. |
 | A6 | merged (verified by Opus) | `task/A6` | Blob and representation endpoints match Rust. Rest waits for the room page; static-file last-modified is a build artifact; gzip sizes pending a decision. |
 | A9 | in progress (Sonnet) | `task/A9` | |
+| A5 | in progress (Sonnet) | `task/A5` | |

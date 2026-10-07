@@ -130,9 +130,9 @@ whose transcript is long.
 | A0 | merged (verified by Opus) | `task/A0` | Written by DeepSeek; layout region fix by Sonnet. Sign-in sweep 36/36 equal to Rust. /up 2.0x Rust at c=16, 3.3x at c=64. |
 | A8 | merged (verified by Opus) | `task/A8` | DeepSeek + Sonnet. Pebble TLS-ALPN-01 passes. A8 sweep: all 16 differences are /rooms pages (A2). Open: HTTP/2 position of `content-length: 0` on empty bodies; /up Accept and 304 rules (A0 gaps). |
 | A1 | merged (verified by Opus) | `task/A1` | 145/147 sweep requests equal; 2 belong to A2 and A4. 10,791/10,791 user agent vectors. Avatar upload at join waits for A6. |
-| A2 | partly merged (Claude cloud session) | `origin/main` | Sidebar, room forms, direct rooms, involvements. Sweep: 53/150 equal; room page, messages page and refresh are missing (404). Rest is A2b. |
+| A2 | merged (cloud session + room page follow-up) | | 150/150 equal to Rust. |
 | A3 | merged (verified by Opus) | `task/A3` | Sweep 63/91 equal; the rest wait for A2b's partial or other areas. DB rows equal to Rust. Broadcasts unified with A2's. |
 | A4 | merged (verified by Opus) | `task/A4` | 131/140 equal; rest: rooms/webmanifest routes, and gzip content-length of compressed cache hits (decision pending). Avatar 1.7x Rust at c=16, 2.8x at c=64. |
-| A2b | paused (usage limit) | `task/A2b` | 9 commits; it was formatting its files before the acceptance run. |
+| A2b | merged (verified by Opus) | `task/A2b` | A1, A2, A3, A8 sweeps 0 differences on main. Room page 2.1-2.5x Rust, messages page 1.8-2.5x. Sidebar 0.63-0.92x and post 0.92x at c=64: performance follow-up. |
 | A6 | merged (verified by Opus) | `task/A6` | Blob and representation endpoints match Rust. Rest waits for the room page; static-file last-modified is a build artifact; gzip sizes pending a decision. |
 | A9 | in progress (Sonnet) | `task/A9` | |

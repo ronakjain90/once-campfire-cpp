@@ -137,3 +137,5 @@ whose transcript is long.
 | A6 | merged (verified by Opus) | `task/A6` | Blob and representation endpoints match Rust. Rest waits for the room page; static-file last-modified is a build artifact; gzip sizes pending a decision. |
 | A9 | in progress (Sonnet) | `task/A9` | |
 | A5 | in progress (Sonnet) | `task/A5` | |
+| A7 | pending (spec `plans/specs/A7.md`) | | Cable channels and the WebSocket wiring. |
+| P1 | pending (spec `plans/specs/P1.md`) | | Sidebar and post performance. Start after jobs and integrations merges (it touches the post path). |

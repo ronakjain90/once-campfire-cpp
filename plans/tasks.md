@@ -67,7 +67,7 @@ its requests in the diff sweep pass.
 | A3 | merged (verified by Opus) | `task/A3` | Sweep 63/91 equal; the rest wait for A2b's partial or other areas. DB rows equal to Rust. Broadcasts unified with A2's. |
 | A4 | merged (verified by Opus) | `task/A4` | 131/140 equal; rest: rooms/webmanifest routes, and gzip content-length of compressed cache hits (decision pending). Avatar 1.7x Rust at c=16, 2.8x at c=64. |
 | A5 | Search | `controllers/searches` |
-| A6 | PWA, the service worker, link unfurl, `/up`, error pages, Active Storage endpoints | `pwa`, `unfurl_links`, Active Storage |
+| A6 | paused (usage limit) | `task/A6` | Early: reading the Rust Active Storage code. |
 | A7 | The 7 channels, `Turbo::StreamsChannel`, the room stream authorization patch | `channels/*` |
 | A8 | merged (verified by Opus) | `task/A8` | DeepSeek + Sonnet. Pebble TLS-ALPN-01 passes. A8 sweep: all 16 differences are /rooms pages (A2). Open: HTTP/2 position of `content-length: 0` on empty bodies; /up Accept and 304 rules (A0 gaps). |
 | A9 | Jobs and integrations: Web Push delivery, webhooks, unfurl fetch, banned content removal | `jobs/*`, `models/*` integrations |
@@ -131,5 +131,5 @@ whose transcript is long.
 | A2 | partly merged (Claude cloud session) | `origin/main` | Sidebar, room forms, direct rooms, involvements. Sweep: 53/150 equal; room page, messages page and refresh are missing (404). Rest is A2b. |
 | A3 | merged (verified by Opus) | `task/A3` | Sweep 63/91 equal; the rest wait for A2b's partial or other areas. DB rows equal to Rust. Broadcasts unified with A2's. |
 | A4 | merged (verified by Opus) | `task/A4` | 131/140 equal; rest: rooms/webmanifest routes, and gzip content-length of compressed cache hits (decision pending). Avatar 1.7x Rust at c=16, 2.8x at c=64. |
-| A2b | in progress (Sonnet) | `task/A2b` | |
-| A6 | in progress (Sonnet) | `task/A6` | |
+| A2b | paused (usage limit) | `task/A2b` | Code written; it was formatting its files before the acceptance run. |
+| A6 | paused (usage limit) | `task/A6` | Early: reading the Rust Active Storage code. |

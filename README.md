@@ -46,8 +46,10 @@ layout and entrypoint.
 
 ### Setup
 
-- Host: Apple M4. Colima VM: Ubuntu, kernel 6.8, arm64, 8 vCPUs.
-- The app runs on CPUs 0–3. The load generator (`loadgen` from the Rust repo) runs on CPUs 4–7.
+- Host: Mac with Apple M4 (10 cores, 32 GB). Docker runs in a Colima VM: Ubuntu, kernel 6.8,
+  arm64, 8 vCPUs, 16 GB.
+- The app runs on CPUs 0–3 of the VM. The load generator (`loadgen` from the Rust repo) runs on
+  CPUs 4–7.
 - Each cell runs for 8 seconds. In a run with more than 1 rep, the order of the apps changes in
   each rep, and the table shows the median. The report of each run shows the ranges.
 - No run had errors. All responses were 2xx or 3xx.

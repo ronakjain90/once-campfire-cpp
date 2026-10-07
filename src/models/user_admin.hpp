@@ -41,6 +41,8 @@ namespace users {
 [[nodiscard]] Result<std::vector<User>> account_users(db::Connection& conn, Arena& arena, bool with_banned);
 // `User.active_bots.ordered`
 [[nodiscard]] Result<std::vector<User>> active_bots_ordered(db::Connection& conn, Arena& arena);
+// `user.messages` (ids): what `remove_banned_content` destroys.
+[[nodiscard]] Result<std::vector<std::int64_t>> message_ids(db::Connection& conn, Arena& arena, std::int64_t user_id);
 // `bot.webhook_url`
 [[nodiscard]] Result<std::optional<std::string>> webhook_url(db::Connection& conn, Arena& arena, std::int64_t user_id);
 // `bot.rooms.without_directs.ordered`: the id and the name of each room.

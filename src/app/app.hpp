@@ -15,6 +15,7 @@
 #include "app/proxy.hpp"
 #include "app/rate_limit.hpp"
 #include "app/session_cache.hpp"
+#include "app/unfurl_http.hpp"
 #include "assets/assets.hpp"
 #include "compat/secrets.hpp"
 #include "core/clock.hpp"
@@ -28,6 +29,9 @@ class Hub;
 }
 namespace campfire::models {
 class JobSink;
+}
+namespace campfire::jobs::web_push {
+class Vapid;
 }
 namespace campfire::storage {
 class Storage;
@@ -58,8 +62,14 @@ struct App {
   std::string preload_link_header;     // the `link` header of a page in the application layout
   // Active Storage on the disk service (storage/files). The upload flows of the message area use it.
   std::unique_ptr<storage::Storage> storage;
-  // Where the model callbacks enqueue jobs (push, bot webhook). A9 replaces the default, which drops them.
+  // Where the model callbacks enqueue jobs (push, bot webhook, blob purge). `create` sets the real queues
+  // (src/app/job_runner.hpp). The constructor sets a sink that drops them.
   std::shared_ptr<models::JobSink> job_sink;
+  // The VAPID keys, parsed once at boot. Nothing when Web Push is off (keys missing or invalid). Set by `create`.
+  std::shared_ptr<const jobs::web_push::Vapid> vapid;
+  // The network that Web Push and the bot webhooks use. The tests change the DNS answers, the dialer and the CA.
+  unfurl::Network push_network;
+  unfurl::Network webhook_network;
   // The Action Cable hub that broadcasts go to. Set once at boot by the cable setup, before the workers start. With
   // no hub a broadcast does nothing.
   std::atomic<cable::Hub*> hub{nullptr};

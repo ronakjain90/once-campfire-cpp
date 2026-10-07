@@ -59,6 +59,8 @@ campfire_library(app
     opengraph/html.cpp
     opengraph/opengraph.cpp
     unfurl_http.cpp
+    web_push.cpp
+    webhook.cpp
     controllers/session_transfers.cpp
     controllers/directs.cpp
     controllers/involvements.cpp
@@ -80,6 +82,10 @@ campfire_library(app
     finish.cpp
     fragment_cache.cpp
     health.cpp
+    job_push.cpp
+    job_purge.cpp
+    job_runner.cpp
+    job_webhook.cpp
     message_actions.cpp
     message_presenter.cpp
     network_guard.cpp
@@ -100,7 +106,7 @@ campfire_library(app
     "${campfire_routes_cpp}"
     "${campfire_data_cpp}"
   PUBLIC_DEPS campfire_net campfire_core campfire_compat campfire_db campfire_models campfire_req campfire_views
-              campfire_assets campfire_routes campfire_richtext campfire_storage campfire_cable
+              campfire_assets campfire_routes campfire_richtext campfire_storage campfire_cable campfire_jobs
   DEPS OpenSSL::Crypto PkgConfig::LIBDEFLATE PkgConfig::PCRE2
   WERROR)
 
@@ -111,6 +117,8 @@ campfire_test(app
     tests/app_test.cpp
     tests/cache_test.cpp
     tests/finish_test.cpp
+    tests/jobs_end_test.cpp
+    tests/jobs_test.cpp
     tests/messages_area_test.cpp
     tests/rqrcode_test.cpp
     tests/signin_area_test.cpp

@@ -119,8 +119,8 @@ std::optional<std::string> resolve_public_address(std::string_view host, const H
   return std::nullopt;
 }
 
-std::optional<std::string> resolve_public_address(std::string_view host) {
-  return resolve_public_address(host, [](const std::string& name) {
+HostLookup system_host_lookup() {
+  return [](const std::string& name) {
     std::vector<std::string> out;
     addrinfo hints{};
     hints.ai_family = AF_UNSPEC;
@@ -138,7 +138,11 @@ std::optional<std::string> resolve_public_address(std::string_view host) {
     }
     freeaddrinfo(found);
     return out;
-  });
+  };
+}
+
+std::optional<std::string> resolve_public_address(std::string_view host) {
+  return resolve_public_address(host, system_host_lookup());
 }
 
 }  // namespace campfire::app

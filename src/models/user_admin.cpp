@@ -36,6 +36,14 @@ const db::Query<UserRow()> kAccountUsersWithBanned{
 const db::Query<UserRow()> kActiveBots{
     CF_UA_USER "WHERE \"users\".\"status\" = 0 AND \"users\".\"role\" = 2 ORDER BY LOWER(name)"};
 
+struct MessageIdRow {
+  std::int64_t id;
+  static MessageIdRow read(db::RowReader& r) { return {r.i64(0)}; }
+};
+// `user.messages`: the association has no order, so the rows come in the order of the primary key.
+const db::Query<MessageIdRow(std::int64_t)> kMessageIds{
+    "SELECT \"messages\".\"id\" FROM \"messages\" WHERE \"messages\".\"creator_id\" = ? ORDER BY \"messages\".\"id\""};
+
 struct UrlRow {
   std::string_view url;
   static UrlRow read(db::RowReader& r) { return {r.text(0)}; }
@@ -274,6 +282,14 @@ Result<std::optional<std::string>> webhook_url(db::Connection& conn, Arena& aren
   if (!row) return std::unexpected(row.error());
   if (!*row) return std::optional<std::string>{};
   return std::optional<std::string>(std::string((*row)->url));
+}
+
+Result<std::vector<std::int64_t>> message_ids(db::Connection& conn, Arena& arena, std::int64_t user_id) {
+  auto rows = conn.all(kMessageIds, arena, user_id);
+  if (!rows) return std::unexpected(rows.error());
+  std::vector<std::int64_t> out;
+  for (const MessageIdRow& row : *rows) out.push_back(row.id);
+  return out;
 }
 
 Result<std::vector<BotRoom>> bot_rooms(db::Connection& conn, Arena& arena, std::int64_t user_id) {

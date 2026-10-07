@@ -68,9 +68,28 @@ class Connection {
   std::string buffer;  // bytes read and not used yet
 
   Status connect_to(const Network& network, const Endpoint& endpoint) {
-    std::string ip = endpoint.pinned_ip;
-    std::uint16_t port = endpoint.port;
-    if (network.dial_override) network.dial_override(ip, port);
+    const auto open_deadline = std::min(deadline, Clock::now() + timeouts.open);
+    // `TCPSocket.open(host, port)`: each address in turn, until one connects.
+    std::vector<std::string> addresses{endpoint.pinned_ip};
+    addresses.insert(addresses.end(), endpoint.more_ips.begin(), endpoint.more_ips.end());
+    Status last;
+    for (const std::string& address : addresses) {
+      std::string ip = address;
+      std::uint16_t port = endpoint.port;
+      if (network.dial_override) network.dial_override(ip, port);
+      last = connect_address(ip, port, open_deadline);
+      if (last) break;
+      if (fd_ >= 0) {
+        ::close(fd_);
+        fd_ = -1;
+      }
+    }
+    if (!last) return last;
+    if (!endpoint.https) return {};
+    return start_tls(network, endpoint, open_deadline);
+  }
+
+  Status connect_address(const std::string& ip, std::uint16_t port, Clock::time_point open_deadline) {
     sockaddr_storage address{};
     socklen_t length = 0;
     if (auto* v4 = reinterpret_cast<sockaddr_in*>(&address); inet_pton(AF_INET, ip.c_str(), &v4->sin_addr) == 1) {
@@ -87,7 +106,6 @@ class Connection {
     }
     fd_ = ::socket(address.ss_family, SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK, 0);
     if (fd_ < 0) return std::unexpected(io_error(std::strerror(errno)));
-    const auto open_deadline = std::min(deadline, Clock::now() + timeouts.open);
     if (::connect(fd_, reinterpret_cast<sockaddr*>(&address), length) != 0) {
       if (errno != EINPROGRESS) return std::unexpected(io_error(std::strerror(errno)));
       if (!wait(POLLOUT, open_deadline)) return std::unexpected(timeout_error("execution expired"));
@@ -96,8 +114,7 @@ class Connection {
       ::getsockopt(fd_, SOL_SOCKET, SO_ERROR, &error, &size);
       if (error != 0) return std::unexpected(io_error(std::strerror(error)));
     }
-    if (!endpoint.https) return {};
-    return start_tls(network, endpoint, open_deadline);
+    return {};
   }
 
   Status write_all(std::string_view data) {
@@ -420,11 +437,18 @@ Result<Response> exchange(const Network& network, const Endpoint& endpoint, cons
   c.deadline = deadline;
   if (auto connected = c.connect_to(network, endpoint); !connected) return std::unexpected(connected.error());
   response.head_ = request.method == "HEAD";
-  response.decode_content_ = !response.head_;
-  // `Net::HTTP::Get.new(uri)`, then `request` on a connection that was not started.
   std::string text = request.method + " " + request.target + " HTTP/1.1\r\n";
-  text += "Accept-Encoding: " + std::string(kAcceptEncoding) + "\r\n";
-  text += "Accept: */*\r\nUser-Agent: Ruby\r\nHost: " + request.host_header + "\r\nConnection: close\r\n\r\n";
+  if (request.headers) {
+    response.decode_content_ = request.decode_content;
+    for (const auto& [name, value] : *request.headers) text += name + ": " + value + "\r\n";
+    text += "\r\n";
+    text += request.body;
+  } else {
+    response.decode_content_ = !response.head_;
+    // `Net::HTTP::Get.new(uri)`, then `request` on a connection that was not started.
+    text += "Accept-Encoding: " + std::string(kAcceptEncoding) + "\r\n";
+    text += "Accept: */*\r\nUser-Agent: Ruby\r\nHost: " + request.host_header + "\r\nConnection: close\r\n\r\n";
+  }
   if (auto sent = c.write_all(text); !sent) return std::unexpected(sent.error());
   std::size_t end;
   while ((end = c.buffer.find("\r\n\r\n")) == std::string::npos) {
@@ -439,6 +463,9 @@ Result<Response> exchange(const Network& network, const Endpoint& endpoint, cons
   const std::string status_line = head.substr(0, line_end);
   if (status_line.size() < 12 || status_line.compare(0, 5, "HTTP/") != 0) return fail(Errc::Parse, "wrong status line");
   response.status = std::atoi(status_line.c_str() + status_line.find(' ') + 1);
+  if (const std::size_t second = status_line.find(' ', status_line.find(' ') + 1); second != std::string::npos) {
+    response.reason = status_line.substr(second + 1);
+  }
   while (line_end != std::string::npos) {
     const std::size_t start = line_end + 2;
     line_end = head.find("\r\n", start);

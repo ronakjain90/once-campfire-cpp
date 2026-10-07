@@ -7,11 +7,14 @@
 #include <netinet/in.h>
 #include <openssl/ssl.h>
 #include <poll.h>
+#include <strings.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
 #include <atomic>
 #include <chrono>
+#include <cstdlib>
+#include <cstring>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -27,6 +30,7 @@ struct FakeRoute {
   int status = 200;
   std::vector<std::pair<std::string, std::string>> headers;
   std::string body;
+  std::string reason = "Status";  // the text after the status code
   bool chunked = false;
   bool gzip = false;
   bool trickle = false;  // after the head, one space every 50 ms until the client hangs up
@@ -37,6 +41,8 @@ struct Received {
   std::string method;
   std::string target;
   std::vector<std::pair<std::string, std::string>> headers;
+  std::string head;  // the request line and the headers, as they came (without the last empty line)
+  std::string body;  // the body of the request, as long as its Content-Length says
   [[nodiscard]] std::string header(const std::string& name) const {
     for (const auto& [key, value] : headers) {
       if (strcasecmp(key.c_str(), name.c_str()) == 0) return value;
@@ -139,6 +145,23 @@ class FakeServer {
       if (n <= 0) break;
       request.append(chunk, static_cast<std::size_t>(n));
     }
+    // The body of the request: `Content-Length` bytes after the head.
+    const std::size_t head_end = request.find("\r\n\r\n");
+    if (head_end != std::string::npos) {
+      std::size_t length = 0;
+      for (std::size_t at = request.find("\r\n"); at != std::string::npos && at < head_end;) {
+        const std::size_t next = request.find("\r\n", at + 2);
+        const std::string line = request.substr(at + 2, next - at - 2);
+        if (strncasecmp(line.c_str(), "content-length:", 15) == 0)
+          length = std::strtoul(line.c_str() + 15, nullptr, 10);
+        at = next;
+      }
+      while (request.size() < head_end + 4 + length) {
+        const ssize_t n = stream.read(chunk, sizeof chunk);
+        if (n <= 0) break;
+        request.append(chunk, static_cast<std::size_t>(n));
+      }
+    }
     respond(stream, request);
     if (stream.ssl != nullptr) {
       SSL_shutdown(stream.ssl);
@@ -147,8 +170,12 @@ class FakeServer {
     ::close(fd);
   }
 
-  void respond(const Stream& stream, const std::string& request) {
+  void respond(const Stream& stream, const std::string& whole_request) {
     Received received;
+    const std::size_t head_end = whole_request.find("\r\n\r\n");
+    received.head = whole_request.substr(0, head_end);
+    if (head_end != std::string::npos) received.body = whole_request.substr(head_end + 4);
+    const std::string request = head_end == std::string::npos ? whole_request : whole_request.substr(0, head_end + 4);
     std::size_t line_end = request.find("\r\n");
     const std::string first = request.substr(0, line_end);
     const std::size_t sp1 = first.find(' ');
@@ -185,7 +212,7 @@ class FakeServer {
     std::this_thread::sleep_for(route->delay);
     std::string body = route->body;
     if (route->gzip) body = gzip_member(body);
-    std::string head = "HTTP/1.1 " + std::to_string(route->status) + " Status\r\n";
+    std::string head = "HTTP/1.1 " + std::to_string(route->status) + " " + route->reason + "\r\n";
     bool has_length = false;
     for (const auto& [name, value] : route->headers) {
       head += name + ": " + value + "\r\n";

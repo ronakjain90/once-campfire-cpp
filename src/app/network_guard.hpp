@@ -27,5 +27,7 @@ namespace campfire::app {
 // does not resolve. The system one is `getaddrinfo`. The tests of the unfurl client give fixed answers.
 using HostLookup = std::function<std::vector<std::string>(const std::string& host)>;
 [[nodiscard]] std::optional<std::string> resolve_public_address(std::string_view host, const HostLookup& lookup);
+// The system lookup: `getaddrinfo`, in the order that it gives.
+[[nodiscard]] HostLookup system_host_lookup();
 
 }  // namespace campfire::app

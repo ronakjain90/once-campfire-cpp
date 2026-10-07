@@ -1,5 +1,6 @@
 // Rails: app/models/push/subscription.rb. Rust: crates/db/src/models/push_subscription.rs.
-// Delivery is the task of the job area (A9): this file has the rows and the validation.
+// This file has the rows, the validation and the queries of `Room::MessagePusher`. The delivery is in
+// src/app/web_push.cpp.
 #pragma once
 
 #include <cstdint>
@@ -61,6 +62,23 @@ struct Conditions {
                                               const ResolveHost& resolve);
 // `destroy_by(id:)` for the user.
 [[nodiscard]] Status destroy_by_id(db::Tx& tx, std::int64_t user_id, std::int64_t id);
+// `Push::Subscription.find_by(id:)`
+[[nodiscard]] Result<std::optional<PushSubscription>> find(db::Connection& conn, Arena& arena, std::int64_t id);
+// `subscription.destroy`
+[[nodiscard]] Status destroy(db::Tx& tx, std::int64_t id);
+// `Room::MessagePusher#push_subscriptions_for_users_involved_in_everything`: the subscriptions of the members of the
+// room who are not the creator, are not connected (`connected_at` before `cutoff` or nothing) and want everything.
+// `cutoff` is `CONNECTION_TTL.ago`, as the text of the database.
+[[nodiscard]] Result<std::vector<PushSubscription>> involved_in_everything(db::Connection& conn, Arena& arena,
+                                                                           std::int64_t room_id,
+                                                                           std::int64_t creator_id,
+                                                                           std::string_view cutoff);
+// `push_subscriptions_for_mentionable_users(mentionees)`: the same for the members who want mentions and are in
+// `user_ids`.
+[[nodiscard]] Result<std::vector<PushSubscription>> involved_in_mentions(db::Connection& conn, Arena& arena,
+                                                                         std::int64_t room_id, std::int64_t creator_id,
+                                                                         const std::vector<std::int64_t>& user_ids,
+                                                                         std::string_view cutoff);
 // `user.memberships.unread.count`: the badge of a notification.
 [[nodiscard]] Result<std::int64_t> unread_count(db::Connection& conn, Arena& arena, std::int64_t user_id);
 

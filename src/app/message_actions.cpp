@@ -10,12 +10,14 @@
 #include "app/page.hpp"
 #include "assets/assets.hpp"
 #include "compat/ruby.hpp"
+#include "core/time_format.hpp"
 #include "models/account.hpp"
 #include "models/job_sink.hpp"
 #include "models/storage_records.hpp"
 #include "richtext/content.hpp"
 #include "richtext/richtext.hpp"
 #include "richtext/text_util.hpp"
+#include "routes/routes.hpp"
 #include "storage/storage.hpp"
 #include "views/layout.hpp"
 #include "views/templates.gen.hpp"
@@ -32,6 +34,8 @@ std::string render_string(const std::function<void(Out&)>& render) {
   return out.to_string();
 }
 
+}  // namespace
+
 // `ActionText::Content.new(body, canonicalize: true).to_html`: assigning a String to a rich text attribute stores it.
 std::string canonical_body(MessagePresenter& presenter, std::string_view body) {
   auto content = richtext::Content::load(body, presenter.render_context());
@@ -46,8 +50,6 @@ std::string plain_text_for(MessagePresenter& presenter, std::string_view body, s
   }
   return std::string(filename);
 }
-
-}  // namespace
 
 std::unexpected<Failure> db_failure(const Error& error) {
   if (error.code == Errc::NotFound) return fail_with(ErrorKind::NotFound, error.message);
@@ -179,13 +181,35 @@ Task<Flow<StagedUpload>> stage_upload(Rq& rq, const AttachmentParam& attachment)
   co_return out;
 }
 
+// What the media work needs from a request or from a job: the app, a scheduler to resume on, and a reader.
+struct MediaWork {
+  const App& app;
+  Scheduler& scheduler;
+  db::Connection& conn;
+};
+
+// `Ctx::offload` for work that has no request.
+template <class F>
+auto offload(MediaWork& work, F fn) {
+  using R = std::invoke_result_t<F&>;
+  auto pair = make_completion<R>(work.scheduler);
+  work.app.jobs.submit([fn = std::move(fn), setter = pair.second]() mutable {
+    try {
+      setter.set_value(fn());
+    } catch (...) {
+      setter.set_exception(std::current_exception());
+    }
+  });
+  return std::move(pair.first);
+}
+
 // `Blob#analyze`, then `touch_attachments`: the message is touched, and so is its room.
-Task<Flow<void>> analyze_attachment(Rq& rq, const storage::Blob& blob, models::Message& message,
+Task<Flow<void>> analyze_attachment(MediaWork& work, const storage::Blob& blob, models::Message& message,
                                     std::string_view plain_text) {
-  const storage::Storage& store = *rq.app.storage;
-  auto metadata = co_await rq.ctx.offload(rq.app.jobs, [&] { return store.analyzed_metadata(blob); });
+  const storage::Storage& store = *work.app.storage;
+  auto metadata = co_await offload(work, [&] { return store.analyzed_metadata(blob); });
   if (!metadata) co_return fail_internal(metadata.error().message);
-  auto written = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
+  auto written = co_await work.app.db->write(work.scheduler, [&](db::Tx& tx) -> Status {
     models::DbRecords records(tx.conn());
     if (auto s = records.update_metadata(blob.id, *metadata); !s) return s;
     return models::messages::touch(tx, message, plain_text);
@@ -196,17 +220,17 @@ Task<Flow<void>> analyze_attachment(Rq& rq, const storage::Blob& blob, models::M
 
 // `blob.representation(variation).processed` for a blob that is not a video: the variant is made off the writer, then
 // recorded.
-Task<Flow<void>> process_variant(Rq& rq, const storage::Blob& blob, const compat::Variation& variation) {
-  const storage::Storage& store = *rq.app.storage;
+Task<Flow<void>> process_variant(MediaWork& work, const storage::Blob& blob, const compat::Variation& variation) {
+  const storage::Storage& store = *work.app.storage;
   {
-    models::DbRecords records(rq.db());
+    models::DbRecords records(work.conn);
     auto existing = store.existing_variant(records, blob, variation);
     if (!existing) co_return fail_internal(existing.error().message);
     if (*existing) co_return Flow<void>{};
   }
-  auto image = co_await rq.ctx.offload(rq.app.jobs, [&] { return store.transform_variant(blob, variation); });
+  auto image = co_await offload(work, [&] { return store.transform_variant(blob, variation); });
   if (!image) co_return fail_internal(image.error().message);
-  auto recorded = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
+  auto recorded = co_await work.app.db->write(work.scheduler, [&](db::Tx& tx) -> Status {
     models::DbRecords records(tx.conn());
     auto saved = store.record_variant(records, blob, variation, *image, models::to_compat(tx.now()));
     if (!saved) return std::unexpected(saved.error());
@@ -218,18 +242,18 @@ Task<Flow<void>> process_variant(Rq& rq, const storage::Blob& blob, const compat
 }
 
 // `blob.preview_image`: the frame that ffmpeg draws, attached to the blob as `preview_image`.
-Task<Flow<storage::Blob>> preview_image(Rq& rq, const storage::Blob& blob) {
-  const storage::Storage& store = *rq.app.storage;
+Task<Flow<storage::Blob>> preview_image(MediaWork& work, const storage::Blob& blob) {
+  const storage::Storage& store = *work.app.storage;
   {
-    models::DbRecords records(rq.db());
+    models::DbRecords records(work.conn);
     auto existing = store.existing_preview_image(records, blob);
     if (!existing) co_return fail_internal(existing.error().message);
     if (*existing) co_return std::move(**existing);
   }
-  auto image = co_await rq.ctx.offload(rq.app.jobs, [&] { return store.draw_preview_image(blob); });
+  auto image = co_await offload(work, [&] { return store.draw_preview_image(blob); });
   if (!image) co_return fail_internal(image.error().message);
   std::optional<storage::Blob> result;
-  auto recorded = co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) -> Status {
+  auto recorded = co_await work.app.db->write(work.scheduler, [&](db::Tx& tx) -> Status {
     models::DbRecords records(tx.conn());
     auto saved = store.record_preview_image(records, blob, *image, models::to_compat(tx.now()));
     if (!saved) return std::unexpected(saved.error());
@@ -250,32 +274,42 @@ Task<Flow<storage::Blob>> preview_image(Rq& rq, const storage::Blob& blob) {
 }
 
 // `process_attachment`: `ensure_attachment_analyzed`, then `process_attachment_thumbnail`.
-Task<Flow<void>> process_attachment(Rq& rq, storage::Blob blob, models::Message& message, std::string_view plain_text) {
-  const storage::Storage& store = *rq.app.storage;
-  if (auto analyzed = co_await analyze_attachment(rq, blob, message, plain_text); !analyzed) {
+Task<Flow<void>> process_media(MediaWork& work, storage::Blob blob, models::Message& message,
+                               std::string_view plain_text) {
+  const storage::Storage& store = *work.app.storage;
+  if (auto analyzed = co_await analyze_attachment(work, blob, message, plain_text); !analyzed) {
     co_return std::unexpected(std::move(analyzed.error()));
   }
   using compat::marshal::Value;
   if (blob.is_video()) {
     // `attachment.preview(format: :webp).processed`
-    auto image = co_await preview_image(rq, blob);
+    auto image = co_await preview_image(work, blob);
     if (!image) co_return std::unexpected(std::move(image.error()));
     const compat::Variation webp({{"format", Value::symbol("webp")}});
     auto variation = store.variation_for(*image, webp);
     if (!variation) co_return fail_internal(variation.error().message);
-    co_return co_await process_variant(rq, *image, *variation);
+    co_return co_await process_variant(work, *image, *variation);
   }
   if (blob.is_representable()) {
     // `attachment.representation(:thumb).processed`
     const compat::Variation thumb = compat::Variation::resize_to_limit(1200, 800, std::nullopt);
     auto variation = store.variation_for(blob, thumb);
     if (!variation) co_return fail_internal(variation.error().message);
-    co_return co_await process_variant(rq, blob, *variation);
+    co_return co_await process_variant(work, blob, *variation);
   }
   co_return Flow<void>{};
 }
 
 }  // namespace
+
+Task<Status> process_attachment_detached(const App& app, Scheduler& scheduler, db::Connection& conn, storage::Blob blob,
+                                         models::Message& message, std::string_view plain_text) {
+  MediaWork work{app, scheduler, conn};
+  auto done = co_await process_media(work, std::move(blob), message, plain_text);
+  if (done) co_return Status{};
+  if (const auto* error = std::get_if<HttpError>(&done.error())) co_return fail(Errc::Internal, error->message);
+  co_return fail(Errc::Internal, "processing the attachment failed");
+}
 
 Task<Flow<models::Message>> create_message(Rq& rq, const models::RoomRef& room, MessageParams params) {
   const models::User* user = rq.current_user();
@@ -311,36 +345,13 @@ Task<Flow<models::Message>> create_message(Rq& rq, const models::RoomRef& room, 
   if (!written) co_return db_failure(written.error());
   models::Message message = std::move(*written);
   if (blob) {
-    if (auto processed = co_await process_attachment(rq, *blob, message, attributes.plain_text); !processed) {
+    MediaWork work{rq.app, rq.ctx.scheduler(), rq.db()};
+    if (auto processed = co_await process_media(work, *blob, message, attributes.plain_text); !processed) {
       co_return std::unexpected(std::move(processed.error()));
     }
   }
   co_return message;
 }
-
-namespace {
-
-// `ActiveStorage::PurgeJob`: `blob.purge`, then the blobs that depended on it. It runs inline until the job queues
-// (A9) exist.
-Task<Flow<void>> purge_blob(Rq& rq, std::int64_t blob_id) {
-  std::vector<std::int64_t> pending{blob_id};
-  const storage::Storage& store = *rq.app.storage;
-  while (!pending.empty()) {
-    const std::int64_t id = pending.back();
-    pending.pop_back();
-    auto purged =
-        co_await rq.app.db->write(rq.ctx.scheduler(), [&](db::Tx& tx) { return models::purge_blob_rows(tx, id); });
-    if (!purged) co_return db_failure(purged.error());
-    if (!purged->blob) continue;
-    const storage::Blob& blob = *purged->blob;
-    auto deleted = co_await rq.ctx.offload(rq.app.jobs, [&] { return store.delete_files(blob); });
-    if (!deleted) log_error("purge of blob {} left files: {}", id, deleted.error().message);
-    pending.insert(pending.end(), purged->dependent_ids.begin(), purged->dependent_ids.end());
-  }
-  co_return Flow<void>{};
-}
-
-}  // namespace
 
 Task<Flow<models::Message>> update_message(Rq& rq, models::Message message, MessageParams params) {
   MessagePresenter presenter(rq.db(), rq.arena(), rq.app, std::string(rq.info.host()));
@@ -385,14 +396,12 @@ Task<Flow<models::Message>> update_message(Rq& rq, models::Message message, Mess
     return {};
   });
   if (!written) co_return db_failure(written.error());
-  if (replaced.purged_blob_id) {
-    if (auto purged = co_await purge_blob(rq, *replaced.purged_blob_id); !purged) {
-      co_return std::unexpected(std::move(purged.error()));
-    }
-  }
+  // `has_one_attached` replaces the attachment and `purge_later` queues the old blob.
+  if (replaced.purged_blob_id) rq.app.job_sink->purge_blob(*replaced.purged_blob_id);
   if (blob) {
     // `ActiveStorage::AnalyzeJob`: the new blob is analyzed, not processed (verified against the reference).
-    if (auto analyzed = co_await analyze_attachment(rq, *blob, message, plain_text); !analyzed) {
+    MediaWork work{rq.app, rq.ctx.scheduler(), rq.db()};
+    if (auto analyzed = co_await analyze_attachment(work, *blob, message, plain_text); !analyzed) {
       co_return std::unexpected(std::move(analyzed.error()));
     }
   }
@@ -411,13 +420,50 @@ Task<Flow<void>> destroy_message(Rq& rq, const models::RoomRef& room, const mode
     return {};
   });
   if (!written) co_return db_failure(written.error());
-  if (destroyed.purged_blob_id) {
-    if (auto purged = co_await purge_blob(rq, *destroyed.purged_blob_id); !purged) {
-      co_return std::unexpected(std::move(purged.error()));
-    }
-  }
+  // `dependent: :purge_later`
+  if (destroyed.purged_blob_id) rq.app.job_sink->purge_blob(*destroyed.purged_blob_id);
   broadcasts::message_remove(rq.app, room, message.client_message_id);
   co_return Flow<void>{};
+}
+
+Result<std::string> broadcast_create_detached(const App& app, db::Connection& conn, Arena& arena,
+                                              const models::RoomRef& room, const models::Message& message) {
+  // `ApplicationController.renderer`: no request, so the host is `example.org`.
+  views::ViewContext ctx;
+  auto account = models::accounts::first(conn, arena);
+  if (!account) return std::unexpected(account.error());
+  const auto fs_number = [](const std::string& text) {
+    const auto t = parse_db(text);
+    return t ? format_to_fs_number(*t) : std::string{};
+  };
+  if (*account) {
+    ctx.account.name = (*account)->name;
+    ctx.account.logo_url = campfire::routes::fresh_account_logo(fs_number((*account)->updated_at));
+    ctx.account.has_logo = (*account)->has_logo;
+  } else {
+    ctx.account.logo_url = campfire::routes::fresh_account_logo();
+  }
+  ctx.vapid_public_key = app.config.vapid_public_key;
+  ctx.asset_path = [](std::string_view source) {
+    auto path = assets::asset_path(source);
+    if (!path) throw std::runtime_error(path.error().message);
+    return std::move(*path);
+  };
+  ctx.importmap_tags = std::string(assets::javascript_importmap_tags());
+  ctx.stylesheet_tags = app.stylesheets.html;
+  ctx.base_url = "http://example.org";
+  ctx.request_url = ctx.base_url + "/";
+  ctx.app_version = app.config.app_version;
+
+  MessagePresenter presenter(conn, arena, app, std::string());
+  auto view = presenter.message(message);
+  if (!view) return std::unexpected(view.error());
+  std::string html = render_string([&](Out& out) { views::messages::message(out, ctx, *view); });
+  broadcasts::message_append(app, room, html);
+  auto members = models::room_refs::member_user_ids(conn, arena, room.id);
+  if (!members) return std::unexpected(members.error());
+  broadcasts::unread_room(app, room, *members);
+  return html;
 }
 
 Flow<std::string> broadcast_create(Rq& rq, const models::RoomRef& room, const models::Message& message) {

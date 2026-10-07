@@ -16,6 +16,7 @@
 #include "models/message.hpp"
 #include "models/room_ref.hpp"
 #include "req/param.hpp"
+#include "storage/blob.hpp"
 #include "views/context.hpp"
 
 namespace campfire::app::messages {
@@ -50,6 +51,16 @@ struct MessageParams {
 // `head :forbidden unless Current.user.can_administer?(@message)`
 [[nodiscard]] Flow<void> ensure_can_administer(Rq& rq, const models::Message& message);
 
+// `ActionText::Content.new(body, canonicalize: true).to_html`: assigning a String to a rich text attribute stores it.
+[[nodiscard]] std::string canonical_body(MessagePresenter& presenter, std::string_view body);
+// `plain_text_body`: `body.to_plain_text.presence || attachment&.filename&.to_s || ""`
+[[nodiscard]] std::string plain_text_for(MessagePresenter& presenter, std::string_view body, std::string_view filename);
+// `process_attachment` for a message that no request made (the webhook job): `ensure_attachment_analyzed`, then the
+// thumbnail. `scheduler` is the scheduler of the calling thread.
+[[nodiscard]] Task<Status> process_attachment_detached(const App& app, Scheduler& scheduler, db::Connection& conn,
+                                                       storage::Blob blob, models::Message& message,
+                                                       std::string_view plain_text);
+
 // `@room.messages.create_with_attachment!(attributes)`, with `process_attachment`.
 [[nodiscard]] Task<Flow<models::Message>> create_message(Rq& rq, const models::RoomRef& room, MessageParams params);
 // `@message.update!(attributes)`
@@ -62,6 +73,11 @@ struct MessageParams {
 [[nodiscard]] Flow<std::string> broadcast_create(Rq& rq, const models::RoomRef& room, const models::Message& message);
 // `broadcast_replace_to @room, :messages, target: [ @message, :presentation ], ...`
 [[nodiscard]] Flow<void> broadcast_replace(Rq& rq, const models::RoomRef& room, const models::Message& message);
+// `message.broadcast_create` outside a request (the webhook job): rendered as `ApplicationController.renderer` does.
+// Gives the HTML of the partial. `arena` and `conn` belong to the calling thread.
+[[nodiscard]] Result<std::string> broadcast_create_detached(const App& app, db::Connection& conn, Arena& arena,
+                                                            const models::RoomRef& room,
+                                                            const models::Message& message);
 // `deliver_webhooks_to_bots`: every active bot of a direct room, else every mentioned active bot, but not the creator.
 [[nodiscard]] Flow<void> deliver_webhooks_to_bots(Rq& rq, const models::RoomRef& room, const models::Message& message);
 

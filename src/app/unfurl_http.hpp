@@ -42,12 +42,19 @@ struct Endpoint {
   std::string host;  // as `URI#host` gives it: the TLS server name
   std::uint16_t port = 80;
   std::string pinned_ip;  // connect here
+  // Tried in order if the connect to `pinned_ip` fails (a name that has more than one address: the webhook).
+  std::vector<std::string> more_ips = {};
 };
 
 struct Request {
-  std::string method;  // "GET" or "HEAD"
+  std::string method;  // "GET" or "HEAD", or "POST" for the request with `headers`
   std::string target;  // path and query
   std::string host_header;
+  // A request that the caller built (the webhook and Web Push POST): these headers in this order, as `Net::HTTP`
+  // writes them, then `body`. `host_header` is not used.
+  std::optional<std::vector<std::pair<std::string, std::string>>> headers = std::nullopt;
+  std::string body = {};
+  bool decode_content = false;  // the request asked for a compressed reply (`Accept-Encoding`): inflate it
 };
 
 // What reading a body with a size limit produced.
@@ -65,6 +72,7 @@ class Response {
   ~Response();
 
   int status = 0;
+  std::string reason;                                        // the text after the status code
   std::vector<std::pair<std::string, std::string>> headers;  // names in lower case
 
   // `response[name]`: every value of the header, joined with ", ".

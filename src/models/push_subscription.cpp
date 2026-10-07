@@ -57,6 +57,26 @@ const db::Query<std::int64_t(std::int64_t)> kUnread{
     "NOT "
     "NULL"};
 
+const db::Query<Row(std::int64_t)> kFindById{
+    "SELECT " CF_PS_COLUMNS " FROM \"push_subscriptions\" WHERE \"push_subscriptions\".\"id\" = ? LIMIT 1"};
+const db::Query<void(std::int64_t)> kDestroy{
+    "DELETE FROM \"push_subscriptions\" WHERE \"push_subscriptions\".\"id\" = ?"};
+// `Membership.visible.disconnected.where(room:).where.not(user: creator)` merged with `involved_in_everything`.
+const db::Query<Row(std::string_view, std::int64_t, std::int64_t)> kEverything{
+    "SELECT " CF_PS_COLUMNS
+    " FROM \"push_subscriptions\" INNER JOIN \"users\" ON \"users\".\"id\" = \"push_subscriptions\".\"user_id\" "
+    "INNER JOIN \"memberships\" ON \"memberships\".\"user_id\" = \"users\".\"id\" WHERE "
+    "(\"memberships\".\"connected_at\" IS NULL OR \"memberships\".\"connected_at\" < ?) AND "
+    "\"memberships\".\"room_id\" = ? AND \"memberships\".\"user_id\" != ? AND \"memberships\".\"involvement\" = "
+    "'everything'"};
+const db::Query<Row(std::string_view, std::int64_t, std::int64_t, std::int64_t)> kMentions{
+    "SELECT " CF_PS_COLUMNS
+    " FROM \"push_subscriptions\" INNER JOIN \"users\" ON \"users\".\"id\" = \"push_subscriptions\".\"user_id\" "
+    "INNER JOIN \"memberships\" ON \"memberships\".\"user_id\" = \"users\".\"id\" WHERE "
+    "(\"memberships\".\"connected_at\" IS NULL OR \"memberships\".\"connected_at\" < ?) AND "
+    "\"memberships\".\"room_id\" = ? AND \"memberships\".\"user_id\" != ? AND \"memberships\".\"involvement\" = "
+    "'mentions' AND \"push_subscriptions\".\"user_id\" = ?"};
+
 constexpr std::array<std::string_view, 5> kPermittedHosts = {"jmt17.google.com", "fcm.googleapis.com",
                                                              "updates.push.services.mozilla.com", "web.push.apple.com",
                                                              "notify.windows.com"};
@@ -173,6 +193,41 @@ Result<std::optional<PushSubscription>> find_by(db::Connection& conn, Arena& are
   if (!row) return std::unexpected(row.error());
   if (!*row) return std::optional<PushSubscription>{};
   return std::optional<PushSubscription>(convert(**row));
+}
+
+Result<std::optional<PushSubscription>> find(db::Connection& conn, Arena& arena, std::int64_t id) {
+  auto row = conn.first(kFindById, arena, id);
+  if (!row) return std::unexpected(row.error());
+  if (!*row) return std::optional<PushSubscription>{};
+  return std::optional<PushSubscription>(convert(**row));
+}
+
+Status destroy(db::Tx& tx, std::int64_t id) {
+  if (auto done = tx.conn().exec(kDestroy, id); !done) return std::unexpected(done.error());
+  tx.changed(db::schema::Table::PushSubscriptions, id);
+  return {};
+}
+
+Result<std::vector<PushSubscription>> involved_in_everything(db::Connection& conn, Arena& arena, std::int64_t room_id,
+                                                             std::int64_t creator_id, std::string_view cutoff) {
+  auto rows = conn.all(kEverything, arena, cutoff, room_id, creator_id);
+  if (!rows) return std::unexpected(rows.error());
+  std::vector<PushSubscription> out;
+  for (const Row& row : *rows) out.push_back(convert(row));
+  return out;
+}
+
+Result<std::vector<PushSubscription>> involved_in_mentions(db::Connection& conn, Arena& arena, std::int64_t room_id,
+                                                           std::int64_t creator_id,
+                                                           const std::vector<std::int64_t>& user_ids,
+                                                           std::string_view cutoff) {
+  std::vector<PushSubscription> out;
+  for (const std::int64_t user_id : user_ids) {
+    auto rows = conn.all(kMentions, arena, cutoff, room_id, creator_id, user_id);
+    if (!rows) return std::unexpected(rows.error());
+    for (const Row& row : *rows) out.push_back(convert(row));
+  }
+  return out;
 }
 
 Status touch(db::Tx& tx, std::int64_t id) {

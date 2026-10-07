@@ -2,11 +2,11 @@
 // test_notifications_controller.rb. Rust:
 // crates/campfire/src/controllers/users/push_subscriptions/test_notifications.rs.
 //
-// The delivery is the task of the job area (A9): this only finds the subscription and hands the job to the hook.
+// The notification goes out in the request, as in Rails: an error of the push service gives a 500.
 #include "app/concerns.hpp"
 #include "app/controllers/accounts_common.hpp"
 #include "app/dispatch.hpp"
-#include "models/hooks.hpp"
+#include "app/web_push.hpp"
 #include "models/push_subscription.hpp"
 #include "routes/routes.hpp"
 
@@ -27,7 +27,12 @@ Task<Flow<net::Response>> test_notifications_create(Rq& rq) {
   auto badge = models::push_subscriptions::unread_count(rq.db(), rq.arena(), user_id);
   if (!badge) co_return fail_internal(badge.error().message);
   const std::string location = rq.url_for(campfire::routes::user_push_subscriptions());
-  models::hooks::enqueue_test_notification((*found)->id, location, *badge);
+  // Off the worker: the delivery waits for the push service.
+  const models::PushSubscription subscription = **found;
+  const std::int64_t unread = *badge;
+  const auto sent = co_await rq.ctx.offload(
+      rq.app.jobs, [&] { return web_push::deliver_test_notification(rq.app, subscription, unread, location); });
+  if (sent) co_return fail_internal(*sent);
   co_return rq.redirect_to(location);
 }
 

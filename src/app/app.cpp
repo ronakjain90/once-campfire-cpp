@@ -5,8 +5,10 @@
 #include <cstdlib>
 
 #include "app/data.hpp"
+#include "app/job_runner.hpp"
 #include "core/log.hpp"
 #include "core/time_format.hpp"
+#include "jobs/web_push.hpp"
 #include "models/job_sink.hpp"
 #include "storage/storage.hpp"
 
@@ -45,6 +47,8 @@ App::App(Config c, SharedClock k, std::size_t job_threads, PageCache::Options pa
       job_sink(std::make_shared<models::NullJobSink>()) {}
 
 App::~App() {
+  // The job threads use the database and the storage: stop them first.
+  job_sink.reset();
   if (db && subscription_ != 0) db->unsubscribe(subscription_);
 }
 
@@ -73,6 +77,7 @@ Result<std::unique_ptr<App>> App::create(Config config, SharedClock clock, const
   if (!sheets) return std::unexpected(sheets.error());
   app->stylesheets = std::move(*sheets);
   app->preload_link_header = assets::append_preload_links("", app->stylesheets.preload_links);
+  start_jobs(*app);
   return app;
 }
 

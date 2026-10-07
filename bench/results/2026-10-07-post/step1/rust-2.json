@@ -1,0 +1,55 @@
+{
+ "app": "rust",
+ "image": "campfire-rust:app",
+ "rep": 2,
+ "http": [
+  {
+   "avg_bytes": 1993,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 41.887,
+    "mean_ms": 2.88,
+    "n": 44346,
+    "p50_ms": 2.703,
+    "p90_ms": 3.475,
+    "p99_ms": 7.855
+   },
+   "ok": 44346,
+   "path": "POST /rooms/201306877/messages",
+   "rps": 5541.7,
+   "secs": 8.0,
+   "statuses": {
+    "200": 44346
+   },
+   "route": "post_message",
+   "app_cpu_usec": 21417585,
+   "requests": 44346
+  },
+  {
+   "avg_bytes": 1992,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 195.199,
+    "mean_ms": 11.84,
+    "n": 43205,
+    "p50_ms": 10.935,
+    "p90_ms": 14.751,
+    "p99_ms": 21.775
+   },
+   "ok": 43205,
+   "path": "POST /rooms/201306877/messages",
+   "rps": 5393.2,
+   "secs": 8.01,
+   "statuses": {
+    "200": 43205
+   },
+   "route": "post_message",
+   "app_cpu_usec": 20503947,
+   "requests": 43205
+  }
+ ]
+}

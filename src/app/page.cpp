@@ -25,8 +25,13 @@ std::string to_fs_number(const std::string& db_text) {
 }  // namespace
 
 std::string user_avatar_path(const Rq& rq, const models::User& user) {
-  const std::string token = compat::signed_id::generate(rq.app.secrets, "User", user.id, "avatar", std::nullopt);
-  return campfire::routes::fresh_user_avatar(token, to_fs_number(user.updated_at));
+  // The token has no expiry: the path is a pure function of the user id and `updated_at`, so the worker keeps it.
+  std::string key = "avatar:" + std::to_string(user.id) + ':';
+  key += user.updated_at;
+  return rq.worker.memo(key, [&] {
+    const std::string token = compat::signed_id::generate(rq.app.secrets, "User", user.id, "avatar", std::nullopt);
+    return campfire::routes::fresh_user_avatar(token, to_fs_number(user.updated_at));
+  });
 }
 
 Flow<LayoutData> load_layout(Rq& rq) {
@@ -39,6 +44,7 @@ Flow<LayoutData> load_layout(Rq& rq) {
     data.account.logo_url = campfire::routes::fresh_account_logo(to_fs_number(a.updated_at));
     data.account.has_logo = a.has_logo;
     data.custom_styles = a.custom_styles;
+    data.restrict_room_creation_to_administrators = a.restrict_room_creation_to_administrators;
   } else {
     data.account.logo_url = campfire::routes::fresh_account_logo();
   }

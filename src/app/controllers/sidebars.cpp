@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <array>
+#include <span>
 #include <string>
 
 #include "app/concerns.hpp"
@@ -30,16 +31,18 @@ views::UserSummary user_summary(const Rq& rq, const models::User& user) {
   return out;
 }
 
-Flow<views::SidebarDirect> sidebar_direct(Rq& rq, const models::Membership& membership, const models::Room& room) {
-  auto users = models::users::of_room(rq.db(), rq.arena(), room.id);
-  if (!users) return fail_internal(users.error().message);
+namespace {
+
+// The `users/sidebars/rooms/_direct` locals, from the members of the room in the order of the query.
+Flow<views::SidebarDirect> direct_locals(Rq& rq, const models::Membership& membership, const models::Room& room,
+                                         std::span<const models::User* const> members) {
   views::SidebarDirect direct;
   direct.room_id = room.id;
   direct.unread = membership.unread();
   const auto updated = parse_db(room.updated_at);
   if (updated) direct.updated_at_epoch = std::to_string(epoch_ms(*updated));
-  for (const models::User& user : *users) {
-    if (user.id != membership.user_id) direct.members.push_back(user_summary(rq, user));
+  for (const models::User* user : members) {
+    if (user->id != membership.user_id) direct.members.push_back(user_summary(rq, *user));
   }
   if (direct.members.empty()) {
     auto own = models::users::find_by_id(rq.db(), rq.arena(), membership.user_id);
@@ -47,6 +50,16 @@ Flow<views::SidebarDirect> sidebar_direct(Rq& rq, const models::Membership& memb
     if (*own) direct.members.push_back(user_summary(rq, **own));
   }
   return direct;
+}
+
+}  // namespace
+
+Flow<views::SidebarDirect> sidebar_direct(Rq& rq, const models::Membership& membership, const models::Room& room) {
+  auto users = models::users::of_room(rq.db(), rq.arena(), room.id);
+  if (!users) return fail_internal(users.error().message);
+  std::vector<const models::User*> members;
+  for (const models::User& user : *users) members.push_back(&user);
+  return direct_locals(rq, membership, room, members);
 }
 
 namespace {
@@ -83,27 +96,38 @@ Task<Flow<net::Response>> sidebars_show(Rq& rq) {
   std::stable_sort(directs.begin(), directs.end(),
                    [](const auto* a, const auto* b) { return a->room.updated_at < b->room.updated_at; });
   std::reverse(directs.begin(), directs.end());
+  // One statement reads the members of all direct rooms. The rows come by room id, so a room is a run of rows.
+  auto members = models::users::direct_room_members(rq.db(), rq.arena(), user.id);
+  if (!members) co_return fail_internal(members.error().message);
   for (const models::MembershipWithRoom* item : directs) {
-    auto direct = sidebar_direct(rq, item->membership, item->room);
+    std::vector<const models::User*> room_members;
+    const auto first = std::lower_bound(members->begin(), members->end(), item->room.id,
+                                        [](const models::users::RoomMember& m, std::int64_t id) { return m.room_id < id; });
+    for (auto it = first; it != members->end() && it->room_id == item->room.id; ++it) room_members.push_back(&it->user);
+    auto direct = direct_locals(rq, item->membership, item->room, room_members);
     if (!direct) co_return std::unexpected(std::move(direct.error()));
     sidebar.direct_memberships.push_back(std::move(*direct));
   }
-  auto placeholders = models::users::direct_placeholders(rq.db(), rq.arena(), user.id);
+  auto placeholders = models::users::direct_placeholders(rq.db(), rq.arena(), user.id, *members);
   if (!placeholders) co_return fail_internal(placeholders.error().message);
   for (const models::User& placeholder : *placeholders) {
     sidebar.direct_placeholder_users.push_back(user_summary(rq, placeholder));
   }
-  auto account = models::accounts::first(rq.db(), rq.arena());
-  if (!account) co_return fail_internal(account.error().message);
-  const bool restricted = *account && (*account)->restrict_room_creation_to_administrators;
+  // `Current.account` is the row that `load_layout` read.
+  const bool restricted = layout->restrict_room_creation_to_administrators;
   sidebar.can_create_rooms = user.is_administrator() || !restricted;
   sidebar.current_user = user_summary(rq, user);
-  // `turbo_stream_from :rooms`, `turbo_stream_from Current.user, :rooms`
-  const std::array<std::string_view, 1> rooms{"rooms"};
-  sidebar.rooms_stream = compat::turbo::signed_stream_name(rq.app.secrets, rooms);
-  const std::string user_gid = compat::global_id::GlobalId::make("User", std::to_string(user.id)).to_param();
-  const std::array<std::string_view, 2> user_rooms{user_gid, "rooms"};
-  sidebar.user_rooms_stream = compat::turbo::signed_stream_name(rq.app.secrets, user_rooms);
+  // `turbo_stream_from :rooms`, `turbo_stream_from Current.user, :rooms`: the names have no expiry, so the worker
+  // keeps them.
+  sidebar.rooms_stream = rq.worker.memo("stream:rooms", [&] {
+    const std::array<std::string_view, 1> rooms{"rooms"};
+    return compat::turbo::signed_stream_name(rq.app.secrets, rooms);
+  });
+  sidebar.user_rooms_stream = rq.worker.memo("stream:user:" + std::to_string(user.id) + ":rooms", [&] {
+    const std::string user_gid = compat::global_id::GlobalId::make("User", std::to_string(user.id)).to_param();
+    const std::array<std::string_view, 2> user_rooms{user_gid, "rooms"};
+    return compat::turbo::signed_stream_name(rq.app.secrets, user_rooms);
+  });
 
   add_page_facets(rq, deps, "users/sidebars#show");
   const LayoutData& data = *layout;

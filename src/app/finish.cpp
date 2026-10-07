@@ -229,7 +229,7 @@ net::Response Finisher::outer(Rq& rq, net::Response response) {
       } else if (rq.is_head()) {
         gz = std::make_shared<const std::string>();
       } else {
-        gz = std::make_shared<const std::string>(gzip_compress(gather_body(response)));
+        gz = std::make_shared<const std::string>(gzip_compress_fast(gather_body(response)));
       }
       // The new header goes where `content-length` was (HeaderMap::insert, then remove). With no
       // `content-length`, it goes before the tail, as the Rust port does.

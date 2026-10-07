@@ -1,6 +1,8 @@
 // Rails: app/models/user.rb and app/models/user/bot.rb. Rust: crates/db/src/models/user.rs.
 #include "models/user.hpp"
 
+#include <algorithm>
+
 #include "req/bcrypt.hpp"
 
 namespace campfire::models {
@@ -55,18 +57,34 @@ const db::Query<db::schema::UserRow(std::int64_t)> kOfRoom{
     " FROM \"users\" INNER JOIN \"memberships\" ON \"users\".\"id\" = \"memberships\".\"user_id\" WHERE "
     "\"memberships\".\"room_id\" = ?"};
 
-// The user ids that share a direct room with a user (`Membership.where(room_id: directs).pluck(:user_id).uniq`).
-const db::Query<std::int64_t(std::int64_t)> kDirectNeighbours{
-    "SELECT DISTINCT \"memberships\".\"user_id\" FROM \"memberships\" WHERE \"memberships\".\"room_id\" IN "
-    "(SELECT \"rooms\".\"id\" FROM \"rooms\" INNER JOIN \"memberships\" ON \"rooms\".\"id\" = "
-    "\"memberships\".\"room_id\" WHERE \"memberships\".\"user_id\" = ? AND \"rooms\".\"type\" = "
-    "'Rooms::Direct')"};
+// A user and the room of the membership that links the user to it.
+struct MemberRow {
+  db::schema::UserRow user;
+  std::int64_t room_id = 0;
 
-// `User.active.where.not(id: ids).order(:created_at).limit(n)`: the ids come as a JSON array.
-const db::Query<db::schema::UserRow(std::string_view, std::int64_t)> kPlaceholders{
+  static MemberRow read(db::RowReader& r) {
+    MemberRow row;
+    row.user = db::schema::UserRow::read(r);
+    row.room_id = r.i64(10);
+    return row;
+  }
+};
+
+// The members of all direct rooms of a user, room by room, by user id in a room. It is the order of `kOfRoom`: the
+// index of the memberships gives the user ids in ascending order. The same rows give the ids that
+// `Membership.where(room_id: directs).pluck(:user_id).uniq` gives.
+const db::Query<MemberRow(std::int64_t)> kDirectRoomMembers{
     "SELECT " CF_USER_COLUMNS
-    " FROM \"users\" WHERE \"users\".\"status\" = 0 AND \"users\".\"id\" NOT IN (SELECT value FROM "
-    "json_each(?)) ORDER BY \"users\".\"created_at\" ASC LIMIT ?"};
+    ", \"memberships\".\"room_id\" FROM \"users\" INNER JOIN \"memberships\" ON \"users\".\"id\" = "
+    "\"memberships\".\"user_id\" WHERE \"memberships\".\"room_id\" IN (SELECT \"rooms\".\"id\" FROM \"rooms\" "
+    "INNER JOIN \"memberships\" \"own\" ON \"rooms\".\"id\" = \"own\".\"room_id\" WHERE \"own\".\"user_id\" = ? AND "
+    "\"rooms\".\"type\" = 'Rooms::Direct') ORDER BY \"memberships\".\"room_id\", \"memberships\".\"user_id\""};
+
+// `User.active.where.not(id: ids).order(:created_at).limit(n)`: the code reads n rows, where n is the limit plus the
+// number of excluded ids. Then it drops the excluded ids. The SQL has no `LIMIT ?` or `json_each(?)`: SQLite
+// prepares a statement again on each use when it binds a new value to a parameter of that kind.
+const db::Query<db::schema::UserRow()> kPlaceholders{
+    "SELECT " CF_USER_COLUMNS " FROM \"users\" WHERE \"users\".\"status\" = 0 ORDER BY \"users\".\"created_at\" ASC"};
 
 const db::Query<db::schema::UserRow()> kActiveOrdered{
     "SELECT " CF_USER_COLUMNS " FROM \"users\" WHERE \"users\".\"status\" = 0 ORDER BY LOWER(name)"};
@@ -173,20 +191,35 @@ Result<std::vector<User>> of_room(db::Connection& conn, Arena& arena, std::int64
   return out;
 }
 
-Result<std::vector<User>> direct_placeholders(db::Connection& conn, Arena& arena, std::int64_t user_id) {
-  auto neighbours = conn.all(kDirectNeighbours, arena, user_id);
-  if (!neighbours) return std::unexpected(neighbours.error());
-  // `exclude_user_ids.including(Current.user.id)` appends the id even when it is there, and the limit counts it.
-  std::string ids = "[";
-  for (const std::int64_t id : *neighbours) ids += std::to_string(id) + ",";
-  ids += std::to_string(user_id) + "]";
-  const std::int64_t excluded = static_cast<std::int64_t>(neighbours->size()) + 1;
-  const std::int64_t limit = std::max<std::int64_t>(kDirectPlaceholders - excluded, 0);
-  auto rows = conn.all(kPlaceholders, arena, ids, limit);
+Result<std::vector<RoomMember>> direct_room_members(db::Connection& conn, Arena& arena, std::int64_t user_id) {
+  auto rows = conn.all(kDirectRoomMembers, arena, user_id);
   if (!rows) return std::unexpected(rows.error());
-  std::vector<User> out;
+  std::vector<RoomMember> out;
   out.reserve(rows->size());
-  for (const db::schema::UserRow& row : *rows) out.push_back(User::from_row(row));
+  for (const MemberRow& row : *rows) out.push_back({row.room_id, User::from_row(row.user)});
+  return out;
+}
+
+Result<std::vector<User>> direct_placeholders(db::Connection& conn, Arena& arena, std::int64_t user_id,
+                                              std::span<const RoomMember> members) {
+  std::vector<std::int64_t> neighbours;
+  for (const RoomMember& member : members) neighbours.push_back(member.user.id);
+  std::sort(neighbours.begin(), neighbours.end());
+  neighbours.erase(std::unique(neighbours.begin(), neighbours.end()), neighbours.end());
+  // `exclude_user_ids.including(Current.user.id)` appends the id even when it is there, and the limit counts it.
+  const std::int64_t excluded = static_cast<std::int64_t>(neighbours.size()) + 1;
+  const std::int64_t limit = std::max<std::int64_t>(kDirectPlaceholders - excluded, 0);
+  std::vector<User> out;
+  if (limit == 0) return out;
+  auto rows = conn.first_n(kPlaceholders, arena, static_cast<std::size_t>(limit + excluded));
+  if (!rows) return std::unexpected(rows.error());
+  const auto is_excluded = [&](std::int64_t id) {
+    return id == user_id || std::binary_search(neighbours.begin(), neighbours.end(), id);
+  };
+  for (const db::schema::UserRow& row : *rows) {
+    if (static_cast<std::int64_t>(out.size()) >= limit) break;
+    if (!is_excluded(row.id)) out.push_back(User::from_row(row));
+  }
   return out;
 }
 

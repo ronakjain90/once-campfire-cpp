@@ -1,6 +1,7 @@
 // Rust: crates/db/src/database.rs (open_connection), crates/db/src/schema.rs (configure_connection).
 #include "db/connection.hpp"
 
+#include <mutex>
 #include <utility>
 
 namespace campfire::db {
@@ -73,6 +74,11 @@ void Connection::Closer::operator()(sqlite3* db) const noexcept {
 }
 
 Result<Connection> Connection::open(const std::string& path, Role role) {
+  // A batch of the writer holds one savepoint for each write, and SQLite keeps the old pages of a savepoint in a
+  // statement journal. By default that journal moves to a temporary file after 64 KiB. Keep up to 16 MiB in memory.
+  // The call must come before the first connection. If it fails, SQLite uses the default.
+  static std::once_flag configured;
+  std::call_once(configured, [] { sqlite3_config(SQLITE_CONFIG_STMTJRNL_SPILL, 16 * 1024 * 1024); });
   sqlite3* db = nullptr;
   const int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_URI;
   int rc = sqlite3_open_v2(path.c_str(), &db, flags, nullptr);

@@ -1,0 +1,55 @@
+{
+ "app": "cpp",
+ "image": "campfire-cpp:b0-s1",
+ "rep": 1,
+ "http": [
+  {
+   "avg_bytes": 5826,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 22.447,
+    "mean_ms": 0.94,
+    "n": 136123,
+    "p50_ms": 0.509,
+    "p90_ms": 2.167,
+    "p99_ms": 5.367
+   },
+   "ok": 136123,
+   "path": "/users/me/sidebar",
+   "rps": 17010.2,
+   "secs": 8.0,
+   "statuses": {
+    "200": 136123
+   },
+   "route": "sidebar",
+   "app_cpu_usec": 16539312,
+   "requests": 136123
+  },
+  {
+   "avg_bytes": 5826,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 17.951,
+    "mean_ms": 2.88,
+    "n": 177316,
+    "p50_ms": 2.519,
+    "p90_ms": 4.487,
+    "p99_ms": 8.091
+   },
+   "ok": 177316,
+   "path": "/users/me/sidebar",
+   "rps": 22156.8,
+   "secs": 8.0,
+   "statuses": {
+    "200": 177316
+   },
+   "route": "sidebar",
+   "app_cpu_usec": 21419593,
+   "requests": 177316
+  }
+ ]
+}

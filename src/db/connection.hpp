@@ -123,6 +123,41 @@ class Connection {
     }
   }
 
+  // The first `max_rows` rows, in the arena. Use it instead of `LIMIT ?`: SQLite prepares a statement again when it
+  // binds a new value to a `LIMIT` parameter. The statement stops after `max_rows` rows.
+  template <class Row, class... A>
+  [[nodiscard]] Result<std::pmr::vector<Row>> first_n(const Query<Row(A...)>& q, Arena& arena, std::size_t max_rows,
+                                                      std::type_identity_t<A>... args) {
+    std::pmr::vector<Row> rows{arena.resource()};
+    if (max_rows == 0) {
+      return rows;
+    }
+    auto st = begin(q);
+    if (!st) {
+      return std::unexpected(st.error());
+    }
+    if (const int rc = bind_all(*st, 1, args...); rc != SQLITE_OK) {
+      return std::unexpected(finish_error(*st, rc, q));
+    }
+    while (true) {
+      const int rc = sqlite3_step(*st);
+      if (rc == SQLITE_ROW) {
+        fold(*st);
+        RowReader reader(*st, arena);
+        rows.push_back(RowTraits<Row>::read(reader));
+        if (rows.size() == max_rows) {
+          end(*st, true);
+          return rows;
+        }
+      } else if (rc == SQLITE_DONE) {
+        end(*st, true);
+        return rows;
+      } else {
+        return std::unexpected(finish_error(*st, rc, q));
+      }
+    }
+  }
+
   // Runs a statement that returns no row. Gives the number of rows changed.
   template <class... A>
   [[nodiscard]] Result<std::int64_t> exec(const Query<void(A...)>& q, std::type_identity_t<A>... args) {

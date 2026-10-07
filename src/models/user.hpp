@@ -77,10 +77,20 @@ namespace users {
 [[nodiscard]] std::optional<User> authenticated(std::optional<User> candidate, std::string_view password);
 // `room.users`: the members of a room, in the order of the query.
 [[nodiscard]] Result<std::vector<User>> of_room(db::Connection& conn, Arena& arena, std::int64_t room_id);
+// A member of a room with the id of the room.
+struct RoomMember {
+  std::int64_t room_id = 0;
+  User user;
+};
+// The members of all direct rooms of `user_id` (`room.users` of each direct room), ordered by room id, then by user id.
+[[nodiscard]] Result<std::vector<RoomMember>> direct_room_members(db::Connection& conn, Arena& arena,
+                                                                  std::int64_t user_id);
 // `find_direct_placeholder_users` of `Users::SidebarsController`: active users that share no direct room with
 // `user_id`, oldest first, at most `kDirectPlaceholders` minus the number of excluded ids.
 inline constexpr std::int64_t kDirectPlaceholders = 20;
-[[nodiscard]] Result<std::vector<User>> direct_placeholders(db::Connection& conn, Arena& arena, std::int64_t user_id);
+// `members` are the rows of `direct_room_members`: their user ids are the ids to exclude.
+[[nodiscard]] Result<std::vector<User>> direct_placeholders(db::Connection& conn, Arena& arena, std::int64_t user_id,
+                                                            std::span<const RoomMember> members);
 // `User.active.ordered`: `LOWER(name)`.
 [[nodiscard]] Result<std::vector<User>> active_ordered(db::Connection& conn, Arena& arena);
 // `User.where(id: ids)`: the ids of the users that exist, in the order of the table.

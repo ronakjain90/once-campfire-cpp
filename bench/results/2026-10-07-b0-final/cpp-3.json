@@ -1,0 +1,223 @@
+{
+ "app": "cpp",
+ "image": "campfire-cpp:b0-final",
+ "rep": 3,
+ "http": [
+  {
+   "avg_bytes": 5826,
+   "conc": 1,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 18.335,
+    "mean_ms": 0.18,
+    "n": 44848,
+    "p50_ms": 0.125,
+    "p90_ms": 0.265,
+    "p99_ms": 1.348
+   },
+   "ok": 44848,
+   "path": "/users/me/sidebar",
+   "rps": 5605.5,
+   "secs": 8.0,
+   "statuses": {
+    "200": 44848
+   },
+   "route": "sidebar",
+   "app_cpu_usec": 4702726,
+   "requests": 44848
+  },
+  {
+   "avg_bytes": 5826,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 20.383,
+    "mean_ms": 0.82,
+    "n": 155954,
+    "p50_ms": 0.269,
+    "p90_ms": 2.261,
+    "p99_ms": 7.779
+   },
+   "ok": 155954,
+   "path": "/users/me/sidebar",
+   "rps": 19486.4,
+   "secs": 8.0,
+   "statuses": {
+    "200": 155954
+   },
+   "route": "sidebar",
+   "app_cpu_usec": 11045070,
+   "requests": 155954
+  },
+  {
+   "avg_bytes": 5826,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 26.255,
+    "mean_ms": 2.28,
+    "n": 224223,
+    "p50_ms": 1.373,
+    "p90_ms": 5.299,
+    "p99_ms": 10.447
+   },
+   "ok": 224223,
+   "path": "/users/me/sidebar",
+   "rps": 28014.3,
+   "secs": 8.0,
+   "statuses": {
+    "200": 224223
+   },
+   "route": "sidebar",
+   "app_cpu_usec": 12506598,
+   "requests": 224223
+  },
+  {
+   "avg_bytes": 2093,
+   "conc": 1,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 14.055,
+    "mean_ms": 0.79,
+    "n": 10088,
+    "p50_ms": 0.604,
+    "p90_ms": 1.311,
+    "p99_ms": 3.937
+   },
+   "ok": 10088,
+   "path": "POST /rooms/201306877/messages",
+   "rps": 1260.9,
+   "secs": 8.0,
+   "statuses": {
+    "200": 10088
+   },
+   "route": "post_message",
+   "app_cpu_usec": 7855086,
+   "requests": 10088
+  },
+  {
+   "avg_bytes": 2095,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 32.431,
+    "mean_ms": 4.74,
+    "n": 26952,
+    "p50_ms": 4.147,
+    "p90_ms": 8.303,
+    "p99_ms": 15.583
+   },
+   "ok": 26952,
+   "path": "POST /rooms/201306877/messages",
+   "rps": 3367.8,
+   "secs": 8.0,
+   "statuses": {
+    "200": 26952
+   },
+   "route": "post_message",
+   "app_cpu_usec": 14126556,
+   "requests": 26952
+  },
+  {
+   "avg_bytes": 2095,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 65.471,
+    "mean_ms": 8.88,
+    "n": 57569,
+    "p50_ms": 8.051,
+    "p90_ms": 13.303,
+    "p99_ms": 24.783
+   },
+   "ok": 57569,
+   "path": "POST /rooms/201306877/messages",
+   "rps": 7177.3,
+   "secs": 8.02,
+   "statuses": {
+    "200": 57569
+   },
+   "route": "post_message",
+   "app_cpu_usec": 20245415,
+   "requests": 57569
+  },
+  {
+   "avg_bytes": 20658,
+   "conc": 1,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 5.035,
+    "mean_ms": 0.1,
+    "n": 76163,
+    "p50_ms": 0.093,
+    "p90_ms": 0.126,
+    "p99_ms": 0.294
+   },
+   "ok": 76163,
+   "path": "/rooms/486777696",
+   "rps": 9520.3,
+   "secs": 8.0,
+   "statuses": {
+    "200": 76163
+   },
+   "route": "room_show",
+   "app_cpu_usec": 4709090,
+   "requests": 76163
+  },
+  {
+   "avg_bytes": 20658,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 10.879,
+    "mean_ms": 0.66,
+    "n": 194574,
+    "p50_ms": 0.5,
+    "p90_ms": 1.244,
+    "p99_ms": 2.947
+   },
+   "ok": 194574,
+   "path": "/rooms/486777696",
+   "rps": 24317.9,
+   "secs": 8.0,
+   "statuses": {
+    "200": 194574
+   },
+   "route": "room_show",
+   "app_cpu_usec": 19966565,
+   "requests": 194574
+  },
+  {
+   "avg_bytes": 20658,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 16.975,
+    "mean_ms": 2.2,
+    "n": 231906,
+    "p50_ms": 2.053,
+    "p90_ms": 3.209,
+    "p99_ms": 5.083
+   },
+   "ok": 231906,
+   "path": "/rooms/486777696",
+   "rps": 28975.5,
+   "secs": 8.0,
+   "statuses": {
+    "200": 231906
+   },
+   "route": "room_show",
+   "app_cpu_usec": 24189839,
+   "requests": 231906
+  }
+ ]
+}

@@ -1,0 +1,55 @@
+{
+ "app": "cpp",
+ "image": "campfire-cpp:b0-p1",
+ "rep": 1,
+ "http": [
+  {
+   "avg_bytes": 2096,
+   "conc": 16,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 141.567,
+    "mean_ms": 2.01,
+    "n": 63537,
+    "p50_ms": 1.838,
+    "p90_ms": 2.731,
+    "p99_ms": 4.799
+   },
+   "ok": 63537,
+   "path": "POST /rooms/201306877/messages",
+   "rps": 7940.4,
+   "secs": 8.0,
+   "statuses": {
+    "200": 63537
+   },
+   "route": "post_message",
+   "app_cpu_usec": 23548070,
+   "requests": 63537
+  },
+  {
+   "avg_bytes": 2096,
+   "conc": 64,
+   "errors": 0,
+   "gzip": true,
+   "latency": {
+    "max_ms": 26.495,
+    "mean_ms": 5.95,
+    "n": 85815,
+    "p50_ms": 5.727,
+    "p90_ms": 7.935,
+    "p99_ms": 13.455
+   },
+   "ok": 85815,
+   "path": "POST /rooms/201306877/messages",
+   "rps": 10718.8,
+   "secs": 8.01,
+   "statuses": {
+    "200": 85815
+   },
+   "route": "post_message",
+   "app_cpu_usec": 25128920,
+   "requests": 85815
+  }
+ ]
+}

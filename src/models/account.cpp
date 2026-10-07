@@ -16,17 +16,18 @@ struct AccountRow {
   std::optional<std::string_view> custom_styles;
   std::string_view updated_at;
   std::optional<std::string_view> settings;
-  static AccountRow read(db::RowReader& r) { return {r.i64(0), r.text(1), r.text_opt(2), r.text(3), r.text_opt(4)}; }
+  bool has_logo;
+  static AccountRow read(db::RowReader& r) {
+    return {r.i64(0), r.text(1), r.text_opt(2), r.text(3), r.text_opt(4), r.boolean(5)};
+  }
 };
 
+// The logo flag comes with the row: one statement, not two.
 const db::Query<AccountRow()> kFirst{
     "SELECT \"accounts\".\"id\", \"accounts\".\"name\", \"accounts\".\"custom_styles\", \"accounts\".\"updated_at\", "
-    "\"accounts\".\"settings\" "
+    "\"accounts\".\"settings\", EXISTS (SELECT 1 FROM active_storage_blobs b JOIN active_storage_attachments a ON "
+    "a.blob_id = b.id WHERE a.record_type = 'Account' AND a.record_id = \"accounts\".\"id\" AND a.name = 'logo') "
     "FROM \"accounts\" ORDER BY \"accounts\".\"id\" ASC LIMIT 1"};
-
-const db::Query<std::int64_t(std::int64_t)> kLogo{
-    "SELECT 1 AS one FROM active_storage_blobs b JOIN active_storage_attachments a ON a.blob_id = b.id WHERE "
-    "a.record_type = 'Account' AND a.record_id = ? AND a.name = 'logo' ORDER BY a.id LIMIT 1"};
 
 const db::Query<std::int64_t()> kAny{"SELECT 1 AS one FROM \"accounts\" LIMIT 1"};
 
@@ -41,10 +42,24 @@ const db::Query<std::int64_t(std::string_view, std::string_view, std::string_vie
     kInsert{
         "INSERT INTO \"accounts\" (\"created_at\", \"custom_styles\", \"join_code\", \"name\", \"settings\", "
         "\"singleton_guard\", \"updated_at\") VALUES (?, NULL, ?, ?, ?, 0, ?) RETURNING \"id\""};
+bool parse_restrict_room_creation(std::string_view settings_text);
 // `restrict_room_creation_to_administrators?` of `has_json :settings`: `present?` of the stored value.
 bool restrict_room_creation(std::optional<std::string_view> settings) {
   if (!settings) return false;
-  const auto json = compat::json::parse(*settings);
+  // The settings text seldom changes: each worker thread keeps the last answer.
+  thread_local std::string last_text;
+  thread_local bool last_answer = false;
+  thread_local bool have_last = false;
+  if (have_last && last_text == *settings) return last_answer;
+  const bool answer = parse_restrict_room_creation(*settings);
+  last_text.assign(*settings);
+  last_answer = answer;
+  have_last = true;
+  return answer;
+}
+
+bool parse_restrict_room_creation(std::string_view settings_text) {
+  const auto json = compat::json::parse(settings_text);
   if (!json || !json->is_object()) return false;
   const compat::json::Value* value = json->find("restrict_room_creation_to_administrators");
   if (value == nullptr || value->is_null()) return false;
@@ -107,9 +122,7 @@ Result<std::optional<Account>> first(db::Connection& conn, Arena& arena) {
   if ((*row)->custom_styles) a.custom_styles = std::string(*(*row)->custom_styles);
   a.updated_at = std::string((*row)->updated_at);
   a.restrict_room_creation_to_administrators = restrict_room_creation((*row)->settings);
-  auto logo = conn.first(kLogo, arena, a.id);
-  if (!logo) return std::unexpected(logo.error());
-  a.has_logo = logo->has_value();
+  a.has_logo = (*row)->has_logo;
   return std::optional<Account>(std::move(a));
 }
 

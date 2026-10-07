@@ -36,6 +36,13 @@ SessionCache& WorkerState::sessions() {
   return sessions_;
 }
 
+const std::string& WorkerState::memo(std::string_view key, const std::function<std::string()>& make) {
+  constexpr std::size_t kMemoLimit = 4096;
+  if (const auto found = memo_.find(key); found != memo_.end()) return found->second;
+  if (memo_.size() >= kMemoLimit) memo_.clear();
+  return memo_.emplace(std::string(key), make()).first->second;
+}
+
 WorkerState& worker_state() {
   thread_local std::unique_ptr<WorkerState> state;
   if (!state) {

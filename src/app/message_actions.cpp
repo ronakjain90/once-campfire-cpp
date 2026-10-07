@@ -138,10 +138,18 @@ Flow<net::Response> content_page(Rq& rq, int status, bool always_application,
 }
 
 Flow<views::ViewContext> detached_context(Rq& rq) {
-  auto layout = load_layout(rq);
-  if (!layout) return std::unexpected(std::move(layout.error()));
+  // The detached view reads the account only: it needs no user and no last room.
+  auto account = models::accounts::first(rq.db(), rq.arena());
+  if (!account) return fail_internal(account.error().message);
   views::ViewContext ctx;
-  ctx.account = layout->account;
+  if (*account) {
+    const models::Account& a = **account;
+    ctx.account.name = a.name;
+    ctx.account.logo_url = campfire::routes::fresh_account_logo(parse_db(a.updated_at) ? format_to_fs_number(*parse_db(a.updated_at)) : std::string{});
+    ctx.account.has_logo = a.has_logo;
+  } else {
+    ctx.account.logo_url = campfire::routes::fresh_account_logo();
+  }
   ctx.vapid_public_key = rq.app.config.vapid_public_key;
   ctx.asset_path = [](std::string_view source) {
     auto path = assets::asset_path(source);

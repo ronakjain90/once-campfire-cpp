@@ -15,6 +15,42 @@ bool run_plain(Connection& conn, const char* sql) noexcept {
   return sqlite3_exec(conn.handle(), sql, nullptr, nullptr, nullptr) == SQLITE_OK;
 }
 
+// The statements of a batch (BEGIN, SAVEPOINT, RELEASE, COMMIT), prepared once. `sqlite3_exec` would parse each of them
+// again for each write.
+class PlainStatements {
+ public:
+  explicit PlainStatements(Connection& conn) noexcept : conn_(conn) {}
+  PlainStatements(const PlainStatements&) = delete;
+  PlainStatements& operator=(const PlainStatements&) = delete;
+  ~PlainStatements() {
+    for (const Entry& entry : entries_) sqlite3_finalize(entry.stmt);
+  }
+
+  // `sql` is a string literal: the pointer is the key.
+  bool run(const char* sql) noexcept {
+    sqlite3_stmt* stmt = nullptr;
+    for (const Entry& entry : entries_) {
+      if (entry.sql == sql) stmt = entry.stmt;
+    }
+    if (stmt == nullptr) {
+      if (sqlite3_prepare_v3(conn_.handle(), sql, -1, SQLITE_PREPARE_PERSISTENT, &stmt, nullptr) != SQLITE_OK) return false;
+      entries_.push_back({sql, stmt});
+    }
+    int rc = sqlite3_step(stmt);
+    while (rc == SQLITE_ROW) rc = sqlite3_step(stmt);
+    sqlite3_reset(stmt);
+    return rc == SQLITE_DONE;
+  }
+
+ private:
+  struct Entry {
+    const char* sql;
+    sqlite3_stmt* stmt;
+  };
+  Connection& conn_;
+  std::vector<Entry> entries_;
+};
+
 }  // namespace
 
 std::string Tx::now_db() const {
@@ -171,6 +207,7 @@ void Database::writer_loop() {
   std::vector<Tx> txs;
   std::vector<char> ok;
   std::vector<Change> changes;
+  PlainStatements plain(writer_);
   while (true) {
     batch.clear();
     {
@@ -188,7 +225,7 @@ void Database::writer_loop() {
     ok.assign(batch.size(), 0);
     changes.clear();
     std::optional<Error> batch_error;
-    if (!run_plain(writer_, "BEGIN IMMEDIATE")) {
+    if (!plain.run("BEGIN IMMEDIATE")) {
       batch_error = sqlite_error(writer_.handle(), sqlite3_errcode(writer_.handle()), "BEGIN IMMEDIATE");
     }
     for (std::size_t i = 0; i < batch.size(); ++i) {
@@ -197,15 +234,25 @@ void Database::writer_loop() {
         continue;
       }
       writes_.fetch_add(1, std::memory_order_relaxed);
-      run_plain(writer_, "SAVEPOINT cf_write");
+      if (i == 0) {
+        // Nothing is in the transaction yet, so the transaction is the scope of the first write. A failure
+        // rolls it back and starts it again. This saves the savepoint, and the full-text index flush that
+        // each savepoint makes.
+        ok[i] = batch[i].run(txs[i]) ? 1 : 0;
+        if (ok[i] == 0 && plain.run("ROLLBACK") && !plain.run("BEGIN IMMEDIATE")) {
+          batch_error = sqlite_error(writer_.handle(), sqlite3_errcode(writer_.handle()), "BEGIN IMMEDIATE");
+        }
+        continue;
+      }
+      plain.run("SAVEPOINT cf_write");
       ok[i] = batch[i].run(txs[i]) ? 1 : 0;
       if (ok[i] == 0) {
-        run_plain(writer_, "ROLLBACK TO cf_write");
+        plain.run("ROLLBACK TO cf_write");
       }
-      run_plain(writer_, "RELEASE cf_write");
+      plain.run("RELEASE cf_write");
     }
     if (!batch_error) {
-      if (run_plain(writer_, "COMMIT")) {
+      if (plain.run("COMMIT")) {
         commits_.fetch_add(1, std::memory_order_relaxed);
       } else {
         batch_error = sqlite_error(writer_.handle(), sqlite3_errcode(writer_.handle()), "COMMIT");

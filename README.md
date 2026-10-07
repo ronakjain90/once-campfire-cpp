@@ -137,3 +137,7 @@ port.
 accepts it.
 
 </details>
+
+## License
+
+MIT. See [`MIT-LICENSE`](MIT-LICENSE).

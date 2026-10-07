@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Benchmark app images with the Rust load generator, in the Colima VM.
+# Benchmark app images with the Rust load generator, in Docker (a Linux host or a VM such as Colima).
+# Setup and options: bench/README.md.
 #
 #   bench/run [--apps name=image,name=image] [--reps 3] [--routes room_show,post_message]
 #                  [--secs 8] [--concs "1 16 64"] [--cable "100 1000"] [--out DIR] [--rebuild]
@@ -8,7 +9,7 @@
 # inside it. Inside the runner it does the work for each rep and each app (the order of the apps
 # alternates between reps): copy the seed to /var/lib/campfire-bench, neuter deliveries, start the
 # app on CPUs 0-3, wait for /up, sign in, run the load generator on CPUs 4-7, and read the app
-# CPU time from the container cgroup. See README.md.
+# CPU time from the container cgroup. See README.md for the setup that this script needs.
 set -euo pipefail
 
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -17,17 +18,36 @@ WORKSPACE=${CAMPFIRE_WORKSPACE:-$(cd "$HERE/../.." && pwd)}
 RUNNER_IMAGE=campfire-bench-runner
 BENCH_DIR=/var/lib/campfire-bench
 
+fail() { echo "bench/run: $*" >&2; exit 1; }
+
 if [ "${CAMPFIRE_BENCH_INNER:-}" != 1 ]; then
   # ---------------------------------------------------------------- host side (bash 3.2 safe)
+  # Check the setup before the first run. Each message tells what to do (see README.md, "Setup").
+  RUST=$WORKSPACE/once-campfire-rust
+  docker info >/dev/null 2>&1 || fail "Docker does not answer. Start Docker (for example: colima start)."
+  [ -d "$RUST/bench/loadgen" ] ||
+    fail "no $RUST/bench/loadgen. Clone once-campfire-rust next to this repo, or set CAMPFIRE_WORKSPACE."
+  [ -f "$RUST/parity/.env.reference" ] || fail "no $RUST/parity/.env.reference. Update the once-campfire-rust clone."
+  for f in labels.json db/production.sqlite3 storage; do
+    [ -e "$RUST/parity/.seed/default/$f" ] ||
+      fail "no seed at $RUST/parity/.seed/default. Build it (README.md, \"Setup\", step 2)."
+  done
   rebuild=0; args=(); prev=
   for a in "$@"; do
     if [ "$a" = --rebuild ]; then rebuild=1; continue; fi
     if [ "$prev" = --out ]; then case "$a" in /*) ;; *) a=$PWD/$a ;; esac; fi   # absolute for the runner
+    if [ "$prev" = --out ]; then
+      case "$a/" in "$WORKSPACE"/*) ;; *) fail "--out $a is not in $WORKSPACE: the runner writes only there." ;; esac
+    fi
     args+=("$a"); prev=$a
   done
   if [ "$rebuild" = 1 ] || ! docker image inspect "$RUNNER_IMAGE" >/dev/null 2>&1; then
     docker build -t "$RUNNER_IMAGE" -f "$HERE/Dockerfile" "$WORKSPACE/once-campfire-rust/bench/loadgen" >&2
   fi
+  # The runner mounts the workspace at the same path. If the Docker VM does not share the folder, Docker mounts an
+  # empty directory.
+  docker run --rm -v "$WORKSPACE:$WORKSPACE" "$RUNNER_IMAGE" test -f "$HERE/run" ||
+    fail "Docker does not see $WORKSPACE. Share it with the VM, writable, at the same path (Colima: \"mounts\" in colima.yaml)."
   exec docker run --rm --name "campfire-bench-runner-$$" --network host --pid host --cgroupns host \
     -e CAMPFIRE_BENCH_INNER=1 -e "HOST_UID=$(id -u)" -e "HOST_GID=$(id -g)" \
     -e PORT -e SERVER_CPUS -e LOADGEN_CPUS -e BENCH_APP_ENV -e BENCH_SECCOMP_UNCONFINED \
@@ -63,6 +83,26 @@ while [ $# -gt 0 ]; do
   esac
 done
 OUT=${OUT:-$HERE/results/$(date +%Y%m%d-%H%M%S)}
+
+# Check the Docker host before the first run.
+[ -f /sys/fs/cgroup/cgroup.controllers ] || fail "the Docker host does not use cgroup v2: the app CPU time needs it."
+# Every CPU of a list ("0-3", "0,2,4-5") must exist. taskset accepts a list when only some of them exist.
+cpus_exist() {
+  python3 -c '
+import os, sys
+want = set()
+for part in sys.argv[1].split(","):
+    lo, _, hi = part.partition("-")
+    want.update(range(int(lo), int(hi or lo) + 1))
+sys.exit(0 if want <= os.sched_getaffinity(0) else 1)' "$1" 2>/dev/null
+}
+for cpus in "$SERVER_CPUS" "$LOADGEN_CPUS"; do
+  cpus_exist "$cpus" ||
+    fail "the Docker host has no CPUs $cpus ($(nproc) CPUs). Give it 8 CPUs, or set SERVER_CPUS and LOADGEN_CPUS."
+done
+for pair in ${APPS//,/ }; do
+  docker image inspect "${pair#*=}" >/dev/null 2>&1 || fail "no image ${pair#*=}. Build it first (README.md, \"Setup\")."
+done
 mkdir -p "$OUT"
 CONTAINER=campfire-bench-app-$PORT
 
@@ -138,7 +178,9 @@ start_app() {
   for kv in ${app_env//;/ }; do args+=(-e "$kv"); done
   sync
   # BENCH_SECCOMP_UNCONFINED=1: a TSan image needs the personality system call.
+  # The log of the Rust app is about 1.5 GB for each rep. Keep at most 100 MB of it on the Docker disk.
   docker run -d --name "$CONTAINER" --cpuset-cpus "$SERVER_CPUS" --user "$APP_USER" --network host \
+    --log-driver json-file --log-opt max-size=50m --log-opt max-file=2 \
     ${BENCH_SECCOMP_UNCONFINED:+--security-opt seccomp=unconfined} \
     -e "HTTP_PORT=$PORT" -e "TARGET_PORT=$((PORT + 1))" "${args[@]}" \
     -v "$dir/db:/rails/storage/db" -v "$dir/storage:/rails/storage/files" "$image" >/dev/null

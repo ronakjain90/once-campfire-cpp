@@ -106,14 +106,16 @@ bin/dev test asan
 bin/dev test tsan
 bin/dev format --check
 tools/diffsweep/diffsweep --expected campfire-rust:app --actual campfire-cpp
-bench/run --apps rust=campfire-rust:app,cpp=campfire-cpp --routes room_show,sidebar,post_message
+bench/run --apps rust=campfire-rust:app,cpp=campfire-cpp --reps 3
 ```
 
 - The presets are `release`, `asan` (ASan and UBSan) and `tsan`. All warnings are errors.
 - The diff sweep starts both images on the same seed and compares each response byte for byte.
   See [`tools/diffsweep/README.md`](tools/diffsweep/README.md).
-- The benchmark takes `--cable "100 1000"` for the Action Cable fan-out. See
-  [`bench/README.md`](bench/README.md). Stop all other work on the host before a run.
+- The benchmark compares the C++ image with the Rust image on the same host. It needs a Docker host
+  with 8 CPUs, the seed data of the Rust port and the two images. Do the setup in
+  [`bench/README.md`](bench/README.md) one time. The script checks the setup before it starts.
+  Stop all other work on the host before a run.
 - See [`AGENTS.md`](AGENTS.md) for the build rules, [`docs/architecture.md`](docs/architecture.md)
   for the design and [`docs/security-review.md`](docs/security-review.md) for the security review.
 

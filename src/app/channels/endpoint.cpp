@@ -138,8 +138,9 @@ net::Response page_not_found(net::Ctx& ctx) {
   response.add("content-type", "text/plain; charset=utf-8");
   response.add("content-length", "14");
   response.body_view("Page not found");
-  response.add("vary", "Accept-Encoding");
   add_rails_tail(ctx, response);
+  // The Rust app adds its "vary" after the Rails tail; the front then adds its own (two "vary" headers).
+  response.add("vary", "Accept-Encoding");
   return response;
 }
 

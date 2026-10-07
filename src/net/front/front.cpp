@@ -207,10 +207,19 @@ void Front::finish(FrontState& state, const Request& request, Response& response
     suppress_bodiless_headers(response);
     return;
   }
-  // A WebSocket upgrade passes the cache as a bypass, as in the Go front: `vary`, then `x-cache`.
+  // A WebSocket upgrade passes the cache as a bypass. Rust puts `vary` after the WebSocket headers and before the
+  // headers of the Rails tail, then appends `x-cache` and `date`.
   if (response.status == 101) {
-    if (!response.has("vary")) response.add("vary", "Accept-Encoding");
+    if (!response.has("vary")) {
+      const auto tail = std::find_if(response.headers.begin(), response.headers.end(),
+                                     [](const Header& h) { return iequals(h.name, "x-request-id"); });
+      response.headers.insert(tail, Header{"vary", "Accept-Encoding"});
+    }
     insert_header(response, "x-cache", "bypass");
+    if (!response.has("date")) {
+      char buffer[32];
+      response.add_copy("date", http_date_now(buffer));
+    }
     return;
   }
   switch (state.status) {

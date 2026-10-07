@@ -46,6 +46,10 @@ void WsState::close(std::chrono::milliseconds grace) {
   worker->ws_flush(*conn);
 }
 
+Scheduler& WsState::scheduler() noexcept {
+  return *worker;
+}
+
 void Worker::ws_start(Conn& c, Response& response) {
   // The 101 reply is the first bytes that the connection writes. The server did not read past the request: what is
   // left in the read buffer belongs to the session.

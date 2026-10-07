@@ -18,6 +18,7 @@ struct WsState final : WsTransport {
 
   void send(std::span<const WsBytes> buffers) override;
   void close(std::chrono::milliseconds grace) override;
+  [[nodiscard]] Scheduler& scheduler() noexcept override;
 
   Worker* worker;
   Conn* conn;

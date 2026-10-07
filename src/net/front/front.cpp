@@ -203,8 +203,14 @@ void Front::compress(FrontState& state, Response& response) const {
 
 void Front::finish(FrontState& state, const Request& request, Response& response) const {
   (void)request;
-  if (response.status >= 100 && response.status < 200) {
+  if (response.status >= 100 && response.status < 200 && response.status != 101) {
     suppress_bodiless_headers(response);
+    return;
+  }
+  // A WebSocket upgrade passes the cache as a bypass, as in the Go front: `vary`, then `x-cache`.
+  if (response.status == 101) {
+    if (!response.has("vary")) response.add("vary", "Accept-Encoding");
+    insert_header(response, "x-cache", "bypass");
     return;
   }
   switch (state.status) {

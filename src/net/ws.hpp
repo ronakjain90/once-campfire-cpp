@@ -16,6 +16,8 @@
 #include <string>
 #include <string_view>
 
+#include "core/scheduler.hpp"
+
 namespace campfire::net {
 
 // A buffer that a session sends. Many connections share one buffer for a broadcast.
@@ -30,6 +32,8 @@ class WsTransport {
   // Closes the TCP connection after the queued bytes are written. If the peer closes first, the transport closes at
   // once. After `grace`, the transport closes in any case.
   virtual void close(std::chrono::milliseconds grace) = 0;
+  // The scheduler of the worker: a coroutine that the session starts resumes on the thread of the connection.
+  [[nodiscard]] virtual Scheduler& scheduler() noexcept = 0;
 };
 
 // The application side. The worker owns the session until the connection ends.

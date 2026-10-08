@@ -186,10 +186,14 @@ ParamResult<Stored> store_nested_param(ParamMap& params, std::string_view name, 
 }  // namespace
 
 ParamResult<std::string> decode_www_form_component(std::string_view s) {
+  // Most values (cookies, ids) have no `+` and no `%`: then the value is the result.
+  std::size_t i = s.find_first_of("+%");
+  if (i == std::string_view::npos) return std::string(s);
   std::string out;
   out.reserve(s.size());
-  for (std::size_t i = 0; i < s.size();) {
-    char c = s[i];
+  out.append(s.substr(0, i));
+  while (i < s.size()) {
+    const char c = s[i];
     if (c == '+') {
       out.push_back(' ');
       ++i;
@@ -201,8 +205,10 @@ ParamResult<std::string> decode_www_form_component(std::string_view s) {
       out.push_back(static_cast<char>(h * 16 + l));
       i += 3;
     } else {
-      out.push_back(c);
-      ++i;
+      // The plain bytes up to the next `+` or `%`, in one copy.
+      const std::size_t next = std::min(s.find_first_of("+%", i), s.size());
+      out.append(s.substr(i, next - i));
+      i = next;
     }
   }
   return out;

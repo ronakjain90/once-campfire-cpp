@@ -29,11 +29,12 @@ namespace campfire {
 template <class T>
 class Task;
 
-// Work that a thread does when a coroutine on it gives the thread back to its Scheduler, and when
-// the coroutine continues on the same thread. A worker uses it to end its read transaction
-// (src/app/worker_state.cpp). `suspend` gives a state, and `resume` gets the same state back.
-// `Completion` and `Yield` call the hook. An awaiter that moves a coroutine to a different thread
-// does not call it.
+// Work that a thread does when a coroutine on it waits for other work, and when the coroutine
+// continues on the same thread. A worker uses it to end its read transaction (src/app/worker_state.cpp).
+// `suspend` gives a state, and `resume` gets the same state back.
+// `Completion` calls the hook on each `co_await`, also when the result is already there: the other
+// thread did work (for example, a COMMIT), so a snapshot from before the `co_await` can be stale.
+// `Yield` calls it too. An awaiter that moves a coroutine to a different thread does not call it.
 struct SuspendHook {
   void* context = nullptr;
   bool (*suspend)(void* context) noexcept = nullptr;
@@ -227,10 +228,13 @@ class Completion {
   Completion(Completion&&) noexcept = default;
   Completion& operator=(Completion&&) noexcept = default;
 
-  bool await_ready() const noexcept { return state_->phase.load(std::memory_order_acquire) == 2; }
+  // Calls the suspend hook first, also if the result is ready and the coroutine does not suspend.
+  bool await_ready() noexcept {
+    hook_state_ = detail::before_suspend();
+    return state_->phase.load(std::memory_order_acquire) == 2;
+  }
 
   bool await_suspend(std::coroutine_handle<> awaiting) noexcept {
-    hook_state_ = detail::before_suspend();
     state_->waiter = awaiting;
     int expected = 0;
     // If the result arrived between `await_ready` and now, resume at once (return false).
@@ -239,10 +243,7 @@ class Completion {
 
   T await_resume() {
     assert(state_->scheduler->on_owner_thread());
-    if (hook_state_) {
-      detail::after_resume(*hook_state_);
-      hook_state_.reset();
-    }
+    detail::after_resume(hook_state_);
     if (state_->error) {
       std::rethrow_exception(state_->error);
     }
@@ -256,7 +257,7 @@ class Completion {
   friend std::pair<Completion<U>, CompletionSetter<U>> make_completion(Scheduler&);
   explicit Completion(std::shared_ptr<detail::CompletionState<T>> state) : state_(std::move(state)) {}
   std::shared_ptr<detail::CompletionState<T>> state_;
-  std::optional<bool> hook_state_;  // set by `await_suspend`: the state for the suspend hook
+  bool hook_state_ = false;  // set by `await_ready`: the state for the suspend hook
 };
 
 // The producer end of a `Completion`. Any thread can use it, once. It is copyable and holds the

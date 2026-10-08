@@ -253,7 +253,7 @@ TEST_CASE("Yield resumes from the queue") {
   CHECK(t.done());
 }
 
-TEST_CASE("the suspend hook runs around a suspension on the owner thread") {
+TEST_CASE("the suspend hook runs on each co_await of a Completion, also a ready one") {
   QueueScheduler scheduler;
   struct Log {
     int suspends = 0;
@@ -273,21 +273,22 @@ TEST_CASE("the suspend hook runs around a suspension on the owner thread") {
   ready_setter.set_value(1);
   auto [later, later_setter] = make_completion<int>(scheduler);
   const auto run = [&]() -> Task<int> {
-    int sum = co_await std::move(ready);  // ready: no suspension, no hook
+    // Ready: no suspension, but the other thread did work, so the hook runs (a stale snapshot must end).
+    int sum = co_await std::move(ready);
     co_await Yield(scheduler);
     sum += co_await std::move(later);
     co_return sum;
   };
   Task<int> t = run();
   t.start();
-  CHECK(log.suspends == 1);
-  CHECK(log.resumes == 0);
+  CHECK(log.suspends == 2);             // the ready Completion, then the Yield
+  CHECK(log.resumes == 1);              // the ready Completion
   CHECK(scheduler.run_pending() == 1);  // the Yield
-  CHECK(log.resumes == 1);
-  CHECK(log.suspends == 2);  // the Completion that is not ready
+  CHECK(log.resumes == 2);
+  CHECK(log.suspends == 3);  // the Completion that is not ready
   later_setter.set_value(2);
   CHECK(scheduler.run_pending() == 1);
-  CHECK(log.resumes == 2);
+  CHECK(log.resumes == 3);
   CHECK(log.resumed_with);
   CHECK(t.result() == 3);
   suspend_hook = SuspendHook{};

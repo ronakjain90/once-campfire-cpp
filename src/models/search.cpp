@@ -27,12 +27,14 @@ const db::Query<void(std::int64_t)> kDestroyAll{"DELETE FROM \"searches\" WHERE 
 
 using db::schema::MessageRow;
 
+// `Message.search_reachable`: the newest 100 reachable matches by id. Rails orders them by id since `dbc7620`, so
+// SQLite walks the full-text index newest first and does not sort every match by `created_at`.
 const db::Query<MessageRow(std::int64_t, std::string_view)> kSearchReachable{
     "SELECT \"messages\".\"id\", \"messages\".\"client_message_id\", \"messages\".\"created_at\", "
     "\"messages\".\"creator_id\", \"messages\".\"room_id\", \"messages\".\"updated_at\" FROM \"messages\" INNER JOIN "
     "\"rooms\" ON \"messages\".\"room_id\" = \"rooms\".\"id\" INNER JOIN \"memberships\" ON \"rooms\".\"id\" = "
     "\"memberships\".\"room_id\" join message_search_index idx on messages.id = idx.rowid WHERE "
-    "\"memberships\".\"user_id\" = ? AND (idx.body match ?) ORDER BY \"messages\".\"created_at\" DESC LIMIT 100"};
+    "\"memberships\".\"user_id\" = ? AND (idx.body match ?) ORDER BY \"messages\".\"id\" DESC LIMIT 100"};
 
 }  // namespace
 

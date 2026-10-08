@@ -2,6 +2,10 @@
 // app/models/room/message_pusher.rb, lib/web_push/pool.rb. Rust:
 // crates/campfire/src/integrations/{jobs.rs,web_push.rs,web_push/pool.rs}.
 #include <algorithm>
+#include <condition_variable>
+#include <deque>
+#include <functional>
+#include <latch>
 #include <mutex>
 #include <thread>
 
@@ -62,16 +66,56 @@ std::vector<std::int64_t> mentionee_ids(db::Connection& conn, Arena& arena, Mess
   return out;
 }
 
+// The threads that deliver notifications (`WebPush::Pool`, a fixed thread pool). They start at the first delivery and
+// stay until the process ends: a thread for each delivery cost more than the delivery to a near push service.
+class DeliveryPool {
+ public:
+  static DeliveryPool& instance() {
+    static DeliveryPool* const pool = new DeliveryPool;  // never destroyed: its threads run until the process ends
+    return *pool;
+  }
+  void post(std::function<void()> work) {
+    {
+      const std::lock_guard lock(mutex_);
+      queue_.push_back(std::move(work));
+    }
+    ready_.notify_one();
+  }
+
+ private:
+  // As many as the `deliveries` semaphore lets run at a time.
+  static constexpr int kThreads = 64;
+  DeliveryPool() {
+    for (int i = 0; i < kThreads; ++i) std::thread([this] { run(); }).detach();
+  }
+  [[noreturn]] void run() {
+    while (true) {
+      std::function<void()> work;
+      {
+        std::unique_lock lock(mutex_);
+        ready_.wait(lock, [this] { return !queue_.empty(); });
+        work = std::move(queue_.front());
+        queue_.pop_front();
+      }
+      work();
+    }
+  }
+  std::mutex mutex_;
+  std::condition_variable ready_;
+  std::deque<std::function<void()>> queue_;
+};
+
 // Delivers each notification, at most `deliveries` at a time, and then destroys the subscriptions that cannot be
 // delivered to (`WebPush::Pool`: one worker destroys them in order).
 void deliver_all(App& app, std::counting_semaphore<64>& deliveries, std::vector<web_push::Notification> notifications) {
   std::mutex mutex;
   std::vector<std::int64_t> invalid;
-  std::vector<std::thread> threads;
+  std::latch done(static_cast<std::ptrdiff_t>(notifications.size()));
   const std::int64_t now = app.now().seconds;
   for (web_push::Notification& notification : notifications) {
     deliveries.acquire();
-    threads.emplace_back([&app, &deliveries, &mutex, &invalid, now, notification = std::move(notification)] {
+    DeliveryPool::instance().post([&app, &deliveries, &mutex, &invalid, &done, now,
+                                   notification = std::move(notification)] {
       const auto delivered = web_push::deliver(notification, *app.vapid, app.push_network, now);
       if (!delivered) {
         if (delivered.error().invalidates_subscription()) {
@@ -82,9 +126,10 @@ void deliver_all(App& app, std::counting_semaphore<64>& deliveries, std::vector<
         }
       }
       deliveries.release();
+      done.count_down();
     });
   }
-  for (std::thread& thread : threads) thread.join();
+  done.wait();
   for (const std::int64_t id : invalid) {
     log_info("Destroying push subscription: {}", id);
     const auto destroyed = write(app, [id](db::Tx& tx) { return models::push_subscriptions::destroy(tx, id); });

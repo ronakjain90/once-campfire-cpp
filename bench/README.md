@@ -9,11 +9,13 @@ The load generator runs on CPUs 4-7.
 - A Docker host with 8 CPUs, cgroup v2 and 10 GB of free space for Docker. A Linux host works.
   On a Mac, use a VM such as [Colima](https://github.com/abiosoft/colima).
 - Bash 3.2 or later on the host.
-- A clone of the [Rust port](https://github.com/basecamp/once-campfire-rust) next to this repo:
+- Clones of the [Rust port](https://github.com/basecamp/once-campfire-rust) and of the shared
+  [verification harness](https://github.com/basecamp/once-campfire-verification) next to this repo:
 
       parent/
-        once-campfire-cpp/     this repo
-        once-campfire-rust/    the Rust port
+        once-campfire-cpp/            this repo
+        once-campfire-rust/           the Rust port: the seed data and the Rust image
+        once-campfire-verification/   the load generator
 
   To use a different parent folder, set `CAMPFIRE_WORKSPACE` to it.
 
@@ -50,7 +52,9 @@ Do these steps one time.
        docker build -t campfire-cpp -f docker/Dockerfile .
 
 The first run of `bench/run` builds the runner image `campfire-bench-runner`. That image has the
-load generator, which is built from `once-campfire-rust/bench/loadgen`.
+load generator, which is built from `once-campfire-verification/loadgen`. (Older Rust checkouts
+kept it in `once-campfire-rust/bench/loadgen`; the script uses that folder if the harness is not
+there.) After the load generator changes, run `bench/run --rebuild` once.
 
 ## Run
 

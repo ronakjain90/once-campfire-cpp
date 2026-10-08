@@ -1,6 +1,6 @@
 # Runner image for the benchmark harness (campfire-bench-runner).
-# Build context: once-campfire-rust/bench/loadgen (the harness script `run` does this):
-#   docker build -t campfire-bench-runner -f bench/Dockerfile ../once-campfire-rust/bench/loadgen
+# Build context: once-campfire-verification/loadgen (the harness script `run` does this):
+#   docker build -t campfire-bench-runner -f bench/Dockerfile ../once-campfire-verification/loadgen
 FROM docker.io/library/rust:1.98.1-trixie AS loadgen
 WORKDIR /src
 COPY Cargo.toml Cargo.lock ./

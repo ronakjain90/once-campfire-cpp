@@ -1,6 +1,7 @@
 // The JSON Rails writes (see json.hpp). Rust: crates/rails_compat/src/json.rs.
 #include "compat/json.hpp"
 
+#include <array>
 #include <charconv>
 #include <cmath>
 #include <cstdio>
@@ -56,15 +57,30 @@ size_t utf8_length(std::string_view s, size_t i) {
   return 0;
 }
 
+// The bytes that `write_string` must look at: control characters, `"`, `\\`, the start of UTF-8 sequences, and (for
+// `Html`) `<`, `>` and `&`. The others are copied as they are.
+template <bool Html>
+constexpr std::array<bool, 256> make_special() {
+  std::array<bool, 256> table{};
+  for (int c = 0; c < 256; ++c) table[static_cast<size_t>(c)] = c < 0x20 || c >= 0x80 || c == '"' || c == '\\';
+  if (Html) table['<'] = table['>'] = table['&'] = true;
+  return table;
+}
+
 // `Html`: also escape `<`, `>` and `&` as ActiveSupport::JSON does (`escape_html_entities` in one pass).
 template <bool Html>
 void write_string(std::string& out, std::string_view s) {
   static constexpr char kHex[] = "0123456789abcdef";
+  static constexpr std::array<bool, 256> kSpecial = make_special<Html>();
+  out.reserve(out.size() + s.size() + 2);
   out += '"';
   size_t run = 0;  // start of the bytes not yet copied
   size_t i = 0;
   auto flush = [&](size_t end) { out.append(s.data() + run, end - run); };
   while (i < s.size()) {
+    // Skip the plain bytes first: most of a message's HTML.
+    while (i < s.size() && !kSpecial[static_cast<unsigned char>(s[i])]) ++i;
+    if (i == s.size()) break;
     unsigned char c = static_cast<unsigned char>(s[i]);
     if (c >= 0x80) {
       size_t n = utf8_length(s, i);

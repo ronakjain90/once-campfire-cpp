@@ -15,8 +15,15 @@ namespace campfire::app::concerns {
 Task<Flow<void>> allow_browser(Rq& rq) {
   const std::string_view header = rq.user_agent();
   if (!ua::is_present(header)) co_return Flow<void>{};
+  // A pure function of the header: the worker keeps the answer for headers of a usual size.
+  const auto blocked = [&] { return ApplicationPlatform(header).browser_blocked(); };
+  if (header.size() <= 512) {
+    const std::string key = "ua-blocked:" + std::string(header);
+    if (rq.worker.memo(key, [&] { return std::string(blocked() ? "1" : "0"); }) == "0") co_return Flow<void>{};
+  } else if (!blocked()) {
+    co_return Flow<void>{};
+  }
   const ApplicationPlatform platform(header);
-  if (!platform.browser_blocked()) co_return Flow<void>{};
   PageSpec spec;
   spec.name = "sessions#incompatible_browser";
   spec.title = platform.apple_messages() ? "Campfire" : "Unsupported browser";

@@ -102,13 +102,24 @@ Flow<std::string> room_display_name(Rq& rq, const models::Room& room) {
 }
 
 // The facets of what the room pages print about the browser: the notification help of the bell.
-void add_platform_facets(db::DependencyScope& deps, const views::Platform& p) {
+std::string platform_facet(const views::Platform& p) {
   std::string text = p.browser + "|" + p.operating_system + "|";
   for (const bool flag : {p.ios, p.android, p.mac, p.windows, p.chrome, p.firefox, p.safari, p.edge, p.mobile,
                           p.desktop, p.apple_messages}) {
     text.push_back(flag ? '1' : '0');
   }
-  deps.facet("platform", text);
+  return text;
+}
+
+// The same, kept by the worker for headers of a usual size: it is a pure function of the User-Agent header.
+void add_platform_facets(Rq& rq, db::DependencyScope& deps) {
+  const std::string_view header = rq.user_agent();
+  const auto make = [&] { return platform_facet(ApplicationPlatform(header).to_view()); };
+  if (header.size() > 512) {
+    deps.facet("platform", make());
+    return;
+  }
+  deps.facet("platform", rq.worker.memo("platform:" + std::string(header), make));
 }
 
 std::string room_gid_param(const models::Room& room) {
@@ -208,9 +219,7 @@ Task<Flow<net::Response>> rooms_show(Rq& rq) {
     show.items = std::move(*items);
     return {};
   };
-  spec.facets = [&](db::DependencyScope& scope, const LayoutData&) {
-    add_platform_facets(scope, ApplicationPlatform(rq.user_agent()).to_view());
-  };
+  spec.facets = [&](db::DependencyScope& scope, const LayoutData&) { add_platform_facets(rq, scope); };
   co_return render_page(rq, 200, spec, deps, *layout);
 }
 

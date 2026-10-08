@@ -219,6 +219,10 @@ std::string generate(const Value& value) {
 
 bool valid_utf8(std::string_view text) {
   for (size_t i = 0; i < text.size();) {
+    if (static_cast<unsigned char>(text[i]) < 0x80) {  // ASCII: one byte, always valid
+      ++i;
+      continue;
+    }
     size_t n = utf8_length(text, i);
     if (n == 0) return false;
     i += n;

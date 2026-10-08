@@ -7,6 +7,7 @@
 #include "app/dispatch.hpp"
 #include "app/message_actions.hpp"
 #include "app/message_partial.hpp"
+#include "app/page.hpp"
 #include "compat/ruby.hpp"
 #include "richtext/text_util.hpp"
 #include "routes/routes.hpp"
@@ -136,7 +137,7 @@ Task<Flow<net::Response>> boosts_new(Rq& rq) {
   MessagePresenter presenter(rq.db(), rq.arena(), rq.app, std::string(rq.info.host()));
   auto view = presenter.message(*message);
   if (!view) co_return db_failure(view.error());
-  const views::messages::UserView user = user_view(rq.app, *rq.current_user());
+  const views::messages::UserView user = current_user_view(rq);
   co_return messages::content_page(rq, 200, false, [&](Out& out, const views::ViewContext& ctx) {
     views::messages::boosts::new_(out, ctx, *view, user);
   });

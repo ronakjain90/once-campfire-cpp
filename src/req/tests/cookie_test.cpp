@@ -169,6 +169,29 @@ TEST_CASE("session: written only on change and deleted when empty") {
   CHECK(next.is_deleted("_campfire_session"));
 }
 
+TEST_CASE("session: the id is made only when it is read or written, as the first key") {
+  auto j = jar("");
+  Session session;
+  session.load(j);
+  CHECK_FALSE(session.contains_key("session_id"));  // reading the session alone makes no id
+  CHECK(session.get("flash") == nullptr);
+  CHECK_FALSE(session.contains_key("session_id"));
+
+  // Written without a read of the id: the id is made, and it comes first, as Rails writes it.
+  session.insert("return_to", compat::json::Value("/rooms/1"));
+  REQUIRE(session.commit(j, clock_at_2024()->now()).has_value());
+  const auto headers = j.set_cookie_headers(true, "h");
+  REQUIRE(headers.size() == 1);
+  auto next = jar(headers[0].substr(0, headers[0].find(';')));
+  const auto stored = next.encrypted_value("_campfire_session");
+  REQUIRE(stored.has_value());
+  REQUIRE(stored->is_object());
+  REQUIRE(stored->as_object().size() == 2);
+  CHECK(stored->as_object()[0].first == "session_id");
+  CHECK(stored->as_object()[0].second.as_string().size() == 32);
+  CHECK(stored->as_object()[1].first == "return_to");
+}
+
 TEST_CASE("flash: shown once") {
   Flash flash;
   flash.set("notice", compat::json::Value("ok"));

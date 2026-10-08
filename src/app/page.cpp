@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "app/controllers/rooms.hpp"
+#include "app/message_presenter.hpp"
 #include "app/platform.hpp"
 #include "assets/assets.hpp"
 #include "compat/signed_id.hpp"
@@ -32,6 +33,11 @@ std::string user_avatar_path(const Rq& rq, const models::User& user) {
     const std::string token = compat::signed_id::generate(rq.app.secrets, "User", user.id, "avatar", std::nullopt);
     return campfire::routes::fresh_user_avatar(token, to_fs_number(user.updated_at));
   });
+}
+
+views::messages::UserView current_user_view(const Rq& rq) {
+  const models::User& user = *rq.current_user();
+  return views::messages::UserView{user.id, user.name, user_title(user), user_avatar_path(rq, user)};
 }
 
 Flow<LayoutData> load_layout(Rq& rq) {

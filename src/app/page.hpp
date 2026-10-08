@@ -19,6 +19,7 @@
 #include "models/user.hpp"
 #include "views/context.hpp"
 #include "views/layout.hpp"
+#include "views/messages/types.hpp"
 
 namespace campfire::app {
 
@@ -33,6 +34,8 @@ struct LayoutData {
 
 // `fresh_user_avatar_path(user)`: the signed avatar token and the `v` cache buster.
 [[nodiscard]] std::string user_avatar_path(const Rq& rq, const models::User& user);
+// The view of `Current.user`, with the avatar path from the worker's memo (no HMAC for each request).
+[[nodiscard]] views::messages::UserView current_user_view(const Rq& rq);
 
 // `Current.account`, `Current.user`. With no account yet (first run) the account summary is blank.
 [[nodiscard]] Flow<LayoutData> load_layout(Rq& rq);

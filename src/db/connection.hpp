@@ -30,36 +30,45 @@ enum class Role : std::uint8_t {
 };
 
 namespace detail {
-// Folds one parameter into a scope, as `bind_value` does (for the memo key and for a replay).
-inline void note_value(DependencyScope& d, std::int64_t v) noexcept {
+// Folds one parameter into a scope or a hasher, as `bind_value` does (for the memo key and for a replay).
+template <class Sink>
+void note_value(Sink& d, std::int64_t v) noexcept {
   d.param_i64(v);
 }
-inline void note_value(DependencyScope& d, double v) noexcept {
+template <class Sink>
+void note_value(Sink& d, double v) noexcept {
   d.param_f64(v);
 }
-inline void note_value(DependencyScope& d, std::string_view v) noexcept {
+template <class Sink>
+void note_value(Sink& d, std::string_view v) noexcept {
   d.param_text(v);
 }
-inline void note_value(DependencyScope& d, Blob v) noexcept {
+template <class Sink>
+void note_value(Sink& d, Blob v) noexcept {
   d.param_blob(v.bytes);
 }
-inline void note_value(DependencyScope& d, std::nullopt_t) noexcept {
+template <class Sink>
+void note_value(Sink& d, std::nullopt_t) noexcept {
   d.param_null();
 }
-inline void note_value(DependencyScope& d, int v) noexcept {
+template <class Sink>
+void note_value(Sink& d, int v) noexcept {
   d.param_i64(v);
 }
-inline void note_value(DependencyScope& d, bool v) noexcept {
+template <class Sink>
+void note_value(Sink& d, bool v) noexcept {
   d.param_i64(static_cast<std::int64_t>(v));
 }
-inline void note_value(DependencyScope& d, const char* v) noexcept {
+template <class Sink>
+void note_value(Sink& d, const char* v) noexcept {
   d.param_text(v);
 }
-inline void note_value(DependencyScope& d, const std::string& v) noexcept {
+template <class Sink>
+void note_value(Sink& d, const std::string& v) noexcept {
   d.param_text(v);
 }
-template <class T>
-void note_value(DependencyScope& d, const std::optional<T>& v) noexcept {
+template <class Sink, class T>
+void note_value(Sink& d, const std::optional<T>& v) noexcept {
   if (v) {
     note_value(d, *v);
   } else {
@@ -222,6 +231,7 @@ class Connection {
     std::uint32_t columns = 0;
     std::uint32_t rows = 0;
     bool ended = false;               // the statement ran to its end (the scope got `end_statement`)
+    Hash128 digest;                   // `DependencyScope::rows_digest` of the rows and the end
     std::vector<CachedValue> values;  // rows × columns
     std::string bytes;                // text and blob values
     [[nodiscard]] std::span<const CachedValue> row(std::uint32_t r) const noexcept {
@@ -298,6 +308,11 @@ class Connection {
       }
     }
     if (memo && !converted && memo_bytes_ + record.cost() <= kMemoBudget) {
+      record.digest = DependencyScope::rows_digest(
+          [&](Hasher& h) {
+            for (std::uint32_t r = 0; r < record.rows; ++r) h.row(record.row(r), record.bytes.data());
+          },
+          record.ended);
       memo_bytes_ += record.cost();
       memo_.emplace(key, std::move(record));
     }
@@ -309,27 +324,23 @@ class Connection {
     if (scope_ != nullptr) {
       scope_->begin_statement(index);
       (detail::note_value(*scope_, args), ...);
+      scope_->kept_rows(m.digest, m.rows);  // the rows and the end, as one kept digest
     }
     for (std::uint32_t r = 0; r < m.rows; ++r) {
-      if (scope_ != nullptr) {
-        scope_->fold_cached_row(m.row(r), m.bytes.data());
-      }
       RowReader reader(m.row(r), m.bytes.data(), arena);
       push(RowTraits<Row>::read(reader));
-    }
-    if (m.ended && scope_ != nullptr) {
-      scope_->end_statement();
     }
   }
 
   template <class... A>
   [[nodiscard]] static Hash128 memo_key(std::uint32_t index, ReadMode mode, std::size_t max_rows, const A&... args) {
-    DependencyScope key;
-    key.begin_statement(index);
+    Hasher key;
+    key.tag('S');
+    key.put_u64(index);
     key.param_i64(static_cast<std::int64_t>(mode));
     key.param_i64(static_cast<std::int64_t>(max_rows));
     (detail::note_value(key, args), ...);
-    return key.key();
+    return key.digest();
   }
 
   // The SQL of `q` gives the same rows for the same data and parameters.

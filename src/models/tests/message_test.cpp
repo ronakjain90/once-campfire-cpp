@@ -9,6 +9,7 @@
 #include "db/tests/test_util.hpp"
 #include "models/boost.hpp"
 #include "models/room_ref.hpp"
+#include "models/search.hpp"
 
 namespace campfire::models {
 using namespace db::testing;
@@ -168,6 +169,35 @@ TEST_CASE("messages: pages") {
   CHECK(*messages::count_in_room(reader, arena, 1) == 45);
   CHECK(last->front().id < last->back().id);
   CHECK(last->front().client_message_id.size() == 36);
+}
+
+TEST_CASE("messages: search orders the matches by id, not by created_at") {
+  TempDir dir;
+  auto database = open_app_db(dir);
+  QueueScheduler scheduler;
+  auto reader = std::move(*database->open_reader());
+  Arena arena;
+  for (int i = 0; i < 2; ++i) {
+    NewMessage attributes;
+    attributes.room_id = 1;
+    attributes.creator_id = 2;
+    attributes.plain_text = "coffee";
+    REQUIRE(run_task(scheduler, database->write(scheduler, [&](db::Tx& tx) -> Result<Message> {
+              return messages::create(tx, attributes, nullptr);
+            })).has_value());
+  }
+  // The message with the smaller id is the newer one (Rails `Message.search_reachable`, `reorder(:id)`).
+  auto writer = db::Connection::open(dir.file("app.sqlite3"), db::Role::Writer);
+  REQUIRE(writer.has_value());
+  REQUIRE(writer
+              ->exec_sql("UPDATE messages SET created_at = '2026-03-02 00:00:00' WHERE id = 1; "
+                         "UPDATE messages SET created_at = '2026-03-01 00:00:00' WHERE id = 2;")
+              .has_value());
+  auto found = messages::search_reachable(reader, arena, 1, "\"coffee\"");
+  REQUIRE(found.has_value());
+  REQUIRE(found->size() == 2);
+  CHECK(found->at(0).id == 1);
+  CHECK(found->at(1).id == 2);
 }
 
 TEST_CASE("room refs: lookups") {

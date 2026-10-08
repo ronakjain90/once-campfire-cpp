@@ -309,6 +309,8 @@ Task<Flow<net::Response>> messages_index(Rq& rq) {
   if (auto format = rq.respond_to(offered); !format) co_return std::unexpected(std::move(format.error()));
   deps.facet("page", "messages#index");
   const views::ViewContext ctx = partial_context(rq);
+  // The parts option makes the gzip body from kept pieces of the message fragments (src/app/splice.hpp). The ETag of
+  // the response stays the one of `fresh_when`: the parts ETag of the entry is not used when an ETag is set.
   co_return cached_page_checked(
       rq, 200, deps,
       [&](Out& out) -> Flow<void> {
@@ -317,7 +319,7 @@ Task<Flow<net::Response>> messages_index(Rq& rq) {
         views::messages::index(out, ctx, *items);
         return {};
       },
-      false);
+      false, true);
 }
 
 // `RoomScoped`, `set_last_updated_at`: what changed in the room since the client loaded it.

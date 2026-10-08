@@ -76,6 +76,9 @@ class PageCache {
   // that is bigger than one shard is returned but not stored.
   std::shared_ptr<const PageEntry> put(const Hash128& key, std::string identity, std::string content_type,
                                        std::string etag = {});
+  // The same, with the gzip body and the ETag already made (src/app/splice.hpp).
+  std::shared_ptr<const PageEntry> put_built(const Hash128& key, std::string identity, std::string gzip,
+                                             std::string content_type, std::string etag);
   void clear();
 
   [[nodiscard]] std::size_t bytes() const;

@@ -6,6 +6,7 @@
 #include "app/controllers/rooms.hpp"
 #include "app/message_presenter.hpp"
 #include "app/platform.hpp"
+#include "app/splice.hpp"
 #include "assets/assets.hpp"
 #include "compat/signed_id.hpp"
 #include "core/time_format.hpp"
@@ -182,6 +183,14 @@ Flow<net::Response> cached_page_checked(Rq& rq, int status, db::DependencyScope&
   auto body = make_body();
   if (!body) return std::unexpected(std::move(body.error()));
   std::string text = body->to_string();
+  if (parts_etag_wanted) {
+    // Kept pieces and digests of the parts: no compression or hash of the whole body (src/app/splice.hpp).
+    if (auto spliced = splice::build(text, recorder.spans)) {
+      auto entry = cache.put_built(key, std::move(text), std::move(spliced->gzip), "text/html; charset=utf-8",
+                                   std::move(spliced->etag));
+      return rq.respond_page(std::move(entry), status);
+    }
+  }
   std::string etag;
   if (parts_etag_wanted) etag = parts_etag(text, recorder.spans);
   auto entry = cache.put(key, std::move(text), "text/html; charset=utf-8", std::move(etag));

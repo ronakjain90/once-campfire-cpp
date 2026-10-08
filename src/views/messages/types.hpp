@@ -4,6 +4,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <string>
 #include <variant>
@@ -118,7 +119,7 @@ struct MessageView {
 
 // A message on its way into a list: the fragment that the cache holds already, or the view to render it from.
 struct MessageItem {
-  std::string html;  // the fragment, when the cache had this version
+  std::shared_ptr<const std::string> html;  // the fragment, when the cache had this version (shared with the cache)
   std::optional<MessageView> view;
   std::string client_message_id;
   std::string updated_at;

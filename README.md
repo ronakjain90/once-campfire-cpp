@@ -37,70 +37,71 @@ docker run -d -p 80:80 -p 443:443 \
 
 ## Performance
 
-Production images, the same seed data and four pinned CPUs for each app, on an Apple M4 Mac
-(10 cores, 32 GB). Docker runs in a Colima VM with 8 vCPUs and 16 GB. The load generator of the
-Rust repo runs on the other four CPUs. All runs were on October 7, 2026, on a quiet host. The
-reports record the settings and the ranges:
-[HTTP](bench/results/2026-10-07-page-cache-off/report.md) and
-[Action Cable](bench/results/2026-10-07-cable/report.md).
+### Shared verification harness
+
+These numbers come from the shared
+[verification harness](https://github.com/basecamp/once-campfire-verification) of the Campfire
+ports. It checks every measured response against its route contract: status, headers, the complete
+decoded body and the expected messages. It also checks every acknowledged post against its row,
+body, room and search-index entry. Any failure stops the run.
+
+| Route (16 concurrent clients) | Rust | C++ | C++ advantage |
+|---|---|---|---|
+| Room page | 47,967 req/s | 102,650 req/s | **2.14×** |
+| Messages page | 44,983 req/s | 117,679 req/s | **2.62×** |
+| Sidebar | 52,494 req/s | 107,246 req/s | **2.04×** |
+| Search | 53,167 req/s | 116,777 req/s | **2.20×** |
+| Post a message | 6,075 req/s | 13,718 req/s | **2.26×** |
+
+- Over three alternating rounds, all 28.0 million C++ responses and all 13.8 million Rust responses
+  were valid. The write audit verified 386,877 C++ posts and 178,582 Rust posts.
+- Rust is the current port (`b7f4af0`, October 8, 2026). Both apps have a page cache for the pages
+  of a signed-in user.
+- The run was on an Apple M4 Mac (10 cores, 32 GB) in a Colima VM with 8 vCPUs and 16 GB. Each app
+  had four pinned CPUs, and the load generator had the other four. The absolute numbers depend on
+  the host. Compare the ratios.
+- The harness does not list the C++ app. A two-line local change adds it. The
+  [report](bench/results/2026-10-08-verification/report.md) gives the change, the sources, the
+  images and the setup.
 
 ### The page cache
 
-The C++ app has a page cache. The Rust port has no page cache. Both apps also have the response
-cache of Thruster, but it keeps only public responses, such as assets and avatars, and not the
-pages of a signed-in user. Thus the two apps do different work for each page:
+The C++ app runs the SQL queries of a page, and hashes the rows that they return. If it has a page
+with the same hash, it sends that page again. If not, it builds the page and keeps it. Because the
+key is a hash of the data, a page cannot be stale. See section 6.1 of
+[`docs/architecture.md`](docs/architecture.md).
 
-- **Rust** builds each page for each request. It keeps the HTML of each message in a fragment
-  cache, as Rails does.
-- **C++** runs the same SQL queries, and hashes the rows that they return. If it has a page with
-  the same hash, it sends that page again. If not, it builds the page and keeps it. Because the
-  key is a hash of the data, a page cannot be stale. See section 6.1 of
-  [`docs/architecture.md`](docs/architecture.md).
+Without the page cache (`CAMPFIRE_PAGE_CACHE_MB=0`), the C++ app builds the room, messages and
+search pages slowly. The Rust port of October 1, 2026 had no page cache. Against that version, on
+the harness of this repo
+([report](bench/results/2026-10-07-page-cache-off/report.md)):
 
-The benchmark asks for the same pages again and again, so almost all C++ page requests use the
-page cache. The tables give the C++ app with the page cache off (`CAMPFIRE_PAGE_CACHE_MB=0`) and
-on. With the page cache off, the C++ app builds the room, messages and search pages more slowly
-than the Rust app. A post does not use the page cache.
-
-### HTTP throughput (16 concurrent clients)
-
-| Route | Rust | C++, page cache off | C++, page cache on |
+| Route (16 concurrent clients) | Rust of October 1 | C++, page cache off | C++, page cache on |
 |---|---|---|---|
-| Room page | 29,259 req/s | 4,376 req/s (0.15×) | 108,604 req/s (**3.71×**) |
-| Messages page | 29,315 req/s | 5,426 req/s (0.19×) | 119,770 req/s (**4.09×**) |
-| Sidebar | 27,100 req/s | 28,736 req/s (**1.06×**) | 109,097 req/s (**4.03×**) |
-| Search | 26,579 req/s | 10,952 req/s (0.41×) | 113,849 req/s (**4.28×**) |
-| Post a message | 6,971 req/s | 15,650 req/s (**2.25×**) | 15,060 req/s (**2.16×**) |
+| Room page | 29,259 req/s | 4,376 req/s (0.15×) | 108,604 req/s (3.71×) |
+| Messages page | 29,315 req/s | 5,426 req/s (0.19×) | 119,770 req/s (4.09×) |
+| Sidebar | 27,100 req/s | 28,736 req/s (1.06×) | 109,097 req/s (4.03×) |
+| Search | 26,579 req/s | 10,952 req/s (0.41×) | 113,849 req/s (4.28×) |
+| Post a message | 6,971 req/s | 15,650 req/s (2.25×) | 15,060 req/s (2.16×) |
 
-### HTTP throughput (100 concurrent clients)
+### Action Cable
 
-| Route | Rust | C++, page cache off | C++, page cache on |
-|---|---|---|---|
-| Room page | 29,464 req/s | 4,306 req/s (0.15×) | 133,318 req/s (**4.52×**) |
-| Messages page | 31,507 req/s | 5,454 req/s (0.17×) | 138,954 req/s (**4.41×**) |
-| Sidebar | 29,374 req/s | 27,543 req/s (0.94×) | 126,955 req/s (**4.32×**) |
-| Search | 31,569 req/s | 11,347 req/s (0.36×) | 141,327 req/s (**4.48×**) |
-| Post a message | 6,808 req/s | 20,844 req/s (**3.06×**) | 20,865 req/s (**3.06×**) |
-
-CPU time for each room page at 100 clients: 0.12 ms for Rust, 0.93 ms for C++ with the page cache
-off, and 0.030 ms for C++ with the page cache on.
-
-### Latency and real time
+Against the Rust port of October 1, 2026, on the harness of this repo
+([report](bench/results/2026-10-07-cable/report.md)):
 
 | Measurement | Rust | C++ | C++ advantage |
 |---|---|---|---|
-| Room page p99, 100 clients, page cache on | 5.9 ms | 1.8 ms | **3.38×** |
-| Room page p99, 100 clients, page cache off | 5.9 ms | 43.2 ms | 0.14× |
-| Post a message p99, 100 clients | 29.1 ms | 12.1 ms | **2.40×** |
 | Posts per second to all of 100 clients in one room | 3,098 | 3,592 | **1.16×** |
 | Posts per second to all of 1,000 clients in one room | 546 | 479 | 0.88× |
 | Post to all 1,000 clients received, p50 | 15.9 ms | 14.1 ms | **1.13×** |
 | Post to all 1,000 clients received, p99 | 20.3 ms | 18.2 ms | **1.12×** |
 
-Every client subscribed and received every broadcast. All numbers are medians of three interleaved
+Every client subscribed and received every broadcast. The numbers are medians of three interleaved
 runs.
 
 ### Image size
+
+Against the Rust image of October 1, 2026:
 
 | Measurement | Rust | C++ | C++ advantage |
 |---|---|---|---|
@@ -114,9 +115,10 @@ page). The cause is the compressor: the C++ app uses libdeflate. The decoded pag
 
 The open work is:
 
-- The page build without the page cache. Today it is slower than the Rust port for the room,
+- The page build without the page cache. It is slower than the Rust port of October 1 for the room,
   messages and search pages.
-- The Action Cable fan-out with 1,000 clients. It is 0.88 times the Rust port.
+- The Action Cable fan-out with 1,000 clients. It is 0.88 times the Rust port of October 1.
+- The browser checks of the shared verification harness (`bin/browser`).
 - Parity checks against Rails: the Playwright harness, and database and cookie compatibility in
   both directions.
 

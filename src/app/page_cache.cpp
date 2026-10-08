@@ -148,9 +148,16 @@ std::shared_ptr<const PageEntry> PageCache::get(const Hash128& key) {
 
 std::shared_ptr<const PageEntry> PageCache::put(const Hash128& key, std::string identity, std::string content_type,
                                                 std::string etag) {
+  std::string gzip = gzip_compress(identity);
+  if (etag.empty()) etag = body_etag(identity);
+  return put_built(key, std::move(identity), std::move(gzip), std::move(content_type), std::move(etag));
+}
+
+std::shared_ptr<const PageEntry> PageCache::put_built(const Hash128& key, std::string identity, std::string gzip,
+                                                      std::string content_type, std::string etag) {
   auto entry = std::make_shared<PageEntry>();
-  entry->etag = etag.empty() ? body_etag(identity) : std::move(etag);
-  entry->gzip = gzip_compress(identity);
+  entry->etag = std::move(etag);
+  entry->gzip = std::move(gzip);
   entry->identity = std::move(identity);
   entry->content_type = std::move(content_type);
   const std::size_t cost =

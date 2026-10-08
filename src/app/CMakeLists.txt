@@ -1,4 +1,5 @@
 # The app: routes, health, 404, main. T5 owns main.cpp and the route table format.
+find_package(ZLIB REQUIRED)
 file(GLOB campfire_route_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/routes/*.inc")
 set(campfire_routes_cpp "${CMAKE_CURRENT_BINARY_DIR}/routes.gen.cpp")
 add_custom_command(
@@ -100,6 +101,7 @@ campfire_library(app
     rails.cpp
     rate_limit.cpp
     render_page.cpp
+    splice.cpp
     rq.cpp
     rq_response.cpp
     rqrcode.cpp
@@ -110,7 +112,7 @@ campfire_library(app
     "${campfire_data_cpp}"
   PUBLIC_DEPS campfire_net campfire_core campfire_compat campfire_db campfire_models campfire_req campfire_views
               campfire_assets campfire_routes campfire_richtext campfire_storage campfire_cable campfire_jobs
-  DEPS OpenSSL::Crypto PkgConfig::LIBDEFLATE PkgConfig::PCRE2
+  DEPS OpenSSL::Crypto PkgConfig::LIBDEFLATE PkgConfig::PCRE2 ZLIB::ZLIB
   WERROR)
 
 campfire_test(app
@@ -127,6 +129,7 @@ campfire_test(app
     tests/messages_area_test.cpp
     tests/rqrcode_test.cpp
     tests/signin_area_test.cpp
+    tests/splice_test.cpp
     tests/user_agent_test.cpp
     tests/rooms_test.cpp
     tests/room_pages_test.cpp
@@ -134,6 +137,7 @@ campfire_test(app
     tests/network_guard_test.cpp
     tests/unfurl_raw_test.cpp
     tests/unfurl_test.cpp
+  DEPS ZLIB::ZLIB
   WERROR)
 target_compile_definitions(test_app PRIVATE CAMPFIRE_TESTS_DIR="${PROJECT_SOURCE_DIR}/tests")
 

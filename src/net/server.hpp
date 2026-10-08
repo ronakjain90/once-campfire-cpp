@@ -36,6 +36,8 @@ class Server {
   // Wakes one worker: it runs `ServerOptions::on_wake` on its own thread. Any thread may call it. A number that is
   // not a worker is ignored.
   void wake(unsigned worker) noexcept;
+  // `Worker::defer_wake` of one worker. Only that worker's thread may call it.
+  void defer_wake(unsigned worker, std::uint64_t delay_ms);
 
  private:
   ServerOptions options_;

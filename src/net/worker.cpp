@@ -160,6 +160,11 @@ void Worker::stop() {
   [[maybe_unused]] const ssize_t n = ::write(wake_fd_, &one, sizeof one);
 }
 
+void Worker::defer_wake(std::uint64_t delay_ms) {
+  const std::uint64_t due = now_ms_ + (delay_ms == 0 ? 1 : delay_ms);
+  if (deferred_wake_ms_ == 0 || due < deferred_wake_ms_) deferred_wake_ms_ = due;
+}
+
 void Worker::join() {
   if (thread_.joinable()) thread_.join();
 }
@@ -200,10 +205,18 @@ void Worker::run() {
       const int left = static_cast<int>(accept_resume_ms_ > now_ms_ ? accept_resume_ms_ - now_ms_ : 0);
       if (timeout < 0 || timeout > left) timeout = left;
     }
+    if (deferred_wake_ms_ != 0) {
+      const int left = static_cast<int>(deferred_wake_ms_ > now_ms_ ? deferred_wake_ms_ - now_ms_ : 0);
+      if (timeout < 0 || timeout > left) timeout = left;
+    }
     const int n = epoll_wait(epoll_fd_, events, kMaxEvents, timeout);
     now_ms_ = monotonic_ms();
     for (int i = 0; i < n; ++i) {
       handle_event(events[i].data.ptr, events[i].events);
+    }
+    if (deferred_wake_ms_ != 0 && now_ms_ >= deferred_wake_ms_) {
+      deferred_wake_ms_ = 0;
+      if (options_.on_wake) options_.on_wake(index_);
     }
     run_posted();
     drain_finished();

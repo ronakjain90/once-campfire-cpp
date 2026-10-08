@@ -26,10 +26,14 @@ constexpr std::string_view kMigrationVersions[] = {
 // SHA1 of reference/db/schema.rb, which `db:schema:load` records in `ar_internal_metadata`.
 constexpr std::string_view kSchemaSha1 = "f75da8dad38bfb179ffd757bd7a7c2b3f818bc29";
 
-// An index that this app adds to the Rails schema: a room's messages are paged by `created_at`.
+// Indexes that this app adds to the Rails schema: a room's messages are paged by `created_at` (the Rust port adds the
+// same index). The second index has every column of a message row, so a page of messages reads no table rows: a page
+// cache hit runs that query on each request to make the page key.
 constexpr std::string_view kAdditions =
     "CREATE INDEX IF NOT EXISTS \"index_messages_on_room_id_and_created_at\" ON \"messages\" (\"room_id\", "
-    "\"created_at\");";
+    "\"created_at\");"
+    "CREATE INDEX IF NOT EXISTS \"index_messages_on_room_id_and_created_at_covering\" ON \"messages\" (\"room_id\", "
+    "\"created_at\", \"updated_at\", \"creator_id\", \"client_message_id\");";
 
 }  // namespace
 

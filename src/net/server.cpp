@@ -208,6 +208,10 @@ void Server::wake(unsigned worker) noexcept {
   if (worker < workers_.size()) workers_[worker]->request_wake();
 }
 
+void Server::defer_wake(unsigned worker, std::uint64_t delay_ms) {
+  if (worker < workers_.size()) workers_[worker]->defer_wake(delay_ms);
+}
+
 std::size_t Server::connection_count() const noexcept {
   std::size_t total = 0;
   for (const std::unique_ptr<Worker>& worker : workers_) total += worker->connection_count();

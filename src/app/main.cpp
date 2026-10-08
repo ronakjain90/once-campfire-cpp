@@ -72,6 +72,12 @@ int main(int argc, char** argv) {
   std::atomic<net::Server*> running{nullptr};
   app::channels::CableConfig cable_config;
   cable_config.assume_ssl = !(*state)->config.disable_ssl;
+  if (const char* ms = std::getenv("CAMPFIRE_CABLE_COALESCE_MS")) {
+    cable_config.coalesce_ms = static_cast<unsigned>(std::strtoul(ms, nullptr, 10));
+  }
+  cable_config.defer = [&running](unsigned worker, std::uint64_t delay_ms) {
+    if (net::Server* server = running.load()) server->defer_wake(worker, delay_ms);
+  };
   app::channels::CableServer cable(
       **state, workers,
       [&running](unsigned worker) {

@@ -45,6 +45,10 @@ class Worker final : public Scheduler {
   [[nodiscard]] unsigned index() const noexcept { return index_; }
   // Asks the worker to run `ServerOptions::on_wake`. Any thread may call it.
   void request_wake();
+  // Runs `ServerOptions::on_wake` again after `delay_ms` (at least 1 ms), or sooner if such a call is already due.
+  // Only the worker's own thread (in `on_wake`) may call it. The wait is the `epoll_wait` timeout (1 ms steps), not a
+  // timer of the wheel (50 ms steps).
+  void defer_wake(std::uint64_t delay_ms);
 
   // The number of connections now. For tests. Any thread may call it.
   [[nodiscard]] std::size_t connection_count() const noexcept { return connection_count_.load(); }
@@ -140,6 +144,7 @@ class Worker final : public Scheduler {
   unsigned index_ = 0;
   std::atomic<bool> wake_pending_{false};
   TimerNode beat_node_;
+  std::uint64_t deferred_wake_ms_ = 0;  // not 0: run `on_wake` at this time
   std::uint64_t accept_resume_ms_ = 0;  // not 0: the listeners are out of epoll until this time
 
   std::mutex post_mutex_;

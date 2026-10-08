@@ -2,6 +2,9 @@
 // Rust: crates/db/src/events.rs (Event::DisconnectUser).
 #include <doctest.h>
 
+#include <chrono>
+#include <thread>
+
 #include "app/channels/server.hpp"
 #include "app/tests/fixture.hpp"
 #include "cable/protocol.hpp"
@@ -74,6 +77,41 @@ TEST_CASE("cable: signing out disconnects the user with reconnect") {
   cable.server.hub().drain(0);
   REQUIRE(cable.listener.frames.size() == 1);
   CHECK(cable.listener.frames[0] == protocol::remote_disconnect_payload(true));
+}
+
+}  // namespace campfire::app::testing
+
+namespace campfire::app::testing {
+
+TEST_CASE("cable: under load a worker defers its drain to the end of the window, and always drains") {
+  Fixture f;
+  std::vector<std::uint64_t> deferred;
+  channels::CableConfig config;
+  config.coalesce_ms = 200;
+  config.defer = [&](unsigned, std::uint64_t delay_ms) { deferred.push_back(delay_ms); };
+  CableServer server(*f.state, 1, [](unsigned) {}, config);
+  Listener listener;
+  server.hub().subscribe(0, "stream", {}, &listener);
+
+  server.hub().broadcast_encoded("stream", "1");
+  server.on_wake(0);  // no drain within the window: at once
+  REQUIRE(listener.frames.size() == 1);
+  CHECK(deferred.empty());
+
+  server.hub().broadcast_encoded("stream", "2");
+  server.on_wake(0);  // within the window: deferred
+  CHECK(listener.frames.size() == 1);
+  REQUIRE(deferred.size() == 1);
+  CHECK(deferred[0] <= 200);
+  // A deferred call that comes before the window ends defers again: the frame must not wait forever.
+  server.on_wake(0);
+  CHECK(listener.frames.size() == 1);
+  CHECK(deferred.size() == 2);
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(220));
+  server.on_wake(0);
+  REQUIRE(listener.frames.size() == 2);
+  CHECK(listener.frames[1] == "2");
 }
 
 }  // namespace campfire::app::testing

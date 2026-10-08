@@ -28,10 +28,11 @@ class Session {
   Session() = default;
 
   [[nodiscard]] bool is_loaded() const { return loaded_; }
-  // Reads the cookie once (load_for_read! and load_for_write!). A new session gets a session_id.
+  // Reads the cookie once (load_for_read! and load_for_write!). A new session gets a session_id when the
+  // id is read or the session is written, not before: most requests never need it.
   Session& load(const CookieJar& jar);
 
-  [[nodiscard]] std::optional<std::string_view> id() const;
+  [[nodiscard]] std::optional<std::string_view> id();
   // session[key]: null if the value is nil.
   [[nodiscard]] const compat::json::Value* get(std::string_view key) const;
   [[nodiscard]] std::optional<std::string_view> get_str(std::string_view key) const;
@@ -47,6 +48,9 @@ class Session {
   [[nodiscard]] Status commit(CookieJar& jar, Timestamp now);
 
  private:
+  // Gives the session a session_id, as its first key, if it has none.
+  void ensure_id();
+
   bool loaded_ = false;
   bool changed_ = false;
   compat::json::Value data_ = compat::json::Value(compat::json::Value::Object{});

@@ -21,13 +21,20 @@ Session& Session::load(const CookieJar& jar) {
   if (loaded_) return *this;
   auto cookie = jar.encrypted_value(kSessionKey);
   if (cookie && cookie->is_object()) data_ = std::move(*cookie);
-  const Value* sid = data_.find("session_id");
-  if (sid == nullptr || sid->is_null()) data_.set("session_id", Value(generate_session_id()));
   loaded_ = true;
   return *this;
 }
 
-std::optional<std::string_view> Session::id() const {
+void Session::ensure_id() {
+  const Value* sid = data_.find("session_id");
+  if (sid != nullptr && !sid->is_null()) return;
+  auto& members = data_.as_object();
+  std::erase_if(members, [](const auto& m) { return m.first == "session_id"; });
+  members.emplace(members.begin(), "session_id", Value(generate_session_id()));
+}
+
+std::optional<std::string_view> Session::id() {
+  ensure_id();
   return get_str("session_id");
 }
 
@@ -63,13 +70,13 @@ void Session::remove(std::string_view key) {
 
 void Session::reset() {
   data_ = Value(Value::Object{});
-  data_.set("session_id", Value(generate_session_id()));
   loaded_ = true;
   changed_ = true;
 }
 
 Status Session::commit(CookieJar& jar, Timestamp now) {
   if (!changed_) return {};
+  ensure_id();
   Value::Object kept;
   for (const auto& [key, value] : data_.as_object()) {
     if (!value.is_null()) kept.emplace_back(key, value);

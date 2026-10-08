@@ -15,6 +15,7 @@
 #include "app/dispatch.hpp"
 #include "app/message_actions.hpp"
 #include "app/message_presenter.hpp"
+#include "app/page.hpp"
 #include "app/platform.hpp"
 #include "app/render_page.hpp"
 #include "assets/assets.hpp"
@@ -160,7 +161,7 @@ Task<Flow<net::Response>> rooms_show(Rq& rq) {
   if (!name) co_return std::unexpected(std::move(name.error()));
   show.room.display_name = std::move(*name);
   if (const auto updated = parse_db(room->updated_at)) show.loaded_at = std::to_string(epoch_ms(*updated));
-  show.user = user_view(rq.app, *rq.current_user());
+  show.user = current_user_view(rq);
   // `@room == Room.original && !@room.messages.paged?`
   auto original = models::rooms::original(rq.db(), rq.arena());
   if (!original) co_return fail_internal(original.error().message);
@@ -174,9 +175,17 @@ Task<Flow<net::Response>> rooms_show(Rq& rq) {
       show.join_code = code->value_or("");
     }
   }
-  const std::string room_gid = room_gid_param(*room);
-  const std::array<std::string_view, 2> stream{room_gid, "messages"};
-  show.messages_stream_name = compat::turbo::signed_stream_name(rq.app.secrets, stream);
+  // A pure function of the room's type and id: the worker keeps it (an HMAC for each request otherwise).
+  std::string stream_key = "stream:";
+  stream_key += room->type;
+  stream_key += ':';
+  stream_key += std::to_string(room->id);
+  stream_key += ":messages";
+  show.messages_stream_name = rq.worker.memo(stream_key, [&] {
+    const std::string room_gid = room_gid_param(*room);
+    const std::array<std::string_view, 2> stream{room_gid, "messages"};
+    return compat::turbo::signed_stream_name(rq.app.secrets, stream);
+  });
 
   const std::string title = show.room.display_name;
   PageSpec spec;

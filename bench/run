@@ -25,8 +25,11 @@ if [ "${CAMPFIRE_BENCH_INNER:-}" != 1 ]; then
   # Check the setup before the first run. Each message tells what to do (see README.md, "Setup").
   RUST=$WORKSPACE/once-campfire-rust
   docker info >/dev/null 2>&1 || fail "Docker does not answer. Start Docker (for example: colima start)."
-  [ -d "$RUST/bench/loadgen" ] ||
-    fail "no $RUST/bench/loadgen. Clone once-campfire-rust next to this repo, or set CAMPFIRE_WORKSPACE."
+  # The load generator moved from once-campfire-rust/bench/loadgen to once-campfire-verification/loadgen.
+  LOADGEN_SRC=$WORKSPACE/once-campfire-verification/loadgen
+  [ -d "$LOADGEN_SRC" ] || LOADGEN_SRC=$RUST/bench/loadgen
+  [ -d "$LOADGEN_SRC" ] ||
+    fail "no load generator. Clone once-campfire-verification next to this repo (see README.md, \"Setup\")."
   [ -f "$RUST/parity/.env.reference" ] || fail "no $RUST/parity/.env.reference. Update the once-campfire-rust clone."
   for f in labels.json db/production.sqlite3 storage; do
     [ -e "$RUST/parity/.seed/default/$f" ] ||
@@ -42,7 +45,7 @@ if [ "${CAMPFIRE_BENCH_INNER:-}" != 1 ]; then
     args+=("$a"); prev=$a
   done
   if [ "$rebuild" = 1 ] || ! docker image inspect "$RUNNER_IMAGE" >/dev/null 2>&1; then
-    docker build -t "$RUNNER_IMAGE" -f "$HERE/Dockerfile" "$WORKSPACE/once-campfire-rust/bench/loadgen" >&2
+    docker build -t "$RUNNER_IMAGE" -f "$HERE/Dockerfile" "$LOADGEN_SRC" >&2
   fi
   # The runner mounts the workspace at the same path. If the Docker VM does not share the folder, Docker mounts an
   # empty directory.
@@ -226,8 +229,11 @@ run_rep() {
       if [ "$first" = 1 ]; then
         sleep 1
         # $lgpid is a subshell; the load generator (taskset execs it) is its child.
-        lgproc=$(pgrep -x -P "$lgpid" loadgen | head -1)
-        echo "loadgen: $(grep Cpus_allowed_list "/proc/$lgproc/status") (pid $lgproc, $(tr '\0' ' ' < "/proc/$lgproc/cmdline" | cut -c1-60))" >> "$OUT/pin.log"
+        # A short sample can end before this look; then there is nothing to record.
+        lgproc=$(pgrep -x -P "$lgpid" loadgen | head -1 || true)
+        if [ -n "$lgproc" ]; then
+          echo "loadgen: $(grep Cpus_allowed_list "/proc/$lgproc/status") (pid $lgproc, $(tr '\0' ' ' < "/proc/$lgproc/cmdline" | cut -c1-60))" >> "$OUT/pin.log"
+        fi
         first=0
       fi
       wait "$lgpid"

@@ -58,6 +58,7 @@ class WorkerFragmentCache final : public views::FragmentCache {
   explicit WorkerFragmentCache(SharedFragmentCache& shared) noexcept : shared_(&shared) {}
   [[nodiscard]] bool enabled() const noexcept override { return true; }
   bool read(std::string_view key, Out& out) override;
+  [[nodiscard]] std::shared_ptr<const std::string> get(std::string_view key) override { return shared_->get(key); }
   void write(std::string_view key, std::string_view html) override;
 
  private:

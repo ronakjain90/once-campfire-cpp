@@ -54,9 +54,9 @@ Flow<std::vector<MessageItem>> message_items(Rq& rq, const std::vector<models::M
     item.client_message_id = message.client_message_id;
     item.updated_at = message.updated_at;
     if (cache.enabled()) {
-      Out cached;
-      if (cache.read(views::messages::message_fragment_key(message.id, message.updated_at), cached)) {
-        item.html = cached.to_string();
+      // Shared with the cache: the page copies the fragment one time, into its body.
+      if (auto html = cache.get(views::messages::message_fragment_key(message.id, message.updated_at))) {
+        item.html = std::move(html);
         items.push_back(std::move(item));
         continue;
       }

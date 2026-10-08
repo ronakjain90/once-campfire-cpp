@@ -185,7 +185,7 @@ void render_message_item(Out& out, const ViewContext& ctx, const MessageItem& it
   if (item.view) {
     message(out, ctx, *item.view);
   } else {
-    out.append(SafeHtml::trusted(item.html));
+    out.append(SafeHtml::trusted(*item.html));
   }
   if (FragmentRecorder* recorder = fragment_recorder()) recorder->record(start, out.size() - start);
 }

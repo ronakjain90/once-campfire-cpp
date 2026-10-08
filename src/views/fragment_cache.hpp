@@ -2,6 +2,8 @@
 #pragma once
 
 #include <cstddef>
+#include <memory>
+#include <string>
 #include <string_view>
 
 #include "core/out.hpp"
@@ -21,6 +23,11 @@ class FragmentCache {
   [[nodiscard]] virtual bool enabled() const noexcept { return false; }
   // If the key has an entry, writes the HTML of the entry to `out` and returns true.
   virtual bool read(std::string_view key, Out& out) = 0;
+  // The HTML of the entry, shared and not copied; null if there is none.
+  [[nodiscard]] virtual std::shared_ptr<const std::string> get(std::string_view key) {
+    (void)key;
+    return nullptr;
+  }
   // Stores the HTML that the body rendered.
   virtual void write(std::string_view key, std::string_view html) = 0;
 };

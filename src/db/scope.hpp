@@ -7,11 +7,22 @@
 #include <array>
 #include <cstdint>
 #include <cstring>
+#include <span>
 #include <string_view>
 
 #include "core/xxh3.hpp"
 
 namespace campfire::db {
+
+// One column of a row that the result memo of a connection keeps (src/db/connection.hpp): its storage type and its
+// value as SQLite stored it. Text and blob bytes are in the memo's byte buffer, at `offset`.
+struct CachedValue {
+  std::int64_t i = 0;
+  double f = 0;
+  std::uint32_t offset = 0;
+  std::uint32_t size = 0;
+  int type = SQLITE_NULL;
+};
 
 // Collects the dependencies of one request. A connection that has a scope folds into it: the
 // index of each statement, the value of each parameter, every returned row (the raw bytes of
@@ -83,6 +94,21 @@ class DependencyScope {
     put_bytes(v);
   }
   void end_statement() noexcept { tag('E'); }
+
+  // Folds a row that the result memo kept: the same bytes as `fold_row` folds for the same row.
+  void fold_cached_row(std::span<const CachedValue> row, const char* bytes) noexcept {
+    ++rows_;
+    tag('R');
+    for (const CachedValue& v : row) {
+      switch (v.type) {
+        case SQLITE_INTEGER: param_i64(v.i); break;
+        case SQLITE_FLOAT: param_f64(v.f); break;
+        case SQLITE_TEXT: param_text({bytes + v.offset, v.size}); break;
+        case SQLITE_BLOB: param_blob({bytes + v.offset, v.size}); break;
+        default: param_null(); break;
+      }
+    }
+  }
 
   // Folds the current row of `stmt`. Call it before the reader converts a column.
   void fold_row(sqlite3_stmt* stmt) noexcept {

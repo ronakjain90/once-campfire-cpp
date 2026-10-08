@@ -1,6 +1,7 @@
 // Rust: crates/db/src/database.rs (open_connection), crates/db/src/schema.rs (configure_connection).
 #include "db/connection.hpp"
 
+#include <cctype>
 #include <mutex>
 #include <utility>
 
@@ -119,8 +120,17 @@ Connection::Connection(Connection&& other) noexcept
       read_transactions_(std::exchange(other.read_transactions_, false)),
       in_read_transaction_(std::exchange(other.in_read_transaction_, false)),
       begin_(std::exchange(other.begin_, nullptr)),
-      commit_(std::exchange(other.commit_, nullptr)) {
+      commit_(std::exchange(other.commit_, nullptr)),
+      data_version_(std::exchange(other.data_version_, nullptr)),
+      memo_(std::move(other.memo_)),
+      memo_allowed_(std::move(other.memo_allowed_)),
+      memo_version_(std::exchange(other.memo_version_, -1)),
+      memo_bytes_(std::exchange(other.memo_bytes_, 0)),
+      memo_hits_(other.memo_hits_),
+      memo_misses_(other.memo_misses_),
+      memo_on_(std::exchange(other.memo_on_, false)) {
   other.stmts_.clear();
+  other.memo_.clear();
 }
 
 Connection& Connection::operator=(Connection&& other) noexcept {
@@ -130,6 +140,7 @@ Connection& Connection::operator=(Connection&& other) noexcept {
     }
     sqlite3_finalize(begin_);
     sqlite3_finalize(commit_);
+    sqlite3_finalize(data_version_);
     Closer{}(db_);
     db_ = std::exchange(other.db_, nullptr);
     role_ = other.role_;
@@ -141,6 +152,15 @@ Connection& Connection::operator=(Connection&& other) noexcept {
     in_read_transaction_ = std::exchange(other.in_read_transaction_, false);
     begin_ = std::exchange(other.begin_, nullptr);
     commit_ = std::exchange(other.commit_, nullptr);
+    data_version_ = std::exchange(other.data_version_, nullptr);
+    memo_ = std::move(other.memo_);
+    other.memo_.clear();
+    memo_allowed_ = std::move(other.memo_allowed_);
+    memo_version_ = std::exchange(other.memo_version_, -1);
+    memo_bytes_ = std::exchange(other.memo_bytes_, 0);
+    memo_hits_ = other.memo_hits_;
+    memo_misses_ = other.memo_misses_;
+    memo_on_ = std::exchange(other.memo_on_, false);
   }
   return *this;
 }
@@ -151,6 +171,7 @@ Connection::~Connection() {
   }
   sqlite3_finalize(begin_);
   sqlite3_finalize(commit_);
+  sqlite3_finalize(data_version_);
   Closer{}(db_);
 }
 
@@ -175,10 +196,32 @@ void Connection::start_read_transaction() noexcept {
   if (sqlite3_get_autocommit(db_) != 0 && step_plain(db_, begin_, "BEGIN") == SQLITE_DONE) {
     in_read_transaction_ = true;
   }
+  if (!in_read_transaction_ || role_ != Role::Reader) {
+    return;
+  }
+  // The version of this snapshot (the PRAGMA starts the read of the transaction). If another connection committed
+  // since the last transaction, the version is new and the kept results are of an older database.
+  if (data_version_ == nullptr && sqlite3_prepare_v3(db_, "PRAGMA data_version", -1, SQLITE_PREPARE_PERSISTENT,
+                                                     &data_version_, nullptr) != SQLITE_OK) {
+    return;
+  }
+  if (sqlite3_step(data_version_) != SQLITE_ROW) {
+    sqlite3_reset(data_version_);
+    return;
+  }
+  const std::int64_t version = sqlite3_column_int64(data_version_, 0);
+  sqlite3_reset(data_version_);
+  if (version != memo_version_) {
+    memo_.clear();
+    memo_bytes_ = 0;
+    memo_version_ = version;
+  }
+  memo_on_ = true;
 }
 
 void Connection::finish_read_transaction() noexcept {
   in_read_transaction_ = false;
+  memo_on_ = false;
   // An error can end the transaction before this call: then SQLite is in autocommit again.
   if (sqlite3_get_autocommit(db_) != 0) {
     return;
@@ -186,6 +229,51 @@ void Connection::finish_read_transaction() noexcept {
   if (step_plain(db_, commit_, "COMMIT") != SQLITE_DONE) {
     sqlite3_exec(db_, "ROLLBACK", nullptr, nullptr, nullptr);
   }
+}
+
+bool Connection::deterministic_select(std::string_view sql) noexcept {
+  std::string lower(sql);
+  for (char& c : lower) c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+  const std::size_t start = lower.find_first_not_of(" \t\r\n(");
+  if (start == std::string::npos) return false;
+  const std::string_view head = std::string_view(lower).substr(start);
+  if (!head.starts_with("select") && !head.starts_with("with")) return false;
+  // Functions that give another value for the same data. "now" also matches words that only contain it: then the
+  // statement is not kept, which is safe.
+  for (const std::string_view word : {"now", "random", "current_", "changes(", "last_insert_rowid", "sqlite_", "pragma",
+                                      "julianday(", "unixepoch("}) {
+    if (lower.find(word) != std::string::npos) return false;
+  }
+  return true;
+}
+
+void Connection::record_row(sqlite3_stmt* st, MemoResult& record) {
+  for (std::uint32_t c = 0; c < record.columns; ++c) {
+    const int col = static_cast<int>(c);
+    CachedValue v;
+    v.type = sqlite3_column_type(st, col);
+    switch (v.type) {
+      case SQLITE_INTEGER: v.i = sqlite3_column_int64(st, col); break;
+      case SQLITE_FLOAT: v.f = sqlite3_column_double(st, col); break;
+      case SQLITE_TEXT: {
+        const auto* p = reinterpret_cast<const char*>(sqlite3_column_text(st, col));
+        v.size = static_cast<std::uint32_t>(sqlite3_column_bytes(st, col));
+        v.offset = static_cast<std::uint32_t>(record.bytes.size());
+        if (p != nullptr) record.bytes.append(p, v.size);
+        break;
+      }
+      case SQLITE_BLOB: {
+        const auto* p = static_cast<const char*>(sqlite3_column_blob(st, col));
+        v.size = static_cast<std::uint32_t>(sqlite3_column_bytes(st, col));
+        v.offset = static_cast<std::uint32_t>(record.bytes.size());
+        if (p != nullptr) record.bytes.append(p, v.size);
+        break;
+      }
+      default: break;
+    }
+    record.values.push_back(v);
+  }
+  ++record.rows;
 }
 
 Status Connection::exec_sql(const std::string& sql) {

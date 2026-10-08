@@ -153,4 +153,138 @@ TEST_CASE("a moved connection keeps its read transaction") {
   CHECK(sqlite3_get_autocommit(moved.handle()) != 0);
 }
 
+namespace {
+const Query<std::int64_t(std::int64_t)> kNameAsNumber{"SELECT name FROM items WHERE id = ?"};
+const Query<std::string_view()> kClock{"SELECT datetime('now')"};
+
+struct Snapshot {
+  std::vector<std::string> names;
+  std::vector<std::optional<std::int64_t>> numbers;
+  bool found_first = false;
+  std::string first_name;
+  bool found_missing = false;
+  std::size_t first_two = 0;
+  Hash128 key;
+};
+
+// One request's reads in one read transaction, with a scope.
+Snapshot read_all(Connection& reader) {
+  Arena arena;
+  DependencyScope scope;
+  reader.set_scope(&scope);
+  reader.set_read_transactions(true);
+  Snapshot out;
+  auto rows = reader.all(ItemsAbove, arena, 0);
+  REQUIRE(rows.has_value());
+  for (const ItemRow& row : *rows) {
+    out.names.emplace_back(row.name);
+    out.numbers.push_back(row.n);
+  }
+  auto one = reader.first(ItemById, arena, 1);
+  REQUIRE(one.has_value());
+  out.found_first = one->has_value();
+  if (*one) out.first_name = std::string((*one)->name);
+  auto missing = reader.first(ItemById, arena, 999);
+  REQUIRE(missing.has_value());
+  out.found_missing = missing->has_value();
+  auto two = reader.first_n(ItemsAbove, arena, 2, 0);
+  REQUIRE(two.has_value());
+  out.first_two = two->size();
+  out.key = scope.key();
+  reader.set_read_transactions(false);
+  reader.set_scope(nullptr);
+  return out;
+}
+
+void open_items(const TempDir& dir, std::optional<Connection>& writer, std::optional<Connection>& reader) {
+  auto w = Connection::open(dir.file("a.sqlite3"), Role::Writer);
+  REQUIRE(w);
+  REQUIRE(w->exec_sql("CREATE TABLE items (id INTEGER PRIMARY KEY, name TEXT NOT NULL, n INTEGER)"));
+  REQUIRE(w->exec(InsertItem, "a", std::optional<std::int64_t>(1)));
+  REQUIRE(w->exec(InsertItem, "b", std::optional<std::int64_t>()));
+  REQUIRE(w->exec(InsertItem, "", std::optional<std::int64_t>(3)));
+  writer.emplace(std::move(*w));
+  auto r = Connection::open(dir.file("a.sqlite3"), Role::Reader);
+  REQUIRE(r);
+  reader.emplace(std::move(*r));
+}
+}  // namespace
+
+TEST_CASE("memo: the same snapshot gives the same rows and the same scope key from the memo") {
+  const TempDir dir;
+  std::optional<Connection> writer;
+  std::optional<Connection> reader;
+  open_items(dir, writer, reader);
+
+  const Snapshot live = read_all(*reader);
+  CHECK(reader->memo_stats().hits == 0);
+  CHECK(reader->memo_stats().entries == 4);
+  const Snapshot again = read_all(*reader);
+  CHECK(reader->memo_stats().hits == 4);  // all, first with a row, first with none, first_n
+
+  CHECK(again.names == live.names);
+  CHECK(again.names == std::vector<std::string>{"a", "b", ""});
+  CHECK(again.numbers == live.numbers);
+  CHECK_FALSE(again.numbers[1].has_value());  // NULL stays NULL
+  CHECK(again.found_first);
+  CHECK(again.first_name == "a");
+  CHECK_FALSE(again.found_missing);
+  CHECK(again.first_two == 2);
+  CHECK(again.key == live.key);  // a page key does not depend on where the rows came from
+}
+
+TEST_CASE("memo: a commit by another connection gives the new rows") {
+  const TempDir dir;
+  std::optional<Connection> writer;
+  std::optional<Connection> reader;
+  open_items(dir, writer, reader);
+  const Snapshot before = read_all(*reader);
+  REQUIRE(writer->exec(RenameItem, "renamed", 1));
+  const Snapshot after = read_all(*reader);
+  CHECK(after.names[0] == "renamed");
+  CHECK(after.first_name == "renamed");
+  CHECK(after.key != before.key);
+  CHECK(reader->memo_stats().hits == 0);
+  // No commit since then: the memo has the new rows.
+  const Snapshot again = read_all(*reader);
+  CHECK(again.names[0] == "renamed");
+  CHECK(again.key == after.key);
+  CHECK(reader->memo_stats().hits == 4);
+}
+
+TEST_CASE("memo: a read that converts a type, or SQL with the clock, is not kept") {
+  const TempDir dir;
+  std::optional<Connection> writer;
+  std::optional<Connection> reader;
+  open_items(dir, writer, reader);
+  Arena arena;
+  for (int round = 0; round < 2; ++round) {
+    reader->set_read_transactions(true);
+    auto number = reader->first(kNameAsNumber, arena, 1);  // TEXT read as an integer: SQLite converts it
+    REQUIRE(number.has_value());
+    CHECK(**number == 0);
+    auto clock = reader->first(kClock, arena);
+    REQUIRE(clock.has_value());
+    CHECK((*clock)->size() == 19);
+    reader->set_read_transactions(false);
+  }
+  CHECK(reader->memo_stats().hits == 0);
+  CHECK(reader->memo_stats().entries == 0);
+}
+
+TEST_CASE("memo: off in autocommit") {
+  const TempDir dir;
+  std::optional<Connection> writer;
+  std::optional<Connection> reader;
+  open_items(dir, writer, reader);
+  Arena arena;
+  for (int round = 0; round < 2; ++round) {
+    auto rows = reader->all(ItemsAbove, arena, 0);
+    REQUIRE(rows.has_value());
+    CHECK(rows->size() == 3);
+  }
+  CHECK(reader->memo_stats().entries == 0);
+  CHECK(reader->memo_stats().hits == 0);
+}
+
 }  // namespace campfire::db

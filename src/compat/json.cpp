@@ -56,6 +56,8 @@ size_t utf8_length(std::string_view s, size_t i) {
   return 0;
 }
 
+// `Html`: also escape `<`, `>` and `&` as ActiveSupport::JSON does (`escape_html_entities` in one pass).
+template <bool Html>
 void write_string(std::string& out, std::string_view s) {
   static constexpr char kHex[] = "0123456789abcdef";
   out += '"';
@@ -86,6 +88,15 @@ void write_string(std::string& out, std::string_view s) {
       case '\n': replacement = "\\n"; break;
       case '\r': replacement = "\\r"; break;
       case '\t': replacement = "\\t"; break;
+      case '<':
+        if constexpr (Html) replacement = "\\u003c";
+        break;
+      case '>':
+        if constexpr (Html) replacement = "\\u003e";
+        break;
+      case '&':
+        if constexpr (Html) replacement = "\\u0026";
+        break;
       default:
         if (c < 0x20) {
           unicode[0] = '\\';
@@ -109,6 +120,7 @@ void write_string(std::string& out, std::string_view s) {
   out += '"';
 }
 
+template <bool Html>
 void write_value(std::string& out, const Value& v);
 
 }  // namespace
@@ -142,6 +154,7 @@ std::string float_to_json(double f) {
 
 namespace {
 
+template <bool Html>
 void write_value(std::string& out, const Value& v) {
   if (v.is_null()) {
     out += "null";
@@ -155,14 +168,14 @@ void write_value(std::string& out, const Value& v) {
     double d = v.as_double();
     out += std::isfinite(d) ? float_to_json(d) : "null";
   } else if (const std::string* s = v.get_string()) {
-    write_string(out, *s);
+    write_string<Html>(out, *s);
   } else if (v.is_array()) {
     out += '[';
     bool first = true;
     for (const auto& item : v.as_array()) {
       if (!first) out += ',';
       first = false;
-      write_value(out, item);
+      write_value<Html>(out, item);
     }
     out += ']';
   } else {
@@ -171,9 +184,9 @@ void write_value(std::string& out, const Value& v) {
     for (const auto& [key, item] : v.as_object()) {
       if (!first) out += ',';
       first = false;
-      write_string(out, key);
+      write_string<Html>(out, key);
       out += ':';
-      write_value(out, item);
+      write_value<Html>(out, item);
     }
     out += '}';
   }
@@ -184,7 +197,7 @@ void write_value(std::string& out, const Value& v) {
 std::string generate(const Value& value) {
   std::string out;
   out.reserve(128);
-  write_value(out, value);
+  write_value<false>(out, value);
   return out;
 }
 
@@ -212,7 +225,11 @@ std::string escape_html_entities(std::string_view json) {
 }
 
 std::string encode(const Value& value) {
-  return escape_html_entities(generate(value));
+  // The same bytes as `escape_html_entities(generate(value))`: `<`, `>` and `&` only occur inside strings.
+  std::string out;
+  out.reserve(128);
+  write_value<true>(out, value);
+  return out;
 }
 
 // ---- parsing --------------------------------------------------------------------------------

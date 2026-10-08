@@ -1,5 +1,6 @@
 // Unit tests for edge cases the Rust crates test beside their code (not vector based).
 #include <cmath>
+#include <random>
 
 #include "compat/base64.hpp"
 #include "compat/cookies.hpp"
@@ -12,6 +13,28 @@
 
 namespace compat = campfire::compat;
 namespace json = campfire::compat::json;
+
+TEST_CASE("json: encode is generate and then escape_html_entities, in one pass") {
+  std::mt19937 rng(11);
+  const std::string alphabet = std::string("<>&\"\\\n\t\x01 az09/") + "\xc3\xa9" + "\xff" + "\xe2\x80\xa8";
+  const auto text = [&] {
+    std::string out;
+    const std::size_t n = rng() % 40;
+    for (std::size_t i = 0; i < n; ++i) out.push_back(alphabet[rng() % alphabet.size()]);
+    return out;
+  };
+  for (int round = 0; round < 300; ++round) {
+    json::Value::Object object;
+    for (int k = 0; k < 4; ++k) object.emplace_back(text(), json::Value(text()));
+    json::Value::Array array;
+    array.emplace_back(json::Value(text()));
+    array.emplace_back(json::Value(static_cast<std::int64_t>(rng() % 1000)));
+    array.emplace_back(json::Value(nullptr));
+    object.emplace_back("list", json::Value(std::move(array)));
+    const json::Value value(std::move(object));
+    CHECK(json::encode(value) == json::escape_html_entities(json::generate(value)));
+  }
+}
 
 TEST_CASE("json: escapes and floats") {
   CHECK(json::encode(json::Value("<a href=\"x\">&'\xE2\x80\xA8\xC3\xA9\n\t\x01\x7f/</a>")) ==

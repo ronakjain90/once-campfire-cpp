@@ -4,7 +4,7 @@
 // The page cache key of the index comes from the rows that the handler reads in the tracked scope (the account, the
 // last room, the messages that match, the recent searches) and from the facets: the text of `params[:q]` (it makes the
 // query and the value of the search field). The rows that a message fragment needs are read with no tracking: the
-// version of the message (its id and `updated_at`) stands for them, as it does on the room page.
+// version of the message (its id and `updated_at`) and the commit epoch stand for them, as on the room page.
 #include <string>
 #include <vector>
 
@@ -14,6 +14,7 @@
 #include "app/message_actions.hpp"
 #include "app/message_presenter.hpp"
 #include "app/render_page.hpp"
+#include "core/commit_epoch.hpp"
 #include "models/search.hpp"
 #include "models/search_query.hpp"
 #include "routes/routes.hpp"
@@ -135,6 +136,8 @@ Task<Flow<net::Response>> searches_index(Rq& rq) {
   };
   spec.facets = [&](db::DependencyScope& scope, const LayoutData&) {
     scope.facet("q", raw->has_value() ? "1" + **raw : std::string("0"));
+    // The message fragments are keyed by the commit epoch of the snapshot, not by their rows.
+    scope.facet("fragment_epoch", fragment_epoch());
   };
   co_return render_page(rq, 200, spec, deps, *layout);
 }

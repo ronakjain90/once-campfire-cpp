@@ -5,7 +5,8 @@
 // The page cache key of these pages comes from the rows that the handler reads in the tracked scope (the room, the
 // messages of the page and what the nav and the invitation print), and from the facets. The rows that a message
 // fragment needs (the creator, the body, the boosts) are read with no tracking: the version of the message (its id and
-// `updated_at`) stands for them, as the fragment cache key does in Rails.
+// `updated_at`) and the commit epoch stand for them. A direct SQL edit changes no `updated_at`, but it changes the
+// epoch (Rails 74381e8: a fragment that does not hash its rows uses the database version).
 #include <string>
 #include <vector>
 
@@ -22,6 +23,7 @@
 #include "compat/global_id.hpp"
 #include "compat/ruby.hpp"
 #include "compat/turbo.hpp"
+#include "core/commit_epoch.hpp"
 #include "core/time_format.hpp"
 #include "models/account.hpp"
 #include "models/message.hpp"
@@ -219,7 +221,11 @@ Task<Flow<net::Response>> rooms_show(Rq& rq) {
     show.items = std::move(*items);
     return {};
   };
-  spec.facets = [&](db::DependencyScope& scope, const LayoutData&) { add_platform_facets(rq, scope); };
+  spec.facets = [&](db::DependencyScope& scope, const LayoutData&) {
+    add_platform_facets(rq, scope);
+    // The message fragments are keyed by the commit epoch of the snapshot, not by their rows.
+    scope.facet("fragment_epoch", fragment_epoch());
+  };
   co_return render_page(rq, 200, spec, deps, *layout);
 }
 
@@ -301,15 +307,17 @@ Task<Flow<net::Response>> messages_index(Rq& rq) {
   if (!page) co_return std::unexpected(std::move(page.error()));
   if (page->empty()) co_return rq.head(204);
 
-  // The ETag is the digest of the record keys with their versions, as `fresh_when` makes it.
+  // The ETag is the digest of the record keys with their versions, as `fresh_when` makes it, and the commit epoch of
+  // the fragments: a direct SQL edit changes no `updated_at`. For the same reason there is no Last-Modified, and an
+  // If-Modified-Since request gets the current body (Rust: crates/campfire/src/controllers/messages.rs).
   Freshness freshness;
   std::string etag;
   for (const models::Message& message : *page) {
     const auto updated = parse_db(message.updated_at);
     if (!etag.empty()) etag.push_back('/');
     etag += "messages/" + std::to_string(message.id) + "-" + (updated ? format_cache_version(*updated) : "");
-    if (updated && (!freshness.last_modified || *freshness.last_modified < *updated)) freshness.last_modified = updated;
   }
+  etag += "/e" + std::to_string(fragment_epoch());
   freshness.etag = std::move(etag);
   freshness.template_digest = "messages/index";
   if (auto not_modified = rq.fresh_when(freshness)) co_return std::move(*not_modified);
@@ -317,6 +325,7 @@ Task<Flow<net::Response>> messages_index(Rq& rq) {
   const req::Format offered[] = {&req::mime::HTML};
   if (auto format = rq.respond_to(offered); !format) co_return std::unexpected(std::move(format.error()));
   deps.facet("page", "messages#index");
+  deps.facet("fragment_epoch", fragment_epoch());
   const views::ViewContext ctx = partial_context(rq);
   // The parts option makes the gzip body from kept pieces of the message fragments (src/app/splice.hpp). The ETag of
   // the response stays the one of `fresh_when`: the parts ETag of the entry is not used when an ETag is set.

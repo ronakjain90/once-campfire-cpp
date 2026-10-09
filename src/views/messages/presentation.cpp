@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "compat/ruby.hpp"
+#include "core/commit_epoch.hpp"
 #include "core/time_format.hpp"
 #include "routes/routes.hpp"
 #include "views/fragment_cache.hpp"
@@ -196,6 +197,9 @@ std::string message_fragment_key(std::int64_t id, std::string_view updated_at) {
   key.push_back('-');
   key += updated_at;
   key += "/presentation-v3";
+  // A direct SQL edit does not change `updated_at` (Rails 74381e8, Rust): the epoch of the snapshot is in the key.
+  key += "/e";
+  key += std::to_string(fragment_epoch());
   return key;
 }
 
@@ -204,6 +208,8 @@ std::string boost_fragment_key(std::int64_t id, std::string_view updated_at) {
   key += std::to_string(id);
   key.push_back('-');
   key += updated_at;
+  key += "/e";
+  key += std::to_string(fragment_epoch());
   return key;
 }
 

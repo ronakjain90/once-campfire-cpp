@@ -5,6 +5,8 @@
 #include <mutex>
 #include <utility>
 
+#include "core/commit_epoch.hpp"
+
 namespace campfire::db {
 
 namespace {
@@ -191,6 +193,8 @@ int step_plain(sqlite3* db, sqlite3_stmt*& st, const char* sql) noexcept {
 }  // namespace
 
 void Connection::start_read_transaction() noexcept {
+  // Loaded before the snapshot starts: every commit of this epoch is in the snapshot.
+  const std::uint64_t epoch_before = commit_epoch();
   // A deferred `BEGIN` takes no lock: the first statement takes the WAL read lock. If `BEGIN` fails, the
   // statements run in autocommit, as they do with read transactions off.
   if (sqlite3_get_autocommit(db_) != 0 && step_plain(db_, begin_, "BEGIN") == SQLITE_DONE) {
@@ -215,8 +219,20 @@ void Connection::start_read_transaction() noexcept {
     memo_.clear();
     memo_bytes_ = 0;
     memo_version_ = version;
+    // The snapshot holds a commit that the epoch may not count yet: a new epoch, so no fragment of an older database
+    // matches the keys of this snapshot.
+    set_snapshot_epoch(observe_commit());
+  } else {
+    set_snapshot_epoch(epoch_before);
   }
   memo_on_ = true;
+}
+
+std::uint64_t Connection::snapshot_epoch() noexcept {
+  if (read_transactions_ && !in_read_transaction_) {
+    start_read_transaction();
+  }
+  return in_read_transaction_ && role_ == Role::Reader ? fragment_epoch() : commit_epoch();
 }
 
 void Connection::finish_read_transaction() noexcept {

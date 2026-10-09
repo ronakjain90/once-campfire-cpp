@@ -27,6 +27,7 @@ Flow<std::shared_ptr<const AuthEntry>> lookup_session(Rq& rq) {
   const auto raw = rq.cookies().get("session_token");
   if (!raw) return std::shared_ptr<const AuthEntry>{};
   SessionCache& cache = rq.worker.sessions();
+  cache.on_epoch(rq.db().snapshot_epoch());
   if (auto hit = cache.find(*raw)) return hit;
   const auto token = rq.cookies().signed_value("session_token");
   if (!token) return std::shared_ptr<const AuthEntry>{};

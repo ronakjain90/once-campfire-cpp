@@ -142,11 +142,9 @@ Task<Flow<bool>> restore_authentication(Rq& rq) {
       return s;
     });
     if (!wrote) co_return db_error(wrote.error());
-    const auto raw = rq.cookies().get("session_token");
+    // Not cached: the user row is of the snapshot before the wait, and the epoch can be newer now. The writer posted
+    // the change to this worker, so the next lookup reads both rows again.
     entry = std::make_shared<const AuthEntry>(AuthEntry{std::move(*wrote), entry->user});
-    // The writer posted the change to this worker: `sessions()` applies it, then the new row goes in.
-    SessionCache& cache = rq.worker.sessions();
-    if (raw) cache.put(std::string(*raw), entry);
     if (auto cookie = set_authentication_cookie(rq, entry->session); !cookie) {
       co_return std::unexpected(std::move(cookie.error()));
     }

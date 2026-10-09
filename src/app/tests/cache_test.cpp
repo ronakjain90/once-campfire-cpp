@@ -7,6 +7,7 @@
 #include "app/session_cache.hpp"
 #include "app/tests/fixture.hpp"
 #include "app/worker_state.hpp"
+#include "core/commit_epoch.hpp"
 #include "core/out.hpp"
 #include "models/session.hpp"
 #include "views/runtime.hpp"
@@ -135,10 +136,19 @@ TEST_CASE("fragment cache: the cache block of a template reads and writes it") {
     });
     return out.to_string();
   };
+  // Outside a read transaction the rows can be older than the epoch: no read and no write.
+  set_snapshot_epoch(0);
   CHECK(render() == "<p>hello</p>");
   CHECK(render() == "<p>hello</p>");
-  CHECK(renders == 1);
+  CHECK(renders == 2);
+  CHECK(shared.entries() == 0);
+  // In a read transaction the first render writes the fragment and the second reads it.
+  set_snapshot_epoch(commit_epoch());
+  CHECK(render() == "<p>hello</p>");
+  CHECK(render() == "<p>hello</p>");
+  CHECK(renders == 3);
   CHECK(shared.entries() == 1);
+  set_snapshot_epoch(0);
   views::set_fragment_cache(nullptr);
 }
 

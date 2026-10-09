@@ -48,9 +48,11 @@ int main(int argc, char** argv) {
   }
   app::AppOptions options;
   options.job_threads = std::max<std::size_t>(config->job_concurrency, 2);
-  if (const char* mb = std::getenv("CAMPFIRE_PAGE_CACHE_MB")) {
-    options.page_cache_bytes = static_cast<std::size_t>(std::strtoull(mb, nullptr, 10)) << 20;
-  }
+  // The page cache keeps the room, messages, sidebar and search pages, as the response store of the Rust port does.
+  // CAMPFIRE_RESPONSE_CACHE_MB is the name in the Rust port and the shared harness. CAMPFIRE_PAGE_CACHE_MB wins.
+  const char* mb = std::getenv("CAMPFIRE_PAGE_CACHE_MB");
+  if (mb == nullptr) mb = std::getenv("CAMPFIRE_RESPONSE_CACHE_MB");
+  if (mb != nullptr) options.page_cache_bytes = static_cast<std::size_t>(std::strtoull(mb, nullptr, 10)) << 20;
   if (const char* every = std::getenv("CAMPFIRE_PAGE_AUDIT_EVERY")) {
     options.audit_every = static_cast<unsigned>(std::strtoul(every, nullptr, 10));
   }

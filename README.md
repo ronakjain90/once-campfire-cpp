@@ -33,6 +33,8 @@ docker run -d -p 80:80 -p 443:443 \
 - `TLS_DOMAIN` enables automatic Let's Encrypt certificates. `DISABLE_SSL` enables plain HTTP.
 - `/rails/storage` holds the database, uploads, backups and certificates. To move an install from
   the Rust image, keep its storage volume and its secrets.
+- `CAMPFIRE_PAGE_CACHE_MB` sets the size of the page cache (default 32, 0 turns it off). The C++
+  app also reads `CAMPFIRE_RESPONSE_CACHE_MB`, the name of this setting in the Rust port.
 - The other settings are the settings of the Rust port. The C++ app reads them in
   [`src/core/config.cpp`](src/core/config.cpp).
 

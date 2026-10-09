@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     return 1;
   }
   app::set_app(state->get());
-  net::App routes_app{&app::routes(), &app::not_found};
+  net::App routes_app = app::server_app();
   if (const std::uint64_t limit = net::raise_open_file_limit(); limit != 0) log_info("open files limit={}", limit);
   net::ServerOptions server_options = net::ServerOptions::from_config(front);
   server_options.after_static = [](net::Ctx& ctx, net::Response& response) { app::add_hsts(ctx.request(), response); };

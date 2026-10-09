@@ -5,7 +5,9 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
+#include <string_view>
 
 #include "core/config.hpp"
 #include "net/ctx.hpp"
@@ -62,6 +64,12 @@ struct ServerOptions {
 struct App {
   const RouteTable* routes = nullptr;
   HandlerFn not_found = nullptr;  // called when no route matches
+  // Rack::MethodOverride: for a POST, the method that the request asks for ("PATCH"), or nothing. The worker
+  // calls it before the router. Null: no override.
+  std::optional<std::string_view> (*method_override)(const Request&) = nullptr;
 };
+
+// Applies `app.method_override` to a POST: the router and the action then see the new method.
+void apply_method_override(const App& app, Request& request);
 
 }  // namespace campfire::net

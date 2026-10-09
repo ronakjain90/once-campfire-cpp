@@ -9,6 +9,7 @@ campfire_library(req
     cookie.cpp
     forgery.cpp
     format.cpp
+    method_override.cpp
     multipart.cpp
     param.cpp
     query.cpp
@@ -25,6 +26,7 @@ campfire_test(req
     tests/cookie_test.cpp
     tests/forgery_bcrypt_test.cpp
     tests/format_test.cpp
+    tests/method_override_test.cpp
     tests/multipart_test.cpp
     tests/param_test.cpp
   WERROR)

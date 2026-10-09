@@ -231,6 +231,7 @@ void Worker::dispatch(Conn& c) {
   c.close_after = !request.keep_alive || stopping_.load();
   c.ctx.emplace(*this, *c.arena, request);
   c.handler = app_.not_found;
+  apply_method_override(app_, request);
   if (app_.routes != nullptr) {
     const Match match = match_route(*app_.routes, request.method, request.path);
     if (match) {

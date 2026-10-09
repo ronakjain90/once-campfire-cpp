@@ -46,6 +46,14 @@ void add_to_epoll(int epoll_fd, int fd, std::uint32_t events, std::uint64_t tag)
 
 }  // namespace
 
+void apply_method_override(const App& app, Request& request) {
+  if (request.method != Method::Post || app.method_override == nullptr) return;
+  if (const std::optional<std::string_view> method = app.method_override(request)) {
+    request.method = parse_method(*method);
+    request.method_text = *method;
+  }
+}
+
 ServerOptions ServerOptions::from_config(const FrontConfig& config) {
   ServerOptions options;
   options.http_port = config.http_port;

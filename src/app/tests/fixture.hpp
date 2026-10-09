@@ -58,7 +58,7 @@ struct Fixture {
     server_options.target_port = 0;
     server_options.workers = 2;
     if (tweak) tweak(server_options);
-    server = std::make_unique<net::Server>(server_options, net::App{&routes(), &not_found});
+    server = std::make_unique<net::Server>(server_options, server_app());
     REQUIRE(server->start().has_value());
   }
   ~Fixture() {

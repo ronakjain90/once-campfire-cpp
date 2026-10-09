@@ -135,6 +135,9 @@ class Connection {
       finish_read_transaction();
     }
   }
+  // The commit epoch of the snapshot that the next statements read (core/commit_epoch.hpp). It starts the read
+  // transaction if read transactions are on. Without a read transaction, the current epoch.
+  [[nodiscard]] std::uint64_t snapshot_epoch() noexcept;
 
   // The result memo of a reader connection. In a read transaction, the rows of a `SELECT` are kept with the
   // `PRAGMA data_version` of the snapshot. That value changes when any other connection commits (this one never

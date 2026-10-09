@@ -71,6 +71,13 @@ class SessionCache {
   void put(std::string cookie_value, std::shared_ptr<const AuthEntry> entry);
   // Drops each entry that a change touches: a `sessions` change by session id, a `users` change by user id.
   void invalidate(std::span<const db::Change> changes);
+  // The commit epoch of the snapshot of the request. Another process can delete a session or change a user with
+  // direct SQL, and only the epoch shows that commit: a new epoch drops all entries.
+  void on_epoch(std::uint64_t epoch) {
+    if (epoch == epoch_) return;
+    entries_.clear();
+    epoch_ = epoch;
+  }
   [[nodiscard]] std::size_t size() const noexcept { return entries_.size(); }
 
  private:
@@ -79,6 +86,7 @@ class SessionCache {
     std::size_t operator()(std::string_view s) const noexcept { return std::hash<std::string_view>{}(s); }
   };
   std::size_t max_entries_;
+  std::uint64_t epoch_ = 0;
   std::unordered_map<std::string, std::shared_ptr<const AuthEntry>, Hash, std::equal_to<>> entries_;
 };
 

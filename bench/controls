@@ -1,0 +1,477 @@
+#!/usr/bin/env python3
+"""Security and cache checks of the production image, against the seed of the shared verification harness.
+
+  bench/controls [--harness DIR] [--image IMAGE] [--cache-mb 32,0] [--rust-image IMAGE] [--out DIR]
+
+The checks follow the production controls of docs/performance-review.md in the harness: Fetch Metadata, legacy
+tokens, signed capabilities, gzip negotiation, the page cache on and off, direct SQL edits without timestamp
+changes, stale conditional requests and revoked sessions, users, memberships and bot keys. With --rust-image, a
+session made by one image must work in the other on the same storage.
+
+Each run gets a fresh copy of the seed in a Docker volume. Direct SQL runs in a second container on that volume
+(the dev image has sqlite3), so SQLite locks work as in production. The script writes results.json and report.md.
+"""
+import argparse
+import gzip
+import http.client
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+import urllib.parse
+import uuid
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEV_IMAGE = os.environ.get("CAMPFIRE_DEV_IMAGE", "campfire-cpp-dev")
+
+
+def sh(*args, check=True, capture=True):
+    r = subprocess.run(args, capture_output=capture, text=True)
+    if check and r.returncode != 0:
+        sys.exit(f"command failed: {' '.join(args)}\n{r.stderr}")
+    return r.stdout
+
+
+class Storage:
+    """A Docker volume with a fresh copy of the seed (db/ and storage/ as /rails/storage/db and files)."""
+
+    def __init__(self, seed):
+        self.volume = f"cfctl-{uuid.uuid4().hex[:10]}"
+        sh("docker", "volume", "create", self.volume)
+        sh("docker", "run", "--rm", "-v", f"{self.volume}:/rails/storage", "-v", f"{seed}:/seed:ro", DEV_IMAGE, "sh",
+           "-c", "mkdir -p /rails/storage/db /rails/storage/files && cp -a /seed/db/. /rails/storage/db/ && "
+           "cp -a /seed/storage/. /rails/storage/files/ && chown -R 1000:1000 /rails/storage")
+        # As the harness does: no push or webhook request leaves the machine.
+        self.sql("UPDATE push_subscriptions SET endpoint = 'https://127.0.0.1:9/push/' || id; "
+                 "UPDATE webhooks SET url = 'http://127.0.0.1:9/hook/' || id;")
+
+    def sql(self, statement):
+        return sh("docker", "run", "--rm", "--user", "1000:1000", "-v", f"{self.volume}:/rails/storage", DEV_IMAGE,
+                  "sqlite3", "-cmd", ".timeout 10000", "/rails/storage/db/production.sqlite3", statement).strip()
+
+    def close(self):
+        sh("docker", "volume", "rm", "-f", self.volume, check=False)
+
+
+class App:
+    def __init__(self, image, storage, env_file, port, extra_env):
+        self.name = f"cfctl-app-{uuid.uuid4().hex[:8]}"
+        self.port = port
+        args = ["docker", "run", "-d", "--name", self.name, "-p", f"127.0.0.1:{port}:80", "--env-file", env_file,
+                "-v", f"{storage.volume}:/rails/storage"]
+        for k, v in extra_env.items():
+            args += ["-e", f"{k}={v}"]
+        sh(*args, image)
+        deadline = time.time() + 60
+        while time.time() < deadline:
+            try:
+                if request(self, "GET", "/up").status == 200:
+                    return
+            except OSError:
+                pass
+            time.sleep(0.2)
+        logs = sh("docker", "logs", self.name, check=False)
+        self.close()
+        sys.exit(f"{image} did not start:\n{logs}")
+
+    @property
+    def origin(self):
+        return f"http://127.0.0.1:{self.port}"
+
+    def close(self):
+        sh("docker", "rm", "-f", self.name, check=False)
+
+
+class Reply:
+    def __init__(self, status, headers, raw):
+        self.status = status
+        self.headers = headers  # list of (lower name, value)
+        self.raw = raw
+
+    def header(self, name):
+        for k, v in self.headers:
+            if k == name:
+                return v
+        return None
+
+    def all(self, name):
+        return [v for k, v in self.headers if k == name]
+
+    @property
+    def body(self):
+        data = gzip.decompress(self.raw) if self.header("content-encoding") == "gzip" else self.raw
+        return data.decode("utf-8", "replace")
+
+
+def request(app, method, path, headers=None, body=None, cookie=None):
+    conn = http.client.HTTPConnection("127.0.0.1", app.port, timeout=30)
+    h = {"Host": f"127.0.0.1:{app.port}", "Accept-Encoding": "identity", "User-Agent": "Mozilla/5.0 (Macintosh) "
+         "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15"}
+    if cookie:
+        h["Cookie"] = cookie
+    h.update(headers or {})
+    if isinstance(body, dict):
+        body = urllib.parse.urlencode(body)
+        h.setdefault("Content-Type", "application/x-www-form-urlencoded")
+    conn.request(method, path, body=body, headers=h)
+    r = conn.getresponse()
+    reply = Reply(r.status, [(k.lower(), v) for k, v in r.getheaders()], r.read())
+    conn.close()
+    return reply
+
+
+def same_origin(app):
+    return {"Sec-Fetch-Site": "same-origin", "Origin": app.origin}
+
+
+def sign_in(app, email, password):
+    r = request(app, "POST", "/session", same_origin(app), {"email_address": email, "password": password})
+    for value in r.all("set-cookie"):
+        name, _, rest = value.partition("=")
+        if name == "session_token":
+            return "session_token=" + rest.split(";")[0]
+    raise RuntimeError(f"sign in as {email} failed: {r.status}")
+
+
+class Run:
+    def __init__(self, label):
+        self.label = label
+        self.results = []
+
+    def check(self, name, ok, detail=""):
+        self.results.append({"mode": self.label, "check": name, "pass": bool(ok), "detail": detail})
+        print(f"  {'PASS' if ok else 'FAIL'}  {name}" + (f"  ({detail})" if detail and not ok else ""), flush=True)
+
+
+ACCEPTED = {200, 201, 204, 302, 303}
+
+
+def rejected(r):
+    """A refusal: an error status, or a redirect to the sign-in page."""
+    return r.status in (401, 403, 404, 406, 422) or (r.status in (302, 303) and "/session/new" in (r.header("location") or ""))
+
+
+def message_count(storage, room):
+    return int(storage.sql(f"SELECT count(*) FROM messages WHERE room_id = {room}"))
+
+
+def post_message(app, cookie, room, text, headers, extra=None):
+    body = {"message[body]": f"<div>{text}</div>", "message[client_message_id]": str(uuid.uuid4())}
+    body.update(extra or {})
+    return request(app, "POST", f"/rooms/{room}/messages", dict(headers, Accept="text/vnd.turbo-stream.html"), body,
+                   cookie)
+
+
+def fetch_metadata(run, app, storage, cookie, room):
+    cases = [
+        ("same-origin with Origin", same_origin(app), True),
+        ("same-site", {"Sec-Fetch-Site": "same-site", "Origin": app.origin}, True),
+        ("no Fetch Metadata over plain HTTP", {}, True),
+        ("cross-site", {"Sec-Fetch-Site": "cross-site", "Origin": "https://evil.example"}, False),
+        ("none", {"Sec-Fetch-Site": "none"}, False),
+        ("invalid Sec-Fetch-Site", {"Sec-Fetch-Site": "bogus", "Origin": app.origin}, False),
+        ("Origin null", {"Sec-Fetch-Site": "same-origin", "Origin": "null"}, False),
+        ("foreign Origin", {"Sec-Fetch-Site": "same-origin", "Origin": "https://evil.example"}, False),
+        ("foreign Origin, no Sec-Fetch-Site", {"Origin": "https://evil.example"}, False),
+    ]
+    for name, headers, allowed in cases:
+        before = message_count(storage, room)
+        r = post_message(app, cookie, room, f"fetch metadata {name}", headers)
+        stored = message_count(storage, room) - before
+        if allowed:
+            run.check(f"fetch metadata: {name} is accepted", r.status in ACCEPTED and stored == 1,
+                      f"status {r.status}, stored {stored}")
+        else:
+            run.check(f"fetch metadata: {name} is rejected", r.status == 422 and stored == 0,
+                      f"status {r.status}, stored {stored}")
+    # Old tabs post a token. It is ignored: it neither helps a cross-site post nor breaks a same-origin one.
+    legacy = {"authenticity_token": "stale-token-from-an-old-tab"}
+    before = message_count(storage, room)
+    r = post_message(app, cookie, room, "legacy token", dict(same_origin(app), **{"X-CSRF-Token": "stale"}), legacy)
+    run.check("legacy token: an old tab still posts", r.status in ACCEPTED and message_count(storage, room) == before + 1,
+              f"status {r.status}")
+    before = message_count(storage, room)
+    r = post_message(app, cookie, room, "legacy cross-site", {"Sec-Fetch-Site": "cross-site"}, legacy)
+    run.check("legacy token: a token does not allow a cross-site post",
+              r.status == 422 and message_count(storage, room) == before, f"status {r.status}")
+    r = request(app, "GET", f"/rooms/{room}", {"Sec-Fetch-Site": "cross-site"}, cookie=cookie)
+    run.check("fetch metadata: a cross-site GET (a link) works", r.status == 200, f"status {r.status}")
+
+
+def capabilities(run, app, storage, cookie, room, labels):
+    blob = None
+    rooms = storage.sql(f"SELECT room_id FROM memberships WHERE user_id = {labels['users.david']}").split()
+    for candidate in [str(room)] + rooms:
+        page = request(app, "GET", f"/rooms/{candidate}", cookie=cookie).body
+        blob = re.search(r'/rails/active_storage/blobs/redirect/([A-Za-z0-9=_-]+--[0-9a-f]+)/([^"?/]+)', page)
+        if blob:
+            break
+    if blob:
+        good = f"/rails/active_storage/blobs/redirect/{blob.group(1)}/{blob.group(2)}"
+        bad = good.replace(blob.group(1), blob.group(1)[:-4] + ("0000" if not blob.group(1).endswith("0000") else "1111"))
+        r = request(app, "GET", good, cookie=cookie)
+        run.check("signed blob: a valid signed id redirects", r.status in (301, 302), f"status {r.status}")
+        r = request(app, "GET", bad, cookie=cookie)
+        run.check("signed blob: a changed signed id is not found", r.status == 404, f"status {r.status}")
+    else:
+        run.check("signed blob: the room page has a blob link", False, "no blob link found")
+    r = request(app, "POST", "/rails/active_storage/direct_uploads", dict(same_origin(app), **{"Content-Type":
+                "application/json"}), json.dumps({"blob": {"filename": "a.txt", "byte_size": 1, "checksum":
+                "DMF1ucDxtqgxw5niaXcmYQ==", "content_type": "text/plain"}}))
+    run.check("direct upload: no session gets no upload", r.status in (302, 401, 403, 422), f"status {r.status}")
+    r = request(app, "PUT", "/session/transfers/forged--0000", same_origin(app))
+    run.check("session transfer: a forged token signs nobody in", r.status in (400, 404) and
+              not any(v.startswith("session_token=") for v in r.all("set-cookie")), f"status {r.status}")
+    r = request(app, "GET", "/join/not-a-join-code")
+    run.check("join code: a wrong code is not found", r.status == 404, f"status {r.status}")
+    david = labels["users.david"]
+    token = labels.get("avatar_tokens.david")
+    if token:
+        r = request(app, "GET", f"/users/{david}/avatar?v={token}", cookie=cookie)
+        ok_status = r.status
+        r = request(app, "GET", f"/users/{token[:-4]}0000/avatar", cookie=cookie)
+        run.check("avatar: a changed avatar token is not found", r.status == 404 and ok_status != 500,
+                  f"status {r.status}")
+    bot_key = labels["bot_keys.bender"]
+    member_room = int(storage.sql(f"SELECT room_id FROM memberships WHERE user_id = {labels['users.bender']} LIMIT 1"))
+    r = request(app, "POST", f"/rooms/{member_room}/{bot_key}/messages", {"Content-Type": "text/plain"}, "bot check")
+    run.check("bot key: a valid key posts without Fetch Metadata", r.status in (201, 200, 204), f"status {r.status}")
+    before = message_count(storage, member_room)
+    r = request(app, "POST", f"/rooms/{member_room}/{bot_key[:-4]}0000/messages", {"Content-Type": "text/plain"}, "x")
+    run.check("bot key: a wrong key is rejected", rejected(r) and message_count(storage, member_room) == before,
+              f"status {r.status}")
+
+
+def gzip_negotiation(run, app, cookie, room):
+    path = f"/rooms/{room}"
+    reference = request(app, "GET", path, cookie=cookie).body
+    tokens = ", ".join(f"x-{i}" for i in range(17))
+    cases = [
+        ("gzip", "gzip", True),
+        ("gzip, deflate, br", "gzip, deflate, br", True),
+        ("gzip;q=0", "gzip;q=0", False),
+        ("gzip;q=0.000", "gzip;q=0.000", False),
+        ("identity", "identity", False),
+        ("gzip;q=0 after 17 other codings", f"{tokens}, gzip;q=0", False),
+        ("*;q=0, identity", "*;q=0, identity", False),
+    ]
+    for _ in range(2):  # warm the page cache with both encodings
+        request(app, "GET", path, {"Accept-Encoding": "gzip"}, cookie=cookie)
+    for name, value, want_gzip in cases:
+        r = request(app, "GET", path, {"Accept-Encoding": value}, cookie=cookie)
+        is_gzip = r.header("content-encoding") == "gzip"
+        same = strip_volatile(r.body) == strip_volatile(reference)
+        run.check(f"gzip: Accept-Encoding {name}", r.status == 200 and is_gzip == want_gzip and same,
+                  f"status {r.status}, gzip {is_gzip}, same body {same}")
+
+
+def strip_volatile(html):
+    # The CSP nonce and the time of the page differ between two renders of the same data.
+    html = re.sub(r'nonce="[^"]*"', 'nonce=""', html)
+    return re.sub(r'content="[^"]*" name="csp-nonce"', "", html)
+
+
+def warm(app, cookie, path):
+    for _ in range(3):
+        r = request(app, "GET", path, {"Accept-Encoding": "gzip"}, cookie=cookie)
+    return r
+
+
+def foreign_edits(run, app, storage, cookie, room, labels):
+    path = f"/rooms/{room}"
+    message = int(storage.sql(f"SELECT id FROM messages WHERE room_id = {room} ORDER BY created_at DESC, id DESC "
+                              "LIMIT 1"))
+    marker = f"foreign-{uuid.uuid4().hex[:8]}"
+    first = warm(app, cookie, path)
+    etag = first.header("etag")
+
+    storage.sql(f"UPDATE action_text_rich_texts SET body = '<div>{marker}</div>' WHERE record_type = 'Message' "
+                f"AND record_id = {message} AND name = 'body'")
+    r = request(app, "GET", path, {"Accept-Encoding": "gzip"}, cookie=cookie)
+    run.check("direct SQL: a body edit with no timestamp change shows on the room page", marker in r.body,
+              f"status {r.status}")
+    r = request(app, "GET", f"/rooms/{room}/@{message}", cookie=cookie)
+    run.check("direct SQL: the body edit shows on the permalink page", r.status != 200 or marker in r.body,
+              f"status {r.status}")
+    run.check("conditional: the room page has an ETag", bool(etag), "no ETag")
+    if etag:
+        r = request(app, "GET", path, {"If-None-Match": etag}, cookie=cookie)
+        run.check("conditional: an old ETag gets the new page, not 304", r.status == 200 and marker in r.body,
+                  f"status {r.status}")
+    # Rust contract: messages omit Last-Modified, and If-Modified-Since gets the current body.
+    r = request(app, "GET", path, {"If-Modified-Since": "Fri, 01 Jan 2100 00:00:00 GMT"}, cookie=cookie)
+    run.check("conditional: If-Modified-Since in the future gets the new page", r.status == 200 and marker in r.body,
+              f"status {r.status}")
+    r = request(app, "GET", path, cookie=cookie)
+    etag = r.header("etag")
+    if etag:
+        r2 = request(app, "GET", path, {"If-None-Match": etag}, cookie=cookie)
+        run.check("conditional: the current ETag gets 304", r2.status == 304, f"status {r2.status}")
+
+    jason = labels["users.jason"]
+    jason_name = storage.sql(f"SELECT name FROM users WHERE id = {jason}")
+    warm(app, cookie, path)
+    storage.sql(f"UPDATE messages SET creator_id = {jason} WHERE id = {message}")
+    r = request(app, "GET", path, cookie=cookie)
+    element = re.search(rf'<div[^>]*data-user-id="(\d+)"[^>]*data-message-id="{message}"', r.body)
+    shown = element.group(1) if element else None
+    run.check("direct SQL: a creator edit shows on the room page", shown == str(jason) and jason_name in r.body,
+              f"creator shown {shown}")
+
+    boost = storage.sql(f"SELECT b.id FROM boosts b JOIN messages m ON m.id = b.message_id WHERE m.room_id = {room} "
+                        "ORDER BY m.created_at DESC LIMIT 1")
+    if boost:
+        boost_marker = f"boost{uuid.uuid4().hex[:6]}"
+        warm(app, cookie, path)
+        storage.sql(f"UPDATE boosts SET content = '{boost_marker}' WHERE id = {boost}")
+        r = request(app, "GET", path, cookie=cookie)
+        run.check("direct SQL: a boost edit shows on the room page", boost_marker in r.body, f"status {r.status}")
+
+    search_marker = f"searchmark{uuid.uuid4().hex[:6]}"
+    before = message_count(storage, room)
+    post_message(app, cookie, room, search_marker, same_origin(app))
+    new_id = storage.sql(f"SELECT max(id) FROM messages WHERE room_id = {room}")
+    warm(app, cookie, f"/searches?q={search_marker}")
+    edit_marker = f"edited{uuid.uuid4().hex[:6]}"
+    storage.sql(f"UPDATE action_text_rich_texts SET body = '<div>{search_marker} {edit_marker}</div>' WHERE "
+                f"record_type = 'Message' AND record_id = {new_id} AND name = 'body'")
+    r = request(app, "GET", f"/searches?q={search_marker}", cookie=cookie)
+    run.check("direct SQL: a body edit shows in search results", message_count(storage, room) == before + 1 and
+              edit_marker in r.body, f"status {r.status}")
+
+
+def revocation(run, app, storage, labels, password, room):
+    david = labels["users.david"]
+    path = f"/rooms/{room}"
+
+    cookie = sign_in(app, labels["emails.david"], password)
+    warm(app, cookie, path)
+    storage.sql(f"DELETE FROM sessions WHERE user_id = {david}")
+    r = request(app, "GET", path, cookie=cookie)
+    run.check("revoked session: a deleted session gets no page", r.status in (302, 303, 401) and
+              "/session/new" in (r.header("location") or ""), f"status {r.status}")
+
+    cookie = sign_in(app, labels["emails.david"], password)
+    warm(app, cookie, path)
+    warm(app, cookie, f"/searches?q=the")
+    membership = storage.sql(f"SELECT id FROM memberships WHERE user_id = {david} AND room_id = {room}")
+    storage.sql(f"DELETE FROM memberships WHERE id = {membership}")
+    r = request(app, "GET", path, cookie=cookie)
+    run.check("revoked membership: the room page is gone", r.status in (302, 303, 404), f"status {r.status}")
+    r = request(app, "GET", f"/rooms/{room}/messages", cookie=cookie)
+    run.check("revoked membership: the messages page is gone", r.status in (302, 303, 404), f"status {r.status}")
+    r = request(app, "GET", "/searches?q=the", cookie=cookie)
+    run.check("revoked membership: search shows no message of the room", f'href="/rooms/{room}/@' not in r.body,
+              f"status {r.status}")
+    before = message_count(storage, room)
+    r = post_message(app, cookie, room, "after revocation", same_origin(app))
+    run.check("revoked membership: a post is rejected", rejected(r) and
+              message_count(storage, room) == before, f"status {r.status}")
+    storage.sql(f"INSERT INTO memberships (id, room_id, user_id, involvement, created_at, updated_at) VALUES "
+                f"({membership}, {room}, {david}, 'mentions', datetime('now'), datetime('now'))")
+
+    jason = labels["users.jason"]
+    cookie = sign_in(app, labels["emails.jason"], password)
+    warm(app, cookie, path)
+    # User#deactivate: the status, the memberships of the user and the sessions.
+    storage.sql(f"UPDATE users SET status = 1 WHERE id = {jason}; DELETE FROM sessions WHERE user_id = {jason}")
+    r = request(app, "GET", path, cookie=cookie)
+    run.check("deactivated user: the session gets no page", rejected(r), f"status {r.status}")
+    r = request(app, "POST", "/session", same_origin(app), {"email_address": labels["emails.jason"],
+                "password": password})
+    run.check("deactivated user: sign in fails", not any(v.startswith("session_token=") for v in r.all("set-cookie")),
+              f"status {r.status}")
+
+    bender = labels["users.bender"]
+    bot_key = labels["bot_keys.bender"]
+    bot_room = int(storage.sql(f"SELECT room_id FROM memberships WHERE user_id = {bender} LIMIT 1"))
+    storage.sql(f"UPDATE users SET bot_token = 'revoked{uuid.uuid4().hex[:12]}' WHERE id = {bender}")
+    before = message_count(storage, bot_room)
+    r = request(app, "POST", f"/rooms/{bot_room}/{bot_key}/messages", {"Content-Type": "text/plain"}, "revoked")
+    run.check("revoked bot key: the old key is rejected", rejected(r) and message_count(storage, bot_room) == before,
+              f"status {r.status}")
+
+
+def cross_image(run, args, labels, password, env_file, port):
+    """A session that one image makes works in the other image on the same storage."""
+    room = labels["rooms.watercooler"]
+    for first, second in ((args.rust_image, args.image), (args.image, args.rust_image)):
+        storage = Storage(args.seed)
+        try:
+            app = App(first, storage, env_file, port, {})
+            cookie = sign_in(app, labels["emails.david"], password)
+            app.close()
+            app = App(second, storage, env_file, port, {})
+            r = request(app, "GET", f"/rooms/{room}", cookie=cookie)
+            run.check(f"install: a session from {first} works in {second}", r.status == 200 and "All Talk" in r.body,
+                      f"status {r.status}")
+            app.close()
+        finally:
+            storage.close()
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--harness", default=os.path.join(os.path.dirname(ROOT), "once-campfire-verification"))
+    p.add_argument("--image", default="once-campfire-cpp:app")
+    p.add_argument("--cache-mb", default="32,0")
+    p.add_argument("--rust-image")
+    p.add_argument("--port", type=int, default=3190)
+    p.add_argument("--out", default=os.path.join(ROOT, "bench", "results", "controls"))
+    args = p.parse_args()
+    args.seed = os.path.join(args.harness, "fixtures", "default")
+    env_file = os.path.join(args.seed, "reference.env")
+    labels = json.load(open(os.path.join(args.seed, "labels.json")))
+    password = labels["passwords.all"]
+    room = labels["rooms.watercooler"]
+    results = []
+
+    for mb in args.cache_mb.split(","):
+        run = Run(f"page cache {mb} MB")
+        print(f"== {args.image}, {run.label}", flush=True)
+        for section in (fetch_metadata, capabilities, gzip_negotiation, foreign_edits, revocation):
+            storage = Storage(args.seed)
+            app = App(args.image, storage, env_file, args.port, {"CAMPFIRE_PAGE_CACHE_MB": mb, "CAMPFIRE_RESPONSE_CACHE_MB": mb})
+            try:
+                if section is revocation:
+                    section(run, app, storage, labels, password, room)
+                else:
+                    cookie = sign_in(app, labels["emails.david"], password)
+                    if section is gzip_negotiation:
+                        section(run, app, cookie, room)
+                    elif section in (capabilities, foreign_edits):
+                        section(run, app, storage, cookie, room, labels)
+                    else:
+                        section(run, app, storage, cookie, room)
+            finally:
+                app.close()
+                storage.close()
+        results += run.results
+
+    if args.rust_image:
+        run = Run("install compatibility")
+        print(f"== {args.image} and {args.rust_image}, {run.label}", flush=True)
+        cross_image(run, args, labels, password, env_file, args.port)
+        results += run.results
+
+    os.makedirs(args.out, exist_ok=True)
+    image_id = sh("docker", "image", "inspect", "-f", "{{.Id}}", args.image).strip()
+    harness = sh("git", "-C", args.harness, "rev-parse", "--short", "HEAD").strip()
+    summary = {"image": args.image, "image_id": image_id, "harness": harness, "results": results}
+    with open(os.path.join(args.out, "results.json"), "w") as f:
+        json.dump(summary, f, indent=1)
+    failed = [r for r in results if not r["pass"]]
+    with open(os.path.join(args.out, "report.md"), "w") as f:
+        f.write(f"# Security and cache checks\n\nImage `{args.image}` (`{image_id[:19]}…`), harness seed at "
+                f"`{harness}`. {len(results) - len(failed)} of {len(results)} checks pass.\n\n")
+        f.write("| Mode | Check | Result | Detail |\n|---|---|---|---|\n")
+        for r in results:
+            f.write(f"| {r['mode']} | {r['check']} | {'pass' if r['pass'] else '**fail**'} | {r['detail']} |\n")
+    print(f"{len(results) - len(failed)} of {len(results)} checks pass. Report: {args.out}/report.md")
+    sys.exit(1 if failed else 0)
+
+
+if __name__ == "__main__":
+    main()

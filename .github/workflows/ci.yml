@@ -1,0 +1,79 @@
+# Rust: .github/workflows/ci.yml. Builds the app in the dev image (docker/dev.Dockerfile) and runs all test suites,
+# with the media fixtures of the Rails app. A test that skips because a fixture is missing fails the run.
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # The Rails commit of vendor/rails-assets/MANIFEST.md. Its test/fixtures/files are the media fixtures of src/storage.
+  RAILS_REFERENCE: 90b330024dec3e757c79b6a7e6568f93da8e3148
+
+jobs:
+  test:
+    name: Test (${{ matrix.preset }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [release, asan]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Checkout the media fixtures of the Rails app
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: basecamp/once-campfire
+          ref: ${{ env.RAILS_REFERENCE }}
+          path: rails-reference
+          sparse-checkout: test/fixtures/files
+          persist-credentials: false
+
+      - name: Check formatting
+        if: matrix.preset == 'release'
+        run: bin/dev format --check
+
+      - name: Build
+        env:
+          CAMPFIRE_FIXTURES_DIR: ${{ github.workspace }}/rails-reference/test/fixtures/files
+        run: bin/dev build ${{ matrix.preset }}
+
+      - name: Test
+        env:
+          CAMPFIRE_FIXTURES_DIR: ${{ github.workspace }}/rails-reference/test/fixtures/files
+        shell: bash
+        run: |
+          set -o pipefail
+          bin/dev test ${{ matrix.preset }} -V | tee test.log
+          if grep -a -q "SKIPPED" test.log; then
+            echo "A test skipped:"; grep -a "SKIPPED" test.log; exit 1
+          fi
+
+      - name: Summary
+        if: always()
+        shell: bash
+        run: |
+          [ -f test.log ] || exit 0
+          {
+            echo "### Tests (${{ matrix.preset }}) at \`${GITHUB_SHA::7}\`"
+            echo
+            grep -a -E "tests passed|tests failed" test.log | tail -1
+            LC_ALL=C awk '/\[doctest\] test cases:/ { suites++; cases += $5; skipped += $(NF-1) }
+                 /\[doctest\] assertions:/ { assertions += $4 }
+                 END { printf "\n%d doctest suites: %d test cases, %d assertions, %d skipped.\n", suites, cases, assertions, skipped }' test.log
+          } >> "$GITHUB_STEP_SUMMARY"

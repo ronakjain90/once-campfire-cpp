@@ -55,6 +55,8 @@ body, room and search-index entry. Any failure stops the run.
 
 - Over three alternating rounds, all 31.9 million C++ responses and all 14.2 million Rust responses
   were valid. The write audit verified 449,631 C++ posts and 180,230 Rust posts.
+- With one writer that posts 10 messages per second, the C++ app is 2.73× to 3.13× faster on the
+  four read routes. All reads were valid.
 - Rust is the current port (`b7f4af0`, October 8, 2026). Both apps have a page cache for the pages
   of a signed-in user.
 - The run was on an Apple M4 Mac (10 cores, 32 GB) in a Colima VM with 8 vCPUs and 16 GB. Each app
@@ -82,10 +84,15 @@ repo ([report](bench/results/2026-10-07-page-cache-off/report.md)):
 | Search | 26,579 req/s | 10,952 req/s (0.41×) | 113,849 req/s (4.28×) |
 | Post a message | 6,971 req/s | 15,650 req/s (2.25×) | 15,060 req/s (2.16×) |
 
-These numbers are older than the fragment splice (`a1a60e8`, `a344825`). A page build without the
-page cache now joins kept gzip pieces of the page parts, as the Rust port does. It does not compress
-each page again. In a test run of `a1a60e8` with the page cache off, the room page was 7.4 times
-faster and search was 7.0 times faster. This table is not measured again.
+These numbers are older than the fragment splice (`a1a60e8`, `0375219`, `a344825`). A page build
+without the page cache now joins kept gzip pieces of the page parts, as the Rust port does. It does
+not compress each page again. Test runs with the page cache off, against the code before the splice:
+
+- Room page: 9.4 times faster (3,769 to 35,357 req/s, 3 runs of `0375219`).
+- Search: 6.3 times faster (8,777 to 55,133 req/s, 3 runs of `0375219`).
+- Messages page: 8.2 times faster (4,448 to 36,454 req/s, 1 run of `a344825` under a profiler).
+
+The table above is not measured again.
 
 ### Action Cable
 

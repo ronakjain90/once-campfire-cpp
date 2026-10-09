@@ -22,8 +22,11 @@ Usage: bin/dev <command> [arguments]
   run <command...>            Run any command in the container
   clean [preset]              Delete the build directory of a preset (or all presets)
 
-Environment: CAMPFIRE_DEV_IMAGE (image), CAMPFIRE_BUILD_VOLUME (build volume).
+Environment: CAMPFIRE_DEV_IMAGE (image), CAMPFIRE_BUILD_VOLUME (build volume),
+CAMPFIRE_FIXTURES_DIR (media fixtures of the Rails app: reference/test/fixtures/files).
 The build volume is mounted at /build. The worktree is mounted at its host path.
+If CAMPFIRE_DEV_IMAGE is not set, the script builds campfire-cpp-dev from docker/dev.Dockerfile
+when the image is missing or the Dockerfile changed.
 USAGE
 }
 
@@ -32,12 +35,12 @@ tty_flags() {
 }
 
 # The media fixtures of the Rails app, read only, at the same path (src/storage tests read them).
-# The Rust repo is a sibling of the main checkout; a worktree is one level deeper.
+# CAMPFIRE_FIXTURES_DIR, else the Rust repo: a sibling of the main checkout, or one level deeper for a worktree.
 fixtures_dir() {
   local d
-  for d in "$ROOT/../once-campfire-rust/reference/test/fixtures/files" \
+  for d in "${CAMPFIRE_FIXTURES_DIR:-}" "$ROOT/../once-campfire-rust/reference/test/fixtures/files" \
            "$ROOT/../../once-campfire-rust/reference/test/fixtures/files"; do
-    if [ -d "$d" ]; then (cd "$d" && pwd); return; fi
+    if [ -n "$d" ] && [ -d "$d" ]; then (cd "$d" && pwd); return; fi
   done
 }
 
@@ -47,10 +50,23 @@ fixtures_mount() {
   if [ -n "$d" ]; then printf -- '-v %s:%s:ro -e CAMPFIRE_FIXTURES_DIR=%s' "$d" "$d" "$d"; fi
 }
 
+# Build the default dev image if it is missing or older than docker/dev.Dockerfile. The image keeps the git hash
+# of the Dockerfile in a label. An image that CAMPFIRE_DEV_IMAGE names is not built here.
+ensure_image() {
+  [ -z "${CAMPFIRE_DEV_IMAGE:-}" ] || return 0
+  local want have
+  want="$(git -C "$ROOT" hash-object docker/dev.Dockerfile)"
+  have="$(docker image inspect -f '{{ index .Config.Labels "campfire.dev.dockerfile" }}' "$IMAGE" 2>/dev/null || true)"
+  [ "$have" = "$want" ] && return 0
+  echo "bin/dev: building $IMAGE from docker/dev.Dockerfile" >&2
+  docker build -q -t "$IMAGE" --label "campfire.dev.dockerfile=$want" -f "$ROOT/docker/dev.Dockerfile" "$ROOT/docker" >&2
+}
+
 # Run a bash -lc script in the container. The arguments of the script are \$1, \$2, ...
 in_container() {
   local script="$1"
   shift
+  ensure_image
   # seccomp=unconfined: TSan calls personality(2), which the default Docker profile blocks.
   docker run --rm "$(tty_flags)" \
     --name "${LOWER}-dev-$$" \

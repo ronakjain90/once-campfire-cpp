@@ -94,6 +94,7 @@ campfire_library(app
     message_presenter.cpp
     network_guard.cpp
     not_found.cpp
+    server_app.cpp
     page.cpp
     page_cache.cpp
     platform.cpp

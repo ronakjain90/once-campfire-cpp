@@ -93,7 +93,7 @@ class Rq {
   // `params`: body params, then query params, then path params, merged as Rails does.
   [[nodiscard]] const req::ParamMap& params() const noexcept { return *params_; }
   [[nodiscard]] std::optional<std::string_view> param_str(std::string_view key) const { return params_->str(key); }
-  // The wire method after nothing overrides it (`_method` override is not wired: see README).
+  // `request.request_method`: the method after Rack::MethodOverride (net::apply_method_override).
   [[nodiscard]] std::string_view method_name() const noexcept { return request.method_text; }
 
   // `request.raw_post`: the body as it came (empty for multipart). Added by A3 for `RawRequestBody`.

@@ -526,6 +526,7 @@ void Worker::h2_begin_request(Conn& c, H2Stream& stream) {
   Request& request = stream.request;
   stream.ctx.emplace(*this, *stream.arena, request);
   stream.handler = app_.not_found;
+  apply_method_override(app_, request);
   if (app_.routes != nullptr) {
     const Match match = match_route(*app_.routes, request.method, request.path);
     if (match) {

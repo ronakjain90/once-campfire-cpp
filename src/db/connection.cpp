@@ -238,6 +238,8 @@ std::uint64_t Connection::snapshot_epoch() noexcept {
 void Connection::finish_read_transaction() noexcept {
   in_read_transaction_ = false;
   memo_on_ = false;
+  // A request that waits ends its transaction; another request can then run on this thread.
+  set_snapshot_epoch(0);
   // An error can end the transaction before this call: then SQLite is in autocommit again.
   if (sqlite3_get_autocommit(db_) != 0) {
     return;

@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "core/commit_epoch.hpp"
 #include "views/fragment_cache.hpp"
 
 namespace campfire::app {
@@ -56,7 +57,9 @@ class SharedFragmentCache {
 class WorkerFragmentCache final : public views::FragmentCache {
  public:
   explicit WorkerFragmentCache(SharedFragmentCache& shared) noexcept : shared_(&shared) {}
-  [[nodiscard]] bool enabled() const noexcept override { return true; }
+  // Only in a read transaction: its snapshot is not older than the epoch in the key (core/commit_epoch.hpp). A job
+  // thread and a request between two transactions render the fragment with no cache.
+  [[nodiscard]] bool enabled() const noexcept override { return in_snapshot(); }
   bool read(std::string_view key, Out& out) override;
   [[nodiscard]] std::shared_ptr<const std::string> get(std::string_view key) override { return shared_->get(key); }
   void write(std::string_view key, std::string_view html) override;

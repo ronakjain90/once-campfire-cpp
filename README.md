@@ -12,7 +12,8 @@ same response.
 
 ## Running it
 
-Build the image:
+Each push to `main` publishes an image for amd64 and arm64 to
+`ghcr.io/ronakjain90/once-campfire-cpp:main`. To build the image yourself:
 
 ```sh
 docker build -t campfire-cpp -f docker/Dockerfile .
@@ -65,6 +66,10 @@ body, room and search-index entry. Any failure stops the run.
 - The [report](bench/results/2026-10-08-hit-path/report.md) gives the sources, the images, the
   setup and the change from the
   [previous run](bench/results/2026-10-08-verification/report.md).
+- The app passes the browser checks of the harness (`bin/browser`): 3 runs of 3 on a fresh install
+  ([report](bench/results/2026-10-09-browser/report.md)).
+- Backend KLOC, counted as the harness counts it: 43.9
+  ([report](bench/results/2026-10-09-kloc/report.md)).
 
 ### The page cache
 
@@ -128,7 +133,6 @@ the same.
 The open work is:
 
 - A new measurement of the page build without the page cache, against the current Rust port.
-- The browser checks of the shared verification harness (`bin/browser`).
 - Parity checks against Rails: the Playwright harness, and database and cookie compatibility in
   both directions.
 

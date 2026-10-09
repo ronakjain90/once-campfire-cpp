@@ -1,0 +1,12 @@
+locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('.messages > .message[data-message-id]').filter({ hasText: 'Edited in the browser' }) to be visible
+
+    at browser/smoke.mjs:170:6 {
+  log: [
+    "  - waiting for locator('.messages > .message[data-message-id]').filter({ hasText: 'Edited in the browser' }) to be visible"
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v26.11.0

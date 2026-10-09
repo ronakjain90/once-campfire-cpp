@@ -187,6 +187,8 @@ TEST_CASE("session transfer: the page, the sign in, a bad id and a deactivated u
   REQUIRE(r.status == 200);
   CHECK(r.body.find("action=\"/session/transfers/" + good + "\"") != std::string::npos);
   CHECK(r.body.find("name=\"_method\" value=\"put\"") != std::string::npos);
+  // Rails 27f5461: the form has an empty block, so it ends with `</form>`.
+  CHECK(r.body.find("name=\"_method\" value=\"put\" />\n</form>") != std::string::npos);
   r = c.request("PATCH", "/session/transfers/" + id_for(1, -10), kSameOrigin);  // expired
   CHECK(r.status == 400);
   r = c.request("PATCH", "/session/transfers/nope", kSameOrigin);
@@ -195,6 +197,13 @@ TEST_CASE("session transfer: the page, the sign in, a bad id and a deactivated u
   CHECK(r.status == 302);
   CHECK(r.header("location") == "http://test.example/");
   CHECK(!cookie_pair(r, "session_token").empty());
+  // The browser posts the form: Rack::MethodOverride turns the POST into a PUT.
+  Client e(f.port());
+  r = e.request("POST", "/session/transfers/" + good, kSameOrigin + kForm, "_method=put");
+  CHECK(r.status == 302);
+  CHECK(!cookie_pair(r, "session_token").empty());
+  r = e.request("POST", "/session/transfers/" + good, kSameOrigin + kForm, "x=1");
+  CHECK(r.status == 404);
 
   f.write([&](db::Tx& tx) -> Status {
     if (auto done = tx.conn().exec(kDeactivate, 1); !done) return std::unexpected(done.error());

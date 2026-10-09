@@ -28,8 +28,25 @@ and 180,230 acknowledged Rust posts. The per-round files (`cpp-N.json`, `rust-N.
 `summary.json` are the output of the harness. The raw samples are not kept.
 
 The previous run ([2026-10-08-verification](../2026-10-08-verification/report.md)) used the same
-Rust image on the same host, but harness revision `7b2dbc7`. Against that run, the C++ app is faster by these amounts: room page
-1.44×, messages page 1.23×, sidebar 1.46×, search 1.38×, post 1.17×.
+Rust image on the same host, but harness revision `7b2dbc7`. Against that run, the C++ app is
+faster by these amounts: room page 1.44×, messages page 1.23×, sidebar 1.46×, search 1.38×, post
+1.17×.
+
+## Reads while posts arrive
+
+A second run (`20261008-155315-1`, profile `mixed-read-write-v1`) measured the same reads while one
+writer posted 10 messages per second to a different room. It tested `64fb4fd`, five commits before
+`79c4b55` on this branch, against the same Rust image. The files are in `mixed/`.
+
+| Route | C++ | Rust | C++ advantage |
+|---|---:|---:|---:|
+| Room page | 144,549 req/s | 46,133 req/s | **3.13×** |
+| Messages page | 129,208 req/s | 43,512 req/s | **2.97×** |
+| Sidebar | 146,958 req/s | 53,765 req/s | **2.73×** |
+| Search | 156,940 req/s | 52,919 req/s | **2.97×** |
+
+All 13,983,531 C++ reads and all 4,707,976 Rust reads were valid. The write audit verified all
+1,200 C++ posts and all 1,196 Rust posts of the writer.
 
 ## Sources
 

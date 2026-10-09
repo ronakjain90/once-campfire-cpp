@@ -7,8 +7,8 @@ data migration, and no user has to sign in again.
 
 One `campfire` executable serves the whole app, with libvips and ffmpeg for media. It includes TLS
 with automatic certificates, HTTP/2, Web Push, bot webhooks, search and Action Cable-compatible
-WebSockets. For each of the 689 requests of the diff sweep, the C++ app and the Rust app send the
-same response.
+WebSockets. The diff sweep sends 689 requests to the C++ app and to the Rust app. Against the Rust
+port `b7f4af0`, 554 responses are the same, and 125 differ only in the names or the order of headers.
 
 ## Running it
 
@@ -50,28 +50,31 @@ body, room and search-index entry. Any failure stops the run.
 
 | Route (16 concurrent clients) | Rust | C++ | C++ advantage |
 |---|---|---|---|
-| Room page | 48,309 req/s | 147,595 req/s | **3.06×** |
-| Messages page | 45,430 req/s | 144,925 req/s | **3.19×** |
-| Sidebar | 53,989 req/s | 156,281 req/s | **2.89×** |
-| Search | 53,888 req/s | 161,070 req/s | **2.99×** |
-| Post a message | 6,199 req/s | 16,073 req/s | **2.59×** |
+| Room page | 46,292 req/s | 147,675 req/s | **3.19×** |
+| Messages page | 44,643 req/s | 138,058 req/s | **3.09×** |
+| Sidebar | 52,905 req/s | 150,161 req/s | **2.84×** |
+| Search | 52,562 req/s | 158,351 req/s | **3.01×** |
+| Post a message | 6,122 req/s | 15,590 req/s | **2.55×** |
 
-- Over three alternating rounds, all 31.9 million C++ responses and all 14.2 million Rust responses
-  were valid. The write audit verified 449,631 C++ posts and 180,230 Rust posts.
-- With one writer that posts 10 messages per second, the C++ app is 2.73× to 3.13× faster on the
+- Over three alternating rounds, all 31.4 million C++ responses and all 13.6 million Rust responses
+  were valid. The write audit verified 434,397 C++ posts and 177,295 Rust posts.
+- With one writer that posts 10 messages per second, the C++ app is 2.93× to 3.37× faster on the
   four read routes. All reads were valid.
 - Rust is the current port (`b7f4af0`, October 8, 2026). Both apps have a page cache for the pages
   of a signed-in user.
 - The run was on an Apple M4 Mac (10 cores, 32 GB) in a Colima VM with 8 vCPUs and 16 GB. Each app
   had four pinned CPUs, and the load generator had the other four. The absolute numbers depend on
   the host. Compare the ratios.
-- The [report](bench/results/2026-10-08-hit-path/report.md) gives the sources, the images, the
-  setup and the change from the
-  [previous run](bench/results/2026-10-08-verification/report.md).
+- The [report](bench/results/2026-10-09-harness/report.md) gives the sources and the images. The
+  [first report](bench/results/2026-10-08-hit-path/report.md) gives the setup.
 - The app passes the browser checks of the harness (`bin/browser`): 3 runs of 3 on a fresh install
   ([report](bench/results/2026-10-09-browser/report.md)).
 - Backend KLOC, counted as the harness counts it: 43.9
   ([report](bench/results/2026-10-09-kloc/report.md)).
+- The app passes the security and cache checks of `bench/controls`, with the page cache on and off:
+  Fetch Metadata, legacy tokens, signed links, gzip negotiation, direct SQL edits, conditional
+  requests, revoked sessions, users, memberships and bot keys, and sessions shared with the Rust
+  image ([report](bench/results/2026-10-09-controls/report.md)).
 
 ### The page cache
 
@@ -153,9 +156,15 @@ bin/dev test tsan
 bin/dev format --check
 tools/diffsweep/diffsweep --expected campfire-rust:app --actual campfire-cpp
 bench/run --apps rust=campfire-rust:app,cpp=campfire-cpp --reps 3
+bench/controls --image campfire-cpp --rust-image campfire-rust:app
 ```
 
 - The presets are `release`, `asan` (ASan and UBSan) and `tsan`. All warnings are errors.
+- `bin/dev` builds the `campfire-cpp-dev` image when it is missing. The storage tests need the media
+  fixtures of the Rails app. `bin/dev` finds them in the Rust clone, or in `CAMPFIRE_FIXTURES_DIR`.
+- `bench/controls` starts the image on the seed of the
+  [shared harness](https://github.com/basecamp/once-campfire-verification) (`../once-campfire-verification`,
+  after `bin/seed`) and runs the security and cache checks.
 - The diff sweep starts both images on the same seed and compares each response byte for byte.
   See [`tools/diffsweep/README.md`](tools/diffsweep/README.md).
 - The benchmark compares the C++ image with the Rust image on the same host. It needs a Docker host

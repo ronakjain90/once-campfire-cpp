@@ -1,0 +1,547 @@
+{
+ "image": "campfire-cpp:fix2",
+ "image_id": "sha256:bb7600c3199002b842ae73bcc279b65536b181bc49aa37fa3439fa1daf0dd30e",
+ "harness": "4d1da88",
+ "results": [
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: same-origin with Origin is accepted",
+   "pass": true,
+   "detail": "status 200, stored 1"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: same-site is accepted",
+   "pass": true,
+   "detail": "status 200, stored 1"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: no Fetch Metadata over plain HTTP is accepted",
+   "pass": true,
+   "detail": "status 200, stored 1"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: cross-site is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: none is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: invalid Sec-Fetch-Site is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: Origin null is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: foreign Origin is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: foreign Origin, no Sec-Fetch-Site is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "legacy token: an old tab still posts",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "legacy token: a token does not allow a cross-site post",
+   "pass": true,
+   "detail": "status 422"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "fetch metadata: a cross-site GET (a link) works",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "signed blob: a valid signed id redirects",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "signed blob: a changed signed id is not found",
+   "pass": true,
+   "detail": "status 404"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "direct upload: no session gets no upload",
+   "pass": true,
+   "detail": "status 401"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "session transfer: a forged token signs nobody in",
+   "pass": true,
+   "detail": "status 400"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "join code: a wrong code is not found",
+   "pass": true,
+   "detail": "status 404"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "avatar: a changed avatar token is not found",
+   "pass": true,
+   "detail": "status 404"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "bot key: a valid key posts without Fetch Metadata",
+   "pass": true,
+   "detail": "status 201"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "bot key: a wrong key is rejected",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "gzip: Accept-Encoding gzip",
+   "pass": true,
+   "detail": "status 200, gzip True, same body True"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "gzip: Accept-Encoding gzip, deflate, br",
+   "pass": true,
+   "detail": "status 200, gzip True, same body True"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "gzip: Accept-Encoding gzip;q=0",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "gzip: Accept-Encoding gzip;q=0.000",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "gzip: Accept-Encoding identity",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "gzip: Accept-Encoding gzip;q=0 after 17 other codings",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "gzip: Accept-Encoding *;q=0, identity",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "direct SQL: a body edit with no timestamp change shows on the room page",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "direct SQL: the body edit shows on the permalink page",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "conditional: the room page has an ETag",
+   "pass": true,
+   "detail": "no ETag"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "conditional: an old ETag gets the new page, not 304",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "conditional: If-Modified-Since in the future gets the new page",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "conditional: the current ETag gets 304",
+   "pass": true,
+   "detail": "status 304"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "direct SQL: a creator edit shows on the room page",
+   "pass": true,
+   "detail": "creator shown 149087659"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "direct SQL: a boost edit shows on the room page",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "direct SQL: a body edit shows in search results",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "revoked session: a deleted session gets no page",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "revoked membership: the room page is gone",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "revoked membership: the messages page is gone",
+   "pass": true,
+   "detail": "status 404"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "revoked membership: search shows no message of the room",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "revoked membership: a post is rejected",
+   "pass": true,
+   "detail": "status 406"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "deactivated user: the session gets no page",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "deactivated user: sign in fails",
+   "pass": true,
+   "detail": "status 401"
+  },
+  {
+   "mode": "page cache 32 MB",
+   "check": "revoked bot key: the old key is rejected",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: same-origin with Origin is accepted",
+   "pass": true,
+   "detail": "status 200, stored 1"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: same-site is accepted",
+   "pass": true,
+   "detail": "status 200, stored 1"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: no Fetch Metadata over plain HTTP is accepted",
+   "pass": true,
+   "detail": "status 200, stored 1"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: cross-site is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: none is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: invalid Sec-Fetch-Site is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: Origin null is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: foreign Origin is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: foreign Origin, no Sec-Fetch-Site is rejected",
+   "pass": true,
+   "detail": "status 422, stored 0"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "legacy token: an old tab still posts",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "legacy token: a token does not allow a cross-site post",
+   "pass": true,
+   "detail": "status 422"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "fetch metadata: a cross-site GET (a link) works",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "signed blob: a valid signed id redirects",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "signed blob: a changed signed id is not found",
+   "pass": true,
+   "detail": "status 404"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "direct upload: no session gets no upload",
+   "pass": true,
+   "detail": "status 401"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "session transfer: a forged token signs nobody in",
+   "pass": true,
+   "detail": "status 400"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "join code: a wrong code is not found",
+   "pass": true,
+   "detail": "status 404"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "avatar: a changed avatar token is not found",
+   "pass": true,
+   "detail": "status 404"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "bot key: a valid key posts without Fetch Metadata",
+   "pass": true,
+   "detail": "status 201"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "bot key: a wrong key is rejected",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "gzip: Accept-Encoding gzip",
+   "pass": true,
+   "detail": "status 200, gzip True, same body True"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "gzip: Accept-Encoding gzip, deflate, br",
+   "pass": true,
+   "detail": "status 200, gzip True, same body True"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "gzip: Accept-Encoding gzip;q=0",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "gzip: Accept-Encoding gzip;q=0.000",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "gzip: Accept-Encoding identity",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "gzip: Accept-Encoding gzip;q=0 after 17 other codings",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "gzip: Accept-Encoding *;q=0, identity",
+   "pass": true,
+   "detail": "status 200, gzip False, same body True"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "direct SQL: a body edit with no timestamp change shows on the room page",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "direct SQL: the body edit shows on the permalink page",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "conditional: the room page has an ETag",
+   "pass": true,
+   "detail": "no ETag"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "conditional: an old ETag gets the new page, not 304",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "conditional: If-Modified-Since in the future gets the new page",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "conditional: the current ETag gets 304",
+   "pass": true,
+   "detail": "status 304"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "direct SQL: a creator edit shows on the room page",
+   "pass": true,
+   "detail": "creator shown 149087659"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "direct SQL: a boost edit shows on the room page",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "direct SQL: a body edit shows in search results",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "revoked session: a deleted session gets no page",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "revoked membership: the room page is gone",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "revoked membership: the messages page is gone",
+   "pass": true,
+   "detail": "status 404"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "revoked membership: search shows no message of the room",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "revoked membership: a post is rejected",
+   "pass": true,
+   "detail": "status 406"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "deactivated user: the session gets no page",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "deactivated user: sign in fails",
+   "pass": true,
+   "detail": "status 401"
+  },
+  {
+   "mode": "page cache 0 MB",
+   "check": "revoked bot key: the old key is rejected",
+   "pass": true,
+   "detail": "status 302"
+  },
+  {
+   "mode": "install compatibility",
+   "check": "install: a session from campfire-rust:current works in campfire-cpp:fix2",
+   "pass": true,
+   "detail": "status 200"
+  },
+  {
+   "mode": "install compatibility",
+   "check": "install: a session from campfire-cpp:fix2 works in campfire-rust:current",
+   "pass": true,
+   "detail": "status 200"
+  }
+ ]
+}

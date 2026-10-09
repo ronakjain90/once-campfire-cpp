@@ -1,5 +1,7 @@
-{# reference/app/views/sessions/transfers/show.html.erb: `auto_submit_form_with method: :put`. A form with no block writes the opening tag and the hidden fields, and no `</form>`. #}
+{# reference/app/views/sessions/transfers/show.html.erb (Rails 27f5461): `auto_submit_form_with method: :put do`, an empty block, so the form is complete. #}
+{% include views/helpers/forms.hpp %}
 {% include views/sessions/helpers.hpp %}
 {% params const helpers::FormWith& form %}
 
-{% call open_form(form) %}
+{% wrap form_with(form) %}
+{% end %}

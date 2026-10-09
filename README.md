@@ -47,22 +47,22 @@ body, room and search-index entry. Any failure stops the run.
 
 | Route (16 concurrent clients) | Rust | C++ | C++ advantage |
 |---|---|---|---|
-| Room page | 47,967 req/s | 102,650 req/s | **2.14×** |
-| Messages page | 44,983 req/s | 117,679 req/s | **2.62×** |
-| Sidebar | 52,494 req/s | 107,246 req/s | **2.04×** |
-| Search | 53,167 req/s | 116,777 req/s | **2.20×** |
-| Post a message | 6,075 req/s | 13,718 req/s | **2.26×** |
+| Room page | 48,309 req/s | 147,595 req/s | **3.06×** |
+| Messages page | 45,430 req/s | 144,925 req/s | **3.19×** |
+| Sidebar | 53,989 req/s | 156,281 req/s | **2.89×** |
+| Search | 53,888 req/s | 161,070 req/s | **2.99×** |
+| Post a message | 6,199 req/s | 16,073 req/s | **2.59×** |
 
-- Over three alternating rounds, all 28.0 million C++ responses and all 13.8 million Rust responses
-  were valid. The write audit verified 386,877 C++ posts and 178,582 Rust posts.
+- Over three alternating rounds, all 31.9 million C++ responses and all 14.2 million Rust responses
+  were valid. The write audit verified 449,631 C++ posts and 180,230 Rust posts.
 - Rust is the current port (`b7f4af0`, October 8, 2026). Both apps have a page cache for the pages
   of a signed-in user.
 - The run was on an Apple M4 Mac (10 cores, 32 GB) in a Colima VM with 8 vCPUs and 16 GB. Each app
   had four pinned CPUs, and the load generator had the other four. The absolute numbers depend on
   the host. Compare the ratios.
-- The harness does not list the C++ app. A two-line local change adds it. The
-  [report](bench/results/2026-10-08-verification/report.md) gives the change, the sources, the
-  images and the setup.
+- The [report](bench/results/2026-10-08-hit-path/report.md) gives the sources, the images, the
+  setup and the change from the
+  [previous run](bench/results/2026-10-08-verification/report.md).
 
 ### The page cache
 
@@ -71,10 +71,8 @@ with the same hash, it sends that page again. If not, it builds the page and kee
 key is a hash of the data, a page cannot be stale. See section 6.1 of
 [`docs/architecture.md`](docs/architecture.md).
 
-Without the page cache (`CAMPFIRE_PAGE_CACHE_MB=0`), the C++ app builds the room, messages and
-search pages slowly. The Rust port of October 1, 2026 had no page cache. Against that version, on
-the harness of this repo
-([report](bench/results/2026-10-07-page-cache-off/report.md)):
+The Rust port of October 1, 2026 had no page cache. Against that version, on the harness of this
+repo ([report](bench/results/2026-10-07-page-cache-off/report.md)):
 
 | Route (16 concurrent clients) | Rust of October 1 | C++, page cache off | C++, page cache on |
 |---|---|---|---|
@@ -84,20 +82,26 @@ the harness of this repo
 | Search | 26,579 req/s | 10,952 req/s (0.41×) | 113,849 req/s (4.28×) |
 | Post a message | 6,971 req/s | 15,650 req/s (2.25×) | 15,060 req/s (2.16×) |
 
+These numbers are older than the fragment splice (`a1a60e8`, `a344825`). A page build without the
+page cache now joins kept gzip pieces of the page parts, as the Rust port does. It does not compress
+each page again. In a test run of `a1a60e8` with the page cache off, the room page was 7.4 times
+faster and search was 7.0 times faster. This table is not measured again.
+
 ### Action Cable
 
-Against the Rust port of October 1, 2026, on the harness of this repo
-([report](bench/results/2026-10-07-cable/report.md)):
+The shared harness does not measure Action Cable. Against the current Rust port (`b7f4af0`), on
+the harness of this repo ([report](bench/results/2026-10-08-cable/report.md)):
 
 | Measurement | Rust | C++ | C++ advantage |
 |---|---|---|---|
-| Posts per second to all of 100 clients in one room | 3,098 | 3,592 | **1.16×** |
-| Posts per second to all of 1,000 clients in one room | 546 | 479 | 0.88× |
-| Post to all 1,000 clients received, p50 | 15.9 ms | 14.1 ms | **1.13×** |
-| Post to all 1,000 clients received, p99 | 20.3 ms | 18.2 ms | **1.12×** |
+| Posts per second to all of 100 clients in one room | 2,793 | 4,809 | **1.72×** |
+| Posts per second to all of 1,000 clients in one room | 496 | 534 | **1.08×** |
+| Post to all 1,000 clients received, p50 | 16.3 ms | 13.7 ms | **1.19×** |
+| Post to all 1,000 clients received, p99 | 20.0 ms | 17.4 ms | **1.15×** |
 
 Every client subscribed and received every broadcast. The numbers are medians of three interleaved
-runs.
+runs. Under load, the C++ app keeps the broadcasts of 4 ms and sends them to each socket in one
+write (`CAMPFIRE_CABLE_COALESCE_MS`, 0 to stop it).
 
 ### Image size
 
@@ -108,16 +112,15 @@ Against the Rust image of October 1, 2026:
 | Image size, unpacked | 267 MB | 243 MB | **1.10×** |
 | Image size, compressed | 70 MB | 64 MB | **1.10×** |
 
-Pages from the C++ app are smaller on the network (for example, 20.7 KB against 24.2 KB for a room
-page). The cause is the compressor: the C++ app uses libdeflate. The decoded pages are the same.
+The pages from the two apps are almost the same size on the network (for example, 24.2 KB for a
+room page from each app). Both apps join kept gzip pieces of the page parts. The decoded pages are
+the same.
 
 ## Status
 
 The open work is:
 
-- The page build without the page cache. It is slower than the Rust port of October 1 for the room,
-  messages and search pages.
-- The Action Cable fan-out with 1,000 clients. It is 0.88 times the Rust port of October 1.
+- A new measurement of the page build without the page cache, against the current Rust port.
 - The browser checks of the shared verification harness (`bin/browser`).
 - Parity checks against Rails: the Playwright harness, and database and cookie compatibility in
   both directions.
